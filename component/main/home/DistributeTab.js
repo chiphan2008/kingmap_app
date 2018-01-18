@@ -41,6 +41,7 @@ export default class Hometab extends Component {
 
   render() {
     const {navigate,goBack} = this.props.navigation;
+    const {name_module} = this.props.navigation.state.params;
     //console.log("this.props.DistributeTab=",util.inspect(this.props.navigation,false,null));
     const {
       container,
@@ -56,13 +57,13 @@ export default class Hometab extends Component {
       <View style={headCatStyle}>
           <View style={headContent}>
               <TouchableOpacity onPress={()=>goBack()}>
-              <Image source={closeIC} style={{width:20, height:20,marginTop:5}} />
+              <Image source={closeIC} style={{width:20, height:20}} />
               </TouchableOpacity>
               <TouchableOpacity
                     style={{alignItems:'center'}}
                     onPress={()=>this.setState({showCat :!this.state.showCat})}
                     >
-                    <Text style={{color:'white',fontSize:18}}>Phân loại</Text>
+                    <Text style={{color:'white',fontSize:18}}>{name_module}</Text>
               </TouchableOpacity>
               <View></View>
           </View>
@@ -75,7 +76,7 @@ export default class Hometab extends Component {
            data={this.state.listCategory}
            renderItem={({item}) =>(
              <TouchableOpacity
-             onPress={()=>navigate('ListLocScr',{idCat:item.id,sub_cat:item.sub_category,serv_items:item.service_items})}
+             onPress={()=>navigate('CatScr',{idCat:item.id,sub_cat:item.sub_category,name_cat:item.name})}
              style={flatItem}>
                  <Image style={imgFlatItemLoc} source={{uri:`${global.url_media}${item.image}`}} />
                  <Text>{item.name}</Text>

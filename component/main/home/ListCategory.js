@@ -55,33 +55,12 @@ export default class CategoryScreen extends Component {
     })
     .catch(err => console.log(err));
   }
-  componentWillMount() {
-    navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const latlng = `${position.coords.latitude}${','}${position.coords.longitude}`;
-            const id = this.props.navigation.state.params.idCat;
-            const idsub = this.props.navigation.state.params.id_subCat;
-            const name_subCat = this.props.navigation.state.params.name_subCat;
-            this.getCategory(id,idsub,name_subCat,latlng)
-            this.setState({
-              curLocation : {
-                latlng:latlng,
-              }
-            });
-            //console.log('this.props.navigation.state.params',this.props.navigation.state.params.idCat);
-           },
-           (error) => {
-            //console.log(error)
-          },
-          {enableHighAccuracy: true, timeout: 20000, maximumAge: 10000}
-    );
 
-  }
 
   render() {
 
     const {navigate, goBack} = this.props.navigation;
-    const { idCat, id_subCat, name_cat, sub_cat, name_subCat } = this.props.navigation.state.params;
+    const { idCat, id_subCat, name_cat, sub_cat, name_subCat,latlng } = this.props.navigation.state.params;
     //console.log("this.props.CategoryScreen=",util.inspect(this.props.navigation.state.key,false,null));
     const {
       container,
@@ -92,7 +71,7 @@ export default class CategoryScreen extends Component {
     } = styles;
     //onRegionChange={this.onRegionChange}
     return (
-      <View style={container}>
+      <View onLayout={()=>this.getCategory(idCat,id_subCat,name_subCat,latlng)} style={container}>
         <View style={headCatStyle}>
             <View style={headContent}>
                 <TouchableOpacity onPress={()=> goBack()}>

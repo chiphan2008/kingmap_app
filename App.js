@@ -5,12 +5,6 @@ import {
 } from 'react-native';
 import { StackNavigator,TabNavigator,Animated, } from 'react-navigation';
 //import util from 'util';
-import HomeTab from './component/main/home/HomeTab';
-import LocationTab from './component/main/location/LocationTab';
-import ListLocation from './component/main/location/ListLocation';
-import DistributeTab from './component/main/location/DistributeTab';
-import NotifyTab from './component/main/notify/NotifyTab';
-import PersonalTab from './component/main/personal/PersonalTab';
 //import icon tabBarIcon
 import homeIC from './src/icon/ic-home/ic-home.png';
 import locationIC from './src/icon/ic-home/ic-location.png';
@@ -23,6 +17,13 @@ import DetailScreen from './component/main/DetailScreen';
 import ListImageContent from './component/main/ListImageContent';
 import CategoryScreen from './component/main/home/CategoryScreen';
 import ListCategory from './component/main/home/ListCategory';
+
+import HomeTab from './component/main/home/HomeTab';
+import LocationTab from './component/main/location/LocationTab';
+import ListLocation from './component/main/location/ListLocation';
+import DistributeTab from './component/main/home/DistributeTab';
+import NotifyTab from './component/main/notify/NotifyTab';
+import PersonalTab from './component/main/personal/PersonalTab';
 
 import SelectLocation from './component/main/location/SelectLocation';
 
@@ -104,7 +105,7 @@ const RootTabs = TabNavigator({
       tabBarVisible:true,
     },
   },
-  
+
 }, {
   //initialRouteName:'LocationT',
   tabBarPosition: 'bottom',

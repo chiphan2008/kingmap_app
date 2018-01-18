@@ -14,32 +14,42 @@ module.exports = {
 },
   country: [],
   city:[],
-  style_map: [{
+  style_map: [
+  {
     "featureType": "administrative",
     "elementType": "geometry",
-    "stylers": [{
+    "stylers": [
+      {
         "visibility": "off"
-      }]
+      }
+    ]
   },
   {
     "featureType": "poi",
-    "stylers": [{
+    "stylers": [
+      {
         "visibility": "off"
-      }]
+      }
+    ]
   },
   {
     "featureType": "road",
     "elementType": "labels.icon",
-    "stylers": [{
+    "stylers": [
+      {
         "visibility": "off"
-      }]
+      }
+    ]
   },
   {
     "featureType": "transit",
-    "stylers": [{
+    "stylers": [
+      {
         "visibility": "off"
-      }]
-  }],
+      }
+    ]
+  }
+],
   style_map_ios: [
     {
     	"featureType": "poi.business",

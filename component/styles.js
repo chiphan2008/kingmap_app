@@ -10,7 +10,7 @@ module.exports = {
     width,height,position: 'absolute',justifyContent: 'center',alignItems: 'center',alignSelf: 'stretch',resizeMode: 'stretch',
   },
   headStyle : {
-      backgroundColor: '#D0021B',paddingTop: Platform.OS==='ios' ? 25 : 10, alignItems: 'center',height: 110,
+      backgroundColor: '#D0021B',paddingTop: Platform.OS==='ios' ? 27 : 10, alignItems: 'center',height: 110,
       position:'relative',zIndex:5,
   },
   headLocationStyle : {
@@ -25,7 +25,7 @@ module.exports = {
   wrapFilter:{alignItems:'center',marginTop:15,marginBottom:15,},
   filterFrame:{width:width-40,justifyContent:'space-between',alignItems:'center',flexDirection:'row'},
   inputSearch : {
-    marginTop: 8,width:width-40,backgroundColor:'#fff',borderRadius:5,padding:10,textAlign:'center',
+    marginTop: 3,width:width-40,backgroundColor:'#fff',borderRadius:5,padding:10,paddingRight:70,
   },
   selectBoxLoc:{
     backgroundColor:'#fff',
@@ -155,7 +155,7 @@ module.exports = {
     flex:1,
   },
   labelCat :{
-    backgroundColor:'transparent',textAlign:'center',
+    backgroundColor:'transparent',textAlign:'center',position:'relative'
   },
   wrapIcRight:{
     width:55,justifyContent: 'space-between',flexDirection: 'row',marginTop: 7,
@@ -180,7 +180,7 @@ module.exports = {
   OptionItem : {
     paddingTop: 7,paddingBottom: 0,marginTop: 0,marginBottom: 0,
   },
-  plusStyle :{bottom:10,position:'absolute',right:10,
+  plusStyle :{bottom:70,position:'absolute',right:10,
   },
   imgPlusStyle:{
     shadowOffset:{  width: 1,  height: 1,  },

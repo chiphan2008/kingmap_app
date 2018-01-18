@@ -11,6 +11,8 @@ import getLanguage from '../../api/getLanguage';
 import accessLocation from '../../api/accessLocation';
 //import requestLocationPermission from '../../api/accessLocation';
 import global from '../../global';
+import lang_vn from '../../lang/vn/language';
+import lang_en from '../../lang/en/language';
 import styles from '../../styles.js';
 
 import bgMap from '../../../src/icon/bg-map.png';
@@ -39,29 +41,14 @@ import {Select, Option} from "react-native-chooser";
 export default class HomeTab extends Component {
   constructor(props) {
     super(props);
-    staticLang_vn = {
-      other:'Khác',
-      location:'Địa điểm',
-      online:'Trực tuyến',
-      new_location:'Địa điểm mới',
-      like : 'Thích',
-      share : 'Chia sẽ',
-    }
-    staticLang_en = {
-      other:'Other',
-      location:'Location',
-      online:'Online',
-      new_location:'New location',
-      like : 'Like',
-      share : 'Share',
-    };
+
     this.state = {
       //permission: PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       Width_Layout:'',
       Height_Layout:'',
       listCategory : [],
       listStatus : [],
-      lang : staticLang_vn,
+      lang : lang_vn,
       selectLang: {
         valueLang : "vn",
         labelLang : "VIE",
@@ -87,7 +74,7 @@ export default class HomeTab extends Component {
               labelLang:e.labelLang,
             }
           });
-          e.valueLang==='vn' ?  this.setState({lang : staticLang_vn}) : this.setState({lang : staticLang_en});
+          e.valueLang==='vn' ?  this.setState({lang : lang_vn}) : this.setState({lang : lang_en});
           this.getCategory(this.state.selectLang.valueLang);
      }
     });
@@ -95,7 +82,7 @@ export default class HomeTab extends Component {
 
   onSelectLang(value, label) {
     AsyncStorage.setItem('@MyLanguage:key',JSON.stringify({valueLang:value,labelLang :label}));
-    value==='vn' ?  this.setState({lang : staticLang_vn}) : this.setState({lang : staticLang_en});
+    value==='vn' ?  this.setState({lang : lang_vn}) : this.setState({lang : lang_en});
     this.getCategory(value)
     this.setState({
       selectLang: {
@@ -107,7 +94,7 @@ export default class HomeTab extends Component {
     });
   }
   getCategory(lang){
-    getApi(global.url+'categories?language='+lang)
+    getApi(global.url+'modules?language='+lang)
     .then(arrCategory => {
         this.setState({ listCategory: arrCategory.data });
     })
@@ -134,7 +121,7 @@ export default class HomeTab extends Component {
     const {
       container, bgImg,
       headStyle, headContent,imgLogoTop,imgSocial, imgWidthGoogle, imgInfo,imgShare,wrapIcRight,FlatList,
-      selectBox,optionListStyle,OptionItem,inputSearch,show,hide,colorTextPP,colorNumPP,
+      selectBox,optionListStyle,OptionItem,inputSearch,show,hide,colorTextPP,colorNumPP,marRight,
       wrapContent,imgContent,square,wrapCircle,logoCenter,circle1,circle2,circle3,circle4,circle5,circle6,circle7,circle8,labelCat,
       plusStyle,imgPlusStyle,popover,overLayout,listOver,popoverShare,overLayoutShare,listOverShare,imgMargin,imgUpHome,imgUpInfo,imgUpShare
     } = styles;
@@ -148,7 +135,7 @@ export default class HomeTab extends Component {
             <TouchableOpacity onPress={()=> this.setState({showInfo:false,showShare:false}) } >
                 <Image source={logoTop} style={imgLogoTop} />
             </TouchableOpacity>
-            
+
             <Select
                   onClick={()=> this.setState({showInfo:false,showShare:false}) }
                   onSelect = {this.onSelectLang.bind(this)}
@@ -168,66 +155,65 @@ export default class HomeTab extends Component {
 
           </View>
           <TextInput underlineColorAndroid='transparent' placeholder="Find place" style={inputSearch} />
-          <Image style={{width:16,height:16,top:-28,left:-50}} source={searchIC} />
+          <Image style={{width:16,height:16,top:Platform.OS==='ios' ? -26 : -32,left:(width-80)/2}} source={searchIC} />
         </View>
 
         <View style={wrapContent}>
             <View style={square}>
-
             {
               this.state.listCategory.map((e)=>{
                 //console.log(e.sub_category)
                 switch (e.alias) {
-                  case 'do-an':
+                  case 'location':
                       return (<TouchableOpacity
                           key={e.id}
                           style={[wrapCircle,circle1]}
-                          onPress={() => navigate('CatScr',{idCat:e.id,name_cat:e.name,sub_cat:e.sub_category, }) }
+                          onPress={() => navigate('OtherCatScr',{name_module:e.name}) }
                           >
                         <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                         <Text style={labelCat}  >{e.name}</Text>
                       </TouchableOpacity>)
-                  case 'thuc-uong':
+                  case 'booking':
                       return (<TouchableOpacity
                           key={e.id}
                           style={[wrapCircle,circle2]}
-                          onPress={() => navigate('CatScr',{idCat:e.id,name_cat:e.name,sub_cat:e.sub_category}) }
+                          onPress={() => navigate('CatScr') }
                           >
                         <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                         <Text style={labelCat}  >{e.name}</Text>
                       </TouchableOpacity>);
-                  case 'thoi-trang':
+                  case 'ads':
                       return (<TouchableOpacity
                           key={e.id}
                           style={[wrapCircle,circle3]}
-                          onPress={() => navigate('CatScr',{idCat:e.id,name_cat:e.name,sub_cat:e.sub_category}) }
+                          onPress={() => navigate('CatScr') }
                           >
                         <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                         <Text style={labelCat}  >{e.name}</Text>
                       </TouchableOpacity>);
-                  case 'ngan-hang':
+                  case 'make-money':
                       return (<TouchableOpacity
                           key={e.id}
                           style={[wrapCircle,circle4]}
-                          onPress={() => navigate('CatScr',{idCat:e.id,name_cat:e.name,sub_cat:e.sub_category}) }
+                          onPress={() => navigate('CatScr') }
                           >
                         <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                         <Text style={labelCat}  >{e.name}</Text>
                       </TouchableOpacity>);
-                  case 'giai-tri':
+                  case 'chat':
                       return (<TouchableOpacity
                           key={e.id}
                           style={[wrapCircle,circle5]}
-                          onPress={() => navigate('CatScr',{idCat:e.id,name_cat:e.name,sub_cat:e.sub_category}) }
+                          onPress={() => navigate('CatScr') }
                           >
                         <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                         <Text style={labelCat}  >{e.name}</Text>
                       </TouchableOpacity>);
-                  case 'khach-san':
+                  case 'wallet':
                       return (<TouchableOpacity
                           key={e.id}
                           style={[wrapCircle,circle6]}
-                          onPress={() => navigate('CatScr',{idCat:e.id,name_cat:e.name,sub_cat:e.sub_category}) }
+                          onPress={() => navigate('CatScr') }
                           >
                         <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                         <Text style={labelCat}  >{e.name}</Text>
@@ -251,7 +237,31 @@ export default class HomeTab extends Component {
         <TouchableOpacity style={plusStyle}>
             <Image source={plusIC} style={imgPlusStyle} />
         </TouchableOpacity>
-
+        <View style={{
+          backgroundColor:'#313B50',height:30,width,flexDirection:'row',alignItems:'center',
+          justifyContent:'space-between',paddingLeft:10,paddingRight:10,
+        }}>
+          <View style={{flexDirection:'row'}}>
+          <Image style={[imgShare,marRight]} source={locationDD} />
+          <Text style={{color:'#fff'}}>{this.state.listStatus.countContent}</Text>
+          </View>
+          <View style={{flexDirection:'row'}}>
+          <Image style={[imgShare,marRight]} source={onlineDD} />
+          <Text style={{color:'#fff'}}>{this.state.listStatus.countOnline}</Text>
+          </View>
+          <View style={{flexDirection:'row'}}>
+          <Image style={[imgShare,marRight]} source={checkDD} />
+          <Text style={{color:'#fff'}}>{this.state.listStatus.newContent}</Text>
+          </View>
+          <View style={{flexDirection:'row'}}>
+          <Image style={[imgShare,marRight]} source={likeDD} />
+          <Text style={{color:'#fff'}}>{this.state.listStatus.countLike}</Text>
+          </View>
+          <View style={{flexDirection:'row'}}>
+          <Image style={[imgShare,marRight]} source={socialDD} />
+          <Text style={{color:'#fff'}}>{this.state.listStatus.countShare}</Text>
+          </View>
+        </View>
         <TouchableOpacity onPress={()=>this.setState({showInfo:!this.state.showInfo})} style={[popover, this.state.showInfo ? show : hide]}>
           <Image style={[imgUpHome,imgUpInfo]} source={upDD} />
 

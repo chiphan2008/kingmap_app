@@ -233,8 +233,8 @@ export default class CategoryScreen extends Component {
           radius={1000}
           lineCap="butt"
           strokeWidth={1}
-          fillColor="#000"
-          strokeColor="#000"/>
+          fillColor="rgba(0, 0, 0, 0.1))"
+          strokeColor="rgba(0, 0, 0, 0))"/>
 
           <MapView.Marker
             draggable

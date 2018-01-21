@@ -1,5 +1,6 @@
 
 module.exports = {
+  all:'AllAll',
   other:'Other',
   location:'Location',
   online:'Online',

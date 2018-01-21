@@ -267,6 +267,9 @@ module.exports = {
   imgUpShare :{right:20},
   imgMargin: {margin:10},
   listCatOver:{paddingRight:20,paddingBottom:20,paddingLeft:20,},
+  listCatAll:{padding:10,paddingRight:15,paddingLeft:15},
+  listCatBG:{backgroundColor:'#F0EEF0'},
+  listCatW:{backgroundColor:'#FFF'},
   listOver:{alignItems:'center',flexDirection:'row',padding:10,borderBottomColor:'#EEEDEE', borderBottomWidth:1,},
   listOverShare:{alignItems:'center',flexDirection:'row',paddingLeft:5},
   listOverService:{

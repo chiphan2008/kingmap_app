@@ -1,5 +1,6 @@
 
 module.exports = {
+  all:'Tất cả',
   other:'Khác',
   location:'Địa điểm',
   online:'Trực tuyến',

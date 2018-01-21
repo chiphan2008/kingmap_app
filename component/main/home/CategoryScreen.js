@@ -17,6 +17,24 @@ import listIC from '../../../src/icon/ic-white/ic-list.png';
 import logoMap from '../../../src/icon/Logo-map.png';
 import plusIC from '../../../src/icon/ic-home/ic-plus.png';
 
+export class SubListCat extends Component{
+  constructor(props) {
+    super(props);
+
+  }
+  render(){
+    const {name,tStyle,W,R,id,selected} = this.props;
+    console.log('onSelected,id',selected,id);
+    return (
+      <TouchableOpacity onPress={this.props.onSelected}>
+      <View style={selected===id ? R : W}>
+      <Text style={tStyle}>#{name}</Text>
+      </View>
+      </TouchableOpacity>
+    );
+  }
+}
+
 export default class CategoryScreen extends Component {
   constructor(props) {
     super(props);
@@ -30,9 +48,9 @@ export default class CategoryScreen extends Component {
         longitudeDelta: 1,
         latlng: '0,0',
       },
-      showCat : false,
+      selected:{},
       showInfoOver : false,
-      id_subCat:'',
+      id_subCat:null,
       name_subCat:'Tất cả',
       markers:[{
         id : 1,
@@ -106,10 +124,16 @@ export default class CategoryScreen extends Component {
     );
   }
 
-  componentDidMount(){
+  componentWillMount(){
    this.getLoc();
   }
-
+  _onSelected(id,name,idCat){
+    this.setState({id_subCat:id,name_subCat:name,
+      selected: Object.assign(this.state.selected,{[id]:id}),
+    });
+    this.getCategory(idCat,id,this.state.curLocation.latlng);
+    console.log('this.state.selected',this.state.selected[id]);
+  }
   render() {
 
     const {navigate,goBack} = this.props.navigation;
@@ -119,7 +143,7 @@ export default class CategoryScreen extends Component {
     const {
       container,
       headCatStyle, headContent,wrapIcRight,plusStyle,imgPlusStyle,
-      popover,show,hide,overLayoutCat,shadown,colorText,listCatOver,
+      popover,show,hide,overLayoutCat,shadown,colorText,listCatAll,listCatBG,listCatW,
       wrapContent,leftContent,rightContent,middleContent,imgContent,labelCat,
       imgFlatItem,catInfoOver,txtTitleOver,txtAddrOver,wrapInfoOver,
     } = styles;
@@ -130,17 +154,11 @@ export default class CategoryScreen extends Component {
       <View style={container}>
         <View style={headCatStyle}>
             <View style={headContent}>
-
                 <TouchableOpacity onPress={()=> goBack()}>
                 <Image source={arrowLeft} style={{width:16, height:16,marginTop:5}} />
                 </TouchableOpacity>
-
-                <TouchableOpacity
-                      style={{alignItems:'center'}}
-                      onPress={()=>this.setState({showCat :!this.state.showCat})}
-                      >
+                <TouchableOpacity style={{alignItems:'center'}} >
                       <Text style={{color:'white',fontSize:16}}>{name_cat}</Text>
-                      <Image source={sortDown} style={{width:18, height:18}} />
                 </TouchableOpacity>
                 <TouchableOpacity
                 onPress={()=>{
@@ -151,36 +169,37 @@ export default class CategoryScreen extends Component {
             </View>
         </View>
 
-        <TouchableOpacity onPress={()=>this.setState({showCat:!this.state.showCat})} style={[popover, this.state.showCat ? show : hide]}>
-            <View style={[overLayoutCat,shadown]}>
-            <FlatList
-               keyExtractor={item => item.id}
-               data={sub_cat}
-               renderItem={({item}) => (
-                 <TouchableOpacity
-                 onPress={()=>{
-                  this.getCategory(idCat,item.id,this.state.curLocation.latlng)
-                  this.setState({showCat:!this.state.showCat,id_subCat:item.id,name_subCat:item.name});
-               }}
-                 style={listCatOver}>
-                   <Text style={colorText}>{item.name}</Text>
-               </TouchableOpacity>
-            )} />
-            <TouchableOpacity
-            onPress={()=>{
-            //onPress={()=>{navigate('ListCatScr',{idCat,name_cat,sub_cat,id_subCat:item.id, name_subCat:item.name});
-             this.getCategory(idCat,null,this.state.curLocation.latlng)
-             this.setState({showCat:!this.state.showCat,id_subCat:null,name_subCat:''});
-          }}
-            style={listCatOver}>
-              <Text style={colorText}>Tất cả</Text>
-          </TouchableOpacity>
-            </View>
-
+        <View style={{backgroundColor:'#fff',flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
+        <TouchableOpacity
+        onPress={()=>{
+         this.getCategory(idCat,null,this.state.curLocation.latlng)
+         this.setState({id_subCat:null,name_subCat:''});
+        }}
+        style={[listCatAll,this.state.id_subCat===null ? listCatBG : '']}>
+          <Text style={colorText}>#All</Text>
         </TouchableOpacity>
 
+        <FlatList
+           horizontal
+           showsHorizontalScrollIndicator={false}
+           keyExtractor={item => item.id}
+           data={sub_cat}
+           renderItem={({item}) => (
+
+              <SubListCat
+              onSelected={()=>this._onSelected(item.id,item.name,idCat)}
+              selected={!!this.state.selected[item.id]}
+              id={item.id}
+              R={[listCatAll,listCatBG]}
+              W={listCatAll}
+              tStyle={colorText}
+              name={item.name}
+              />
+
+        )} />
+        </View>
         <MapView
-            //provider={PROVIDER_GOOGLE}
+            provider={PROVIDER_GOOGLE}
             style={{flex:1,position:'relative',zIndex:1}}
             region={this.state.curLocation }
             onRegionChange={()=>{clearTimeout(timeout);}}
@@ -197,7 +216,7 @@ export default class CategoryScreen extends Component {
                     latlng:`${region.latitude},${region.longitude}`,
                   }
                 });
-                this.getCategory(idCat,null,`${region.latitude},${region.longitude}`);
+                this.getCategory(idCat,this.state.id_subCat,`${region.latitude},${region.longitude}`);
               }, 2000);
             }}
             customMapStyle={global.style_map}

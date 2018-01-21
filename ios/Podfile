@@ -18,8 +18,9 @@ target 'kingmap_app' do
     'BatchedBridge'
   ]
 
+  pod 'GoogleMaps'
   pod 'react-native-maps', path: rn_maps_path
-
+  
 end
 
 post_install do |installer|

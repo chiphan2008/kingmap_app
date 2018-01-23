@@ -41,7 +41,7 @@ export default class Hometab extends Component {
 
   render() {
     const {navigate,goBack} = this.props.navigation;
-    const {name_module} = this.props.navigation.state.params;
+    const {name_module, lang} = this.props.navigation.state.params;
     //console.log("this.props.DistributeTab=",util.inspect(this.props.navigation,false,null));
     const {
       container,
@@ -76,7 +76,7 @@ export default class Hometab extends Component {
            data={this.state.listCategory}
            renderItem={({item}) =>(
              <TouchableOpacity
-             onPress={()=>navigate('CatScr',{idCat:item.id,sub_cat:item.sub_category,name_cat:item.name})}
+             onPress={()=>navigate('CatScr',{idCat:item.id,idSub:item.sub_category[0].id,sub_cat:item.sub_category,serviceItem:item.service_items,name_cat:item.name,lang})}
              style={flatItem}>
                  <Image style={imgFlatItemLoc} source={{uri:`${global.url_media}${item.image}`}} />
                  <Text>{item.name}</Text>

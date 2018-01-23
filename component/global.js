@@ -5,8 +5,8 @@ module.exports = {
     client_id:1,
     client_secret:'NKbqe8ovfMetW8WYimVN7MtNHSsy6tCo6mm7WU9Y'
   },
-  url: 'https://diadiem.kingmap.vn/api/',
-  url_media: 'https://diadiem.kingmap.vn',
+  url: 'https://kingmap.vn/api/',
+  url_media: 'https://kingmap.vn',
   secret_key: {
     token_type: "Bearer",
     expires_in: 1296000,

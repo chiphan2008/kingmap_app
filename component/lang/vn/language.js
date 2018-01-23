@@ -7,4 +7,5 @@ module.exports = {
   new_location:'Địa điểm mới',
   like : 'Thích',
   share : 'Chia sẽ',
+  lang:'vn'
 };

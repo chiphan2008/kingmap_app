@@ -1,10 +1,11 @@
 
 module.exports = {
-  all:'AllAll',
+  all:'All',
   other:'Other',
   location:'Location',
   online:'Online',
   new_location:'New location',
   like : 'Like',
-  share : 'Share'
+  share : 'Share',
+  lang:'en'
 };

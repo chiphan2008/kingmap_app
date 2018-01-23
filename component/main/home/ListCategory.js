@@ -43,10 +43,12 @@ export default class CategoryScreen extends Component {
 
   }
 
-  getCategory(idcat,idsub=null,name_subCat,loc){
+  getCategory(idcat,idsub=null,id_service=null,name_subCat,loc){
     this.setState({nameSubCat:name_subCat,showCat:false});
-    let url = `${global.url}${'content-by-category?category='}${idcat}${'&location='}${loc}`;
+    let url = `${global.url}${'search-content?category='}${idcat}${'&location='}${loc}`;
     if(idsub!==null) url += `${'&subcategory='}${idsub}`;
+    if(id_service!==null) url += `${'&service='}${id_service}`;
+
     getApi(url)
     .then(arrData => {
       //console.log('parseFloat(marker.lat)',arrTest.data)
@@ -60,7 +62,7 @@ export default class CategoryScreen extends Component {
   render() {
 
     const {navigate, goBack} = this.props.navigation;
-    const { idCat, id_subCat, name_cat, sub_cat, name_subCat,latlng } = this.props.navigation.state.params;
+    const { idCat, id_subCat, id_service, name_cat, sub_cat, name_subCat,latlng } = this.props.navigation.state.params;
     //console.log("this.props.CategoryScreen=",util.inspect(this.props.navigation.state.key,false,null));
     const {
       container,
@@ -71,7 +73,7 @@ export default class CategoryScreen extends Component {
     } = styles;
     //onRegionChange={this.onRegionChange}
     return (
-      <View onLayout={()=>this.getCategory(idCat,id_subCat,name_subCat,latlng)} style={container}>
+      <View onLayout={()=>this.getCategory(idCat,id_subCat,id_service,name_subCat,latlng)} style={container}>
         <View style={headCatStyle}>
             <View style={headContent}>
                 <TouchableOpacity onPress={()=> goBack()}>
@@ -97,7 +99,7 @@ export default class CategoryScreen extends Component {
                data={sub_cat}
                renderItem={({item}) => (
                  <TouchableOpacity
-                   onPress={()=>{ this.getCategory(idCat,item.id,item.name,this.state.curLocation.latlng) }}
+                   onPress={()=>{ this.getCategory(idCat,item.id,id_service,item.name,this.state.curLocation.latlng) }}
                    style={listCatOver}>
                      <Text style={colorText}>{item.name}</Text>
                  </TouchableOpacity>

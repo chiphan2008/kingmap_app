@@ -177,6 +177,7 @@ module.exports = {
     backgroundColor:'#fff',borderColor:'transparent',position:'absolute',width: 55,  height:60,
     top:Platform.OS ==='ios' ? 48 : 35,right:10,
   },
+
   OptionItem : {
     paddingTop: 7,paddingBottom: 0,marginTop: 0,marginBottom: 0,
   },
@@ -277,7 +278,8 @@ module.exports = {
       borderBottomColor:'#EEEDEE',
       borderBottomWidth:1,
   },
-
+  serviceList:{flexDirection:'row',justifyContent:'center',alignItems:'center',borderBottomColor:'#C8C7C8',borderBottomWidth:1},
+  serviceOver:{position:'absolute',zIndex:9,top: 65},
   catInfoOver:{padding:15,bottom:0,zIndex:6,backgroundColor:'#fff',width,flexDirection:'row'},
   wrapInfoOver:{flex:1,flexWrap: 'wrap'},
   txtTitleOver:{color:'#2F353F',fontSize:20,marginBottom:10,maxHeight:50,overflow:'hidden'},

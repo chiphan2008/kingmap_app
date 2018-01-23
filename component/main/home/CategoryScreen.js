@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image, TextInput, TouchableOpacity,FlatList,Alert} from 'react-native';
 const {height, width} = Dimensions.get('window');
 
+import accessLocation from '../../api/accessLocation';
 import getApi from '../../api/getApi';
 import getLocationByIP from '../../api/getLocationByIP';
 import global from '../../global';
@@ -17,24 +18,6 @@ import listIC from '../../../src/icon/ic-white/ic-list.png';
 import logoMap from '../../../src/icon/Logo-map.png';
 import plusIC from '../../../src/icon/ic-home/ic-plus.png';
 
-export class SubListCat extends Component{
-  constructor(props) {
-    super(props);
-
-  }
-  render(){
-    const {name,tStyle,W,R,id,selected} = this.props;
-    console.log('onSelected,id',selected,id);
-    return (
-      <TouchableOpacity onPress={this.props.onSelected}>
-      <View style={selected===id ? R : W}>
-      <Text style={tStyle}>#{name}</Text>
-      </View>
-      </TouchableOpacity>
-    );
-  }
-}
-
 export default class CategoryScreen extends Component {
   constructor(props) {
     super(props);
@@ -44,13 +27,15 @@ export default class CategoryScreen extends Component {
         longitude: 0,
         lat:0,
         lng: 0,
-        latitudeDelta:  4,
-        longitudeDelta: 1,
+        latitudeDelta:  0.008757,
+        longitudeDelta: 0.010066,
         latlng: '0,0',
       },
-      selected:{},
-      showInfoOver : false,
-      id_subCat:null,
+      onchange:false,
+      showInfoOver : true,
+      showServOver : false,
+      id_subCat:this.props.navigation.state.params.idSub,
+      id_service:null,
       name_subCat:'Tất cả',
       markers:[{
         id : 1,
@@ -65,87 +50,105 @@ export default class CategoryScreen extends Component {
         avatar:'',
       },],
     }
-
+    accessLocation();
 
   }
 
-  getCategory(idcat,idsub=null,loc){
-    let url = `${global.url}${'content-by-category?category='}${idcat}${'&location='}${loc}${'&limit='}${'5000'}`;
+  getCategory(idcat,idsub=null,idservice=null,loc){
+    let url = `${global.url}${'search-content?category='}${idcat}${'&location='}${loc}${'&limit=5000'}${'&distance=500'}`;
+    if(idsub===null) idsub=this.state.id_subCat;
+    url += `${'&subcategory='}${idsub}`;
+    if(idservice!==null){
+      const item=this.state.id_service===null ? idservice : `${this.state.id_service},${idservice}`;
+      //console.log('[this.state.id_service].indexOf(idservice)',`${this.state.id_service}`.indexOf(idservice));
+      if ( `${this.state.id_service}`.indexOf(idservice)===-1 ){
+        this.setState({id_service: item})
+        url += `${'&service='}${item}`;
+      }else{
+        url += `${'&service='}${this.state.id_service}`;
+      }
+
+    }
     //console.log('url',url);
-    if(idsub!==null) url += `${'&subcategory='}${idsub}`;
     getApi(url)
     .then(arrData => {
-      //console.log('arrData',arrData);
-        this.setState({ markers: arrData.data });
+        this.setState({ markers: arrData.data,onchange:true,showInfoOver:true });
     })
     .catch(err => console.log(err));
   }
 
   getLoc(){
-    //console.log('getloc',this.props.navigation.state.params.idCat);
     navigator.geolocation.getCurrentPosition(
           (position) => {
-            //Alert.alert(position.coords.latitude.toString(),position.coords.latitude.toString());
-            const id = this.props.navigation.state.params.idCat;
+            //console.log('position');
             const latlng = `${position.coords.latitude}${','}${position.coords.longitude}`;
-            this.getCategory(id,null,latlng);
             this.setState({
               curLocation : {
                 latitude:position.coords.latitude,
                 longitude: position.coords.longitude,
                 lat:position.coords.latitude,
                 lng: position.coords.longitude,
-                latitudeDelta:  0.0295,
-                longitudeDelta: 0.0055,
+                latitudeDelta:  0.008757,
+                longitudeDelta: 0.010066,
                 latlng:latlng,
               }
             });
-            //console.log('this.props.navigation.state.params',this.props.navigation.state.params.idCat);
            },
            (error) => {
-            getLocationByIP().then(e => {
-              //Alert.alert(e.ip.toString());
-            this.getCategory(this.props.navigation.state.params.idCat,`${e.latitude}${','}${e.longitude}`);
+             //console.log('getLocationByIP');
+            getLocationByIP().then((e) => {
             this.setState({
               curLocation : {
                 latitude:e.latitude,
                 longitude: e.longitude,
                 lat:e.latitude,
                 lng: e.longitude,
-                altitude: 7,
-                latitudeDelta:  0.044422,
-                longitudeDelta: 0.011121,
+                latitudeDelta:  0.008757,
+                longitudeDelta: 0.010066,
+                // latitudeDelta:  0.0895,
+                // longitudeDelta: 0.0355,
                 latlng:`${e.latitude}${','}${e.longitude}`,
               }
             });
             });
           },
-          {enableHighAccuracy: true, timeout: 3000, maximumAge: 3000}
+          {enableHighAccuracy: false, timeout: 6000, maximumAge: 6000}
     );
   }
 
   componentWillMount(){
    this.getLoc();
   }
-  _onSelected(id,name,idCat){
-    this.setState({id_subCat:id,name_subCat:name,
-      selected: Object.assign(this.state.selected,{[id]:id}),
-    });
-    this.getCategory(idCat,id,this.state.curLocation.latlng);
-    console.log('this.state.selected',this.state.selected[id]);
-  }
-  render() {
 
+
+  _onSelectSub(idCat,id,name,timeout){
+    //console.log('_onSelectSub');
+    clearTimeout(timeout);
+    this.setState({id_subCat:id,name_subCat:name,showServOver:true});
+    if(this.state.onchange){
+      this.getCategory(idCat,id,null,this.state.curLocation.latlng);
+    }
+  };
+  _onSelectServ(idCat,idsub,id,timeout){
+    //console.log('_onSelectServ');
+    clearTimeout(timeout);
+    if(this.state.onchange){
+      this.getCategory(idCat,idsub,id,this.state.curLocation.latlng);
+    }
+  };
+
+  render() {
+    //console.log('count',this.state.markers.length);
     const {navigate,goBack} = this.props.navigation;
-    const { idCat, name_cat, sub_cat } = this.props.navigation.state.params;
-    //console.log('sub_cat',sub_cat);
+    const { idCat, name_cat, sub_cat, serviceItem, lang } = this.props.navigation.state.params;
+    //console.log('lang',lang);
     //console.log("this.props.CategoryScreen=",util.inspect(this.props.navigation.state.key,false,null));
     const {
       container,
-      headCatStyle, headContent,wrapIcRight,plusStyle,imgPlusStyle,
+      headCatStyle, headContent,wrapIcRight,plusStyle,imgPlusStyle,serviceList,
       popover,show,hide,overLayoutCat,shadown,colorText,listCatAll,listCatBG,listCatW,
       wrapContent,leftContent,rightContent,middleContent,imgContent,labelCat,
-      imgFlatItem,catInfoOver,txtTitleOver,txtAddrOver,wrapInfoOver,
+      imgFlatItem,catInfoOver,txtTitleOver,txtAddrOver,wrapInfoOver,serviceOver,
     } = styles;
 
 
@@ -162,48 +165,68 @@ export default class CategoryScreen extends Component {
                 </TouchableOpacity>
                 <TouchableOpacity
                 onPress={()=>{
-                  navigate('ListCatScr',{idCat,name_cat,id_subCat:this.state.id_subCat,name_subCat:this.state.name_subCat,sub_cat,latlng:this.state.curLocation.latlng});
+                  navigate('ListCatScr',{idCat,name_cat,id_subCat:this.state.id_subCat,name_subCat:this.state.name_subCat,id_service:this.state.id_service,sub_cat,latlng:this.state.curLocation.latlng});
                 }}>
                 <Image source={listIC} style={{width:16, height:20}} />
                 </TouchableOpacity>
             </View>
         </View>
+        <View style={[serviceOver,this.state.showInfoOver ? show : hide]}>
+        <View style={{backgroundColor:'#fff',flexDirection:'row',justifyContent:'center',alignItems:'center',}}>
 
-        <View style={{backgroundColor:'#fff',flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
-        <TouchableOpacity
-        onPress={()=>{
-         this.getCategory(idCat,null,this.state.curLocation.latlng)
-         this.setState({id_subCat:null,name_subCat:''});
-        }}
-        style={[listCatAll,this.state.id_subCat===null ? listCatBG : '']}>
-          <Text style={colorText}>#All</Text>
-        </TouchableOpacity>
 
         <FlatList
            horizontal
+           extraData={this.state}
            showsHorizontalScrollIndicator={false}
            keyExtractor={item => item.id}
            data={sub_cat}
            renderItem={({item}) => (
-
-              <SubListCat
-              onSelected={()=>this._onSelected(item.id,item.name,idCat)}
-              selected={!!this.state.selected[item.id]}
-              id={item.id}
-              R={[listCatAll,listCatBG]}
-              W={listCatAll}
-              tStyle={colorText}
-              name={item.name}
-              />
+             <TouchableOpacity onPress={()=>{this._onSelectSub(idCat,item.id,item.name,timeout)}}>
+             <View style={[listCatAll,this.state.id_subCat===item.id ? listCatBG : '']}>
+             <Text style={colorText}>{item.name}</Text>
+             </View>
+             </TouchableOpacity>
 
         )} />
         </View>
+
+        <View style={[serviceList,this.state.showServOver ? show : hide]}>
+        <TouchableOpacity
+        onPress={()=>{
+          this.getCategory(idCat,this.state.id_subCat,null,this.state.curLocation.latlng);
+          this.setState({id_service:null});
+        }}
+        style={[listCatAll,listCatBG]}>
+          <Text style={colorText}>{lang.all}</Text>
+        </TouchableOpacity>
+
+        <FlatList
+           horizontal
+           extraData={this.state}
+           showsHorizontalScrollIndicator={false}
+           keyExtractor={item => item.id}
+           data={serviceItem}
+           renderItem={({item}) => (
+             <TouchableOpacity onPress={()=>{this._onSelectServ(idCat,this.state.id_subCat,item.id,timeout)}}>
+             <View style={[listCatAll,listCatBG]}>
+             <Text style={colorText}>{`${this.state.id_service}`.includes(item.id) ? '#' : ''}{item.name}</Text>
+             </View>
+             </TouchableOpacity>
+
+        )} />
+        </View>
+
+        </View>
+
         <MapView
+
             provider={PROVIDER_GOOGLE}
             style={{flex:1,position:'relative',zIndex:1}}
-            region={this.state.curLocation }
+            region={this.state.curLocation}
             onRegionChange={()=>{clearTimeout(timeout);}}
             onRegionChangeComplete={(region)=>{
+              //console.log('region',region);
               timeout = setTimeout(()=>{
                 this.setState({
                   curLocation : {
@@ -214,9 +237,12 @@ export default class CategoryScreen extends Component {
                     latitudeDelta:region.latitudeDelta,
                     longitudeDelta: region.longitudeDelta,
                     latlng:`${region.latitude},${region.longitude}`,
-                  }
+                  },
+                  onchange:false,
+                  showInfoOver:false,
+                  showServOver:false,
                 });
-                this.getCategory(idCat,this.state.id_subCat,`${region.latitude},${region.longitude}`);
+                this.getCategory(idCat,this.state.id_subCat,this.state.id_service,`${region.latitude},${region.longitude}`);
               }, 2000);
             }}
             customMapStyle={global.style_map}
@@ -249,7 +275,7 @@ export default class CategoryScreen extends Component {
         })}
         <MapView.Circle
           center={this.state.curLocation}
-          radius={1000}
+          radius={500}
           lineCap="butt"
           strokeWidth={1}
           fillColor="rgba(0, 0, 0, 0.1))"

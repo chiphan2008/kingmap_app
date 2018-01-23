@@ -168,7 +168,7 @@ export default class HomeTab extends Component {
                       return (<TouchableOpacity
                           key={e.id}
                           style={[wrapCircle,circle1]}
-                          onPress={() => navigate('OtherCatScr',{name_module:e.name}) }
+                          onPress={() => navigate('OtherCatScr',{name_module:e.name,lang:this.state.lang}) }
                           >
                         <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                         <Text style={labelCat}  >{e.name}</Text>

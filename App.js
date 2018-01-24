@@ -8,6 +8,7 @@ import { StackNavigator,TabNavigator,Animated, } from 'react-navigation';
 //import icon tabBarIcon
 import homeIC from './src/icon/ic-home/ic-home.png';
 import locationIC from './src/icon/ic-home/ic-location.png';
+import infoIC from './src/icon/ic-home/ic-info.png';
 import notifyIC from './src/icon/ic-home/ic-notification.png';
 import personalIC from './src/icon/ic-home/ic-personal.png';
 
@@ -73,7 +74,16 @@ const RootTabs = TabNavigator({
       ),
     },
   },
-
+  LocationT: {
+    screen: LocationScreen,//LocationTab,//,DistributeTab
+    navigationOptions: {
+      tabBarLabel: 'Location',
+      tabBarIcon: ({ tintColor }) => (
+        <Image source={locationIC} style={[styles.icon, {tintColor}]} />
+      ),
+      tabBarVisible:true,
+    },
+  },
   NotifyT: {
     screen: NotifyTab,
     navigationOptions: {
@@ -95,16 +105,19 @@ const RootTabs = TabNavigator({
       },
     },
   },
-  LocationT: {
-    screen: LocationScreen,//LocationTab,//,DistributeTab
+  InfoT: {
+    screen: PersonalTab,
     navigationOptions: {
-      tabBarLabel: 'Location',
+      tabBarLabel: 'Info',
       tabBarIcon: ({ tintColor }) => (
-        <Image source={locationIC} style={[styles.icon, {tintColor}]} />
+        <Image source={infoIC} style={[styles.icon, {tintColor}]} />
       ),
-      tabBarVisible:true,
+      style : {
+        borderBottomWidth:0,
+      },
     },
   },
+
 
 }, {
   //initialRouteName:'LocationT',
@@ -118,12 +131,12 @@ const RootTabs = TabNavigator({
     labelStyle: {
       fontSize: 11,
     },
-    activeTintColor: '#D0021B',
-    inactiveTintColor: '#777E8A',
-    activeBackgroundColor:'#FFFEFF',
+    activeTintColor: '#fff',
+    inactiveTintColor: '#B8BBC0',
+    activeBackgroundColor:'#BF2827',
     borderBottomWidth: 0,
     style : {
-        backgroundColor:'#FFFEFF',
+        backgroundColor:'#BF2827',
     },
     indicatorStyle: {
         backgroundColor: 'transparent',

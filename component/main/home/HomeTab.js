@@ -9,7 +9,7 @@ const {height, width} = Dimensions.get('window');
 import getApi from '../../api/getApi';
 import getLanguage from '../../api/getLanguage';
 import accessLocation from '../../api/accessLocation';
-//import requestLocationPermission from '../../api/accessLocation';
+
 import global from '../../global';
 import lang_vn from '../../lang/vn/language';
 import lang_en from '../../lang/en/language';

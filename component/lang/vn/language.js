@@ -1,5 +1,6 @@
 
 module.exports = {
+  search:'Tìm kiếm sản phẩm, dịch vụ, địa chỉ ...',
   all:'Tất cả',
   other:'Khác',
   location:'Địa điểm',

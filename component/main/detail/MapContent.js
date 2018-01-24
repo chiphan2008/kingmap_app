@@ -19,7 +19,7 @@ export default class MapContent extends Component {
     }
   }
   getDirection(){
-
+      //console.log(this.props.curLoc.latlng);
       const mode = 'driving'; // 'walking';
       const origin = this.props.curLoc.latlng;
       const destination = this.props.region.latlng;

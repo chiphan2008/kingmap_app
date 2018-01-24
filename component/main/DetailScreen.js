@@ -34,13 +34,7 @@ export default class DetailScreen extends Component {
         longitudeDelta: 0.011121,
         latlng: '10.7818513,106.6769368',
       },
-      curLoc:{
-        latitude:10.7818513,
-        longitude: 106.6769368,
-        latitudeDelta:  0.014422,
-        longitudeDelta: 0.011121,
-        latlng: '10.7818513,106.6769368',
-      },
+      curLoc:this.props.navigation.state.params.curLoc,
       listData:{
         image_space:[],
         image_menu:[],
@@ -96,7 +90,9 @@ export default class DetailScreen extends Component {
   }
 
   getContent(idContent){
-    getApi(`${global.url}${'content/'}${idContent}`)
+    const url = `${global.url}${'content/'}${idContent}${'?location='}${this.props.navigation.state.params.curLoc.latlng}`;
+    //console.log('url',url);
+    getApi(url)
     .then(arrData => {
         this.setState({
           listData: arrData.data,
@@ -110,24 +106,6 @@ export default class DetailScreen extends Component {
 
   componentWillMount(){
     this.getContent(this.props.navigation.state.params.idContent);
-    navigator.geolocation.getCurrentPosition((position) => {
-      //console.log('position',position);
-            const latlng = `${position.coords.latitude}${','}${position.coords.longitude}`;
-            this.setState({
-              curLoc:{
-                latitude:position.coords.latitude,
-                longitude: position.coords.longitude,
-                latitudeDelta:  0.444422,
-                longitudeDelta: 0.111121,
-                //altitude: 10,
-                latlng:latlng,
-              },
-            });
-           },
-           (error) => {
-          },
-          {enableHighAccuracy: true, timeout: 5000, maximumAge: 5000}
-    );
   }
   componentDidMount(){
     this.setState({

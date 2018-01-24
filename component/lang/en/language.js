@@ -1,5 +1,6 @@
 
 module.exports = {
+  search:'Search products, services, location ...',
   all:'All',
   other:'Other',
   location:'Location',

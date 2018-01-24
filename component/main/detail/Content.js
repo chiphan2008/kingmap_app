@@ -86,7 +86,9 @@ export default class Content extends Component {
           <Text style={colorContent}>{`${listContent.price_from}${' - '}${listContent.price_to}`}</Text>
         </View>
 
+
         <View style={rowFlexBottom}>
+          <View style={{flexDirection:'row'}}>
           <TouchableOpacity onPress={()=>this.props.saveLike('like')}>
             <Image source={this.props.hasLiked===1 ? likeFullIcon : likeIcon} style={[likeIC]} />
           </TouchableOpacity>
@@ -112,6 +114,10 @@ export default class Content extends Component {
             <Rating rate={5} showVote={this.state.vote_avg} styleIMG={[favIC,marRight]} />
             </TouchableOpacity>
             <Text>({this.state.vote_avg})</Text>
+
+            </View>
+            <Text>{Number.parseFloat(listContent.line).toFixed(0)} (m)</Text>
+
         </View>
 
     </View>
@@ -123,7 +129,7 @@ const styles = StyleSheet.create({
   wrapContentDetail:{flexWrap:'wrap',padding:10,backgroundColor:'#fff'},
   rowFlex:{flexDirection:'row',paddingLeft:10,paddingRight:10,marginTop:10},
   rowFlexImg:{flexDirection:'row',marginBottom:20},
-  rowFlexBottom:{flexDirection:'row',padding:5,paddingLeft:10,marginTop:15,marginBottom:15,alignItems:'flex-end'},
+  rowFlexBottom:{flexDirection:'row',padding:5,paddingLeft:10,marginTop:15,marginBottom:15,justifyContent:'space-between'},
   wrapImgDetail:{marginRight:15,alignItems:'center'},
   marRight:{marginRight:10},
   colorContent:{color:'#6587A8',overflow:'hidden',fontSize:15,},

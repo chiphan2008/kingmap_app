@@ -17,9 +17,9 @@ async function accessLocation() {
           ],
           { cancelable: false ,}
         );
-        console.log('location is disabled')
+        //console.log('location is disabled')
       }else{
-        console.log('location is enable')
+        //console.log('location is enable')
       }
 
     });

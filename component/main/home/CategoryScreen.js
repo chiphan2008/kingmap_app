@@ -31,6 +31,7 @@ export default class CategoryScreen extends Component {
         longitudeDelta: 0.010066,
         latlng: '0,0',
       },
+      curLoc:{},
       onchange:false,
       showInfoOver : true,
       showServOver : false,
@@ -69,6 +70,7 @@ export default class CategoryScreen extends Component {
       }
 
     }
+    //console.log('curLoc',this.state.curLoc);
     //console.log('url',url);
     getApi(url)
     .then(arrData => {
@@ -91,6 +93,15 @@ export default class CategoryScreen extends Component {
                 latitudeDelta:  0.008757,
                 longitudeDelta: 0.010066,
                 latlng:latlng,
+              },
+              curLoc : {
+                latitude:position.coords.latitude,
+                longitude: position.coords.longitude,
+                lat:position.coords.latitude,
+                lng: position.coords.longitude,
+                latitudeDelta:  0.008757,
+                longitudeDelta: 0.010066,
+                latlng:latlng,
               }
             });
            },
@@ -105,14 +116,21 @@ export default class CategoryScreen extends Component {
                 lng: e.longitude,
                 latitudeDelta:  0.008757,
                 longitudeDelta: 0.010066,
-                // latitudeDelta:  0.0895,
-                // longitudeDelta: 0.0355,
+                latlng:`${e.latitude}${','}${e.longitude}`,
+              },
+              curLoc : {
+                latitude:e.latitude,
+                longitude: e.longitude,
+                lat:e.latitude,
+                lng: e.longitude,
+                latitudeDelta:  0.008757,
+                longitudeDelta: 0.010066,
                 latlng:`${e.latitude}${','}${e.longitude}`,
               }
             });
             });
           },
-          {enableHighAccuracy: false, timeout: 6000, maximumAge: 6000}
+          {enableHighAccuracy: false, timeout: 3000, maximumAge: 3000}
     );
   }
 
@@ -220,7 +238,7 @@ export default class CategoryScreen extends Component {
         </View>
 
         <MapView
-
+            moveOnMarkerPress={false}
             provider={PROVIDER_GOOGLE}
             style={{flex:1,position:'relative',zIndex:1}}
             region={this.state.curLocation}
@@ -261,7 +279,7 @@ export default class CategoryScreen extends Component {
             <Image source={{uri:`${global.url_media}${marker._category_type.marker}`}} style={{width:48,height:54}} />
 
             <MapView.Callout
-            onPress={()=>navigate('DetailScr',{idContent:marker.id,lat:marker.lat,lng:marker.lng})}>
+            onPress={()=>navigate('DetailScr',{idContent:marker.id,lat:marker.lat,lng:marker.lng,curLoc:this.state.curLoc})}>
               <TouchableOpacity >
               <View style={{height: 45,width: 300,alignItems:'center',borderRadius:3}}>
               <Text numberOfLines={1} style={{fontWeight:'bold'}}>{marker.name}</Text>

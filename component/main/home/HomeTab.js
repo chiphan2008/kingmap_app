@@ -154,7 +154,7 @@ export default class HomeTab extends Component {
             </Select>
 
           </View>
-          <TextInput underlineColorAndroid='transparent' placeholder="Find place" style={inputSearch} />
+          <TextInput underlineColorAndroid='transparent' placeholder={this.state.lang.search} style={inputSearch} />
           <Image style={{width:16,height:16,top:Platform.OS==='ios' ? -26 : -32,left:(width-80)/2}} source={searchIC} />
         </View>
 

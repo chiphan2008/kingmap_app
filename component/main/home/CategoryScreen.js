@@ -70,19 +70,22 @@ export default class CategoryScreen extends Component {
       }
 
     }
-    //console.log('curLoc',this.state.curLoc);
-    //console.log('url',url);
-    getApi(url)
-    .then(arrData => {
-        this.setState({ markers: arrData.data,onchange:true,showInfoOver:true });
-    })
-    .catch(err => console.log(err));
+    console.log('url',url);
+    //Alert.alert(loc);
+
+      getApi(url)
+      .then(arrData => {
+          this.setState({ markers: arrData.data,onchange:true,showInfoOver:true });
+      })
+      .catch(err => console.log(err));
+
+
   }
 
   getLoc(){
     navigator.geolocation.getCurrentPosition(
           (position) => {
-            //console.log('position');
+            console.log('position');
             const latlng = `${position.coords.latitude}${','}${position.coords.longitude}`;
             this.setState({
               curLocation : {
@@ -130,17 +133,17 @@ export default class CategoryScreen extends Component {
                 });
             });
           },
-          {enableHighAccuracy: false, timeout: 3000, maximumAge: 6000}
+          {enableHighAccuracy: false, timeout: 2000, maximumAge: 2000}
     );
   }
 
-  componentDidMount(){
+  componentWillMount(){
+    console.log('componentWillMount');
    this.getLoc();
   }
 
-
   _onSelectSub(idCat,id,name,timeout){
-    //console.log('_onSelectSub');
+    console.log('_onSelectSub');
     clearTimeout(timeout);
     this.setState({id_subCat:id,name_subCat:name,showServOver:true});
     if(this.state.onchange){
@@ -148,7 +151,7 @@ export default class CategoryScreen extends Component {
     }
   };
   _onSelectServ(idCat,idsub,id,timeout){
-    //console.log('_onSelectServ');
+    console.log('_onSelectServ');
     clearTimeout(timeout);
     if(this.state.onchange){
       this.getCategory(idCat,idsub,id,this.state.curLocation.latlng);
@@ -156,7 +159,7 @@ export default class CategoryScreen extends Component {
   };
 
   render() {
-    //console.log('count',this.state.markers.length);
+    console.log('render',this.state.markers.length);
     const {navigate,goBack} = this.props.navigation;
     const { idCat, name_cat, sub_cat, serviceItem, lang } = this.props.navigation.state.params;
     //console.log('lang',lang);
@@ -170,7 +173,7 @@ export default class CategoryScreen extends Component {
     } = styles;
 
 
-    var timeout;
+    let timeout;
     return (
       <View style={container}>
         <View style={headCatStyle}>
@@ -242,9 +245,10 @@ export default class CategoryScreen extends Component {
             provider={PROVIDER_GOOGLE}
             style={{flex:1,position:'relative',zIndex:1}}
             region={this.state.curLocation}
-            onRegionChange={()=>{clearTimeout(timeout);}}
+            onRegionChange={clearTimeout(timeout)}
             onRegionChangeComplete={(region)=>{
-              //console.log('region',region);
+              console.log('onRegionChangeComplete');
+              if(this.state.curLocation.lng!==0){
               timeout = setTimeout(()=>{
                 this.setState({
                   curLocation : {
@@ -262,6 +266,7 @@ export default class CategoryScreen extends Component {
                 });
                 this.getCategory(idCat,this.state.id_subCat,this.state.id_service,`${region.latitude},${region.longitude}`);
               }, 2000);
+            }
             }}
             customMapStyle={global.style_map}
             showsPointsOfInterest={false}

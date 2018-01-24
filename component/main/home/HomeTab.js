@@ -64,7 +64,7 @@ export default class HomeTab extends Component {
     accessLocation();
     arrLang = [{name:'VIE',v:'vn'},{name:'ENG',v:'en'}];
   }
-
+  
   getLang(){
     getLanguage().then((e) =>{
       if(e!==null){

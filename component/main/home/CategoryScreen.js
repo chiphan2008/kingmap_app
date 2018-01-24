@@ -106,35 +106,35 @@ export default class CategoryScreen extends Component {
             });
            },
            (error) => {
-             //console.log('getLocationByIP');
+             console.log('getLocationByIP');
             getLocationByIP().then((e) => {
-            this.setState({
-              curLocation : {
-                latitude:e.latitude,
-                longitude: e.longitude,
-                lat:e.latitude,
-                lng: e.longitude,
-                latitudeDelta:  0.008757,
-                longitudeDelta: 0.010066,
-                latlng:`${e.latitude}${','}${e.longitude}`,
-              },
-              curLoc : {
-                latitude:e.latitude,
-                longitude: e.longitude,
-                lat:e.latitude,
-                lng: e.longitude,
-                latitudeDelta:  0.008757,
-                longitudeDelta: 0.010066,
-                latlng:`${e.latitude}${','}${e.longitude}`,
-              }
-            });
+                this.setState({
+                  curLocation : {
+                    latitude:e.latitude,
+                    longitude: e.longitude,
+                    lat:e.latitude,
+                    lng: e.longitude,
+                    latitudeDelta:  0.008757,
+                    longitudeDelta: 0.010066,
+                    latlng:`${e.latitude}${','}${e.longitude}`,
+                  },
+                  curLoc : {
+                    latitude:e.latitude,
+                    longitude: e.longitude,
+                    lat:e.latitude,
+                    lng: e.longitude,
+                    latitudeDelta:  0.008757,
+                    longitudeDelta: 0.010066,
+                    latlng:`${e.latitude}${','}${e.longitude}`,
+                  }
+                });
             });
           },
-          {enableHighAccuracy: false, timeout: 3000, maximumAge: 3000}
+          {enableHighAccuracy: false, timeout: 3000, maximumAge: 6000}
     );
   }
 
-  componentWillMount(){
+  componentDidMount(){
    this.getLoc();
   }
 

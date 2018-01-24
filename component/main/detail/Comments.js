@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 
 import Moment from 'moment';
-//import ImagePicker from 'react-native-image-crop-picker';
+import ImagePicker from 'react-native-image-crop-picker';
 import postApi from '../../api/postApi';
 import global from '../../global';
 
@@ -32,11 +32,11 @@ export default class Comments extends Component {
   }
 
   uploadImage(){
-    // ImagePicker.openPicker({
-    //     multiple: true
-    //   }).then(images => {
-    //     console.log(images);
-    //   });
+    ImagePicker.openPicker({
+      multiple: true
+    }).then(images => {
+      console.log(images);
+    });
   }
   postComment(comment_id){
     if(this.state.inputChildComment!=='' || this.state.inputComment!==''){
@@ -84,7 +84,7 @@ export default class Comments extends Component {
             value={this.state.inputComment}
              />
             <TouchableOpacity style={{position:'absolute',right:45,top:Platform.OS==='ios' ? 15 : 18}}
-            onPress={this.uploadImage()}>
+            onPress={this.uploadImage.bind(this)}>
             <Image source={ImageIcon} style={{width:20,height:20,}} />
             </TouchableOpacity>
 
@@ -148,7 +148,7 @@ export default class Comments extends Component {
                 value={this.state.inputChildComment}
                  />
                 <TouchableOpacity style={{position:'absolute',right:45,top:Platform.OS==='ios' ? 15 : 18}}
-                onPress={this.uploadImage()}>
+                onPress={()=>this.uploadImage()}>
                 <Image source={ImageIcon} style={{width:20,height:20,}} />
                 </TouchableOpacity>
 

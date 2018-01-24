@@ -20,7 +20,9 @@ target 'kingmap_app' do
 
   pod 'GoogleMaps'
   pod 'react-native-maps', path: rn_maps_path
-  
+  pod 'RSKImageCropper'
+  pod 'QBImagePickerController'
+
 end
 
 post_install do |installer|

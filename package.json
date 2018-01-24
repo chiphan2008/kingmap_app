@@ -11,6 +11,7 @@
     "react": "16.2.0",
     "react-native": "0.52.0",
     "react-native-chooser": "^1.7.0",
+    "react-native-image-crop-picker": "^0.19.1",
     "react-native-image-zoom-viewer": "^2.0.18",
     "react-native-maps": "^0.19.0",
     "react-native-settings": "0.0.1-alpha5",

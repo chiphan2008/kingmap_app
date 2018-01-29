@@ -27,15 +27,18 @@ export default class Comments extends Component {
       inputChildComment:'',
       arrIdComment:{},
       _has_liked:{},
+      arrImage:[],
     }
 
   }
 
   uploadImage(){
+    this.props.requestLogin();
     ImagePicker.openPicker({
       multiple: true
-    }).then(images => {
-      console.log(images);
+    }).then(img => {
+      console.log('image',img);
+      this.setState({arrImage:this.state.arrImage.concat(img)})
     });
   }
   postComment(comment_id){
@@ -45,12 +48,16 @@ export default class Comments extends Component {
       arr.append('content_id',this.props.idContent);
       arr.append('comment_id',comment_id);
       arr.append('content',comment_id===0 ? this.state.inputComment.toString() : this.state.inputChildComment.toString());
-
+      arr.append('image', this.state.arrImage);
+      //arr.append('title', 'A beautiful photo!');
+      console.log('arr',arr);
       postApi(`${global.url}${'content-create-comment'}`,arr);
       if(comment_id===0)
       this.setState({inputComment:''});
       else
       this.setState({inputChildComment:''});
+
+      this.setState({arrImage:[]});
     }
   }
 
@@ -93,6 +100,18 @@ export default class Comments extends Component {
             >
             <Image source={sendEmailIcon} style={{width:20,height:20,}} />
             </TouchableOpacity>
+
+            {this.state.arrImage.length > 0 ?
+              <View style={{flexDirection:'row', flexWrap:'wrap'}}>
+              {this.state.arrImage.map((e,index)=>(
+                <Image key={index} style={{width:90,height:90,marginTop:10,marginRight:10}} source={{isStatic:true,uri:`${e.path}`}} />
+              ))}
+              </View>
+              :
+              <View></View>
+            }
+
+
           </View>
           {listComment.length>0 ?
             listComment.map((e)=>(
@@ -197,9 +216,7 @@ export default class Comments extends Component {
                           <Text>{this.state.arrIdComment[r.id]} like</Text>
                         </TouchableOpacity>
                     </View>
-
                       <View style={rowFlex}>
-
                       </View>
                     </View>
                   ))
@@ -207,7 +224,6 @@ export default class Comments extends Component {
                   :
                   <View></View>
                 }
-
 
               </View>
             ))

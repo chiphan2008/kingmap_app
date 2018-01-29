@@ -68,9 +68,11 @@ export default class ListLocation extends Component {
 
   getCategory(idcat,loc){
     //console.log('idcat,loc',idcat,loc);
-    getApi(global.url+'content-by-category?category='+idcat+'&location='+loc)
+    const url = global.url+'content-by-category?category='+idcat+'&location='+loc;
+    console.log('url',url);
+    getApi(url)
     .then(arrData => {
-      //console.log('arrData',arrData);
+      console.log('arrData',arrData);
         this.setState({ listData: arrData.data });
     })
     .catch(err => console.log(err));
@@ -100,8 +102,9 @@ export default class ListLocation extends Component {
 
   saveLocation(){
     checkLocation().then((e)=>{
+      //console.log('saveLocation',e);
       this.getContentByDist(e.idDist,this.state.id_sub,this.state.id_serv);
-      this.setState({showLoc:!this.state.showLoc,idDist:e.idDist});
+      this.setState({showLoc:!this.state.showLoc,idDist:e.idDist,labelLoc:e.nameDist});
     });
   }
 
@@ -118,10 +121,10 @@ export default class ListLocation extends Component {
            },
            (error) => {
              //console.log('error',id);
-             //getLocationByIP().then(e => this.getCategory(id,`${e.latitude}${','}${e.longitude}`));
+             getLocationByIP().then(e => this.getCategory(id,`${e.latitude}${','}${e.longitude}`));
              //console.log('ip',ip.latitude);
           },
-          {enableHighAccuracy: true, timeout: 5000, maximumAge: 5000}
+          {enableHighAccuracy: true, timeout: 3000, maximumAge: 3000}
     );
   }
 
@@ -154,21 +157,21 @@ export default class ListLocation extends Component {
                   onPress={()=>this.setState({ showLoc:!this.state.showLoc,listSubCat:{showList:false},listSerItem:{showList:false}, })}
                   style={selectBoxLoc}>
                     <Text style={{color:'#303B50'}}>{this.state.labelLoc}</Text>
-                    <Image source={sortDownIC} style={{width:12,height:13,marginTop:3,}} />
+                    <Image source={sortDownIC} style={{width:12,height:13,top:13,right:5,position:'absolute'}} />
                 </TouchableOpacity>
 
                 <TouchableOpacity
                   onPress={()=>this.setState({ listSubCat:{showList:!this.state.listSubCat.showList},listSerItem:{showList:false}, showLoc:false})}
                   style = {selectBoxLoc}>
                     <Text style={{color:'#303B50'}}>{this.state.labelCat}</Text>
-                    <Image source={sortDownIC} style={{width:12,height:13,marginTop:3,}} />
+                    <Image source={sortDownIC} style={{width:12,height:13,top:13,right:5,position:'absolute'}} />
                 </TouchableOpacity>
 
                 <TouchableOpacity
                 onPress={()=>this.setState({ listSubCat:{showList:false},listSerItem:{showList:!this.state.listSerItem.showList}, showLoc:false})}
                 style = {selectBoxLoc}>
-                    <Text style={{color:'#303B50'}}>{this.state.labelSer}</Text>
-                    <Image source={sortDownIC} style={{width:12,height:13,marginTop:3,}} />
+                    <Text numberOfLines={1} style={{color:'#303B50'}}>{this.state.labelSer}</Text>
+                    <Image source={sortDownIC} style={{width:12,height:13,top:13,right:5,position:'absolute'}} />
                 </TouchableOpacity>
               </View>
         </View>
@@ -238,7 +241,7 @@ export default class ListLocation extends Component {
                  <TouchableOpacity
                  onPress={()=>{
                    this.getContentByDist(this.state.idDist,item.id,this.state.id_serv);
-                   this.setState({listSubCat:{showList:!this.state.listSubCat.showList},id_sub:item.id});
+                   this.setState({listSubCat:{showList:!this.state.listSubCat.showList},id_sub:item.id,labelCat:item.name});
                }}
                  style={listCatOver}>
                    <Text style={colorText}>{item.name}</Text>
@@ -264,6 +267,7 @@ export default class ListLocation extends Component {
             <View style={[overLayout,shadown]}>
 
             <FlatList
+               extraData={this.state}
                keyExtractor={item => item.id}
                data={serv_items}
                renderItem={({item}) => (
@@ -271,15 +275,18 @@ export default class ListLocation extends Component {
               <TouchableOpacity
                  onLayout={()=>this.setState({showServie: Object.assign(this.state.showServie,{[item.id]:false}),})}
                  onPress={()=>{
-                  let idServ = this.state.id_serv===null ? item.id : `${this.state.id_serv}${','}${item.id}`;
+                   let idServ = this.state.id_serv===null ? item.id : `${this.state.id_serv}${','}${item.id}`;
+                  let labelServ = this.state.labelSer==='Dịch vụ' ? item.name : `${this.state.labelSer}${','}${item.name}`;
                   this.getContentByDist(this.state.idDist,this.state.id_sub,idServ);
-                  this.setState({showServie: Object.assign(this.state.showServie,{[item.id]:!this.state.showServie[item.id]}),});
+                  this.setState({showServie: Object.assign(this.state.showServie,{[item.id]:!this.state.showServie[item.id]}),
+                  labelSer:labelServ,
+                });
 
                   }}
                   style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',}}
                 >
                    <Text style={colorText}>{item.name}</Text>
-                   <Image style={[imgInfo, this.state.id_serv===item.id ? show : hide]} source={checkIC}/>
+                   <Image style={[imgInfo, `${this.state.id_serv}`.includes(item.id)  ? show : hide]} source={checkIC}/>
 
                </TouchableOpacity>
                </View>

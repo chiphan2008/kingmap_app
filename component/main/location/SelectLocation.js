@@ -89,6 +89,7 @@ export default class SelectLocation extends Component {
                                    idCountry:this.state.showCheckCountry,
                                    idCity:this.state.showCheckCity,
                                    idDist:item.id,
+                                   nameDist:item.name,
                          }));
                          this.props.saveLocation();
 

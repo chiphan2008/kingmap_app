@@ -70,22 +70,18 @@ export default class CategoryScreen extends Component {
       }
 
     }
-    console.log('url',url);
-    //Alert.alert(loc);
 
       getApi(url)
       .then(arrData => {
           this.setState({ markers: arrData.data,onchange:true,showInfoOver:true });
       })
       .catch(err => console.log(err));
-
-
   }
 
   getLoc(){
     navigator.geolocation.getCurrentPosition(
           (position) => {
-            console.log('position');
+            //console.log('position');
             const latlng = `${position.coords.latitude}${','}${position.coords.longitude}`;
             this.setState({
               curLocation : {
@@ -109,7 +105,7 @@ export default class CategoryScreen extends Component {
             });
            },
            (error) => {
-             console.log('getLocationByIP');
+             //console.log('getLocationByIP');
             getLocationByIP().then((e) => {
                 this.setState({
                   curLocation : {
@@ -133,17 +129,17 @@ export default class CategoryScreen extends Component {
                 });
             });
           },
-          {enableHighAccuracy: false, timeout: 2000, maximumAge: 2000}
+          {enableHighAccuracy: true, timeout: 3000, maximumAge: 3000}
     );
   }
 
   componentWillMount(){
-    console.log('componentWillMount');
+    //console.log('componentWillMount');
    this.getLoc();
   }
 
   _onSelectSub(idCat,id,name,timeout){
-    console.log('_onSelectSub');
+    //console.log('_onSelectSub');
     clearTimeout(timeout);
     this.setState({id_subCat:id,name_subCat:name,showServOver:true});
     if(this.state.onchange){
@@ -151,7 +147,7 @@ export default class CategoryScreen extends Component {
     }
   };
   _onSelectServ(idCat,idsub,id,timeout){
-    console.log('_onSelectServ');
+    //console.log('_onSelectServ');
     clearTimeout(timeout);
     if(this.state.onchange){
       this.getCategory(idCat,idsub,id,this.state.curLocation.latlng);
@@ -159,7 +155,7 @@ export default class CategoryScreen extends Component {
   };
 
   render() {
-    console.log('render',this.state.markers.length);
+    //console.log('render',this.state.markers.length);
     const {navigate,goBack} = this.props.navigation;
     const { idCat, name_cat, sub_cat, serviceItem, lang } = this.props.navigation.state.params;
     //console.log('lang',lang);
@@ -247,7 +243,7 @@ export default class CategoryScreen extends Component {
             region={this.state.curLocation}
             onRegionChange={clearTimeout(timeout)}
             onRegionChangeComplete={(region)=>{
-              console.log('onRegionChangeComplete');
+              //console.log('onRegionChangeComplete');
               if(this.state.curLocation.lng!==0){
               timeout = setTimeout(()=>{
                 this.setState({

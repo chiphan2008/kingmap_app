@@ -64,7 +64,7 @@ export default class HomeTab extends Component {
     accessLocation();
     arrLang = [{name:'VIE',v:'vn'},{name:'ENG',v:'en'}];
   }
-  
+
   getLang(){
     getLanguage().then((e) =>{
       if(e!==null){
@@ -213,6 +213,15 @@ export default class HomeTab extends Component {
                       return (<TouchableOpacity
                           key={e.id}
                           style={[wrapCircle,circle6]}
+                          onPress={() => navigate('CatScr') }
+                          >
+                        <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
+                        <Text style={labelCat}  >{e.name}</Text>
+                      </TouchableOpacity>);
+                  case 'rao-vat':
+                      return (<TouchableOpacity
+                          key={e.id}
+                          style={[wrapCircle,circle7]}
                           onPress={() => navigate('CatScr') }
                           >
                         <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />

@@ -77,7 +77,7 @@ const RootTabs = TabNavigator({
   LocationT: {
     screen: LocationScreen,//LocationTab,//,DistributeTab
     navigationOptions: {
-      tabBarLabel: 'Location',
+      tabBarLabel: 'Địa điểm',
       tabBarIcon: ({ tintColor }) => (
         <Image source={locationIC} style={[styles.icon, {tintColor}]} />
       ),
@@ -87,7 +87,7 @@ const RootTabs = TabNavigator({
   NotifyT: {
     screen: NotifyTab,
     navigationOptions: {
-      tabBarLabel: 'Notification',
+      tabBarLabel: 'Thông báo',
       tabBarIcon: ({ tintColor }) => (
         <Image source={notifyIC} style={[styles.icon, {tintColor}]} />
       ),
@@ -96,7 +96,7 @@ const RootTabs = TabNavigator({
   PersonalT: {
     screen: PersonalTab,
     navigationOptions: {
-      tabBarLabel: 'Personal',
+      tabBarLabel: 'Cá nhân',
       tabBarIcon: ({ tintColor }) => (
         <Image source={personalIC} style={[styles.icon, {tintColor}]} />
       ),
@@ -126,7 +126,7 @@ const RootTabs = TabNavigator({
   swipeEnabled: true,
   tabBarSelected: 'Home',
   tabBarOptions: {
-    showLabel:false,
+    showLabel:true,
     showIcon:true,
     labelStyle: {
       fontSize: 11,

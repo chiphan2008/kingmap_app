@@ -82,7 +82,7 @@ export default class DetailScreen extends Component {
   requestLogin(){
     checkLogin().then(e=>{
       if(e.id===undefined){
-        this.props.navigation.navigate('LoginScr');
+        this.props.navigation.navigate('LoginScr',{backScr:'DetailScr'});
       }else{
         this.setState({user_id:e.id});
       }
@@ -99,6 +99,14 @@ export default class DetailScreen extends Component {
           liked: arrData.data.content.like,
           vote: arrData.data.content.vote,
           hasLiked: arrData.data.content.has_like,
+          region:{
+            latitude: parseFloat(arrData.data.content.lat),
+            longitude: parseFloat(arrData.data.content.lng),
+            altitude: 7,
+            latitudeDelta:  0.004422,
+            longitudeDelta: 0.001121,
+            latlng:`${this.props.navigation.state.params.lat}${','}${this.props.navigation.state.params.lng}`,
+          },
         });
     })
     .catch(err => console.log(err));
@@ -107,18 +115,7 @@ export default class DetailScreen extends Component {
   componentWillMount(){
     this.getContent(this.props.navigation.state.params.idContent);
   }
-  componentDidMount(){
-    this.setState({
-      region:{
-        latitude: parseFloat(this.props.navigation.state.params.lat),
-        longitude: parseFloat(this.props.navigation.state.params.lng),
-        altitude: 7,
-        latitudeDelta:  0.004422,
-        longitudeDelta: 0.001121,
-        latlng:`${this.props.navigation.state.params.lat}${','}${this.props.navigation.state.params.lng}`,
-      },
-    });
-  }
+
   onRegionChange(region) {
     this.setState({ region });
   }
@@ -160,8 +157,8 @@ export default class DetailScreen extends Component {
 
   render() {
     const {navigate} = this.props.navigation;
-    const { idContent } = this.props.navigation.state.params;
-
+    const { idContent,lang } = this.props.navigation.state.params;
+    //console.log('lang',lang);
     const {
       container, bgImg,colorWhite,likeIC,shareIC,imgIC,voteIC,
       imgSocial, imgInfo,aligncenter,
@@ -176,6 +173,7 @@ export default class DetailScreen extends Component {
     return (
       <ScrollView scrollEnabled={this.state.scroll} style={container}>
         <Header
+        lang={lang}
         navigation={this.props.navigation}
         idContent={idContent}
         userId={this.state.user_id}
@@ -217,6 +215,7 @@ export default class DetailScreen extends Component {
           </View>
 
           <Comments
+          lang={lang}
           idContent={idContent}
           userId={this.state.user_id}
           requestLogin={this.requestLogin.bind(this)}

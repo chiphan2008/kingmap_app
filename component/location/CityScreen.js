@@ -49,7 +49,6 @@ export default class CityScreen extends Component {
           id:value,
       }
     });
-
   }
   saveLocation(){
     //console.log('this.state.slCountry.id',this.state.slCountry.id,this.state.slCity.id)

@@ -2,8 +2,7 @@
 
 import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image,
-  TextInput, TouchableOpacity,
-  FlatList,
+  TextInput, TouchableOpacity,FlatList,
 } from 'react-native';
 const {height, width} = Dimensions.get('window');
 

@@ -2,15 +2,18 @@
 
 import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image,
-  TextInput, TouchableOpacity,
+  TextInput, TouchableOpacity,Modal,
   FlatList,
 } from 'react-native';
 const {height, width} = Dimensions.get('window');
 
 import styles from '../../styles';
 import getApi from '../../api/getApi';
+import getLanguage from '../../api/getLanguage';
 import getLocationByIP from '../../api/getLocationByIP';
 import global from '../../global';
+import lang_vn from '../../lang/vn/language';
+import lang_en from '../../lang/en/language';
 import SelectLocation from '../../main/location/SelectLocation';
 import checkLocation from '../../api/checkLocation';
 
@@ -26,6 +29,7 @@ export default class ListLocation extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      lang: {},
       labelLoc : "Địa điểm",
       labelCat : "Danh mục",
       labelSer : "Dịch vụ",
@@ -64,15 +68,18 @@ export default class ListLocation extends Component {
         avatar:'',
       },],
     }
+    getLanguage().then((e)=>{
+      e.valueLang==='en' ? this.setState({lang:lang_en}) : this.setState({lang:lang_vn});
+    });
   }
 
   getCategory(idcat,loc){
     //console.log('idcat,loc',idcat,loc);
     const url = global.url+'content-by-category?category='+idcat+'&location='+loc;
-    console.log('url',url);
+    //console.log('url',url);
     getApi(url)
     .then(arrData => {
-      console.log('arrData',arrData);
+      //console.log('arrData',arrData);
         this.setState({ listData: arrData.data });
     })
     .catch(err => console.log(err));
@@ -141,13 +148,13 @@ export default class ListLocation extends Component {
       txtTitleOverCat,txtAddrOverCat,flatlistItemCat,wrapInfoOver,
       imgUp,imgUpLoc,imgUpSubCat,imgUpService,popoverLoc,overLayout,imgInfo,overLayoutLoc,shadown,overLayoutSer,listCatOver,listOverService,colorText
     } = styles;
-
+    //console.log('lang',this.props.lang);
     return (
       <View style={container}>
 
         <View style={headLocationStyle}>
-          <TextInput underlineColorAndroid='transparent' placeholder="Find place" style={inputSearch} />
-          <Image style={{width:16,height:16,top:-28,left:-50}} source={searchIC} />
+          <TextInput underlineColorAndroid='transparent' placeholder={this.state.lang.search} style={inputSearch} />
+          <Image style={{width:16,height:16,top:Platform.OS==='ios' ? -26 : -32,left:(width-80)/2}} source={searchIC} />
         </View>
 
         <View style={wrapFilter}>
@@ -219,18 +226,22 @@ export default class ListLocation extends Component {
                    />
         </View>
 
+
+        <Modal onRequestClose={() => null} transparent visible={this.state.showLoc}>
         <TouchableOpacity
         onPress={()=>this.setState({showLoc:!this.state.showLoc})}
-        style={[popoverLoc, this.state.showLoc ? show : hide]}>
+        style={popoverLoc}>
           <Image style={[imgUp,imgUpLoc]} source={upDD} />
           <View style={[overLayout,shadown]}>
               <SelectLocation saveLocation={this.saveLocation.bind(this)} />
           </View>
-        </TouchableOpacity>
+          </TouchableOpacity>
+          </Modal>
 
+        <Modal onRequestClose={() => null} transparent visible={this.state.listSubCat.showList}>
         <TouchableOpacity
-        onPress={()=>this.setState({listSubCat:!this.state.listSubCat})}
-        style={[popoverLoc, this.state.listSubCat.showList ? show : hide]}>
+        onPress={()=>this.setState({listSubCat:{showList:!this.state.listSubCat.showList}})}
+        style={popoverLoc}>
         <Image style={[imgUp,imgUpSubCat]} source={upDD} />
             <View style={[overLayoutLoc,shadown]}>
 
@@ -259,23 +270,25 @@ export default class ListLocation extends Component {
 
             </View>
         </TouchableOpacity>
+        </Modal>
 
+        <Modal onRequestClose={() => null} transparent visible={this.state.listSerItem.showList}>
         <TouchableOpacity
-        onPress={()=>this.setState({listSerItem:!this.state.listSerItem})}
-        style={[popoverLoc, this.state.listSerItem.showList ? show : hide]}>
+        onPress={()=>this.setState({listSerItem:{showList:!this.state.listSerItem.showList}})}
+        style={popoverLoc}>
         <Image style={[imgUp,imgUpService]} source={upDD} />
             <View style={[overLayout,shadown]}>
 
             <FlatList
                extraData={this.state}
-               keyExtractor={item => item.id}
+               keyExtractor={(item, index) => index}
                data={serv_items}
                renderItem={({item}) => (
-              <View style={listOverService}>
+              <View  style={listOverService}>
               <TouchableOpacity
                  onLayout={()=>this.setState({showServie: Object.assign(this.state.showServie,{[item.id]:false}),})}
                  onPress={()=>{
-                   let idServ = this.state.id_serv===null ? item.id : `${this.state.id_serv}${','}${item.id}`;
+                  let idServ = this.state.id_serv===null ? item.id : `${this.state.id_serv}${','}${item.id}`;
                   let labelServ = this.state.labelSer==='Dịch vụ' ? item.name : `${this.state.labelSer}${','}${item.name}`;
                   this.getContentByDist(this.state.idDist,this.state.id_sub,idServ);
                   this.setState({showServie: Object.assign(this.state.showServie,{[item.id]:!this.state.showServie[item.id]}),
@@ -305,6 +318,7 @@ export default class ListLocation extends Component {
 
             </View>
         </TouchableOpacity>
+        </Modal>
 
       </View>
     );

@@ -62,8 +62,9 @@ export default class CategoryScreen extends Component {
   render() {
 
     const {navigate, goBack} = this.props.navigation;
-    const { idCat, id_subCat, id_service, name_cat, sub_cat, name_subCat,latlng } = this.props.navigation.state.params;
+    const { idCat, id_subCat, id_service, name_cat, sub_cat, name_subCat,latlng, lang } = this.props.navigation.state.params;
     //console.log("this.props.CategoryScreen=",util.inspect(this.props.navigation.state.key,false,null));
+    //console.log('lang',lang);
     const {
       container,
       headCatStyle, headContent,plusStyle,

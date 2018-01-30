@@ -20,6 +20,7 @@ import CategoryScreen from './component/main/home/CategoryScreen';
 import ListCategory from './component/main/home/ListCategory';
 
 import HomeTab from './component/main/home/HomeTab';
+import MakeMoney from './component/make_money/MakeMoney';
 import LocationTab from './component/main/location/LocationTab';
 import ListLocation from './component/main/location/ListLocation';
 import DistributeTab from './component/main/home/DistributeTab';
@@ -49,6 +50,7 @@ const styles = StyleSheet.create({
 
 const HomeScreen = StackNavigator({
   HomeTabs: { screen: HomeTab },
+  MakeMoneyScr: { screen: MakeMoney },
   CatScr: { screen: CategoryScreen },
   ListCatScr: { screen: ListCategory },
   OtherCatScr: { screen: DistributeTab },
@@ -123,7 +125,7 @@ const RootTabs = TabNavigator({
   //initialRouteName:'LocationT',
   tabBarPosition: 'bottom',
   animationEnabled: false,
-  swipeEnabled: true,
+  swipeEnabled: false,
   tabBarSelected: 'Home',
   tabBarOptions: {
     showLabel:true,
@@ -138,6 +140,7 @@ const RootTabs = TabNavigator({
     style : {
         backgroundColor:'#BF2827',
     },
+    
     indicatorStyle: {
         backgroundColor: 'transparent',
     },

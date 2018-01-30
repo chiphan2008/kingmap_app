@@ -27,7 +27,9 @@ const getApi = async (url) => {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer '+ resposive.access_token,
       },
-    }).then(res => res.json());
+    }).then(res => res.json()).catch(function(error) {
+      throw error;
+    });
     if(resposive.code!==401) return resJson;
 
   } catch (error) {

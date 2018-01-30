@@ -28,17 +28,21 @@ export default class Comments extends Component {
       arrIdComment:{},
       _has_liked:{},
       arrImage:[],
+      arrImageChild:[],
     }
 
   }
 
-  uploadImage(){
+  uploadImage(id){
     this.props.requestLogin();
     ImagePicker.openPicker({
       multiple: true
     }).then(img => {
-      console.log('image',img);
-      this.setState({arrImage:this.state.arrImage.concat(img)})
+      if(id===0){
+        this.setState({arrImage:this.state.arrImage.concat(img)});
+      }else {
+        this.setState({arrImageChild:this.state.arrImageChild.concat(img)});
+      }
     });
   }
   postComment(comment_id){
@@ -48,16 +52,31 @@ export default class Comments extends Component {
       arr.append('content_id',this.props.idContent);
       arr.append('comment_id',comment_id);
       arr.append('content',comment_id===0 ? this.state.inputComment.toString() : this.state.inputChildComment.toString());
-      arr.append('image', this.state.arrImage);
-      //arr.append('title', 'A beautiful photo!');
-      console.log('arr',arr);
-      postApi(`${global.url}${'content-create-comment'}`,arr);
-      if(comment_id===0)
-      this.setState({inputComment:''});
-      else
-      this.setState({inputChildComment:''});
+      if(comment_id===0){
+        this.state.arrImage.forEach((e,index)=>{
+          arr.append(`image[]`, {
+            uri:`${e.path}`,
+            name: `${index}_my_photo.jpg`,
+            type: `${e.mime}`
+          });
+        })
+      }else {
+        this.state.arrImageChild.forEach((e,index)=>{
+          arr.append(`image[]`, {
+            uri:`${e.path}`,
+            name: `${index}_my_photo.jpg`,
+            type: `${e.mime}`
+          });
+        })
+      }
 
-      this.setState({arrImage:[]});
+      postApi(`${global.url}${'content-create-comment'}`,arr);
+      if(comment_id===0){
+        this.setState({inputComment:'',arrImage:[]});
+      }else{
+        this.setState({inputChildComment:'',arrImageChild:[]});
+      }
+
     }
   }
 
@@ -86,12 +105,12 @@ export default class Comments extends Component {
       <View>
           <View>
             <TextInput onFocus={()=>{this.props.requestLogin();}} style={[txtComments,padLeft]} underlineColorAndroid='transparent'
-            placeholder="Bình luận của bạn ..."
+            placeholder={this.props.lang.your_comment}
             onChangeText={(text) => this.setState({inputComment: text})}
             value={this.state.inputComment}
              />
             <TouchableOpacity style={{position:'absolute',right:45,top:Platform.OS==='ios' ? 15 : 18}}
-            onPress={this.uploadImage.bind(this)}>
+            onPress={()=>this.uploadImage(0)}>
             <Image source={ImageIcon} style={{width:20,height:20,}} />
             </TouchableOpacity>
 
@@ -162,12 +181,12 @@ export default class Comments extends Component {
               <View style={this.state.showComments===e.id ? show : hide}>
               <View>
                 <TextInput onFocus={()=>{this.props.requestLogin(); }} style={[txtComments,padLeft]} underlineColorAndroid='transparent'
-                placeholder="Bình luận của bạn ..."
+                placeholder={this.props.lang.your_comment}
                 onChangeText={(cm) => this.setState({inputChildComment: cm})}
                 value={this.state.inputChildComment}
                  />
                 <TouchableOpacity style={{position:'absolute',right:45,top:Platform.OS==='ios' ? 15 : 18}}
-                onPress={()=>this.uploadImage()}>
+                onPress={()=>this.uploadImage(e.id)}>
                 <Image source={ImageIcon} style={{width:20,height:20,}} />
                 </TouchableOpacity>
 
@@ -176,6 +195,16 @@ export default class Comments extends Component {
                 >
                 <Image source={sendEmailIcon} style={{width:20,height:20,}} />
                 </TouchableOpacity>
+
+                {this.state.arrImageChild.length > 0 ?
+                  <View style={{flexDirection:'row', flexWrap:'wrap'}}>
+                  {this.state.arrImageChild.map((e,index)=>(
+                    <Image key={index} style={{width:90,height:90,marginTop:10,marginRight:10}} source={{isStatic:true,uri:`${e.path}`}} />
+                  ))}
+                  </View>
+                  :
+                  <View></View>
+                }
               </View>
               </View>
 

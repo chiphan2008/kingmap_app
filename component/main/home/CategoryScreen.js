@@ -182,7 +182,7 @@ export default class CategoryScreen extends Component {
                 </TouchableOpacity>
                 <TouchableOpacity
                 onPress={()=>{
-                  navigate('ListCatScr',{idCat,name_cat,id_subCat:this.state.id_subCat,name_subCat:this.state.name_subCat,id_service:this.state.id_service,sub_cat,latlng:this.state.curLocation.latlng});
+                  navigate('ListCatScr',{idCat,name_cat,id_subCat:this.state.id_subCat,name_subCat:this.state.name_subCat,id_service:this.state.id_service,sub_cat,latlng:this.state.curLocation.latlng,lang});
                 }}>
                 <Image source={listIC} style={{width:16, height:20}} />
                 </TouchableOpacity>
@@ -280,7 +280,7 @@ export default class CategoryScreen extends Component {
             <Image source={{uri:`${global.url_media}${marker._category_type.marker}`}} style={{width:48,height:54}} />
 
             <MapView.Callout
-            onPress={()=>navigate('DetailScr',{idContent:marker.id,lat:marker.lat,lng:marker.lng,curLoc:this.state.curLoc})}>
+            onPress={()=>navigate('DetailScr',{idContent:marker.id,lat:marker.lat,lng:marker.lng,curLoc:this.state.curLoc,lang})}>
               <TouchableOpacity >
               <View style={{height: 45,width: 300,alignItems:'center',borderRadius:3}}>
               <Text numberOfLines={1} style={{fontWeight:'bold'}}>{marker.name}</Text>

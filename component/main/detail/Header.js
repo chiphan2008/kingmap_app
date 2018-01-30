@@ -34,6 +34,7 @@ export default class Header extends Component {
     } = styles;
     //console.log("this.props.navigation=",util.inspect(this.props.navigation,false,null));
     const {goBack} = this.props.navigation;
+    //console.log('lang',this.props.lang);
     return (
       <View>
       <View style={headStyle}>
@@ -46,9 +47,9 @@ export default class Header extends Component {
               <Image source={logoTop} style={imgLogoTop} />
               <View></View>
           </View>
-          <View style={{marginTop:Platform.OS==='ios' ? 7 :10}}></View>
-        <TextInput underlineColorAndroid='transparent' placeholder="Find place" style={inputSearch} />
-        <Image style={{width:16,height:16,top:-28,left:-50}} source={searchIC} />
+          <View style={{marginTop:Platform.OS==='ios' ? 7 : 10}}></View>
+        <TextInput underlineColorAndroid='transparent' placeholder={this.props.lang.search} style={inputSearch} />
+        <Image style={{width:16,height:16,top:Platform.OS==='ios' ? -26 : -32,left:(width-80)/2}} source={searchIC} />
       </View>
 
 
@@ -91,7 +92,7 @@ const styles = StyleSheet.create({
   },
   voteIC:{width:23,height:22,marginBottom:5},
   inputSearch : {
-    marginTop: 8,width:width-40,backgroundColor:'#fff',borderRadius:5,padding:10,textAlign:'center',
+    marginTop: 8,width:width-40,backgroundColor:'#fff',borderRadius:5,padding:10,
   },
   wrapHeadBottom:{height:65,backgroundColor:'#2F353F',alignItems:'center',justifyContent:'center'},
   colorWhite:{

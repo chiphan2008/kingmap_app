@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image, TextInput,
-  Alert,TouchableOpacity,PermissionsAndroid, AsyncStorage } from 'react-native';
+  Alert,TouchableOpacity,PermissionsAndroid, AsyncStorage, Modal } from 'react-native';
 import RNSettings from 'react-native-settings';
 const {height, width} = Dimensions.get('window');
 
@@ -11,6 +11,7 @@ import getLanguage from '../../api/getLanguage';
 import accessLocation from '../../api/accessLocation';
 
 import global from '../../global';
+import checkLogin from '../../api/checkLogin';
 import lang_vn from '../../lang/vn/language';
 import lang_en from '../../lang/en/language';
 import styles from '../../styles.js';
@@ -29,6 +30,7 @@ import checkDD from '../../../src/icon/ic-gray/ic-check-gray.png';
 import likeDD from '../../../src/icon/ic-gray/ic-like.png';
 import socialDD from '../../../src/icon/ic-gray/ic-social.png';
 import plusIC from '../../../src/icon/ic-home/ic-plus.png';
+import closeIC from '../../../src/icon/ic-home/ic-close.png';
 import facebookIC from '../../../src/icon/ic-home/ic-facebook.png';
 import googleIC from '../../../src/icon/ic-home/ic-google.png';
 import twitterIC from '../../../src/icon/ic-home/ic-twitter.png';
@@ -53,14 +55,21 @@ export default class HomeTab extends Component {
         valueLang : "vn",
         labelLang : "VIE",
       },
+
       showInfo : false,
       showShare : false,
+      showCreate : false,
       latitude: null,
       longitude: null,
       error: null,
-
+      code_user:null,
+      isLogin:false,
     };
-
+    checkLogin().then(e=>{
+      //console.log('e.length',e);
+      e.id===undefined ? this.setState({isLogin:false}) :
+      this.setState({code_user:e.phone,isLogin:true});
+    })
     accessLocation();
     arrLang = [{name:'VIE',v:'vn'},{name:'ENG',v:'en'}];
   }
@@ -115,15 +124,16 @@ export default class HomeTab extends Component {
 
 
   render() {
+    //console.log('isLogin',this.state.isLogin);
     const {height, width} = Dimensions.get('window');
     const {navigate} = this.props.navigation;
     //console.log("this.props.Hometab=",util.inspect(this.state.listCategory,false,null));
     const {
       container, bgImg,
       headStyle, headContent,imgLogoTop,imgSocial, imgWidthGoogle, imgInfo,imgShare,wrapIcRight,FlatList,
-      selectBox,optionListStyle,OptionItem,inputSearch,show,hide,colorTextPP,colorNumPP,marRight,
+      selectBox,optionListStyle,OptionItem,inputSearch,show,hide,colorTextPP,colorNumPP,marRight,itemCreate,
       wrapContent,imgContent,square,wrapCircle,logoCenter,circle1,circle2,circle3,circle4,circle5,circle6,circle7,circle8,labelCat,
-      plusStyle,imgPlusStyle,popover,overLayout,listOver,popoverShare,overLayoutShare,listOverShare,imgMargin,imgUpHome,imgUpInfo,imgUpShare
+      plusStyle,imgPlusStyle,popover,overLayout,listOver,popoverShare,popoverCreate,overLayoutShare,listOverShare,imgMargin,imgUpHome,imgUpInfo,imgUpShare
     } = styles;
 
     return (
@@ -195,7 +205,10 @@ export default class HomeTab extends Component {
                       return (<TouchableOpacity
                           key={e.id}
                           style={[wrapCircle,circle4]}
-                          onPress={() => navigate('CatScr') }
+                          onPress={() => {
+                            this.state.isLogin===false ? navigate('LoginScr',{backScr:'MainScr'}) :
+                            navigate('MakeMoneyScr',{lang:this.state.lang,code_user:this.state.code_user});
+                          } }
                           >
                         <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                         <Text style={labelCat}  >{e.name}</Text>
@@ -243,8 +256,10 @@ export default class HomeTab extends Component {
 
             </View>
         </View>
-        <TouchableOpacity style={plusStyle}>
-            <Image source={plusIC} style={imgPlusStyle} />
+        <TouchableOpacity
+        onPress={()=>this.setState({showCreate:!this.state.showCreate,showInfo:false,showShare:false})}
+        style={plusStyle}>
+            <Image source={plusIC} style={[imgPlusStyle, this.state.showCreate===false ? show : hide]} />
         </TouchableOpacity>
         <View style={{
           backgroundColor:'#313B50',height:30,width,flexDirection:'row',alignItems:'center',
@@ -315,6 +330,23 @@ export default class HomeTab extends Component {
                 </TouchableOpacity>
             </View>
         </TouchableOpacity>
+
+        <Modal
+        onRequestClose={() => null}
+        transparent
+        visible={this.state.showCreate}>
+        <View style={popoverCreate}>
+
+            <TouchableOpacity style={itemCreate}>
+              <Text>Tạo địa điểm</Text>
+            </TouchableOpacity>
+        <TouchableOpacity
+        onPress={()=>this.setState({showCreate:!this.state.showCreate})}
+        >
+            <Image source={this.state.showCreate===false ? plusIC : closeIC} style={imgPlusStyle} />
+        </TouchableOpacity>
+        </View>
+        </Modal>
 
       </View>
     );

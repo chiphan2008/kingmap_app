@@ -26,14 +26,14 @@ export default class LoginScreen extends Component {
       errMsg:null,
     }
   }
-  callLogin(){
+  callLogin(backScr){
     //console.log('txtUsername,txtPassword',this.state.txtUsername,this.state.txtPassword);
     const param = {username:this.state.txtUsername,password:this.state.txtPassword};
     loginApi(`${global.url}${'login'}`,param).then(e=>{
       if(e.code!==200){
         this.setState({errMsg:e.message})
       }else{
-        this.props.navigation.goBack();
+        this.props.navigation.navigate(backScr);
       }
     })
   }
@@ -45,6 +45,7 @@ export default class LoginScreen extends Component {
     } = styles;
     //console.log('this.props.navigation',this.props.navigation);
     const {navigate} = this.props.navigation;
+    const {backScr} = this.props.navigation.state.params;
     return (
       <View style={container}>
         <Image source={bgMap} style={bgImg} />
@@ -78,7 +79,7 @@ export default class LoginScreen extends Component {
                     <Text style={[rememberClass,forgotpwd]}>Forgot Password</Text>
                     </TouchableOpacity>
               </View>
-              <TouchableOpacity onPress={()=>this.callLogin()}>
+              <TouchableOpacity onPress={()=>this.callLogin(backScr)}>
               <Text style={[btn,colorPress]}>LOGIN</Text>
               </TouchableOpacity>
               <View style={[btnWrapSoci,mrgTop]}>

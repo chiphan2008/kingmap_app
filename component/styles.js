@@ -213,11 +213,21 @@ module.exports = {
     backgroundColor:'rgba(0,0,0,0.7)',
     zIndex:5,
   },
+  popoverCreate : {
+    paddingBottom: Platform.OS ==='ios' ? 95 :150,
+    paddingRight:10,
+    position:'absolute',
+    alignItems:'flex-end',
+    justifyContent:'flex-end',
+    width,height,
+    backgroundColor:'rgba(0,0,0,0.7)',
+    zIndex:5,
+  },
   imgUpHome:{width: 14,height: 7,top:Platform.OS ==='ios' ? 55 :41,position:'absolute'},
   overLayoutShare:{
-
     backgroundColor:'#fff',width: 130,borderRadius:4,overflow:'hidden',top:7,right:10,paddingBottom:Platform.OS==='ios' ? 0 : 10,
   },
+  itemCreate:{marginBottom:10,backgroundColor:'#fff',width: 150,padding:15,borderRadius:5},
   overLayout:{
     backgroundColor:'#fff',width: width-20,borderRadius:6,overflow:'hidden',top:7,
     maxHeight:Platform.OS ==='ios' ? 350 : 380,

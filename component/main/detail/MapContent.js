@@ -19,16 +19,21 @@ export default class MapContent extends Component {
     }
   }
   getDirection(){
-      //console.log(this.props.curLoc.latlng);
       const mode = 'driving'; // 'walking';
       const origin = this.props.curLoc.latlng;
       const destination = this.props.region.latlng;
       //const APIKEY = 'AIzaSyCUNFe8ZC0csUZzlTHRQFPp7PjiAtQ6Z0M';
       const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${destination}&mode=${mode}`;
       getApi(url).then(e=> {
+        if(e.routes[0].overview_polyline!==undefined){
           this.setState({
                   coords: this.decode(e.routes[0].overview_polyline.points) // definition below
               });
+        }else{
+          this.setState({
+                  coords:[{latitude:10.8142,longitude:106.6438}]
+              });
+        }
       }).catch();
   }
   decode(t,e){

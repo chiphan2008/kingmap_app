@@ -65,7 +65,7 @@ export default class Hometab extends Component {
         <View style={headStyle}>
 
           <TextInput underlineColorAndroid='transparent' placeholder="Find place" style={inputSearch} />
-          <Image style={{width:16,height:16,top:-28,left:-50}} source={searchIC} />
+          <Image style={{width:16,height:16,top:Platform.OS==='ios' ? -26 : -32,left:(width-80)/2}} source={searchIC} />
         </View>
 
 

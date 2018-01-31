@@ -6,49 +6,49 @@ import {Platform, View, Text, StyleSheet, Dimensions, Image,
 } from 'react-native';
 const {height, width} = Dimensions.get('window');
 
-import styles from '../../styles';
-import global from '../../global';
-import getApi from '../../api/getApi';
-import getLanguage from '../../api/getLanguage';
+import styles from '../styles';
+import global from '../global';
+import getApi from '../api/getApi';
+import language_vn from '../lang/vn/language';
+import language_en from '../lang/en/language';
 
-import closeIC from '../../../src/icon/ic-white/ic-close.png';
-import searchIC from '../../../src/icon/ic-gray/ic-search.png';
-import infoIC from '../../../src/icon/ic-white/ic-analysis.png';
-import socialIC from '../../../src/icon/ic-white/ic-social.png';
+import closeIC from '../../src/icon/ic-white/ic-close.png';
 
-
-export default class Hometab extends Component {
+export default class ChooseCat extends Component {
   constructor(props) {
     super(props);
     this.state = {
       listCategory : [],
       selectLang: {
         valueLang : '',
-        labelLang : '',
       },
+      lang:language_vn,
     }
   }
 
   getCategory(lang){
     getApi(global.url+'categories?language='+lang)
     .then(arrCategory => {
-      //console.log('arrCategory',arrCategory.data);
         this.setState({ listCategory: arrCategory.data });
     })
     .catch(err => console.log(err));
   }
 
   componentWillMount(){
-    getLanguage().then((e) => {this.getCategory(e.valueLang);
-      this.setState({selectLang: {
-        valueLang : e.valueLang,
-        labelLang : e.labelLang,
-      },})
-    });
+    const { lang } = this.props.navigation.state.params;
+    this.getCategory(lang);
+      this.setState({
+        selectLang: {
+          valueLang : lang,
+
+        },
+        lang: lang==='vn' ? language_vn : language_en,
+    })
   }
 
   render() {
     const {navigate, goBack} = this.props.navigation;
+    const { lang } = this.props.navigation.state.params;
     const {
       container,
       headCatStyle,headContent, wrapDistribute,shadown,wrapFilter,
@@ -64,16 +64,16 @@ export default class Hometab extends Component {
               <TouchableOpacity onPress={()=>goBack()}>
               <Image source={closeIC} style={{width:20, height:20,marginTop:5}} />
               </TouchableOpacity>
-              <TouchableOpacity
-                  style={{alignItems:'center'}}
-                  onPress={()=>this.setState({showCat :!this.state.showCat})}
-                  >
-                    <Text style={{color:'white',fontSize:18,paddingTop:5}}> Phân loại </Text>
-              </TouchableOpacity>
+               <Text style={{color:'white',fontSize:18,paddingTop:5}}> Phân loại </Text>
+
               <View></View>
           </View>
       </View>
 <View style={wrapFilter}>
+    <View style={{marginBottom:15}}>
+    <Text>{this.state.lang.choose_create}</Text>
+
+    </View>
     <View style={[wrapDistribute,shadown]}>
     <View style={flatlistItem}>
         <FlatList
@@ -81,7 +81,7 @@ export default class Hometab extends Component {
            data={this.state.listCategory}
            renderItem={({item}) =>(
              <TouchableOpacity
-              onPress={()=>navigate('ListLocScr',{idCat:item.id,sub_cat:item.sub_category,serv_items:item.service_items,lang:this.state.selectLang})}
+              onPress={()=>navigate('FormCreateScr',{idCat:item.id,sub_cat:item.sub_category,serv_items:item.service_items,lang:this.state.selectLang})}
               style={flatItem}>
                  <Image style={imgFlatItemLoc} source={{uri:`${global.url_media}${item.image}`}} />
                  <Text>{item.name}</Text>

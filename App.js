@@ -12,6 +12,9 @@ import infoIC from './src/icon/ic-home/ic-info.png';
 import notifyIC from './src/icon/ic-home/ic-notification.png';
 import personalIC from './src/icon/ic-home/ic-personal.png';
 
+//create-location
+import ChooseCat from './component/create_location/ChooseCat';
+import FormCreate from './component/create_location/FormCreate';
 // import screen
 import FadeView from './component/FadeView';
 import DetailScreen from './component/main/DetailScreen';
@@ -180,6 +183,12 @@ export default class App extends Component {
       },
       ListIMGScr: {
         screen: ListImageContent,
+      },
+      ChooseCatScr: {
+        screen: ChooseCat,
+      },
+      FormCreateScr: {
+        screen: FormCreate,
       },
       LoginScr: {
         screen: LoginScreen,

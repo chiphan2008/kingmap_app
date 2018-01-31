@@ -20,23 +20,11 @@ import bgMap from '../../../src/icon/bg-map.png';
 //import test from '../../../src/icon/test.svg';
 import logoTop from '../../../src/icon/ic-white/Logo-ngang.png';
 import searchIC from '../../../src/icon/ic-gray/ic-search.png';
-import infoIC from '../../../src/icon/ic-white/ic-analysis.png';
-import socialIC from '../../../src/icon/ic-white/ic-social.png';
 
-import upDD from '../../../src/icon/ic-white/ic-dropdown_up.png';
-import locationDD from '../../../src/icon/ic-gray/ic-location.png';
-import onlineDD from '../../../src/icon/ic-gray/ic-online.png';
-import checkDD from '../../../src/icon/ic-gray/ic-check-gray.png';
-import likeDD from '../../../src/icon/ic-gray/ic-like.png';
-import socialDD from '../../../src/icon/ic-gray/ic-social.png';
 import plusIC from '../../../src/icon/ic-home/ic-plus.png';
 import closeIC from '../../../src/icon/ic-home/ic-close.png';
-import facebookIC from '../../../src/icon/ic-home/ic-facebook.png';
-import googleIC from '../../../src/icon/ic-home/ic-google.png';
-import twitterIC from '../../../src/icon/ic-home/ic-twitter.png';
 
 import logoHome from '../../../src/icon/ic-home/Logo-home.png';
-import hospitalOval from '../../../src/icon/ic-home/Oval-hospital.png';
 
 import {Select, Option} from "react-native-chooser";
 
@@ -55,7 +43,6 @@ export default class HomeTab extends Component {
         valueLang : "vn",
         labelLang : "VIE",
       },
-
       showInfo : false,
       showShare : false,
       showCreate : false,
@@ -129,7 +116,7 @@ export default class HomeTab extends Component {
     const {navigate} = this.props.navigation;
     //console.log("this.props.Hometab=",util.inspect(this.state.listCategory,false,null));
     const {
-      container, bgImg,
+      container, bgImg,colorlbl,
       headStyle, headContent,imgLogoTop,imgSocial, imgWidthGoogle, imgInfo,imgShare,wrapIcRight,FlatList,
       selectBox,optionListStyle,OptionItem,inputSearch,show,hide,colorTextPP,colorNumPP,marRight,itemCreate,
       wrapContent,imgContent,square,wrapCircle,logoCenter,circle1,circle2,circle3,circle4,circle5,circle6,circle7,circle8,labelCat,
@@ -261,75 +248,8 @@ export default class HomeTab extends Component {
         style={plusStyle}>
             <Image source={plusIC} style={[imgPlusStyle, this.state.showCreate===false ? show : hide]} />
         </TouchableOpacity>
-        <View style={{
-          backgroundColor:'#313B50',height:30,width,flexDirection:'row',alignItems:'center',
-          justifyContent:'space-between',paddingLeft:10,paddingRight:10,
-        }}>
-          <View style={{flexDirection:'row'}}>
-          <Image style={[imgShare,marRight]} source={locationDD} />
-          <Text style={{color:'#fff'}}>{this.state.listStatus.countContent}</Text>
-          </View>
-          <View style={{flexDirection:'row'}}>
-          <Image style={[imgShare,marRight]} source={onlineDD} />
-          <Text style={{color:'#fff'}}>{this.state.listStatus.countOnline}</Text>
-          </View>
-          <View style={{flexDirection:'row'}}>
-          <Image style={[imgShare,marRight]} source={checkDD} />
-          <Text style={{color:'#fff'}}>{this.state.listStatus.newContent}</Text>
-          </View>
-          <View style={{flexDirection:'row'}}>
-          <Image style={[imgShare,marRight]} source={likeDD} />
-          <Text style={{color:'#fff'}}>{this.state.listStatus.countLike}</Text>
-          </View>
-          <View style={{flexDirection:'row'}}>
-          <Image style={[imgShare,marRight]} source={socialDD} />
-          <Text style={{color:'#fff'}}>{this.state.listStatus.countShare}</Text>
-          </View>
-        </View>
-        <TouchableOpacity onPress={()=>this.setState({showInfo:!this.state.showInfo})} style={[popover, this.state.showInfo ? show : hide]}>
-          <Image style={[imgUpHome,imgUpInfo]} source={upDD} />
 
-          <View style={overLayout}>
-          <View style={listOver}>
-              <Image style={[imgInfo,imgMargin]} source={locationDD} />
-              <Text style={colorTextPP}>{this.state.lang.location}: <Text style={colorNumPP}>{this.state.listStatus.countContent}k</Text></Text>
-          </View>
-          <View style={listOver}>
-              <Image style={[imgInfo,imgMargin]} source={onlineDD} />
-              <Text style={colorTextPP}>{this.state.lang.online}: <Text style={colorNumPP}>{this.state.listStatus.countOnline}</Text></Text>
-          </View>
-          <View style={listOver}>
-              <Image style={[imgInfo,imgMargin]} source={checkDD} />
-              <Text style={colorTextPP}>{this.state.lang.new_location}: <Text style={colorNumPP}>{this.state.listStatus.newContent}k</Text></Text>
-          </View>
-          <View style={listOver}>
-              <Image style={[imgInfo,imgMargin]} source={likeDD} />
-              <Text style={colorTextPP}>{this.state.lang.like}: <Text style={colorNumPP}>{this.state.listStatus.countLike}k</Text></Text>
-          </View>
-          <View style={listOver}>
-              <Image style={[imgInfo,imgMargin]} source={socialDD} />
-              <Text style={colorTextPP}>{this.state.lang.share}: <Text style={colorNumPP}>{this.state.listStatus.countShare}k</Text></Text>
-          </View>
-          </View>
-        </TouchableOpacity>
 
-        <TouchableOpacity onPress={()=>this.setState({showShare:!this.state.showShare})} style={[popoverShare, this.state.showShare ? show : hide]}>
-          <Image style={[imgUpHome,imgUpShare]} source={upDD} />
-            <View style={overLayoutShare}>
-                <TouchableOpacity style={listOverShare}>
-                    <Image style={[imgWidthGoogle,imgMargin]} source={googleIC} />
-                    <Text style={colorNumPP}>Google</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={listOverShare}>
-                    <Image style={[imgShare,imgMargin]} source={facebookIC} />
-                    <Text style={colorNumPP}>Facebook</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={listOverShare}>
-                    <Image style={[imgShare,imgMargin]} source={twitterIC} />
-                    <Text style={colorNumPP}>Twitter</Text>
-                </TouchableOpacity>
-            </View>
-        </TouchableOpacity>
 
         <Modal
         onRequestClose={() => null}
@@ -337,8 +257,13 @@ export default class HomeTab extends Component {
         visible={this.state.showCreate}>
         <View style={popoverCreate}>
 
-            <TouchableOpacity style={itemCreate}>
-              <Text>Tạo địa điểm</Text>
+            <TouchableOpacity
+            onPress={()=>{
+              this.setState({showCreate:false});
+              navigate('ChooseCatScr',{lang:this.state.lang.lang});
+            }}
+            style={itemCreate}>
+              <Text style={colorlbl}>{this.state.lang.create_location}</Text>
             </TouchableOpacity>
         <TouchableOpacity
         onPress={()=>this.setState({showCreate:!this.state.showCreate})}

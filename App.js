@@ -135,12 +135,16 @@ const RootTabs = TabNavigator({
     },
     activeTintColor: '#fff',
     inactiveTintColor: '#B8BBC0',
-    activeBackgroundColor:'#BF2827',
+    activeBackgroundColor:'#D0021B',
     borderBottomWidth: 0,
     style : {
-        backgroundColor:'#BF2827',
+        backgroundColor:'#D0021B',
+        height: Platform.OS==='ios' ? 55 : 60,
+
     },
-    
+    tabStyle:{
+      paddingBottom:3,
+    },
     indicatorStyle: {
         backgroundColor: 'transparent',
     },

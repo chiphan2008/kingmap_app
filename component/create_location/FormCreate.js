@@ -5,7 +5,7 @@ import {Platform, View, Text, StyleSheet, Dimensions, Image,
   TextInput, TouchableOpacity,ScrollView,Modal,FlatList,
 } from 'react-native';
 const {height, width} = Dimensions.get('window');
-
+import ImagePicker from 'react-native-image-crop-picker';
 import styles from '../styles';
 import global from '../global';
 import getApi from '../api/getApi';
@@ -15,6 +15,7 @@ import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
 import arrowNextIC from '../../src/icon/ic-arrow-next.png';
 import cameraIC from '../../src/icon/ic-camera.png';
 import checkIC from '../../src/icon/ic-green/ic-check.png';
+import closeIC from '../../src/icon/ic-home/ic-close.png';
 
 export default class FormCreate extends Component {
   constructor(props) {
@@ -24,6 +25,12 @@ export default class FormCreate extends Component {
       checkSubCat:{},
       showService:false,
       checkService:{},
+
+      txtName:'',
+      txtPhone:'',
+      txtEmail:'',
+      txtAddress:'',
+
     }
   }
 
@@ -37,7 +44,7 @@ export default class FormCreate extends Component {
       headCatStyle,headContent, wrapDistribute,shadown,wrapFilter,
       show,hide,colorlbl,listAdd,
       listCreate,titleCreate,imgCamera,
-      imgShare,wrapInputCre,wrapInputCreImg,wrapCreImg,widthLblCre,
+      imgShare,wrapInputCreImg,wrapCreImg,widthLblCre,
     } = styles;
 
     return (
@@ -46,7 +53,7 @@ export default class FormCreate extends Component {
       <View style={headCatStyle}>
           <View style={headContent}>
               <TouchableOpacity onPress={()=>goBack()}>
-              <Image source={arrowLeft} style={{width:20, height:20,marginTop:5}} />
+              <Image source={arrowLeft} style={{width:16, height:16,marginTop:5}} />
               </TouchableOpacity>
               <Text style={titleCreate}> TẠO ĐỊA ĐIỂM </Text>
               <TouchableOpacity>
@@ -61,34 +68,54 @@ export default class FormCreate extends Component {
           <Text style={colorlbl}>Tên</Text>
           </View>
           <TextInput underlineColorAndroid='transparent'
-          placeholder="------" style={wrapInputCre} />
+          placeholder="- - - - - -" style={wrapInputCreImg}
+          onChangeText={(txtName) => this.setState({txtName})}
+          value={this.state.txtName}
+           />
+
+          <TouchableOpacity style={this.state.txtName!=='' ? show : hide} onPress={()=>{this.setState({txtName:''})}}>
+          <Image source={closeIC} style={imgShare} />
+          </TouchableOpacity>
         </View>
 
-        <View style={listCreate}>
+        <TouchableOpacity style={listCreate}
+        onPress={()=>this.setState({showSubCat:!this.state.showSubCat})}>
           <View style={widthLblCre}>
           <Text style={colorlbl}>Phân loại</Text>
           </View>
           <View style={wrapInputCreImg}></View>
-          <TouchableOpacity onPress={()=>this.setState({showSubCat:!this.state.showSubCat})}>
           <Image source={arrowNextIC} style={imgShare}/>
+        </TouchableOpacity>
+
+        <View style={listCreate}>
+          <View style={widthLblCre}>
+          <Text style={colorlbl}>Điện thoại</Text>
+          </View>
+          <TextInput keyboardType={'phone-pad'} underlineColorAndroid='transparent'
+          onChangeText={(txtPhone) => this.setState({txtPhone})}
+          value={this.state.txtPhone}
+          placeholder="- - - - - -" style={wrapInputCreImg} />
+
+          <TouchableOpacity style={this.state.txtPhone!=='' ? show : hide} onPress={()=>{this.setState({txtPhone:''})}}>
+          <Image source={closeIC} style={imgShare} />
           </TouchableOpacity>
         </View>
 
         <View style={listCreate}>
           <View style={widthLblCre}>
-          <Text style={colorlbl}>Địa chỉ</Text>
+          <Text style={colorlbl}>Email </Text>
           </View>
           <TextInput underlineColorAndroid='transparent'
-          placeholder="------" style={wrapInputCre} />
+          keyboardType={'email-address'}
+          onChangeText={(txtEmail) => this.setState({txtEmail})}
+          value={this.state.txtEmail}
+          placeholder="- - - - - -" style={wrapInputCreImg} />
+          <TouchableOpacity style={this.state.txtEmail!=='' ? show : hide} onPress={()=>{this.setState({txtEmail:''})}}>
+          <Image source={closeIC} style={imgShare} />
+          </TouchableOpacity>
         </View>
 
-        <View style={listCreate}>
-          <View style={widthLblCre}>
-          <Text style={colorlbl}>Email</Text>
-          </View>
-          <TextInput underlineColorAndroid='transparent'
-          placeholder="------" style={wrapInputCre} />
-        </View>
+
 
         <View style={listCreate}>
           <View style={widthLblCre}>
@@ -109,38 +136,86 @@ export default class FormCreate extends Component {
           <Image source={arrowNextIC} style={imgShare}/>
           </TouchableOpacity>
         </View>
+        <View style={{height:15}}></View>
+
+        <View style={listCreate}>
+          <View style={widthLblCre}>
+          <Text style={colorlbl}>Quốc gia </Text>
+          </View>
+          <TextInput underlineColorAndroid='transparent'
+          onChangeText={(txtAddress) => this.setState({txtAddress})}
+          value={this.state.txtAddress}
+          placeholder="- - - - - -" style={wrapInputCreImg} />
+          <TouchableOpacity style={this.state.txtAddress!=='' ? show : hide} onPress={()=>{this.setState({txtAddress:''})}}>
+          <Image source={closeIC} style={imgShare} />
+          </TouchableOpacity>
+        </View>
+        <View style={listCreate}>
+          <View style={widthLblCre}>
+          <Text style={colorlbl}>Tỉnh/TP</Text>
+          </View>
+          <TextInput underlineColorAndroid='transparent'
+          onChangeText={(txtAddress) => this.setState({txtAddress})}
+          value={this.state.txtAddress}
+          placeholder="- - - - - -" style={wrapInputCreImg} />
+          <TouchableOpacity style={this.state.txtAddress!=='' ? show : hide} onPress={()=>{this.setState({txtAddress:''})}}>
+          <Image source={closeIC} style={imgShare} />
+          </TouchableOpacity>
+        </View>
+        <View style={listCreate}>
+          <View style={widthLblCre}>
+          <Text style={colorlbl}>Quận/Huyện </Text>
+          </View>
+          <TextInput underlineColorAndroid='transparent'
+          onChangeText={(txtAddress) => this.setState({txtAddress})}
+          value={this.state.txtAddress}
+          placeholder="- - - - - -" style={wrapInputCreImg} />
+          <TouchableOpacity style={this.state.txtAddress!=='' ? show : hide} onPress={()=>{this.setState({txtAddress:''})}}>
+          <Image source={closeIC} style={imgShare} />
+          </TouchableOpacity>
+        </View>
+        <View style={listCreate}>
+          <View style={widthLblCre}>
+          <Text style={colorlbl}>Địa chỉ </Text>
+          </View>
+          <TextInput underlineColorAndroid='transparent'
+          onChangeText={(txtAddress) => this.setState({txtAddress})}
+          value={this.state.txtAddress}
+          placeholder="- - - - - -" style={wrapInputCreImg} />
+          <TouchableOpacity style={this.state.txtAddress!=='' ? show : hide} onPress={()=>{this.setState({txtAddress:''})}}>
+          <Image source={closeIC} style={imgShare} />
+          </TouchableOpacity>
+        </View>
+
 
         <View style={{height:15}}></View>
         <View style={listCreate}>
           <View style={widthLblCre}>
-          <Text style={colorlbl}>Hình ảnh</Text>
+          <Text style={colorlbl}>Ảnh đại diện</Text>
           </View>
           <View style={wrapCreImg}></View>
           <TouchableOpacity style={imgCamera}>
           <Image source={cameraIC} style={imgShare}/>
           </TouchableOpacity>
         </View>
-        <View style={{height:15}}></View>
-
         <View style={listCreate}>
           <View style={widthLblCre}>
-          <Text style={colorlbl}>Tiện nghi</Text>
-          </View>
-          <View style={wrapInputCreImg}></View>
-          <TouchableOpacity onPress={()=>this.setState({showService:!this.state.showService})}>
-          <Image source={arrowNextIC} style={imgShare}/>
-          </TouchableOpacity>
-        </View>
-
-        <View style={listCreate}>
-          <View style={widthLblCre}>
-          <Text style={colorlbl}>Chi nhánh</Text>
+          <Text style={colorlbl}>Thêm hình</Text>
           </View>
           <View style={wrapInputCreImg}></View>
           <TouchableOpacity>
           <Image source={arrowNextIC} style={imgShare}/>
           </TouchableOpacity>
         </View>
+        <View style={{height:15}}></View>
+
+        <TouchableOpacity style={listCreate} onPress={()=>this.setState({showService:!this.state.showService})}>
+          <View style={widthLblCre}>
+          <Text style={colorlbl}>Tiện nghi</Text>
+          </View>
+          <View style={wrapInputCreImg}></View>
+          <Image source={arrowNextIC} style={imgShare}/>
+        </TouchableOpacity>
 
       </View>
       </ScrollView>
@@ -155,7 +230,7 @@ export default class FormCreate extends Component {
             <View style={headCatStyle}>
                 <View style={headContent}>
                     <TouchableOpacity onPress={()=>this.setState({showSubCat:!this.state.showSubCat})}>
-                    <Image source={arrowLeft} style={{width:20, height:20,marginTop:5}} />
+                    <Image source={arrowLeft} style={{width:16, height:16,marginTop:5}} />
                     </TouchableOpacity>
                     <Text style={titleCreate}> Phân loại </Text>
                     <View></View>
@@ -204,7 +279,7 @@ export default class FormCreate extends Component {
               <View style={headCatStyle}>
                   <View style={headContent}>
                       <TouchableOpacity onPress={()=>this.setState({showService:!this.state.showService})}>
-                      <Image source={arrowLeft} style={{width:20, height:20,marginTop:5}} />
+                      <Image source={arrowLeft} style={{width:16, height:16,marginTop:5}} />
                       </TouchableOpacity>
                       <Text style={titleCreate}> TIỆN ÍCH </Text>
                       <View></View>

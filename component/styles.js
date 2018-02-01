@@ -273,7 +273,6 @@ module.exports = {
   colorText :{color:'#303B50',fontSize:17},
   listCreate:{padding:15,flexDirection:'row',backgroundColor:'#fff',marginBottom:1,alignItems:'center'},
   widthLblCre:{width:width/4},
-  wrapInputCre:{width:width-(width/4)-30,padding:0},
   wrapInputCreImg:{width:width-(width/4)-45,padding:0},
   wrapCreImg:{width:width-(width/4)-55},
   imgCamera:{width:30,height:30,borderRadius:15,backgroundColor:'#F1F1F5',alignItems:'center',justifyContent:'center'},

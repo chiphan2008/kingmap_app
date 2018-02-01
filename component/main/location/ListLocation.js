@@ -286,20 +286,22 @@ export default class ListLocation extends Component {
                renderItem={({item}) => (
               <View  style={listOverService}>
               <TouchableOpacity
-                 onLayout={()=>this.setState({showServie: Object.assign(this.state.showServie,{[item.id]:false}),})}
                  onPress={()=>{
-                  let idServ = this.state.id_serv===null ? item.id : `${this.state.id_serv}${','}${item.id}`;
+                  let idServ = this.state.id_serv===null ? item.id : `${this.state.id_serv}${', '}${item.id}`;
                   let labelServ = this.state.labelSer==='Dịch vụ' ? item.name : `${this.state.labelSer}${','}${item.name}`;
                   this.getContentByDist(this.state.idDist,this.state.id_sub,idServ);
-                  this.setState({showServie: Object.assign(this.state.showServie,{[item.id]:!this.state.showServie[item.id]}),
-                  labelSer:labelServ,
-                });
 
+                  if(this.state.showServie[`${item.id}`]!==item.id)
+                    this.setState({ showServie: Object.assign(this.state.showServie,{[item.id]:item.id}),labelSer:labelServ });
+                    //if(`${this.state.labelSer}`.includes(labelServ)) this.setState({labelSer:labelServ});
+
+                  else
+                    this.setState({showServie: Object.assign(this.state.showServie,{[item.id]:!item.id})});
                   }}
                   style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',}}
                 >
                    <Text style={colorText}>{item.name}</Text>
-                   <Image style={[imgInfo, `${this.state.id_serv}`.includes(item.id)  ? show : hide]} source={checkIC}/>
+                   <Image style={[imgInfo, this.state.showServie[`${item.id}`]===item.id  ? show : hide]} source={checkIC}/>
 
                </TouchableOpacity>
                </View>
@@ -309,7 +311,7 @@ export default class ListLocation extends Component {
                 <TouchableOpacity
                    onPress={()=>{
                     this.getContentByDist(this.state.idDist,this.state.id_sub,null);
-                    this.setState({listSerItem:{showList:!this.state.listSerItem.showList},id_serv:null});
+                    this.setState({listSerItem:{showList:!this.state.listSerItem.showList},id_serv:null,labelSer:'Dịch vụ'});
                     }}
                   >
                      <Text style={colorText}>Tất cả</Text>

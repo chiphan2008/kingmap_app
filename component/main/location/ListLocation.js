@@ -146,7 +146,7 @@ export default class ListLocation extends Component {
       selectBoxLoc,optionListLoc,OptionItemLoc,
       wrapListLoc,flatItemLoc,imgFlatItem,wrapFlatRight,
       txtTitleOverCat,txtAddrOverCat,flatlistItemCat,wrapInfoOver,
-      imgUp,imgUpLoc,imgUpSubCat,imgUpService,popoverLoc,overLayout,imgInfo,overLayoutLoc,shadown,overLayoutSer,listCatOver,listOverService,colorText
+      imgUp,imgUpLoc,imgUpSubCat,imgUpInfo,popoverLoc,paddingLoc,overLayout,imgInfo,overLayoutLoc,shadown,overLayoutSer,listCatOver,listOverService,colorText
     } = styles;
     //console.log('lang',this.props.lang);
     return (
@@ -230,7 +230,7 @@ export default class ListLocation extends Component {
         <Modal onRequestClose={() => null} transparent visible={this.state.showLoc}>
         <TouchableOpacity
         onPress={()=>this.setState({showLoc:!this.state.showLoc})}
-        style={popoverLoc}>
+        style={[popoverLoc,paddingLoc]}>
           <Image style={[imgUp,imgUpLoc]} source={upDD} />
           <View style={[overLayout,shadown]}>
               <SelectLocation saveLocation={this.saveLocation.bind(this)} />
@@ -241,7 +241,7 @@ export default class ListLocation extends Component {
         <Modal onRequestClose={() => null} transparent visible={this.state.listSubCat.showList}>
         <TouchableOpacity
         onPress={()=>this.setState({listSubCat:{showList:!this.state.listSubCat.showList}})}
-        style={popoverLoc}>
+        style={[popoverLoc,paddingLoc]}>
         <Image style={[imgUp,imgUpSubCat]} source={upDD} />
             <View style={[overLayoutLoc,shadown]}>
 
@@ -275,8 +275,8 @@ export default class ListLocation extends Component {
         <Modal onRequestClose={() => null} transparent visible={this.state.listSerItem.showList}>
         <TouchableOpacity
         onPress={()=>this.setState({listSerItem:{showList:!this.state.listSerItem.showList}})}
-        style={popoverLoc}>
-        <Image style={[imgUp,imgUpService]} source={upDD} />
+        style={[popoverLoc,paddingLoc]}>
+        <Image style={[imgUp,imgUpInfo]} source={upDD} />
             <View style={[overLayout,shadown]}>
 
             <FlatList

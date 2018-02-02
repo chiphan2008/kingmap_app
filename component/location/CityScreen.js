@@ -55,7 +55,9 @@ export default class CityScreen extends Component {
     if(this.state.slCountry.id !==-1 && this.state.slCity.id !==-1){
       AsyncStorage.setItem('@LocationKey:key', JSON.stringify({
                 idCountry:this.state.slCountry.id,
+                nameCountry:this.state.slCountry.name,
                 idCity:this.state.slCity.id,
+                nameCity:this.state.slCity.name,
             }));
       if(this.state.slCountry.id==1){
         AsyncStorage.setItem('@MyLanguage:key',JSON.stringify({

@@ -24,6 +24,8 @@ export default class SelectLocation extends Component {
       showCheckDistrict:'',
       idCountry:1,
       idCity:1,
+      nameCountry:'',
+      nameCity:'',
     };
   }
   getCity(){
@@ -87,7 +89,9 @@ export default class SelectLocation extends Component {
                           this.setState({showCheckDistrict:item.id});
                          AsyncStorage.setItem('@LocationKey:key', JSON.stringify({
                                    idCountry:this.state.showCheckCountry,
+                                   nameCountry:this.state.nameCountry,
                                    idCity:this.state.showCheckCity,
+                                   nameCity:this.state.nameCity,
                                    idDist:item.id,
                                    nameDist:item.name,
                          }));
@@ -115,7 +119,7 @@ export default class SelectLocation extends Component {
                   <TouchableOpacity
                      style={{justifyContent:'space-between',flexDirection:'row',}}
                      onPress={()=>{
-                       this.setState({showDistrict:false, showCountry:false, showCity:true,idCountry:item.id});
+                       this.setState({showDistrict:false, showCountry:false, showCity:true,idCountry:item.id,nameCountry:item.name});
                        this.getCity();
                      }}
                    >
@@ -148,7 +152,7 @@ export default class SelectLocation extends Component {
                      style={{justifyContent:'space-between',flexDirection:'row',}}
                      onPress={()=>{
                        this.setState({
-                         showDistrict:true,showCountry:false,showCity:false,idCity:item.id,
+                         showDistrict:true,showCountry:false,showCity:false,idCity:item.id,nameCity:item.name,
                          showCheckCity:item.id,
                        });
                        this.getDistrict(item.id);

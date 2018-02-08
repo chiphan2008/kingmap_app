@@ -266,6 +266,8 @@ module.exports = {
   marRight:{marginRight:5},
   titleTab:{color:'#9B9A9B',fontSize:18},
   titleTabActive:{color:'#000',fontSize:18},
+  titleActive:{color:'#fff',fontSize:18},
+  titleErr:{color:'#D0021B',fontSize:18},
   wrapListImage:{
     flexDirection: 'row',
       flexWrap: 'wrap',

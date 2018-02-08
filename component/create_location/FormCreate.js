@@ -12,6 +12,7 @@ import getApi from '../api/getApi';
 import getLanguage from '../api/getLanguage';
 import checkLocation from '../api/checkLocation';
 import GroupProduct from './GroupProduct';
+import AddImageMore from './AddImageMore';
 //import LatLng from './LatLng';
 
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
@@ -62,11 +63,13 @@ export default class FormCreate extends Component {
       txtKW:'',
       txtCode:'',
       txtNameProduct:'',
-      imgAvatar:'',
+      imgAvatar:{},
       lblUnit: 'VND',
-      showUnit:false,
       showProduct:false,
-      showMap:false,
+      showImgMore:false,
+      img_space:[],
+      img_menu:[],
+      img_video:[],
       addGroupProduct:[],
       index:0,
       product:[],
@@ -99,6 +102,28 @@ export default class FormCreate extends Component {
     arr.append('address',this.state.txtAddress);
     arr.append('tag',this.state.txtKW);
     arr.append('code_invite',this.state.txtCode);
+    this.state.img_space.forEach((e,index)=>{
+      arr.append(`image_space[]`, {
+        uri:`${e.path}`,
+        name: `${index}_image_space.jpg`,
+        type: `${e.mime}`
+      });
+    });
+    this.state.img_menu.forEach((e,index)=>{
+      arr.append(`image_menu[]`, {
+        uri:`${e.path}`,
+        name: `${index}_image_menu.jpg`,
+        type: `${e.mime}`
+      });
+    })
+    arr.append('link',this.state.img_video);
+
+    arr.append(`avatar`, {
+      uri:`${this.state.imgAvatar.path}`,
+      name: `my_avatar.jpg`,
+      type: `${this.state.imgAvatar.mime}`
+    });
+
     Object.entries(this.state.checkService).forEach((e)=>{
       if(e[1]!==false){
         arr.append('service[]',e[1]);
@@ -195,16 +220,7 @@ export default class FormCreate extends Component {
 
   }
   uploadAvatar(){
-    //this.props.requestLogin();
-    // ImagePicker.openPicker({
-    //   multiple: true
-    // }).then(img => {
-    //   if(id===0){
-    //     this.setState({arrImage:this.state.arrImage.concat(img)});
-    //   }else {
-    //     this.setState({arrImageChild:this.state.arrImageChild.concat(img)});
-    //   }
-    // });
+
     // ImagePicker.openCamera({
     //   width: 300,
     //   height: 400,
@@ -215,6 +231,7 @@ export default class FormCreate extends Component {
     ImagePicker.openPicker({
       cropping: false
     }).then(image =>{
+      //console.log(image.path);
       this.setState({imgAvatar:image});
     });
   }
@@ -230,6 +247,14 @@ export default class FormCreate extends Component {
         lng:arrDataLoc.lng,
       })
     })
+  }
+  submitImage(space,menu,video){
+    console.log('space',space,'menu',menu,'video',video);
+    this.setState({
+        img_space:space,
+        img_menu:menu,
+        img_video:video,
+    });
   }
   render() {
     //console.log('checkSubCat',this.state.checkSubCat);
@@ -478,20 +503,9 @@ export default class FormCreate extends Component {
           value={this.state.txtToPrice} />
 
           <TouchableOpacity
-          onPress={()=>{ this.setState({ showUnit:!this.state.showUnit });}}
+          onPress={()=>{ this.setState({ lblUnit:this.state.lblUnit==='VND' ? 'USD' : 'VND' });}}
           style={{width:50,backgroundColor:'#d0021b',borderRadius:3,padding:5,marginLeft:7}}>
             <Text numberOfLines={1} style={txtKV}>{this.state.lblUnit}</Text>
-          </TouchableOpacity>
-          </View>
-        </View>
-        <View style={[optionUnitStyle,shadown,this.state.showUnit ? show : hide]}>
-          <Image source={upDD} style={{width:16,height:16,top:10}} />
-          <View style={{backgroundColor:'#fff',width:50,alignItems:'center'}}>
-          <TouchableOpacity onPress={()=>this.setState({lblUnit:'VND',showUnit:false})} style={{padding:5}}>
-          <Text>VND</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={()=>this.setState({lblUnit:'USD',showUnit:false})} style={{padding:5}}>
-          <Text>USD</Text>
           </TouchableOpacity>
           </View>
         </View>
@@ -591,7 +605,8 @@ export default class FormCreate extends Component {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={listCreate}>
+        <TouchableOpacity style={listCreate}
+        onPress={()=>this.setState({showImgMore:true})}>
           <View style={{flexDirection:'row'}}>
             <View style={widthLblCre}>
             <Image source={galleryIC} style={imgInfo} />
@@ -603,7 +618,10 @@ export default class FormCreate extends Component {
 
           <Image source={arrowNextIC} style={imgShare}/>
           </TouchableOpacity>
-
+          <AddImageMore
+          submitImage={this.submitImage.bind(this)}
+          showImgMore={this.state.showImgMore}
+          closeModal={()=>this.setState({showImgMore:false})} />
         <View style={{height:15}}></View>
 
         <TouchableOpacity style={listCreate} onPress={()=>this.setState({showProduct:!this.state.showProduct})}>
@@ -655,7 +673,6 @@ export default class FormCreate extends Component {
         visible={this.state.showSubCat}
         >
           <View style={container}>
-
             <View style={headCatStyle}>
                 <View style={headContent}>
                     <TouchableOpacity onPress={()=>this.setState({showSubCat:!this.state.showSubCat})}>
@@ -673,7 +690,6 @@ export default class FormCreate extends Component {
             <Text style={{color:'white',fontSize:18,fontWeight:'bold'}}>+</Text>
             </TouchableOpacity>
             </View>
-
             <FlatList
                 extraData={this.state}
                data={sub_cat}

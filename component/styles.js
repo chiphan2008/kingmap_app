@@ -177,9 +177,12 @@ module.exports = {
   },
   optionListStyle :{
     backgroundColor:'#fff',borderColor:'transparent',position:'absolute',width: 55,  height:60,
-    top:Platform.OS ==='ios' ? 48 : 35,right:10,
+    top:Platform.OS ==='ios' ? 48 : 35,right:10,zIndex:9
   },
-
+  optionUnitStyle :{
+    borderColor:'transparent',position:'absolute',
+    top:Platform.OS ==='ios' ? 460 : 485 ,right:15,zIndex:9,alignItems:'center'
+  },
   OptionItem : {
     paddingTop: 7,paddingBottom: 0,marginTop: 0,marginBottom: 0,
   },
@@ -272,11 +275,11 @@ module.exports = {
   colorWhite:{color:'#fff'},
   colorTextPP :{color:'#B8BBC0'},
   colorText :{color:'#303B50',fontSize:17},
-  listCreate:{padding:15,flexDirection:'row',backgroundColor:'#fff',marginBottom:1,alignItems:'center',justifyContent:'space-between'},
-  itemKV:{width:(width-50)/3,backgroundColor:'#2E3B51',borderRadius:3,padding:5},
+  listCreate:{padding:15,flexDirection:'row',backgroundColor:'#fff',marginBottom:1,alignItems:'center',justifyContent:'space-between',overflow:'visible'},
+  itemKV:{width:(width-50)/3,backgroundColor:'#2E3B51',borderRadius:3,padding:10},
   txtKV:{color:'#fff',alignSelf:'center'},
-  widthLblCre:{width:30},
-  wrapInputCreImg:{width:width-75,padding:0},
+  widthLblCre:{width: Platform.OS==='ios' ? 20 : 30,alignItems:'center'},
+  wrapInputCreImg:{width:width-75,padding:0,fontSize:16,paddingLeft: Platform.OS==='ios' ? 10 : 15,paddingRight:15},
   wrapCreImg:{width:width-85},
   imgCamera:{width:30,height:30,borderRadius:15,backgroundColor:'#F1F1F5',alignItems:'center',justifyContent:'center'},
   colorlbl :{color:'#323640',fontSize:16},

@@ -30,7 +30,6 @@ export default class Comments extends Component {
       arrImage:[],
       arrImageChild:[],
     }
-
   }
 
   uploadImage(id){
@@ -69,14 +68,12 @@ export default class Comments extends Component {
           });
         })
       }
-
       postApi(`${global.url}${'content-create-comment'}`,arr);
       if(comment_id===0){
         this.setState({inputComment:'',arrImage:[]});
       }else{
         this.setState({inputChildComment:'',arrImageChild:[]});
       }
-
     }
   }
 

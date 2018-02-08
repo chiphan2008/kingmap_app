@@ -24,8 +24,8 @@ import ListCategory from './component/main/home/ListCategory';
 
 import HomeTab from './component/main/home/HomeTab';
 import MakeMoney from './component/make_money/MakeMoney';
-import LocationTab from './component/main/location/LocationTab';
-import ListLocation from './component/main/location/ListLocation';
+import LocationTab from './component/main/home/LocationTab';
+import ListLocation from './component/main/home/ListLocation';
 import DistributeTab from './component/main/home/DistributeTab';
 import NotifyTab from './component/main/notify/NotifyTab';
 import PersonalTab from './component/main/personal/PersonalTab';
@@ -54,20 +54,21 @@ const styles = StyleSheet.create({
 const HomeScreen = StackNavigator({
   HomeTabs: { screen: HomeTab },
   MakeMoneyScr: { screen: MakeMoney },
-  CatScr: { screen: CategoryScreen },
-  ListCatScr: { screen: ListCategory },
-  OtherCatScr: { screen: DistributeTab },
-},{
-  headerMode: 'none',
-});
-
-const LocationScreen = StackNavigator({
-  LocTab: { screen: LocationTab },
+  OtherCatScr: { screen: LocationTab },
   ListLocScr: { screen: ListLocation },
+  //CatScr: { screen: CategoryScreen },
+  //ListCatScr: { screen: ListCategory },
+  //OtherCatScr: { screen: DistributeTab },
 },{
   headerMode: 'none',
-
 });
+
+// const LocationScreen = StackNavigator({
+//   LocTab: { screen: LocationTab },
+//   ListLocScr: { screen: ListLocation },
+// },{
+//   headerMode: 'none',
+// });
 
 const RootTabs = TabNavigator({
   HomeT: {
@@ -79,16 +80,7 @@ const RootTabs = TabNavigator({
       ),
     },
   },
-  LocationT: {
-    screen: LocationScreen,//LocationTab,//,DistributeTab
-    navigationOptions: {
-      tabBarLabel: 'Địa điểm',
-      tabBarIcon: ({ tintColor }) => (
-        <Image source={locationIC} style={[styles.icon, {tintColor}]} />
-      ),
-      tabBarVisible:true,
-    },
-  },
+
   NotifyT: {
     screen: NotifyTab,
     navigationOptions: {

@@ -72,7 +72,6 @@ export default class FormCreate extends Component {
       img_video:[],
       addGroupProduct:[],
       index:0,
-      product:[],
       listProduct:{},
       category_item:[],
     };
@@ -83,73 +82,92 @@ export default class FormCreate extends Component {
   }
   postData(){
     const arr = new FormData();
-    arr.append('country',this.state.idCountry);
-    arr.append('city',this.state.idCity);
-    arr.append('district',this.state.idDist);
+    // arr.append('country',this.state.idCountry);
+    // arr.append('city',this.state.idCity);
+    // arr.append('district',this.state.idDist);
+    //
+    // arr.append('id_category',this.props.navigation.state.params.idCat);
+    // arr.append('name',this.state.txtName);
+    // Object.entries(this.state.checkSubCat).forEach((e)=>{
+    //   if(e[1]!==false){
+    //     arr.append('category_item[]',e[1]);
+    //   }
+    // })
+    // arr.append('phone',this.state.txtPhone);
+    // arr.append('email',this.state.txtEmail);
+    // arr.append('price_from',this.state.txtFromPrice);
+    // arr.append('price_to',this.state.txtToPrice);
+    // arr.append('currency',this.state.lblUnit);
+    // arr.append('address',this.state.txtAddress);
+    // arr.append('tag',this.state.txtKW);
+    // arr.append('code_invite',this.state.txtCode);
+    // this.state.img_space.forEach((e,index)=>{
+    //   arr.append(`image_space[]`, {
+    //     uri:`${e.path}`,
+    //     name: `${index}_image_space.jpg`,
+    //     type: `${e.mime}`
+    //   });
+    // });
+    // this.state.img_menu.forEach((e,index)=>{
+    //   arr.append(`image_menu[]`, {
+    //     uri:`${e.path}`,
+    //     name: `${index}_image_menu.jpg`,
+    //     type: `${e.mime}`
+    //   });
+    // })
+    // arr.append('link',this.state.img_video);
+    //
+    // arr.append(`avatar`, {
+    //   uri:`${this.state.imgAvatar.path}`,
+    //   name: `my_avatar.jpg`,
+    //   type: `${this.state.imgAvatar.mime}`
+    // });
+    //
+    // Object.entries(this.state.checkService).forEach((e)=>{
+    //   if(e[1]!==false){
+    //     arr.append('service[]',e[1]);
+    //   }
+    // });
 
-    arr.append('id_category',this.props.navigation.state.params.idCat);
-    arr.append('name',this.state.txtName);
-    Object.entries(this.state.checkSubCat).forEach((e)=>{
-      if(e[1]!==false){
-        arr.append('category_item[]',e[1]);
-      }
-    })
-    arr.append('phone',this.state.txtPhone);
-    arr.append('email',this.state.txtEmail);
-    arr.append('price_from',this.state.txtFromPrice);
-    arr.append('price_to',this.state.txtToPrice);
-    arr.append('currency',this.state.lblUnit);
-    arr.append('address',this.state.txtAddress);
-    arr.append('tag',this.state.txtKW);
-    arr.append('code_invite',this.state.txtCode);
-    this.state.img_space.forEach((e,index)=>{
-      arr.append(`image_space[]`, {
-        uri:`${e.path}`,
-        name: `${index}_image_space.jpg`,
-        type: `${e.mime}`
+    Object.entries(this.state.listProduct).forEach((e)=>{
+      //console.log('=Object.entries',e);
+      let group = e[0];
+      arr.append(`product[${group}][group_name]`,e[1].group_name);
+      Object.entries(e[1]).forEach((r)=>{
+        if(r[0]!=='group_name' && r[0]!=='idGroup'){
+          arr.append(`product[${group}][${r[0]}][id]`,r[0]);
+          arr.append(`product[${group}][${r[0]}][name]`,r[1].name);
+          arr.append(`product[${group}][${r[0]}][price]`,r[1].price);
+          arr.append(`product[${group}][${r[0]}][currency]`,r[1].currency);
+          if(r[1].image.path!==undefined){
+              arr.append(`product[${group}][${r[0]}][image]`, {
+              uri:`${r[1].image.path}`,
+              name: `${r[0]}_my_product.jpg`,
+              type: `${r[1].image.mime}`
+            });
+          }
+        }
       });
-    });
-    this.state.img_menu.forEach((e,index)=>{
-      arr.append(`image_menu[]`, {
-        uri:`${e.path}`,
-        name: `${index}_image_menu.jpg`,
-        type: `${e.mime}`
-      });
-    })
-    arr.append('link',this.state.img_video);
 
-    arr.append(`avatar`, {
-      uri:`${this.state.imgAvatar.path}`,
-      name: `my_avatar.jpg`,
-      type: `${this.state.imgAvatar.mime}`
     });
 
-    Object.entries(this.state.checkService).forEach((e)=>{
-      if(e[1]!==false){
-        arr.append('service[]',e[1]);
-      }
-    })
     console.log('arr',arr);
 
     //
     // postApi(`${global.url}${'create-location'}`,arr);
   }
-
-  submitProduct(id,e){
-    const i_product = this.state.product.findIndex((el)=>this.getIndexProduct(el,id));
-    if(i_product===undefined){
-      this.setState({product: this.state.product.push(e) });
-    }else {
-      let list = this.state.product.splice(0,0,e)
-      this.setState({product: list });
-    }
-    console.log('this.state.product',this.state.product);
-
+  getIndexProduct(element,id){
+    //console.log('element[id].idGroup==id',element[id].idGroup==id);
+    return element[id].idGroup==id;
   }
+  submitProduct(id,e){
+    this.setState({listProduct: Object.assign(this.state.listProduct,{[id]:e})});
+  }
+
   insertGroup() {
     this.state.addGroupProduct.push(
           <GroupProduct
-            listProduct={this.state.product}
+            //listProduct={this.state.product}
             submitProduct={this.submitProduct.bind(this)}
             removeGroup={this.removeGroup.bind(this)}
             indexGroup={this.state.index}
@@ -162,18 +180,20 @@ export default class FormCreate extends Component {
   getIndex(element,id){
     return element.key==id;
   }
-  getIndexProduct(element,id){
-    return element[`${id}`]['idGroup']==id;
-  }
+
   removeGroup(id){
+
     const index = this.state.addGroupProduct.findIndex((e)=>this.getIndex(e,id));
-    const i_product = this.state.product.findIndex((e)=>this.getIndexProduct(e,id));
-    //console.log('this.state.product[id][\'idGroup\']',i_product);
-    //console.log('this.state.rmproduct',this.state.product[i_product]);
-    this.state.product.splice(i_product, 1);
+    delete this.state.listProduct[id];
     this.setState({
-        product: this.state.product
-    })
+        listProduct: this.state.listProduct
+    });
+    if(Object.keys(this.state.listProduct).length===0){
+      this.setState({
+          index: 0,
+          listProduct:{}
+      });
+    }
     if(index!==-1){
       this.state.addGroupProduct.splice(index, 1);
       this.setState({
@@ -220,18 +240,9 @@ export default class FormCreate extends Component {
 
   }
   uploadAvatar(){
-
-    // ImagePicker.openCamera({
-    //   width: 300,
-    //   height: 400,
-    //   cropping: false
-    // }).then(image => {
-    //   console.log('image',image);
-    // });
     ImagePicker.openPicker({
       cropping: false
     }).then(image =>{
-      //console.log(image.path);
       this.setState({imgAvatar:image});
     });
   }
@@ -249,7 +260,7 @@ export default class FormCreate extends Component {
     })
   }
   submitImage(space,menu,video){
-    console.log('space',space,'menu',menu,'video',video);
+    //console.log('space',space,'menu',menu,'video',video);
     this.setState({
         img_space:space,
         img_menu:menu,
@@ -536,7 +547,11 @@ export default class FormCreate extends Component {
           value={this.state.txtAddress}
           ref='Address'
           returnKeyType = {"next"}
-          onBlur={()=>this.getLatLng(this.state.txtAddress)}
+          onBlur={()=>{
+            if(this.state.txtAddress!==''){
+              this.getLatLng(this.state.txtAddress)
+            }
+          }}
           onSubmitEditing={(event) => {  this.refs.Des.focus(); this.getLatLng(this.state.txtAddress);  }}
           placeholder="Địa chỉ" style={wrapInputCreImg} />
           <View style={{width:15}}>

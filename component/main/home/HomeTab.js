@@ -160,6 +160,8 @@ export default class HomeTab extends Component {
             {
               this.state.listCategory.map((e)=>{
                 //console.log(e.sub_category)
+                //<Text style={labelCat}  >{e.name}</Text>
+
                 switch (e.alias) {
                   case 'location':
                       return (<TouchableOpacity
@@ -168,7 +170,6 @@ export default class HomeTab extends Component {
                           onPress={() => navigate('OtherCatScr',{name_module:e.name,lang:this.state.lang}) }
                           >
                         <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
-                        <Text style={labelCat}  >{e.name}</Text>
                       </TouchableOpacity>)
                   case 'booking':
                       return (<TouchableOpacity
@@ -177,7 +178,6 @@ export default class HomeTab extends Component {
                           onPress={() => navigate('CatScr') }
                           >
                         <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
-                        <Text style={labelCat}  >{e.name}</Text>
                       </TouchableOpacity>);
                   case 'ads':
                       return (<TouchableOpacity
@@ -186,7 +186,6 @@ export default class HomeTab extends Component {
                           onPress={() => navigate('CatScr') }
                           >
                         <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
-                        <Text style={labelCat}  >{e.name}</Text>
                       </TouchableOpacity>);
                   case 'make-money':
                       return (<TouchableOpacity
@@ -198,7 +197,6 @@ export default class HomeTab extends Component {
                           } }
                           >
                         <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
-                        <Text style={labelCat}  >{e.name}</Text>
                       </TouchableOpacity>);
                   case 'chat':
                       return (<TouchableOpacity
@@ -207,7 +205,6 @@ export default class HomeTab extends Component {
                           onPress={() => navigate('CatScr') }
                           >
                         <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
-                        <Text style={labelCat}  >{e.name}</Text>
                       </TouchableOpacity>);
                   case 'wallet':
                       return (<TouchableOpacity
@@ -216,7 +213,14 @@ export default class HomeTab extends Component {
                           onPress={() => navigate('CatScr') }
                           >
                         <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
-                        <Text style={labelCat}  >{e.name}</Text>
+                      </TouchableOpacity>);
+                  case 'khuyen-mai':
+                      return (<TouchableOpacity
+                          key={e.id}
+                          style={[wrapCircle,circle6]}
+                          //onPress={() => navigate('CatScr') }
+                          >
+                        <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                       </TouchableOpacity>);
                   case 'rao-vat':
                       return (<TouchableOpacity
@@ -225,7 +229,6 @@ export default class HomeTab extends Component {
                           onPress={() => navigate('CatScr') }
                           >
                         <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
-                        <Text style={labelCat}  >{e.name}</Text>
                       </TouchableOpacity>);
 
                   //default:

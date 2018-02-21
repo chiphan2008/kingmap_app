@@ -13,6 +13,7 @@ import getLanguage from '../api/getLanguage';
 import checkLocation from '../api/checkLocation';
 import GroupProduct from './GroupProduct';
 import AddImageMore from './AddImageMore';
+import OpenTime from './OpenTime';
 //import LatLng from './LatLng';
 
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
@@ -45,6 +46,7 @@ export default class FormCreate extends Component {
     this.state = {
 
       showSubCat:false,
+      showOpenTime:false,
       checkSubCat:{},
       showService:false,
       checkService:{},
@@ -406,7 +408,7 @@ export default class FormCreate extends Component {
           returnKeyType = {"next"}
           autoFocus = {true}
           returnKeyType={ "next" }
-          onSubmitEditing={(event) => {  this.refs.Phone.focus();  }}
+          onSubmitEditing={(event) => {  this.refs.Email.focus();  }}
           placeholder="Tên địa điểm" style={wrapInputCreImg}
           onChangeText={(txtName) => this.setState({txtName})}
           value={this.state.txtName}
@@ -431,23 +433,7 @@ export default class FormCreate extends Component {
           <Image source={arrowNextIC} style={imgShare}/>
         </TouchableOpacity>
 
-        <View style={listCreate}>
-          <View style={widthLblCre}>
-            <Image source={phoneIC} style={imgInfo} />
-          </View>
-          <TextInput keyboardType={'phone-pad'} underlineColorAndroid='transparent'
-          onChangeText={(txtPhone) => this.setState({txtPhone})}
-          value={this.state.txtPhone}
-          ref='Phone'
-          returnKeyType = {"next"}
-          onSubmitEditing={(event) => {  this.refs.Email.focus();  }}
-          placeholder="Điện thoại" style={wrapInputCreImg} />
-          <View style={{width:15}}>
-          <TouchableOpacity style={this.state.txtPhone!=='' ? show : hide} onPress={()=>{this.setState({txtPhone:''})}}>
-          <Image source={closeIC} style={imgShare} />
-          </TouchableOpacity>
-          </View>
-        </View>
+
 
         <View style={listCreate}>
         <View style={widthLblCre}>
@@ -468,7 +454,8 @@ export default class FormCreate extends Component {
           </View>
         </View>
 
-        <View style={listCreate}>
+        <TouchableOpacity style={listCreate}
+        onPress={()=>this.setState({showOpenTime:!this.state.showOpenTime})}>
         <View style={{flexDirection:'row'}}>
             <View style={widthLblCre}>
               <Image source={timeIC} style={imgInfo} />
@@ -477,10 +464,10 @@ export default class FormCreate extends Component {
               <Text style={colorlbl}>Thời gian mở cửa</Text>
               </View>
           </View>
-          <TouchableOpacity>
+
           <Image source={arrowNextIC} style={imgShare}/>
-          </TouchableOpacity>
-        </View>
+
+        </TouchableOpacity>
 
         <View style={listCreate}>
           <View style={{flexDirection:'row'}}>
@@ -681,6 +668,15 @@ export default class FormCreate extends Component {
 
       </View>
       </ScrollView>
+      <Modal
+      onRequestClose={() => null}
+      transparent
+      animationType={'slide'}
+      visible={this.state.showOpenTime}
+      >
+      <OpenTime
+      closeModal={()=>this.setState({showOpenTime:false})}/>
+      </Modal>
         <Modal
         onRequestClose={() => null}
         transparent

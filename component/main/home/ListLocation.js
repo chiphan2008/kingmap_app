@@ -192,7 +192,7 @@ export default class ListLocation extends Component {
                      renderItem={({item}) => (
                        <View style={flatlistItemCat}>
                            <TouchableOpacity
-                           onPress={()=>navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng})}
+                           onPress={()=>navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc:{latitude:item.lat,longitude:item.lng},lang})}
                            >
                              <Image style={imgFlatItem} source={{uri:`${global.url_media}${item.avatar}`}} />
                            </TouchableOpacity>

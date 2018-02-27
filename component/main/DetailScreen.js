@@ -6,7 +6,7 @@ const {height, width} = Dimensions.get('window');
 
 import global from '../global';
 import getApi from '../api/getApi';
-import loginApi from '../api/loginApi';
+import loginServer from '../api/loginServer';
 import checkLogin from '../api/checkLogin';
 
 import Header from './detail/Header';
@@ -65,20 +65,11 @@ export default class DetailScreen extends Component {
     checkLogin().then(e=>{
       if(e.id!==undefined){
         this.setState({user_id:e.id,ema:e.email,pwd:e.pwd});
-        this.loginServer();
+        loginServer(e.email,e.pwd);
       }
     });
   }
-  loginServer(){
-    getApi(`${global.url}${'check-login/'}`)
-    .then(arr => {
-      if(arr.data.length===0){
-        const param = {username:this.state.ema,password:this.state.pwd};
-        loginApi(`${global.url}${'login'}`,param);
-      }
-    })
-    .catch(err => console.log(err));
-  }
+
   requestLogin(){
     checkLogin().then(e=>{
       if(e.id===undefined){

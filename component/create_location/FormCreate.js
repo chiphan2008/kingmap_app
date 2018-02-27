@@ -6,9 +6,12 @@ import {Platform, View, Text, StyleSheet, Dimensions, Image,
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 const {height, width} = Dimensions.get('window');
+import language_vn from '../lang/vn/language';
+import language_en from '../lang/en/language';
 import styles from '../styles';
 import global from '../global';
 import getApi from '../api/getApi';
+import postApi from '../api/postApi';
 import getLanguage from '../api/getLanguage';
 import checkLocation from '../api/checkLocation';
 import GroupProduct from './GroupProduct';
@@ -44,7 +47,7 @@ export default class FormCreate extends Component {
   constructor(props) {
     super(props);
     this.state = {
-
+      lang: this.props.navigation.state.params.lang==='vn' ? language_vn : language_en,
       showSubCat:false,
       showOpenTime:false,
       checkSubCat:{},
@@ -57,9 +60,10 @@ export default class FormCreate extends Component {
       lng:'Lng 0.0',
       txtFromPrice:'',
       txtToPrice:'',
+      open_from:'',
+      open_to:'',
       txtName:'',
       txtPhone:'',
-      txtEmail:'',
       txtAddress:'',
       txtDes:'',
       txtKW:'',
@@ -76,6 +80,8 @@ export default class FormCreate extends Component {
       index:0,
       listProduct:{},
       category_item:[],
+      errArea:false,
+      errMsg:'',
     };
     checkLocation().then(e=>{
       this.setState({idCountry:e.idCountry, nameCountry:e.nameCountry,idCity:e.idCity, nameCity:e.nameCity, })
@@ -83,53 +89,67 @@ export default class FormCreate extends Component {
 
   }
   postData(){
+    if(this.state.idCountry==='' || this.state.idCity==='' || this.state.idDist===''){
+      this.setState({errArea:true});return false;
+    }
+    if(this.state.txtName===''){this.setState({errMsg:this.state.lang.enter_name});return false;}
+    if(Object.entries(this.state.checkSubCat).length===0){this.setState({errMsg:this.state.lang.enter_classify});return false;}
+    if(this.state.open_from===''){this.setState({errMsg:this.state.lang.enter_time});return false;}
+    if(this.state.txtFromPrice===''){this.setState({errMsg:this.state.lang.enter_price_from});return false;}
+    if(this.state.txtToPrice===''){this.setState({errMsg:this.state.lang.enter_price_to});return false;}
+    if(this.state.txtAddress===''){this.setState({errMsg:this.state.lang.enter_address});return false;}
+    if(this.state.imgAvatar.path===undefined){this.setState({errMsg:this.state.lang.enter_avatar});return false;}
+
     const arr = new FormData();
-    // arr.append('country',this.state.idCountry);
-    // arr.append('city',this.state.idCity);
-    // arr.append('district',this.state.idDist);
-    //
-    // arr.append('id_category',this.props.navigation.state.params.idCat);
-    // arr.append('name',this.state.txtName);
-    // Object.entries(this.state.checkSubCat).forEach((e)=>{
-    //   if(e[1]!==false){
-    //     arr.append('category_item[]',e[1]);
-    //   }
-    // })
-    // arr.append('phone',this.state.txtPhone);
-    // arr.append('email',this.state.txtEmail);
-    // arr.append('price_from',this.state.txtFromPrice);
-    // arr.append('price_to',this.state.txtToPrice);
-    // arr.append('currency',this.state.lblUnit);
-    // arr.append('address',this.state.txtAddress);
-    // arr.append('tag',this.state.txtKW);
-    // arr.append('code_invite',this.state.txtCode);
-    // this.state.img_space.forEach((e,index)=>{
-    //   arr.append(`image_space[]`, {
-    //     uri:`${e.path}`,
-    //     name: `${index}_image_space.jpg`,
-    //     type: `${e.mime}`
-    //   });
-    // });
-    // this.state.img_menu.forEach((e,index)=>{
-    //   arr.append(`image_menu[]`, {
-    //     uri:`${e.path}`,
-    //     name: `${index}_image_menu.jpg`,
-    //     type: `${e.mime}`
-    //   });
-    // })
-    // arr.append('link',this.state.img_video);
-    //
-    // arr.append(`avatar`, {
-    //   uri:`${this.state.imgAvatar.path}`,
-    //   name: `my_avatar.jpg`,
-    //   type: `${this.state.imgAvatar.mime}`
-    // });
-    //
-    // Object.entries(this.state.checkService).forEach((e)=>{
-    //   if(e[1]!==false){
-    //     arr.append('service[]',e[1]);
-    //   }
-    // });
+    arr.append('name',this.state.txtName);
+    arr.append('id_category',this.props.navigation.state.params.idCat);
+    Object.entries(this.state.checkSubCat).forEach((e)=>{
+      if(e[1]!==false){
+        arr.append('category_item[]',e[1]);
+      }
+    })
+    arr.append('open_from',this.state.open_from);
+    arr.append('open_to',this.state.open_to);
+    arr.append('price_from',this.state.txtFromPrice);
+    arr.append('price_to',this.state.txtToPrice);
+    arr.append('currency',this.state.lblUnit);
+    arr.append('country',this.state.idCountry);
+    arr.append('city',this.state.idCity);
+    arr.append('district',this.state.idDist);
+    arr.append(`avatar`, {
+      uri:`${this.state.imgAvatar.path}`,
+      name: `my_avatar.jpg`,
+      type: `${this.state.imgAvatar.mime}`
+    });
+    arr.append('address',this.state.txtAddress);
+    arr.append('lat',this.state.lat);
+    arr.append('lng',this.state.lng);
+
+    arr.append('tag[]',this.state.txtKW);
+    arr.append('description',this.state.txtDes);
+    arr.append('code_invite',this.state.txtCode);
+    this.state.img_space.forEach((e,index)=>{
+      arr.append(`image_space[]`, {
+        uri:`${e.path}`,
+        name: `${index}_image_space.jpg`,
+        type: `${e.mime}`
+      });
+    });
+    this.state.img_menu.forEach((e,index)=>{
+      arr.append(`image_menu[]`, {
+        uri:`${e.path}`,
+        name: `${index}_image_menu.jpg`,
+        type: `${e.mime}`
+      });
+    })
+    this.state.img_video.forEach((e)=>{
+      arr.append('link[]',e);
+    })
+    Object.entries(this.state.checkService).forEach((e)=>{
+      if(e[1]!==false){
+        arr.append('service[]',e[1]);
+      }
+    });
 
     Object.entries(this.state.listProduct).forEach((e)=>{
       //console.log('=Object.entries',e);
@@ -152,12 +172,23 @@ export default class FormCreate extends Component {
       });
 
     });
-
     console.log('arr',arr);
-
-    //
-    // postApi(`${global.url}${'create-location'}`,arr);
+    postApi(`${global.url}${'create-location'}`,arr).then((e)=>{
+      console.log('e',e);
+      if(e.code===200){
+        this.props.navigation.navigate('MainScr');
+      }
+    });
   }
+
+  setOpenTime(open_from,open_to){
+    this.setState({
+      open_from,
+      open_to,
+      showOpenTime:false
+    });
+  }
+
   getIndexProduct(element,id){
     //console.log('element[id].idGroup==id',element[id].idGroup==id);
     return element[id].idGroup==id;
@@ -270,38 +301,39 @@ export default class FormCreate extends Component {
     });
   }
   render() {
-    //console.log('checkSubCat',this.state.checkSubCat);
-
-    //console.log('this.state.addGroupProduct',this.state.addGroupProduct);
+    //console.log('navigation',this.props.navigation);
     const {navigate, goBack} = this.props.navigation;
-    const { idCat, nameCat, sub_cat, serv_items, lang } = this.props.navigation.state.params;
+    const { idCat, nameCat, sub_cat, serv_items,lang } = this.props.navigation.state.params;
     const {
       container,
       headCatStyle,headContent, wrapDistribute,wrapFilter,
-      show,hide,colorlbl,listAdd,txtKV,
-      listCreate,titleCreate,imgCamera,itemKV,
+      show,hide,hidden,colorlbl,listAdd,txtKV,
+      listCreate,titleCreate,imgCamera,itemKV,colorErr,
       imgShare,imgInfo,wrapInputCreImg,wrapCreImg,widthLblCre,
       imgUpCreate,imgUpLoc,imgUpInfo,overLayout,listOverService,shadown,popoverLoc,padCreate,
-      upDDLoc,upDDSubCat,selectBox,optionUnitStyle,
+      upDDLoc,upDDSubCat,selectBox,optionUnitStyle,clockTime,
     } = styles;
 
     return (
       <View style={container}>
-      <ScrollView>
+      <ScrollView >
       <View style={headCatStyle}>
           <View style={headContent}>
               <TouchableOpacity onPress={()=>goBack()}>
               <Image source={arrowLeft} style={{width:16, height:16,marginTop:5}} />
               </TouchableOpacity>
-              <Text style={titleCreate}> TẠO ĐỊA ĐIỂM </Text>
+              <Text style={titleCreate}> {this.state.lang.create_location} </Text>
               <TouchableOpacity onPress={()=>this.postData()}>
-                <Text style={titleCreate}>Done</Text>
+                <Text style={titleCreate}>{this.state.lang.done}</Text>
               </TouchableOpacity>
           </View>
       </View>
     <View>
-        <View style={{padding:15}}>
-        <Text style={colorlbl}>Chọn khu vực</Text>
+        <View style={{padding:15,flexDirection:'row',justifyContent:'space-between'}}>
+          <Text style={colorlbl}>{this.state.lang.choose_area}</Text>
+          <View style={this.state.errArea ? show : hide}>
+            <Text style={colorErr}>{this.state.lang.plz_choose_area}</Text>
+          </View>
         </View>
         <View style={listCreate}>
             <TouchableOpacity
@@ -335,7 +367,7 @@ export default class FormCreate extends Component {
                   <TouchableOpacity
                       onPress={()=>this.setState({
                         idCountry:item.id,nameCountry:item.name,showCountry:false,
-                        idCity:'',nameCity:'Tỉnh/TP',idDist:'',nameDist:'Quận/Huyện',
+                        idCity:'', nameCity:this.state.lang.city,idDist:'',nameDist:this.state.lang.district,
                        })}
                       style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',}} >
                        <Text style={colorlbl}>{item.name}</Text>
@@ -361,7 +393,7 @@ export default class FormCreate extends Component {
                   <TouchableOpacity
                       onPress={()=>this.setState({
                         idCity:item.id,nameCity:item.name,showCity:false,
-                        idDist:'',nameDist:'Quận/Huyện',
+                        idDist:'',nameDist:this.state.lang.district,
                        })}
                       style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',}} >
                        <Text style={colorlbl}>{item.name}</Text>
@@ -385,7 +417,7 @@ export default class FormCreate extends Component {
                    renderItem={({item}) => (
                   <View  style={listOverService}>
                   <TouchableOpacity
-                      onPress={()=>this.setState({ idDist:item.id,nameDist:item.name,showDist:false })}
+                      onPress={()=>this.setState({ idDist:item.id,nameDist:item.name,showDist:false,errArea:false })}
                       style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',}} >
                        <Text style={colorlbl}>{item.name}</Text>
                    </TouchableOpacity>
@@ -397,8 +429,11 @@ export default class FormCreate extends Component {
             </Modal>
 
         </View>
-        <View style={{padding:15}}>
-        <Text style={colorlbl}>Thông tin chung</Text>
+        <View style={{padding:15,flexDirection:'row',justifyContent:'space-between'}}>
+        <Text style={colorlbl}>{this.state.lang.info_general}</Text>
+          <View style={this.state.errMsg!=='' ? show : hide}>
+          <Text style={colorErr}>{this.state.errMsg}</Text>
+          </View>
         </View>
         <View style={listCreate}>
           <View style={widthLblCre}>
@@ -408,8 +443,8 @@ export default class FormCreate extends Component {
           returnKeyType = {"next"}
           autoFocus = {true}
           returnKeyType={ "next" }
-          onSubmitEditing={(event) => {  this.refs.Email.focus();  }}
-          placeholder="Tên địa điểm" style={wrapInputCreImg}
+          onSubmitEditing={(event) => {  this.refs.FromPrice.focus();  }}
+          placeholder={this.state.lang.name_location} style={wrapInputCreImg}
           onChangeText={(txtName) => this.setState({txtName})}
           value={this.state.txtName}
            />
@@ -427,32 +462,11 @@ export default class FormCreate extends Component {
             <Image source={cateLocationIC} style={imgInfo} />
             </View>
               <View style={{paddingLeft:15}}>
-                <Text style={colorlbl}>Phân loại địa điểm</Text>
+                <Text style={colorlbl}>{this.state.lang.classify_location}</Text>
               </View>
           </View>
           <Image source={arrowNextIC} style={imgShare}/>
         </TouchableOpacity>
-
-
-
-        <View style={listCreate}>
-        <View style={widthLblCre}>
-          <Image source={emailIC} style={imgInfo} />
-        </View>
-          <TextInput underlineColorAndroid='transparent'
-          keyboardType={'email-address'}
-          onChangeText={(txtEmail) => this.setState({txtEmail})}
-          value={this.state.txtEmail}
-          ref='Email'
-          returnKeyType = {"next"}
-          onSubmitEditing={(event) => {  this.refs.FromPrice.focus();  }}
-          placeholder="Email" style={wrapInputCreImg} />
-          <View style={{width:15}}>
-          <TouchableOpacity style={this.state.txtEmail!=='' ? show : hide} onPress={()=>{this.setState({txtEmail:''})}}>
-          <Image source={closeIC} style={imgShare} />
-          </TouchableOpacity>
-          </View>
-        </View>
 
         <TouchableOpacity style={listCreate}
         onPress={()=>this.setState({showOpenTime:!this.state.showOpenTime})}>
@@ -461,7 +475,7 @@ export default class FormCreate extends Component {
               <Image source={timeIC} style={imgInfo} />
             </View>
             <View style={{paddingLeft:15}}>
-              <Text style={colorlbl}>Thời gian mở cửa</Text>
+              <Text style={colorlbl}>{this.state.lang.open_time}</Text>
               </View>
           </View>
 
@@ -475,13 +489,13 @@ export default class FormCreate extends Component {
             <Image source={priceIC} style={imgInfo} />
             </View>
             <View style={{paddingLeft:15}}>
-            <Text style={colorlbl}>Mức giá</Text>
+            <Text style={colorlbl}>{this.state.lang.price}</Text>
             </View>
           </View>
 
           <View style={{flexDirection:'row'}}>
           <TextInput underlineColorAndroid='transparent'
-          placeholder="Giá từ"
+          placeholder={this.state.lang.price_from}
           keyboardType={'numeric'}
           ref='FromPrice'
           returnKeyType = {"next"}
@@ -491,7 +505,7 @@ export default class FormCreate extends Component {
           value={this.state.txtFromPrice} />
           <Text style={colorlbl}> - </Text>
           <TextInput underlineColorAndroid='transparent'
-          placeholder="Đến giá"
+          placeholder={this.state.lang.price_to}
           keyboardType={'numeric'}
           ref='ToPrice'
           returnKeyType = {"next"}
@@ -509,6 +523,39 @@ export default class FormCreate extends Component {
         </View>
 
         <View style={{height:15}}></View>
+        <View style={listCreate}>
+            <View style={{flexDirection:'row'}}>
+              <View style={widthLblCre}>
+                <Image source={avatarIC} style={imgInfo} />
+              </View>
+              <View style={{paddingLeft:15}}>
+                <Text style={colorlbl}>{this.state.lang.avatar}</Text>
+                </View>
+            </View>
+          <TouchableOpacity style={imgCamera}
+          onPress={()=>this.uploadAvatar()}>
+          <Image source={cameraIC} style={imgShare}/>
+          </TouchableOpacity>
+        </View>
+
+        <TouchableOpacity style={listCreate}
+        onPress={()=>this.setState({showImgMore:true})}>
+          <View style={{flexDirection:'row'}}>
+            <View style={widthLblCre}>
+            <Image source={galleryIC} style={imgInfo} />
+            </View>
+            <View style={{paddingLeft:15}}>
+            <Text style={colorlbl}>{this.state.lang.add_gallery}</Text>
+            </View>
+          </View>
+
+          <Image source={arrowNextIC} style={imgShare}/>
+          </TouchableOpacity>
+          <AddImageMore
+          submitImage={this.submitImage.bind(this)}
+          showImgMore={this.state.showImgMore}
+          closeModal={()=>this.setState({showImgMore:false})} />
+        <View style={{height:15}}></View>
 
         <View style={listCreate}>
           <View style={{flexDirection:'row'}}>
@@ -516,7 +563,7 @@ export default class FormCreate extends Component {
               <Image source={locationMapIC} style={imgInfo} />
             </View>
               <View style={{paddingLeft:15}}>
-              <Text style={colorlbl}>Vị trí bản đồ</Text>
+              <Text style={colorlbl}>{this.state.lang.location_map}</Text>
               </View>
           </View>
             <View style={{flexDirection:'row'}}>
@@ -540,7 +587,7 @@ export default class FormCreate extends Component {
             }
           }}
           onSubmitEditing={(event) => {  this.refs.Des.focus(); this.getLatLng(this.state.txtAddress);  }}
-          placeholder="Địa chỉ" style={wrapInputCreImg} />
+          placeholder={this.state.lang.address} style={wrapInputCreImg} />
           <View style={{width:15}}>
           <TouchableOpacity style={this.state.txtAddress!=='' ? show : hide}
           onPress={()=>{this.setState({txtAddress:'',lat:'Lat 0.0',lng:'Lng 0.0',})}}>
@@ -562,7 +609,7 @@ export default class FormCreate extends Component {
           ref='Des'
           returnKeyType = {"next"}
           onSubmitEditing={(event) => {  this.refs.KW.focus();  }}
-          placeholder="Nhập mô tả" style={wrapInputCreImg} />
+          placeholder={this.state.lang.description} style={wrapInputCreImg} />
           <View style={{width:15}}>
           <TouchableOpacity style={this.state.txtDes!=='' ? show : hide} onPress={()=>{this.setState({txtDes:''})}}>
           <Image source={closeIC} style={imgShare} />
@@ -583,48 +630,14 @@ export default class FormCreate extends Component {
           ref='KW'
           returnKeyType = {"next"}
           onSubmitEditing={(event) => {  this.refs.Code.focus();  }}
-          placeholder="Nhập từ khoá" style={wrapInputCreImg} />
+          placeholder={this.state.lang.keyword} style={wrapInputCreImg} />
           <View style={{width:15}}>
           <TouchableOpacity style={this.state.txtKW!=='' ? show : hide} onPress={()=>{this.setState({txtKW:''})}}>
           <Image source={closeIC} style={imgShare} />
           </TouchableOpacity>
           </View>
         </View>
-
-        <View style={{height:15}}></View>
-        <View style={listCreate}>
-            <View style={{flexDirection:'row'}}>
-              <View style={widthLblCre}>
-                <Image source={avatarIC} style={imgInfo} />
-              </View>
-              <View style={{paddingLeft:15}}>
-                <Text style={colorlbl}>Ảnh đại diện</Text>
-                </View>
-            </View>
-          <TouchableOpacity style={imgCamera}
-          onPress={()=>this.uploadAvatar()}>
-          <Image source={cameraIC} style={imgShare}/>
-          </TouchableOpacity>
-        </View>
-
-        <TouchableOpacity style={listCreate}
-        onPress={()=>this.setState({showImgMore:true})}>
-          <View style={{flexDirection:'row'}}>
-            <View style={widthLblCre}>
-            <Image source={galleryIC} style={imgInfo} />
-            </View>
-            <View style={{paddingLeft:15}}>
-            <Text style={colorlbl}>Thêm hình ảnh</Text>
-            </View>
-          </View>
-
-          <Image source={arrowNextIC} style={imgShare}/>
-          </TouchableOpacity>
-          <AddImageMore
-          submitImage={this.submitImage.bind(this)}
-          showImgMore={this.state.showImgMore}
-          closeModal={()=>this.setState({showImgMore:false})} />
-        <View style={{height:15}}></View>
+          <View style={{height:15}}></View>
 
         <TouchableOpacity style={listCreate} onPress={()=>this.setState({showProduct:!this.state.showProduct})}>
           <View style={{flexDirection:'row'}}>
@@ -632,7 +645,7 @@ export default class FormCreate extends Component {
             <Image source={groupProductIC} style={imgInfo} />
             </View>
             <View style={{paddingLeft:15}}>
-            <Text style={colorlbl}>Món ăn, sản phẩm, dịch vụ</Text></View>
+            <Text style={colorlbl}>{this.state.lang.add_product_more}</Text></View>
           </View>
           <Image source={arrowNextIC} style={imgShare}/>
         </TouchableOpacity>
@@ -643,7 +656,7 @@ export default class FormCreate extends Component {
             <Image source={addonIC} style={imgInfo} />
             </View>
             <View style={{paddingLeft:15}}>
-            <Text style={colorlbl}>Tiện ích</Text></View>
+            <Text style={colorlbl}>{this.state.lang.utilities}</Text></View>
           </View>
           <Image source={arrowNextIC} style={imgShare}/>
         </TouchableOpacity>
@@ -657,7 +670,7 @@ export default class FormCreate extends Component {
           value={this.state.txtCode}
           ref='Code'
           returnKeyType = {"done"}
-          placeholder="Mã giới thiệu" style={wrapInputCreImg} />
+          placeholder={this.state.lang.referral_code} style={wrapInputCreImg} />
           <View style={{width:15}}>
           <TouchableOpacity style={this.state.txtCode!=='' ? show : hide} onPress={()=>{this.setState({txtCode:''})}}>
           <Image source={closeIC} style={imgShare} />
@@ -667,16 +680,15 @@ export default class FormCreate extends Component {
         <View style={{height:15}}></View>
 
       </View>
+
       </ScrollView>
-      <Modal
-      onRequestClose={() => null}
-      transparent
-      animationType={'slide'}
-      visible={this.state.showOpenTime}
-      >
+
+      <View style={[clockTime,this.state.showOpenTime ? show : hidden]}>
       <OpenTime
-      closeModal={()=>this.setState({showOpenTime:false})}/>
-      </Modal>
+      lang={this.state.lang}
+      closeModal={this.setOpenTime.bind(this)} />
+      </View>
+
         <Modal
         onRequestClose={() => null}
         transparent
@@ -689,14 +701,14 @@ export default class FormCreate extends Component {
                     <TouchableOpacity onPress={()=>this.setState({showSubCat:!this.state.showSubCat})}>
                     <Image source={arrowLeft} style={{width:16, height:16,marginTop:5}} />
                     </TouchableOpacity>
-                    <Text style={titleCreate}> Phân loại </Text>
+                    <Text style={titleCreate}> {this.state.lang.classify} </Text>
                     <View></View>
                 </View>
             </View>
 
             <View style={{flexDirection:'row',padding:15}}>
             <TextInput underlineColorAndroid='transparent'
-            placeholder="Thêm phân loại" style={{borderColor:'#DFE7ED',borderWidth:1,borderRadius:3,marginRight:10,padding:5,width:width-100,backgroundColor:'#fff'}} />
+            placeholder={this.state.lang.add_classify} style={{borderColor:'#DFE7ED',borderWidth:1,borderRadius:3,marginRight:10,padding:5,width:width-100,backgroundColor:'#fff'}} />
             <TouchableOpacity style={{backgroundColor:'#D0021B',borderRadius:3,padding:8,paddingLeft:18,paddingRight:18}}>
             <Text style={{color:'white',fontSize:18,fontWeight:'bold'}}>+</Text>
             </TouchableOpacity>
@@ -736,14 +748,14 @@ export default class FormCreate extends Component {
                       <TouchableOpacity onPress={()=>this.setState({showService:!this.state.showService})}>
                       <Image source={arrowLeft} style={{width:16, height:16,marginTop:5}} />
                       </TouchableOpacity>
-                      <Text style={titleCreate}> TIỆN ÍCH </Text>
+                      <Text style={titleCreate}> {this.state.lang.utilities} </Text>
                       <View></View>
                   </View>
               </View>
 
               <View style={{flexDirection:'row',padding:15}}>
               <TextInput underlineColorAndroid='transparent'
-              placeholder="Thêm tiện ích" style={{borderColor:'#DFE7ED',borderWidth:1,borderRadius:3,marginRight:10,padding:5,width:width-100,backgroundColor:'#fff'}} />
+              placeholder={this.state.lang.add_utilities} style={{borderColor:'#DFE7ED',borderWidth:1,borderRadius:3,marginRight:10,padding:5,width:width-100,backgroundColor:'#fff'}} />
               <TouchableOpacity style={{backgroundColor:'#D0021B',borderRadius:3,padding:8,paddingLeft:18,paddingRight:18}}>
               <Text style={{color:'white',fontSize:18,fontWeight:'bold'}}>+</Text>
               </TouchableOpacity>
@@ -784,7 +796,7 @@ export default class FormCreate extends Component {
                         <TouchableOpacity onPress={()=>this.setState({showProduct:!this.state.showProduct})}>
                         <Image source={arrowLeft} style={{width:16, height:16,marginTop:5}} />
                         </TouchableOpacity>
-                        <Text style={titleCreate}> MÓN ĂN, SẢN PHẨM, DỊCH VỤ </Text>
+                        <Text style={titleCreate}> {this.state.lang.add_product_more} </Text>
                         <View></View>
                     </View>
                 </View>
@@ -793,7 +805,7 @@ export default class FormCreate extends Component {
                 <TouchableOpacity
                 onPress={()=>this.insertGroup()}
                 style={{backgroundColor:'#D0021B',borderRadius:3,padding:8,paddingLeft:18,paddingRight:18}}>
-                <Text style={{color:'white',fontSize:18,fontWeight:'bold'}}>+ Thêm nhóm</Text>
+                <Text style={{color:'white',fontSize:18,fontWeight:'bold'}}>+ {this.state.lang.add_group}</Text>
                 </TouchableOpacity>
                 </View>
                 <ScrollView>

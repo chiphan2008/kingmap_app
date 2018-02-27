@@ -11,6 +11,7 @@ import getLanguage from '../../api/getLanguage';
 import accessLocation from '../../api/accessLocation';
 
 import global from '../../global';
+import loginServer from '../../api/loginServer';
 import checkLogin from '../../api/checkLogin';
 import lang_vn from '../../lang/vn/language';
 import lang_en from '../../lang/en/language';
@@ -25,6 +26,11 @@ import plusIC from '../../../src/icon/ic-home/ic-plus.png';
 import closeIC from '../../../src/icon/ic-home/ic-close.png';
 
 import logoHome from '../../../src/icon/ic-home/Logo-home.png';
+import locationDD from '../../../src/icon/ic-gray/ic-location.png';
+import onlineDD from '../../../src/icon/ic-gray/ic-online.png';
+import checkDD from '../../../src/icon/ic-gray/ic-check-gray.png';
+import likeDD from '../../../src/icon/ic-gray/ic-like.png';
+import socialDD from '../../../src/icon/ic-gray/ic-social.png';
 
 import {Select, Option} from "react-native-chooser";
 
@@ -51,14 +57,25 @@ export default class HomeTab extends Component {
       error: null,
       code_user:null,
       isLogin:false,
+      user_id:0,
     };
     checkLogin().then(e=>{
-      //console.log('e.length',e);
-      e.id===undefined ? this.setState({isLogin:false}) :
-      this.setState({code_user:e.phone,isLogin:true});
+      //loginServer(this.state.ema,this.state.pwd)
+      if(e.id===undefined){
+        this.setState({isLogin:false})
+      }else {
+        loginServer(e.email,e.pwd);
+        this.setState({user_id:e.id,code_user:e.phone,isLogin:true});
+      }
     })
     accessLocation();
     arrLang = [{name:'VIE',v:'vn'},{name:'ENG',v:'en'}];
+  }
+
+  requestLogin(){
+    if(this.state.isLogin===false){
+      this.props.navigation.navigate('LoginScr',{backScr:'MainScr'});
+    }
   }
 
   getLang(){
@@ -109,20 +126,25 @@ export default class HomeTab extends Component {
       //this.getCategory(this.state.selectLang.valueLang);
   }
 
-
+  findNewPoint(x, y, angle, distance) {
+      let result = {};
+      result.x = Math.round(Math.cos(angle * Math.PI / 180) * distance + x);
+      result.y = Math.round(Math.sin(angle * Math.PI / 180) * distance + y);
+      return result;
+  }
   render() {
     //console.log('isLogin',this.state.isLogin);
     const {height, width} = Dimensions.get('window');
     const {navigate} = this.props.navigation;
     //console.log("this.props.Hometab=",util.inspect(this.state.listCategory,false,null));
     const {
-      container, bgImg,colorlbl,
-      headStyle, headContent,imgLogoTop,imgSocial, imgWidthGoogle, imgInfo,imgShare,wrapIcRight,FlatList,
-      selectBox,optionListStyle,OptionItem,inputSearch,show,hide,colorTextPP,colorNumPP,marRight,itemCreate,
-      wrapContent,imgContent,square,wrapCircle,logoCenter,circle1,circle2,circle3,circle4,circle5,circle6,circle7,circle8,labelCat,
+      container, bgImg,colorlbl,flexRow,
+      headStyle, headContent,imgLogoTop,imgSocial, imgWidthGoogle, imgShare,wrapIcRight,FlatList,
+      selectBox,optionListStyle,OptionItem,inputSearch,show,hide,colorTextPP,colorWhite,marRight,itemCreate,
+      wrapContent,imgContent,square,wrapCircle,logoCenter,circle1,circle2,circle3,circle4,circle5,circle6,circle7,circle8,labelCat,labelNum,
       plusStyle,imgPlusStyle,popover,overLayout,listOver,popoverShare,popoverCreate,overLayoutShare,listOverShare,imgMargin,imgUpHome,imgUpInfo,imgUpShare
     } = styles;
-
+    let i=0;
     return (
       <View style={container} >
 
@@ -158,108 +180,73 @@ export default class HomeTab extends Component {
         <View style={wrapContent}>
             <View style={square}>
             {
-              this.state.listCategory.map((e)=>{
-                //console.log(e.sub_category)
-                //<Text style={labelCat}  >{e.name}</Text>
 
+              this.state.listCategory.map((e,index)=>{
+                const x=118;const y=120;const distance=140;
+                let angle = (360/(this.state.listCategory.length-1));
+                let pos = this.findNewPoint(x, y, angle, distance);
                 switch (e.alias) {
                   case 'location':
+                      angle *= index-i;
+                      pos = this.findNewPoint(x, y, angle, distance);
                       return (<TouchableOpacity
                           key={e.id}
-                          style={[wrapCircle,circle1]}
+                          style={{position:'absolute',alignItems:'center',top:pos.y,left :pos.x,overflow: 'visible'}}
                           onPress={() => navigate('OtherCatScr',{name_module:e.name,lang:this.state.lang}) }
                           >
+                          <Text style={labelNum}>(25)</Text>
                         <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
-                      </TouchableOpacity>)
-                  case 'booking':
-                      return (<TouchableOpacity
-                          key={e.id}
-                          style={[wrapCircle,circle2]}
-                          onPress={() => navigate('CatScr') }
-                          >
-                        <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
-                      </TouchableOpacity>);
-                  case 'ads':
-                      return (<TouchableOpacity
-                          key={e.id}
-                          style={[wrapCircle,circle3]}
-                          onPress={() => navigate('CatScr') }
-                          >
-                        <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
-                      </TouchableOpacity>);
-                  case 'make-money':
-                      return (<TouchableOpacity
-                          key={e.id}
-                          style={[wrapCircle,circle4]}
-                          onPress={() => {
-                            this.state.isLogin===false ? navigate('LoginScr',{backScr:'MainScr'}) :
-                            navigate('MakeMoneyScr',{lang:this.state.lang,code_user:this.state.code_user});
-                          } }
-                          >
-                        <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
-                      </TouchableOpacity>);
-                  case 'chat':
-                      return (<TouchableOpacity
-                          key={e.id}
-                          style={[wrapCircle,circle5]}
-                          onPress={() => navigate('CatScr') }
-                          >
-                        <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
-                      </TouchableOpacity>);
-                  case 'wallet':
-                      return (<TouchableOpacity
-                          key={e.id}
-                          style={[wrapCircle,circle6]}
-                          onPress={() => navigate('CatScr') }
-                          >
-                        <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
-                      </TouchableOpacity>);
-                  case 'khuyen-mai':
-                      return (<TouchableOpacity
-                          key={e.id}
-                          style={[wrapCircle,circle6]}
-                          //onPress={() => navigate('CatScr') }
-                          >
-                        <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
-                      </TouchableOpacity>);
-                  case 'rao-vat':
-                      return (<TouchableOpacity
-                          key={e.id}
-                          style={[wrapCircle,circle7]}
-                          onPress={() => navigate('CatScr') }
-                          >
-                        <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
-                      </TouchableOpacity>);
+                        <Text style={labelCat}>{e.name}</Text>
 
-                  //default:
+                      </TouchableOpacity>);
+                        break;
+                      case 'wallet':
+                          i=1;
+                          return (<TouchableOpacity
+                              key={e.id}
+                              onPress={()=>navigate('OtherCatScr')}
+                              style={[wrapCircle,logoCenter]}>
+                              <Image style={imgContent} source={logoHome} />
+                              <Text style={labelCat}>{e.name}</Text>
+
+                              </TouchableOpacity>);
+                          break;
+                  default:
+                  angle *= index-i;
+                  pos = this.findNewPoint(x, y, angle, distance);
+                    return (<TouchableOpacity
+                        key={e.id}
+                        style={{position:'absolute',flex:1,alignItems:'center',top:pos.y,left :pos.x,}}
+                        onPress={() => navigate('CatScr') }
+                        >
+                      <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
+                      <Text style={labelCat}>{e.name}</Text>
+                      <Text style={labelNum}>(25)</Text>
+                    </TouchableOpacity>);
+                    break;
 
                 }
               })
             }
 
-              <TouchableOpacity
-              onPress={()=>navigate('OtherCatScr')}
-              style={[wrapCircle,logoCenter]}>
-              <Image style={imgContent} source={logoHome} />
-              <Text style={labelCat}>{this.state.lang.other}</Text>
-              </TouchableOpacity>
-
             </View>
         </View>
         <TouchableOpacity
-        onPress={()=>this.setState({showCreate:!this.state.showCreate,showInfo:false,showShare:false})}
+        onPress={()=>{
+          this.requestLogin();
+          if(this.state.isLogin){
+            this.setState({showCreate:!this.state.showCreate,showInfo:false,showShare:false});
+          }
+        }}
         style={plusStyle}>
             <Image source={plusIC} style={[imgPlusStyle, this.state.showCreate===false ? show : hide]} />
         </TouchableOpacity>
-
-
 
         <Modal
         onRequestClose={() => null}
         transparent
         visible={this.state.showCreate}>
         <View style={popoverCreate}>
-
             <TouchableOpacity
             onPress={()=>{
               this.setState({showCreate:false});
@@ -275,6 +262,29 @@ export default class HomeTab extends Component {
         </TouchableOpacity>
         </View>
         </Modal>
+
+        <View style={flexRow}>
+          <View style={flexRow}>
+              <Image style={[imgShare,imgMargin]} source={locationDD} />
+              <Text style={colorTextPP}><Text style={colorWhite}>{this.state.listStatus.countContent}k</Text></Text>
+          </View>
+          <View style={flexRow}>
+              <Image style={[imgShare,imgMargin]} source={onlineDD} />
+              <Text style={colorTextPP}><Text style={colorWhite}>{this.state.listStatus.countOnline}</Text></Text>
+          </View>
+          <View style={flexRow}>
+              <Image style={[imgShare,imgMargin]} source={checkDD} />
+              <Text style={colorTextPP}><Text style={colorWhite}>{this.state.listStatus.newContent}k</Text></Text>
+          </View>
+          <View style={flexRow}>
+              <Image style={[imgShare,imgMargin]} source={likeDD} />
+              <Text style={colorTextPP}><Text style={colorWhite}>{this.state.listStatus.countLike}k</Text></Text>
+          </View>
+          <View style={flexRow}>
+              <Image style={[imgShare,imgMargin]} source={socialDD} />
+              <Text style={colorTextPP}><Text style={colorWhite}>{this.state.listStatus.countShare}k</Text></Text>
+          </View>
+          </View>
 
       </View>
     );

@@ -64,8 +64,7 @@ export default class ChooseCat extends Component {
               <TouchableOpacity onPress={()=>goBack()}>
               <Image source={closeIC} style={{width:20, height:20,marginTop:5}} />
               </TouchableOpacity>
-               <Text style={{color:'white',fontSize:18,paddingTop:5}}> Phân loại </Text>
-
+               <Text style={{color:'white',fontSize:18,paddingTop:5}}> {this.state.lang.classify} </Text>
               <View></View>
           </View>
       </View>
@@ -81,7 +80,7 @@ export default class ChooseCat extends Component {
            data={this.state.listCategory}
            renderItem={({item}) =>(
              <TouchableOpacity
-              onPress={()=>navigate('FormCreateScr',{idCat:item.id,nameCat:item.name,sub_cat:item.sub_category,serv_items:item.service_items,lang:this.state.selectLang})}
+              onPress={()=>navigate('FormCreateScr',{idCat:item.id,nameCat:item.name,sub_cat:item.sub_category,serv_items:item.service_items,lang:this.state.selectLang.valueLang})}
               style={flatItem}>
                  <Image style={imgFlatItemLoc} source={{uri:`${global.url_media}${item.image}`}} />
                  <Text>{item.name}</Text>

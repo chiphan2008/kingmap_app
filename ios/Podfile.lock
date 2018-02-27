@@ -45,6 +45,8 @@ PODS:
     - React/Core
     - React/fishhook
     - React/RCTBlob
+  - RNSVG (6.2.2):
+    - React
   - RSKImageCropper (2.0.0)
   - yoga (0.52.0.React)
 
@@ -64,6 +66,7 @@ DEPENDENCIES:
   - React/RCTText (from `../node_modules/react-native`)
   - React/RCTVibration (from `../node_modules/react-native`)
   - React/RCTWebSocket (from `../node_modules/react-native`)
+  - RNSVG (from `../node_modules/react-native-svg`)
   - RSKImageCropper
   - yoga (from `../node_modules/react-native/ReactCommon/yoga/yoga.podspec`)
 
@@ -72,6 +75,8 @@ EXTERNAL SOURCES:
     :path: ../node_modules/react-native
   react-native-maps:
     :path: ../node_modules/react-native-maps
+  RNSVG:
+    :path: ../node_modules/react-native-svg
   yoga:
     :path: ../node_modules/react-native/ReactCommon/yoga/yoga.podspec
 
@@ -80,9 +85,10 @@ SPEC CHECKSUMS:
   QBImagePickerController: d54cf93db6decf26baf6ed3472f336ef35cae022
   React: 61a6bdf17a9ff16875c230e6ff278d9de274e16c
   react-native-maps: d3b689927722398a12a4b3007fd9a0c60e1c48cd
+  RNSVG: aeeb222dd9cf2268385306108c20cf364872f5d2
   RSKImageCropper: d9a1acbc0600bf8decc8f0d21895872c99a9e4cf
   yoga: 646606bf554d54a16711f35596178522fbc00480
 
-PODFILE CHECKSUM: 3235a522ac88bc4bf87e8b39c7922a22478245b3
+PODFILE CHECKSUM: f49ea92d92342870aac118be3835bda1f709f37a
 
 COCOAPODS: 1.3.1

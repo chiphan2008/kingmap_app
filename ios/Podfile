@@ -23,6 +23,8 @@ target 'kingmap_app' do
   pod 'RSKImageCropper'
   pod 'QBImagePickerController'
 
+  pod 'RNSVG', :path => '../node_modules/react-native-svg'
+
 end
 
 post_install do |installer|

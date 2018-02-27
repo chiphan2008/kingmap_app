@@ -9,6 +9,39 @@ module.exports = {
   bgImg : {
     width,height,position: 'absolute',justifyContent: 'center',alignItems: 'center',alignSelf: 'stretch',resizeMode: 'stretch',
   },
+  clockTime : {
+    width,height,backgroundColor: '#F1F2F5',justifyContent: 'center',alignSelf: 'center'
+  },
+  bedtimeText: {
+    color: '#2E3B51',marginLeft: 3,fontSize: 16,
+  },
+  wakeText: {
+    color: '#2E3B51',marginLeft: 3,fontSize: 16,
+  },
+  timeContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  time: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  timeHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  timeValue: {
+    color: '#2E3B51',
+    fontSize: 35,
+    fontWeight: "300",
+  },
+  sleepTimeContainer: {
+    flex: 1,justifyContent: 'center',
+    position: 'absolute',
+    top: 0,bottom: 0,left: 0,right: 0
+  },
+
   headStyle : {
       backgroundColor: '#D0021B',paddingTop: Platform.OS==='ios' ? 27 : 10, alignItems: 'center',height: 110,
       position:'relative',zIndex:5,
@@ -125,23 +158,28 @@ module.exports = {
   },
   square:{
     width:300,
-    height:350,
+    height:360,
     alignItems:'center',
     justifyContent:'center',
   },
   wrapCircle:{
-    position:'absolute',
-    flex:1,
-    alignItems:'center',
-
+    position:'absolute',flex:1,alignItems:'center',
   },
-  circle1:{top:-5,left :120,},
-  circle2:{top:44,left:222,},
-  circle3:{top:154,left :247,},
-  circle4:{top:242,left :176,},
-  circle5:{top:242,left :64,},
-  circle6:{top:154,left :-7,},
-  circle7:{top:44,left :22,},
+  flexRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor:'#2e3c52',
+    alignItems:'center',
+    height:28,
+    paddingRight:4,
+  },
+  // circle1:{top:-5,left :120,},
+  // circle2:{top:44,left:222,},
+  // circle3:{top:154,left :247,},
+  // circle4:{top:242,left :176,},
+  // circle5:{top:242,left :64,},
+  // circle6:{top:154,left :-7,},
+  // circle7:{top:44,left :22,},
   // circle1:{top:0,left :120,},
   // circle2:{top:60,left :224,},
   // circle3:{top:180,left :224,},
@@ -158,6 +196,9 @@ module.exports = {
   },
   labelCat :{
     backgroundColor:'transparent',textAlign:'center',position:'relative'
+  },
+  labelNum :{
+    backgroundColor:'transparent',zIndex:9,position:'absolute',color:'#d0021b',top:0,right:0
   },
   wrapIcRight:{
     width:55,justifyContent: 'space-between',flexDirection: 'row',marginTop: 7,
@@ -186,7 +227,7 @@ module.exports = {
   OptionItem : {
     paddingTop: 7,paddingBottom: 0,marginTop: 0,marginBottom: 0,
   },
-  plusStyle :{bottom:70,position:'absolute',right:10,
+  plusStyle :{bottom:40,position:'absolute',right:10,
   },
   imgPlusStyle:{
     shadowOffset:{  width: 1,  height: 1,  },
@@ -268,6 +309,7 @@ module.exports = {
   titleTabActive:{color:'#000',fontSize:18},
   titleActive:{color:'#fff',fontSize:18},
   titleErr:{color:'#D0021B',fontSize:18},
+  colorErr:{color:'#D0021B'},
   wrapListImage:{
     flexDirection: 'row',
       flexWrap: 'wrap',
@@ -293,7 +335,7 @@ module.exports = {
   listAdd:{padding:15,flexDirection:'row',justifyContent:'space-between',backgroundColor:'white',marginBottom:1},
   imgUpSubCat :{alignSelf:'center'},
   imgUpShare :{right:20},
-  imgMargin: {margin:10},
+  imgMargin: {margin:5},
   listCatOver:{paddingRight:20,paddingBottom:20,paddingLeft:20,},
   listCatAll:{padding:10,paddingRight:15,paddingLeft:15},
   listCatBG:{backgroundColor:'#F0EEF0'},
@@ -313,5 +355,5 @@ module.exports = {
   txtAddrOver:{color:'#6587A8',fontSize:14,overflow:'hidden',},
   show : { display: 'flex'},
   hide : { display: 'none'},
-
+  hidden:{ position:'absolute',left:-width}
 }

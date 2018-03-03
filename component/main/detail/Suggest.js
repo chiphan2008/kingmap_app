@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
   txtAddrOver:{color:'#6587A8',fontSize:14,overflow:'hidden',marginTop:5},
   imgSpace:{
     width:Platform.OS==='ios' ? 160 : 200,
-    height:Platform.OS==='ios' ? 160 : 200,
+    height:Platform.OS==='ios' ? 100 : 120,
     marginRight:20
   },
 });

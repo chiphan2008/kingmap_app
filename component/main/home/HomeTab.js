@@ -9,6 +9,7 @@ const {height, width} = Dimensions.get('window');
 import getApi from '../../api/getApi';
 import getLanguage from '../../api/getLanguage';
 import accessLocation from '../../api/accessLocation';
+import getLocationByIP from '../../api/getLocationByIP';
 
 import global from '../../global';
 import loginServer from '../../api/loginServer';
@@ -58,8 +59,11 @@ export default class HomeTab extends Component {
       code_user:null,
       isLogin:false,
       user_id:0,
+      curLoc:{},
+      valSearch:'',
     };
     checkLogin().then(e=>{
+      console.log(e);
       //loginServer(this.state.ema,this.state.pwd)
       if(e.id===undefined){
         this.setState({isLogin:false})
@@ -68,8 +72,44 @@ export default class HomeTab extends Component {
         this.setState({user_id:e.id,code_user:e.phone,isLogin:true});
       }
     })
+    this.getLoc();
     accessLocation();
     arrLang = [{name:'VIE',v:'vn'},{name:'ENG',v:'en'}];
+  }
+
+  getLoc(){
+    navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const latlng = `${position.coords.latitude}${','}${position.coords.longitude}`;
+            this.setState({
+              curLoc : {
+                latitude:position.coords.latitude,
+                longitude: position.coords.longitude,
+                lat:position.coords.latitude,
+                lng: position.coords.longitude,
+                latitudeDelta:  0.008757,
+                longitudeDelta: 0.010066,
+                latlng:latlng,
+              }
+            });
+           },
+           (error) => {
+            getLocationByIP().then((e) => {
+                this.setState({
+                  curLoc : {
+                    latitude:e.latitude,
+                    longitude: e.longitude,
+                    lat:e.latitude,
+                    lng: e.longitude,
+                    latitudeDelta:  0.008757,
+                    longitudeDelta: 0.010066,
+                    latlng:`${e.latitude}${','}${e.longitude}`,
+                  }
+                });
+            });
+          },
+          {enableHighAccuracy: true, timeout: 20000, maximumAge: 10000}
+    );
   }
 
   requestLogin(){
@@ -133,7 +173,7 @@ export default class HomeTab extends Component {
       return result;
   }
   render() {
-    //console.log('isLogin',this.state.isLogin);
+    //console.log('curLoc',this.state.curLoc);
     const {height, width} = Dimensions.get('window');
     const {navigate} = this.props.navigation;
     //console.log("this.props.Hometab=",util.inspect(this.state.listCategory,false,null));
@@ -173,8 +213,20 @@ export default class HomeTab extends Component {
             </Select>
 
           </View>
-          <TextInput underlineColorAndroid='transparent' placeholder={this.state.lang.search} style={inputSearch} />
-          <Image style={{width:16,height:16,top:Platform.OS==='ios' ? -26 : -32,left:(width-80)/2}} source={searchIC} />
+          <TextInput underlineColorAndroid='transparent'
+          placeholder={this.state.lang.search} style={inputSearch}
+          onSubmitEditing={() => { if (this.state.valSearch!==''){navigate('SearchScr',{keyword:this.state.valSearch,lat:this.state.curLoc.lat,lng:this.state.curLoc.lng,lang:this.state.lang})} }}
+          onChangeText={(valSearch) => this.setState({valSearch})}
+          value={this.state.valSearch} />
+
+          <TouchableOpacity style={{top:Platform.OS==='ios' ? 75 : 65,left:(width-50),position:'absolute'}}
+          onPress={()=>{
+            if (this.state.valSearch!=='') {
+              navigate('SearchScr',{keyword:this.state.valSearch,lat:this.state.curLoc.lat,lng:this.state.curLoc.lng,lang:this.state.lang});
+            }
+          }}>
+            <Image style={{width:16,height:16,}} source={searchIC} />
+          </TouchableOpacity>
         </View>
 
         <View style={wrapContent}>
@@ -204,7 +256,7 @@ export default class HomeTab extends Component {
                           i=1;
                           return (<TouchableOpacity
                               key={e.id}
-                              onPress={()=>navigate('OtherCatScr')}
+                              onPress={()=>navigate('MakeMoneyScr',{code_user:this.state.code_user,lang:this.state.lang})}
                               style={[wrapCircle,logoCenter]}>
                               <Image style={imgContent} source={logoHome} />
                               <Text style={labelCat}>{e.name}</Text>

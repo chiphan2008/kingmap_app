@@ -1,7 +1,7 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import {Platform, View, Text, StyleSheet, Dimensions, Image,
+import {Keyboard,Platform, View, Text, StyleSheet, Dimensions, Image,
   TextInput, TouchableOpacity,Modal,
   FlatList,
 } from 'react-native';
@@ -9,7 +9,6 @@ const {height, width} = Dimensions.get('window');
 
 import styles from '../../styles';
 import getApi from '../../api/getApi';
-import getLanguage from '../../api/getLanguage';
 import getLocationByIP from '../../api/getLocationByIP';
 import global from '../../global';
 import lang_vn from '../../lang/vn/language';
@@ -23,13 +22,16 @@ import searchIC from '../../../src/icon/ic-gray/ic-search.png';
 import likeIC from '../../../src/icon/ic-like.png';
 import favoriteIC from '../../../src/icon/ic-favorite.png';
 import checkIC from '../../../src/icon/ic-green/ic-check.png';
+import arrowLeft from '../../../src/icon/ic-white/arrow-left.png';
+import logoTop from '../../../src/icon/ic-white/Logo-ngang.png';
 
 
 export default class ListLocation extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      lang: {},
+      keyword:'',
+      lang: this.props.navigation.state.params.lang==='vn' ? lang_vn : lang_en,
       labelLoc : "Địa điểm",
       labelCat : "Danh mục",
       labelSer : "Dịch vụ",
@@ -68,13 +70,10 @@ export default class ListLocation extends Component {
         avatar:'',
       },],
     }
-    getLanguage().then((e)=>{
-      e.valueLang==='en' ? this.setState({lang:lang_en}) : this.setState({lang:lang_vn});
-    });
+
   }
 
   getCategory(idcat,loc){
-    //console.log('idcat,loc',idcat,loc);
     const url = global.url+'content-by-category?category='+idcat+'&location='+loc;
     //console.log('url',url);
     getApi(url)
@@ -88,18 +87,22 @@ export default class ListLocation extends Component {
   getContentByDist(id_district,id_sub,id_serv){
     const id_cat = this.props.navigation.state.params.idCat;
     var url = `${global.url}${'search-content?category='}${id_cat}`;
+    const { keyword,curLocation } = this.state;
+    if(keyword!==''){
+      url += `${'&keyword='}${keyword}`;
+    }
     if(id_district===null){
-      url += `${'&location='}${this.state.curLocation.latlng}`;
+      url += `${'&location='}${curLocation.latlng}`;
     }else {
       url += `${'&district='}${id_district}`;
     }
 
-    if(id_sub!==null)      url += `${'&subcategory='}${id_sub}`;
+    if(id_sub!==null) url += `${'&subcategory='}${id_sub}`;
     if(id_serv!==null){
       this.setState({id_serv: id_serv});
       url += `${'&service='}${id_serv}`;
     }
-    //console.log('-----url-----',url);
+    // console.log('-----url-----',url);
     getApi(url)
     .then(arrData => {
         this.setState({ listData: arrData.data });
@@ -118,6 +121,7 @@ export default class ListLocation extends Component {
   componentDidMount() {
     const id = this.props.navigation.state.params.idCat;
     navigator.geolocation.getCurrentPosition((position) => {
+      //console.log('position');
             const latlng = `${position.coords.latitude}${','}${position.coords.longitude}`;
             this.getCategory(id,latlng);
             this.setState({
@@ -127,35 +131,66 @@ export default class ListLocation extends Component {
             });
            },
            (error) => {
-             //console.log('error',id);
+             console.log('error',id);
              getLocationByIP().then(e => this.getCategory(id,`${e.latitude}${','}${e.longitude}`));
              //console.log('ip',ip.latitude);
           },
-          {enableHighAccuracy: true, timeout: 3000, maximumAge: 3000}
+          {enableHighAccuracy: true, timeout: 20000, maximumAge: 10000}
     );
   }
 
   render() {
-    const {navigate,setParams} = this.props.navigation;
-    const {idCat,sub_cat,serv_items,lang} = this.props.navigation.state.params;
-    //console.log("this.props.ListLocation=",util.inspect(this.props.navigation,false,null));
+    console.log('ListLocation');
+    const { keyword,lang,idDist,id_sub,id_serv } = this.state;
+    const { goBack,navigate } = this.props.navigation;
+    const {idCat,sub_cat,serv_items} = this.props.navigation.state.params;
+    //console.log('lang',lang);
     const {
       container,
-      headLocationStyle, filterFrame,wrapFilter,
+      headStyle, filterFrame,wrapFilter,headContent,imgLogoTop,
       inputSearch,show,hide,colorTextPP,colorNumPP,
       selectBoxLoc,optionListLoc,OptionItemLoc,
       wrapListLoc,flatItemLoc,imgFlatItem,wrapFlatRight,
       txtTitleOverCat,txtAddrOverCat,flatlistItemCat,wrapInfoOver,
-      imgUp,imgUpLoc,imgUpSubCat,imgUpInfo,popoverLoc,paddingLoc,overLayout,imgInfo,overLayoutLoc,shadown,overLayoutSer,listCatOver,listOverService,colorText
+      imgUpCreate,imgUpLoc,imgUpSubCat,imgUpInfo,popoverLoc,padCreate,overLayout,imgInfo,overLayoutLoc,shadown,overLayoutSer,listCatOver,listOverService,colorText
     } = styles;
     //console.log('lang',this.props.lang);
     return (
       <View style={container}>
 
-        <View style={headLocationStyle}>
-          <TextInput underlineColorAndroid='transparent' placeholder={this.state.lang.search} style={inputSearch} />
-          <Image style={{width:16,height:16,top:Platform.OS==='ios' ? -26 : -32,left:(width-80)/2}} source={searchIC} />
-        </View>
+      <View style={headStyle}>
+          <View style={headContent}>
+          <TouchableOpacity
+          onPress={()=>goBack()}
+          >
+          <Image source={arrowLeft} style={{width:16, height:16,marginTop:5}} />
+          </TouchableOpacity>
+              <Image source={logoTop} style={imgLogoTop} />
+              <View></View>
+          </View>
+          <View style={{marginTop:Platform.OS==='ios' ? 7 : 10}}></View>
+        <TextInput
+        underlineColorAndroid='transparent' style={inputSearch}
+        placeholder={lang.search}
+        onChangeText={(keyword)=>this.setState({keyword})}
+        onSubmitEditing={(event)=>{
+          if(keyword!==''){
+            this.getContentByDist(idDist,id_sub,id_serv);
+          }
+        }}
+        value={keyword} />
+
+        <TouchableOpacity style={{top:Platform.OS==='ios' ? 75 : 65,left:(width-50),position:'absolute'}}
+        onPress={()=>{
+          if (keyword!=='') {
+            Keyboard.dismiss();
+            this.getContentByDist(idDist,id_sub,id_serv);
+          }
+        }}>
+          <Image style={{width:16,height:16,}} source={searchIC} />
+        </TouchableOpacity>
+
+      </View>
 
         <View style={wrapFilter}>
 
@@ -163,14 +198,14 @@ export default class ListLocation extends Component {
                 <TouchableOpacity
                   onPress={()=>this.setState({ showLoc:!this.state.showLoc,listSubCat:{showList:false},listSerItem:{showList:false}, })}
                   style={selectBoxLoc}>
-                    <Text style={{color:'#303B50'}}>{this.state.labelLoc}</Text>
+                    <Text  numberOfLines={1} style={{color:'#303B50'}}>{this.state.labelLoc}</Text>
                     <Image source={sortDownIC} style={{width:12,height:13,top:13,right:5,position:'absolute'}} />
                 </TouchableOpacity>
 
                 <TouchableOpacity
                   onPress={()=>this.setState({ listSubCat:{showList:!this.state.listSubCat.showList},listSerItem:{showList:false}, showLoc:false})}
                   style = {selectBoxLoc}>
-                    <Text style={{color:'#303B50'}}>{this.state.labelCat}</Text>
+                    <Text  numberOfLines={1} style={{color:'#303B50'}}>{this.state.labelCat}</Text>
                     <Image source={sortDownIC} style={{width:12,height:13,top:13,right:5,position:'absolute'}} />
                 </TouchableOpacity>
 
@@ -185,7 +220,7 @@ export default class ListLocation extends Component {
 
         <View style={wrapListLoc}>
               <FlatList
-                     style={{marginBottom:100}}
+                     style={{marginBottom:190}}
                      ListEmptyComponent={<Text>Loading ...</Text>}
                      data={this.state.listData}
                      keyExtractor={item => item.id}
@@ -230,8 +265,8 @@ export default class ListLocation extends Component {
         <Modal onRequestClose={() => null} transparent visible={this.state.showLoc}>
         <TouchableOpacity
         onPress={()=>this.setState({showLoc:!this.state.showLoc})}
-        style={[popoverLoc,paddingLoc]}>
-          <Image style={[imgUp,imgUpLoc]} source={upDD} />
+        style={[popoverLoc,padCreate]}>
+          <Image style={[imgUpCreate,imgUpLoc]} source={upDD} />
           <View style={[overLayout,shadown]}>
               <SelectLocation saveLocation={this.saveLocation.bind(this)} />
           </View>
@@ -241,8 +276,8 @@ export default class ListLocation extends Component {
         <Modal onRequestClose={() => null} transparent visible={this.state.listSubCat.showList}>
         <TouchableOpacity
         onPress={()=>this.setState({listSubCat:{showList:!this.state.listSubCat.showList}})}
-        style={[popoverLoc,paddingLoc]}>
-        <Image style={[imgUp,imgUpSubCat]} source={upDD} />
+        style={[popoverLoc,padCreate]}>
+        <Image style={[imgUpCreate,imgUpSubCat]} source={upDD} />
             <View style={[overLayoutLoc,shadown]}>
 
             <FlatList
@@ -275,8 +310,8 @@ export default class ListLocation extends Component {
         <Modal onRequestClose={() => null} transparent visible={this.state.listSerItem.showList}>
         <TouchableOpacity
         onPress={()=>this.setState({listSerItem:{showList:!this.state.listSerItem.showList}})}
-        style={[popoverLoc,paddingLoc]}>
-        <Image style={[imgUp,imgUpInfo]} source={upDD} />
+        style={[popoverLoc,padCreate]}>
+        <Image style={[imgUpCreate,imgUpInfo]} source={upDD} />
             <View style={[overLayout,shadown]}>
 
             <FlatList

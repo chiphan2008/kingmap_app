@@ -47,9 +47,6 @@ export default class Header extends Component {
               <Image source={logoTop} style={imgLogoTop} />
               <View></View>
           </View>
-          <View style={{marginTop:Platform.OS==='ios' ? 7 : 10}}></View>
-        <TextInput underlineColorAndroid='transparent' placeholder={this.props.lang.search} style={inputSearch} />
-        <Image style={{width:16,height:16,top:Platform.OS==='ios' ? -26 : -32,left:(width-80)/2}} source={searchIC} />
       </View>
 
 
@@ -81,8 +78,8 @@ export default class Header extends Component {
 }
 const styles = StyleSheet.create({
   headStyle : {
-      backgroundColor: '#D0021B',paddingTop: Platform.OS==='ios' ? 25 : 10, alignItems: 'center',height: 110,
-      position:'relative',zIndex:5,
+      backgroundColor: '#D0021B',paddingTop: Platform.OS==='ios' ? 25 : 10, alignItems: 'center',height: 65,
+      position:'relative',zIndex:5,justifyContent:'center',
   },
   headContent : {
       width: width - 40,justifyContent: 'space-between',flexDirection: 'row',

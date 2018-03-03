@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image,
-  TextInput, TouchableOpacity,ScrollView,Modal,FlatList,
+  TextInput, TouchableOpacity,ScrollView,Modal,FlatList,AsyncStorage,
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 const {height, width} = Dimensions.get('window');
@@ -406,7 +406,7 @@ export default class FormCreate extends Component {
 
             <Modal onRequestClose={() => null} transparent visible={this.state.showDist}>
             <TouchableOpacity
-            onPress={()=>this.setState({ showDist:false }) }
+            onPress={()=>{this.setState({ showDist:false });}}
             style={[popoverLoc,padCreate]}>
             <Image style={[imgUpCreate,imgUpInfo]} source={upDD} />
                 <View style={[overLayout,shadown]}>
@@ -417,7 +417,8 @@ export default class FormCreate extends Component {
                    renderItem={({item}) => (
                   <View  style={listOverService}>
                   <TouchableOpacity
-                      onPress={()=>this.setState({ idDist:item.id,nameDist:item.name,showDist:false,errArea:false })}
+                      onPress={()=>{ this.setState({ idDist:item.id,nameDist:item.name,showDist:false,errArea:false });
+                      }}
                       style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',}} >
                        <Text style={colorlbl}>{item.name}</Text>
                    </TouchableOpacity>
@@ -442,8 +443,7 @@ export default class FormCreate extends Component {
           <TextInput underlineColorAndroid='transparent'
           returnKeyType = {"next"}
           autoFocus = {true}
-          returnKeyType={ "next" }
-          onSubmitEditing={(event) => {  this.refs.FromPrice.focus();  }}
+          onSubmitEditing={(event) => {this.refs.FromPrice.focus();}}
           placeholder={this.state.lang.name_location} style={wrapInputCreImg}
           onChangeText={(txtName) => this.setState({txtName})}
           value={this.state.txtName}

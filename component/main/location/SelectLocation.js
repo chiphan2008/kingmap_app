@@ -59,7 +59,13 @@ export default class SelectLocation extends Component {
   componentWillMount(){
     checkLocation().then((e)=>{
       this.getDistrict(e.idCity);
-      this.setState({showCheckCountry:e.idCountry, showCheckCity: e.idCity, showCheckDistrict: e.idDist});
+      this.setState({
+        showCheckCountry:e.idCountry,
+        showCheckCity: e.idCity,
+        showCheckDistrict: e.idDist,
+        nameCountry:e.nameCountry,
+        nameCity:e.nameCity,
+      });
     });
   }
 

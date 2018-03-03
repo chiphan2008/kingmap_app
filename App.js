@@ -20,10 +20,13 @@ import FadeView from './component/FadeView';
 import DetailScreen from './component/main/DetailScreen';
 import ListImageContent from './component/main/ListImageContent';
 import CategoryScreen from './component/main/home/CategoryScreen';
+import SearchScreen from './component/main/home/SearchScreen';
 import ListCategory from './component/main/home/ListCategory';
 
 import HomeTab from './component/main/home/HomeTab';
 import MakeMoney from './component/make_money/MakeMoney';
+import Transfer from './component/make_money/Transfer';
+import RequestTransfer from './component/make_money/RequestTransfer';
 import LocationTab from './component/main/home/LocationTab';
 import ListLocation from './component/main/home/ListLocation';
 import DistributeTab from './component/main/home/DistributeTab';
@@ -53,9 +56,9 @@ const styles = StyleSheet.create({
 
 const HomeScreen = StackNavigator({
   HomeTabs: { screen: HomeTab },
-  MakeMoneyScr: { screen: MakeMoney },
   OtherCatScr: { screen: LocationTab },
   ListLocScr: { screen: ListLocation },
+  SearchScr: { screen: SearchScreen },
   //CatScr: { screen: CategoryScreen },
   //ListCatScr: { screen: ListCategory },
   //OtherCatScr: { screen: DistributeTab },
@@ -126,7 +129,7 @@ const RootTabs = TabNavigator({
     showLabel:true,
     showIcon:true,
     labelStyle: {
-      fontSize: 11,
+      fontSize: 10.5,
     },
     activeTintColor: '#fff',
     inactiveTintColor: '#B8BBC0',
@@ -169,6 +172,15 @@ export default class App extends Component {
       },
       MainScr: {
         screen: RootTabs,
+      },
+      MakeMoneyScr: {
+        screen: MakeMoney
+      },
+      TransferScr: {
+        screen: Transfer
+      },
+      RequestTransferScr: {
+        screen: RequestTransfer
       },
       DetailScr: {
         screen: DetailScreen,

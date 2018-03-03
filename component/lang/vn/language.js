@@ -1,5 +1,8 @@
 
 module.exports = {
+  my_wallet:'Ví của bạn',
+  transfer:'Chuyển đi',
+  request_transfer:'Yêu cầu rút tiền',
   classify: 'Phân loại',
   add_classify: 'Thêm phân loại',
   classify_location: 'Phân loại địa điểm',

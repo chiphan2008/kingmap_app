@@ -42,7 +42,7 @@ export default class Hometab extends Component {
   render() {
     const {navigate,goBack} = this.props.navigation;
     const {name_module, lang} = this.props.navigation.state.params;
-    //console.log('lang',lang);
+    console.log('DistributeTab');
     //console.log("this.props.DistributeTab=",util.inspect(this.props.navigation,false,null));
     const {
       container,

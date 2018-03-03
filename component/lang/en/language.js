@@ -1,5 +1,8 @@
 
 module.exports = {
+  my_wallet:'My wallet',
+  transfer:'Transfer',
+  request_transfer:'Request transfer',
   classify: 'Classify',
   add_classify: 'Add classify',
   classify_location: 'Classify location',

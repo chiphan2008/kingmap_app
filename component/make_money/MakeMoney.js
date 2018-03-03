@@ -13,6 +13,8 @@ import getApi from '../api/getApi';
 import global from '../global';
 
 import searchIC from '../../src/icon/ic-gray/ic-search.png';
+import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
+import dollarIC from '../../src/icon/ic-dollar.png';
 
 
 export default class MakeMoney extends Component {
@@ -30,7 +32,7 @@ export default class MakeMoney extends Component {
   }
   onSelectLoc(value, label) {
     const { navigate } = this.props.navigation;
-    const { lang } = this.props.navigation.state.params;
+    const { lang,code_user } = this.props.navigation.state.params;
     navigate('DetailScr',{
       idContent:value,lat:0,lng:0,curLoc:{latitude:10.8142,longitude:106.6438,},lang
     });
@@ -48,40 +50,64 @@ export default class MakeMoney extends Component {
     this.callData(code_user);
   }
   render() {
-    const { lang } = this.props.navigation.state.params;
+    const { lang,code_user } = this.props.navigation.state.params;
+    const { navigation } = this.props;
     const {
-      container,contentWrap,
-      headLocationStyle, inputSearch,wrapWhite,marTop,
+      container,contentWrap,headCatStyle,headContent,titleCreate,
+      headLocationStyle, inputSearch,wrapWhite,marTop,titleKcoin,
       selectBox,selectBoxCity,optionListStyle,optionListStyleCity,
+      imgInfo,colorTitle,
     } = styles;
 
     return (
       <View style={container}>
 
-        <View style={headLocationStyle}>
-          <TextInput underlineColorAndroid='transparent' placeholder={lang.search} style={inputSearch} />
-          <Image style={{width:16,height:16,top:Platform.OS==='ios' ? -26 : -32,left:(width-80)/2}} source={searchIC} />
-        </View>
+      <View style={headCatStyle}>
+          <View style={headContent}>
+              <TouchableOpacity onPress={()=>navigation.goBack()}>
+              <Image source={arrowLeft} style={{width:16, height:16,marginTop:5}} />
+              </TouchableOpacity>
+                <Text style={titleCreate}> {`${lang.my_wallet}`.toUpperCase()} </Text>
+              <View></View>
+          </View>
+      </View>
 
         <View style={contentWrap}>
-        <Select
-              onSelect = {this.onSelectLoc.bind(this)}
-              defaultText={lang.choose_loc}
-              style = {[selectBox,selectBoxCity]}
-              textStyle = {{color:'#5b89ab'}}
-              optionListStyle={[optionListStyle,optionListStyleCity]}
-              transparent
-              indicatorColor="#5b89ab"
-              indicator="down"
-              indicatorSize={7}
-            >
-            {this.state.listLoc.your_location.map((e)=>(
-              <Option numberOfLines={1} value={e.id} key={e.id}>{e.name}</Option>
-            ))}
+        <View style={{backgroundColor:'#2e3c52',width,height:110,justifyContent:'center',alignItems:'center'}}>
+        <Text style={{color:'white'}}> {`${'Số Kcoin bạn đang có trong ví'}`} </Text>
+        <Text style={titleKcoin}> {`${'200.000'}`.toUpperCase()} </Text>
+        </View>
 
-        </Select>
+        <View>
+          <TouchableOpacity
+          onPress={()=> navigation.navigate('TransferScr',{lang,title:lang.transfer,code_user})}
+          style={wrapWhite}>
+          <Image source={dollarIC} style={imgInfo} />
+          <Text style={colorTitle}>{lang.transfer}</Text>
+          </TouchableOpacity>
 
-        <View style={[wrapWhite,marTop]}>
+          <TouchableOpacity style={wrapWhite}>
+          <Image source={dollarIC} style={imgInfo} />
+          <Text style={colorTitle}>Chuyển đến</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={wrapWhite}>
+          <Image source={dollarIC} style={imgInfo} />
+          <Text style={colorTitle}>Nạp tiền vào ví</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+          onPress={()=> navigation.navigate('RequestTransferScr',{lang,title:lang.request_transfer})}
+          style={wrapWhite}>
+          <Image source={dollarIC} style={imgInfo} />
+          <Text style={colorTitle}>Yêu cầu rút tiền</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={wrapWhite}>
+          <Image source={dollarIC} style={imgInfo} />
+          <Text style={colorTitle}>Lịch sử giao dịch</Text>
+          </TouchableOpacity>
+          {/*
             <View style={{padding:20}}>
               <Text>Địa điểm mới: {this.state.listLoc.new_location}</Text>
               <Text>Bạn đang có: {this.state.listLoc.make_money} kcoin</Text>
@@ -92,7 +118,24 @@ export default class MakeMoney extends Component {
               <Text>- Phí thuê website:  {this.state.listLoc.pay_money.thue_web}</Text>
               <Text>- Phí mua phần mềm:  {this.state.listLoc.pay_money.phan_mem}</Text>
             </View>
+            <Select
+                  onSelect = {this.onSelectLoc.bind(this)}
+                  defaultText={lang.choose_loc}
+                  style = {[selectBox,selectBoxCity]}
+                  textStyle = {{color:'#5b89ab'}}
+                  optionListStyle={[optionListStyle,optionListStyleCity]}
+                  transparent
+                  indicatorColor="#5b89ab"
+                  indicator="down"
+                  indicatorSize={7}
+                >
+                {this.state.listLoc.your_location.map((e)=>(
+                  <Option numberOfLines={1} value={e.id} key={e.id}>{e.name}</Option>
+                ))}
+
+            </Select>*/}
         </View>
+
         </View>
 
       </View>
@@ -114,9 +157,21 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   marTop:{marginTop:20},
-  wrapWhite:{backgroundColor:'#fff',flex:1,width},
-  contentWrap : { flex : 1,alignItems: 'center',justifyContent: 'flex-start',marginTop:20},
-
+  wrapWhite:{
+    backgroundColor:'#fff',
+    flexDirection:'row',
+    alignItems:'center',
+    padding:15,
+    marginBottom:1,
+    width
+  },
+  colorTitle:{color:'#2F353F',fontSize:16},
+  imgInfo:{width:32,height:32,marginRight:10},
+  contentWrap : { flex : 1,alignItems: 'center',justifyContent: 'flex-start'},
+  headCatStyle : {
+      backgroundColor: '#D0021B',paddingTop: Platform.OS==='ios' ? 30 : 20, alignItems: 'center',height: 65,
+      position:'relative',zIndex:5,
+  },
   selectBox : {
     borderRadius : 5,
     borderWidth : 1,
@@ -127,7 +182,11 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
     //alignSelf: 'stretch',
   },
-
+  headContent : {
+      width: width - 40,justifyContent: 'space-between',flexDirection: 'row',
+  },
+  titleCreate:{color:'white',fontSize:18,paddingTop:5},
+  titleKcoin:{color:'white',fontSize:24,fontWeight:'bold',paddingTop:5},
   selectBoxCity : {
     marginBottom: 0,
   },

@@ -6,7 +6,6 @@ async function accessLocation() {
   try {
 
     RNSettings.getSetting(RNSettings.LOCATION_SETTING).then(result => {
-
       if (result !== RNSettings.ENABLED) {
         Alert.alert(
           'KingMap App Location Permission',

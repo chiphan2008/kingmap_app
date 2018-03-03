@@ -62,7 +62,7 @@ module.exports = {
   },
   selectBoxLoc:{
     backgroundColor:'#fff',
-    width:Platform.OS ==='ios' ? 100 : 110,
+    width:(width-60)/3,
     borderRadius:4,
     borderColor:'#CED0D5',
     borderWidth:1,
@@ -243,14 +243,14 @@ module.exports = {
     backgroundColor:'rgba(0,0,0,0.7)',
     zIndex:5,
   },
-  paddingLoc:{ paddingTop: 130},
+
   padCreate:{ paddingTop: 165},
   popoverLoc : {
     alignItems:'center',
     position:'absolute',
     width,height,
     backgroundColor:'rgba(0,0,0,0.7)',
-    zIndex:5,
+    zIndex:8,
   },
   popoverShare : {
     paddingTop: Platform.OS ==='ios' ? 55 :40,
@@ -328,7 +328,7 @@ module.exports = {
   imgCamera:{width:30,height:30,borderRadius:15,backgroundColor:'#F1F1F5',alignItems:'center',justifyContent:'center'},
   colorlbl :{color:'#323640',fontSize:16},
   colorNumPP :{fontWeight: 'bold',color:'#2F353F'},
-  imgUp:{width: 14,height: 7,top:131,position:'absolute'},
+  // imgUp:{width: 14,height: 7,top:166,position:'absolute'},
   imgUpCreate:{width: 14,height: 7,top:166,position:'absolute'},
   imgUpInfo :{right:58},
   imgUpLoc :{left:58},
@@ -355,5 +355,5 @@ module.exports = {
   txtAddrOver:{color:'#6587A8',fontSize:14,overflow:'hidden',},
   show : { display: 'flex'},
   hide : { display: 'none'},
-  hidden:{ position:'absolute',left:-width}
+  hidden:{ position:'absolute',right:-width}
 }

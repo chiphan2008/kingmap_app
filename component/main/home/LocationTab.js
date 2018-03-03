@@ -1,7 +1,7 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import {Platform, View, Text, StyleSheet, Dimensions, Image,
+import {Keyboard,Platform, View, Text, StyleSheet, Dimensions, Image,
   TextInput, TouchableOpacity,FlatList,
 } from 'react-native';
 const {height, width} = Dimensions.get('window');
@@ -27,6 +27,7 @@ export default class Hometab extends Component {
         labelLang : '',
       },
     }
+    Keyboard.dismiss();
   }
 
   getCategory(lang){
@@ -48,6 +49,7 @@ export default class Hometab extends Component {
   }
 
   render() {
+    console.log('LocationTab');
     const {navigate, goBack} = this.props.navigation;
     const {
       container,
@@ -81,7 +83,7 @@ export default class Hometab extends Component {
            data={this.state.listCategory}
            renderItem={({item}) =>(
              <TouchableOpacity
-              onPress={()=>navigate('ListLocScr',{idCat:item.id,sub_cat:item.sub_category,serv_items:item.service_items,lang:this.state.selectLang})}
+              onPress={()=>navigate('ListLocScr',{idCat:item.id,sub_cat:item.sub_category,serv_items:item.service_items,lang:this.state.selectLang.valueLang})}
               style={flatItem}>
                  <Image style={imgFlatItemLoc} source={{uri:`${global.url_media}${item.image}`}} />
                  <Text>{item.name}</Text>

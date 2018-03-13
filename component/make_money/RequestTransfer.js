@@ -23,12 +23,6 @@ export default class RequestTransfer extends Component {
     this.state = {
       showCode:false,
       choose_loc:global.choose_loc,
-      listLoc:{
-        your_location:[],
-        new_location:0,
-        pay_money:{},
-        make_money:0
-      },
     }
   }
 

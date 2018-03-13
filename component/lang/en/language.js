@@ -1,7 +1,15 @@
 
 module.exports = {
+  home:'Home',
+  personal:'Personal',
+  notify:'Notification',
+  other:'Other',
+  request_login:'Please login to perform this function',
+  _login:'Login',
   my_wallet:'My wallet',
   transfer:'Transfer',
+  history:'History',
+  receive:'Received',
   request_transfer:'Request transfer',
   classify: 'Classify',
   add_classify: 'Add classify',
@@ -19,7 +27,6 @@ module.exports = {
   district:'District',
   done: 'Done',
   all:'All',
-  other:'Other',
   location:'Location',
   online:'Online',
   new_location:'New location',
@@ -49,5 +56,5 @@ module.exports = {
   enter_price_from:'Price from (*)',
   enter_price_to:'Price to (*)',
   enter_avatar:'Choose avatar (*)',
-  lang:'en'
+  lang:'en',
 };

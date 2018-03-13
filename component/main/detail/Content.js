@@ -72,18 +72,13 @@ export default class Content extends Component {
         </View>
 
         <View style={rowFlex}>
-          <Image style={[imgContentIC,marRight]} source={phoneIC} />
-          <Text style={colorContent}>{listContent.phone}</Text>
-        </View>
-
-        <View style={rowFlex}>
           <Image style={[imgContentIC,marRight]} source={timeIC} />
-          <Text style={colorContent}>{`${listContent.open_from}${' - '}${listContent.open_to}`}</Text>
+          <Text style={colorContent}>{`${listContent.open_time}`}</Text>
         </View>
 
         <View style={rowFlex}>
           <Image style={[imgContentIC,marRight]} source={priceIC} />
-          <Text style={colorContent}>{`${listContent.price_from}${' - '}${listContent.price_to}`}</Text>
+          <Text style={colorContent}>{`${listContent.price_from}${' - '}${listContent.price_to} ${listContent.currency}`}</Text>
         </View>
 
 

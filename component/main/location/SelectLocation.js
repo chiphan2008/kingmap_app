@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, Image, FlatList, Platform,AsyncStorage,
+  Dimensions,
 } from 'react-native';
 import checkLocation from '../../api/checkLocation';
 import global from '../../global';
@@ -10,7 +11,7 @@ import getApi from '../../api/getApi';
 
 import arrowNextIC from '../../../src/icon/ic-arrow-next.png';
 import checkIC from '../../../src/icon/ic-green/ic-check.png';
-
+const {width,height} = Dimensions.get('window');
 
 export default class SelectLocation extends Component {
   constructor(props){
@@ -85,12 +86,13 @@ export default class SelectLocation extends Component {
            </TouchableOpacity>
            <FlatList
                 ListEmptyComponent={<Text>Loading ...</Text>}
+                refreshing
                 data={this.state.listDistrict}
                 keyExtractor={item => item.id}
                 renderItem={({item}) => (
                   <View  style={styles.listItem}>
                   <TouchableOpacity
-                     style={{justifyContent:'space-between',flexDirection:'row',}}
+                     style={{justifyContent:'space-between',flexDirection:'row',width:-50,padding:15,}}
                      onPress={() => {
                           this.setState({showCheckDistrict:item.id});
                          AsyncStorage.setItem('@LocationKey:key', JSON.stringify({
@@ -123,7 +125,7 @@ export default class SelectLocation extends Component {
                 renderItem={({item}) => (
                   <View  style={styles.listItem}>
                   <TouchableOpacity
-                     style={{justifyContent:'space-between',flexDirection:'row',}}
+                     style={{justifyContent:'space-between',flexDirection:'row',width:-50,padding:15,}}
                      onPress={()=>{
                        this.setState({showDistrict:false, showCountry:false, showCity:true,idCountry:item.id,nameCountry:item.name});
                        this.getCity();
@@ -155,7 +157,7 @@ export default class SelectLocation extends Component {
                 renderItem={({item}) => (
                   <View  style={styles.listItem}>
                   <TouchableOpacity
-                     style={{justifyContent:'space-between',flexDirection:'row',}}
+                     style={{justifyContent:'space-between',flexDirection:'row',width:-50,padding:15,}}
                      onPress={()=>{
                        this.setState({
                          showDistrict:true,showCountry:false,showCity:false,idCity:item.id,nameCity:item.name,
@@ -203,9 +205,7 @@ const styles = StyleSheet.create({
     borderBottomWidth:1,
   },
   listItem:{
-    padding:15,
-    paddingTop:20,
-    paddingBottom:20,
+
     borderBottomColor:'#EEEDEE',
     borderBottomWidth:1,
   },

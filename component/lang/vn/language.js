@@ -1,7 +1,15 @@
 
 module.exports = {
+  home:'Trang chủ',
+  personal:'Cá nhân',
+  notify:'Thông báo',
+  other:'Khác',
+  request_login:'Vui lòng đăng nhập để thực hiện chức năng này',
+  _login:'Đăng nhập',
   my_wallet:'Ví của bạn',
   transfer:'Chuyển đi',
+  history:'Lịch sử giao dịch',
+  receive:'Đã nhận',
   request_transfer:'Yêu cầu rút tiền',
   classify: 'Phân loại',
   add_classify: 'Thêm phân loại',
@@ -19,7 +27,6 @@ module.exports = {
   district:'Quận/Huyện',
   done: 'Xong',
   all:'Tất cả',
-  other:'Khác',
   location:'Địa điểm',
   online:'Trực tuyến',
   new_location:'Địa điểm mới',

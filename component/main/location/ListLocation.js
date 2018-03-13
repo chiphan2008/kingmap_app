@@ -39,6 +39,7 @@ export default class ListLocation extends Component {
       curLocation : {
         latlng:'',
       },
+      curLoc:{},
       showLoc:false,
       listData:[],
       listSubCat:{
@@ -55,18 +56,7 @@ export default class ListLocation extends Component {
       idDist:null,
       id_sub:null,
       id_serv:null,
-      markers:[{
-        id : 1,
-        lat: 10.780843591000904,
-        lng: 106.67830749999996,
-        name: '',
-        _district:{name:''},
-        _city:{name:''},
-        _country:{name:''},
-        _category_type:{marker:''},
-        address:'',
-        avatar:'',
-      },],
+
     }
     getLanguage().then((e)=>{
       e.valueLang==='en' ? this.setState({lang:lang_en}) : this.setState({lang:lang_vn});
@@ -123,12 +113,30 @@ export default class ListLocation extends Component {
             this.setState({
               curLocation : {
                 latlng:latlng,
+              },
+              curLoc:{
+                latitude:position.coords.latitude,
+                longitude:position.coords.longitude,
+                lat:position.coords.latitude,
+                lng:position.coords.longitude,
+                latlng,
               }
             });
            },
            (error) => {
              //console.log('error',id);
-             getLocationByIP().then(e => this.getCategory(id,`${e.latitude}${','}${e.longitude}`));
+             getLocationByIP().then(e => {
+               this.getCategory(id,`${e.latitude}${','}${e.longitude}`);
+               this.setState({
+                 curLoc:{
+                   latitude:e.latitude,
+                   longitude:e.longitude,
+                   lat:e.latitude,
+                   lng:e.longitude,
+                   latlng:`${e.latitude},${e.longitude}`,
+                 }
+               });
+           });
              //console.log('ip',ip.latitude);
           },
           {enableHighAccuracy: true, timeout: 3000, maximumAge: 3000}
@@ -192,16 +200,16 @@ export default class ListLocation extends Component {
                      renderItem={({item}) => (
                        <View style={flatlistItemCat}>
                            <TouchableOpacity
-                           onPress={()=>navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng})}
+                           onPress={()=>navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc:this.state.curLoc})}
                            >
                              <Image style={imgFlatItem} source={{uri:`${global.url_media}${item.avatar}`}} />
                            </TouchableOpacity>
                            <View style={wrapInfoOver}>
                              <View>
                                <TouchableOpacity
-                               onPress={()=>navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng})}
+                               onPress={()=>navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc:this.state.curLoc})}
                                >
-                                   <Text style={txtTitleOverCat} numberOfLines={2}>{item.name}</Text>
+                                   <Text style={txtTitleOverCat} numberOfLines={2}>{item.name}AAA</Text>
                                </TouchableOpacity>
                                    <Text style={txtAddrOverCat} numberOfLines={1}>{`${item.address}${', '}${item._district.name}${', '}${item._city.name}${', '}${item._country.name}`}</Text>
                              </View>

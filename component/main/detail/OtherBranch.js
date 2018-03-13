@@ -81,9 +81,9 @@ const styles = StyleSheet.create({
   widthHafl:{width:(width-40)/2,overflow:'hidden'},
   txtAddrOver:{color:'#6587A8',fontSize:14,overflow:'hidden',marginTop:5},
   imgSpace:{
-    width:Platform.OS==='ios' ? 160 : 200,
-    height:Platform.OS==='ios' ? 160 : 200,
-    marginRight:20
+    width:(width-50)/2,
+    height:(width/3),
+    marginRight:10
   },
   marRight:{marginRight:10},
 });

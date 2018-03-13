@@ -25,6 +25,10 @@ import checkIC from '../../../src/icon/ic-green/ic-check.png';
 import arrowLeft from '../../../src/icon/ic-white/arrow-left.png';
 import logoTop from '../../../src/icon/ic-white/Logo-ngang.png';
 
+function remove(array, element) {
+    const index = array.indexOf(element);
+    array.splice(index, 1);
+}
 
 export default class ListLocation extends Component {
   constructor(props) {
@@ -41,6 +45,7 @@ export default class ListLocation extends Component {
       curLocation : {
         latlng:'',
       },
+      curLoc:{},
       showLoc:false,
       listData:[],
       listSubCat:{
@@ -56,19 +61,8 @@ export default class ListLocation extends Component {
       showServie:{},
       idDist:null,
       id_sub:null,
-      id_serv:null,
-      markers:[{
-        id : 1,
-        lat: 10.780843591000904,
-        lng: 106.67830749999996,
-        name: '',
-        _district:{name:''},
-        _city:{name:''},
-        _country:{name:''},
-        _category_type:{marker:''},
-        address:'',
-        avatar:'',
-      },],
+      id_serv:'-1',
+
     }
 
   }
@@ -87,6 +81,7 @@ export default class ListLocation extends Component {
   getContentByDist(id_district,id_sub,id_serv){
     const id_cat = this.props.navigation.state.params.idCat;
     var url = `${global.url}${'search-content?category='}${id_cat}`;
+
     const { keyword,curLocation } = this.state;
     if(keyword!==''){
       url += `${'&keyword='}${keyword}`;
@@ -98,13 +93,15 @@ export default class ListLocation extends Component {
     }
 
     if(id_sub!==null) url += `${'&subcategory='}${id_sub}`;
-    if(id_serv!==null){
-      this.setState({id_serv: id_serv});
+    id_serv = id_serv.replace('-1,','');
+    if(id_serv!=='' && id_serv!=='-1'){
+      this.setState({id_serv});
       url += `${'&service='}${id_serv}`;
     }
-    // console.log('-----url-----',url);
+    console.log('-----url-----',url);
     getApi(url)
     .then(arrData => {
+      //console.log('count',arrData.data.length);
         this.setState({ listData: arrData.data });
     })
     .catch(err => console.log(err));
@@ -127,12 +124,25 @@ export default class ListLocation extends Component {
             this.setState({
               curLocation : {
                 latlng:latlng,
+              },
+              curLoc:{
+                latlng:latlng,
+                latitude:`${position.coords.latitude}`,
+                longitude:`${position.coords.longitude}`,
               }
             });
            },
            (error) => {
              console.log('error',id);
-             getLocationByIP().then(e => this.getCategory(id,`${e.latitude}${','}${e.longitude}`));
+             getLocationByIP().then(e => {
+               this.setState({
+                 curLoc:{
+                   latlng:`${e.latitude},${e.longitude}`,
+                   latitude:`${e.latitude}`,
+                   longitude:`${e.longitude}`,
+                 }
+               });
+               this.getCategory(id,`${e.latitude},${e.longitude}`)});
              //console.log('ip',ip.latitude);
           },
           {enableHighAccuracy: true, timeout: 20000, maximumAge: 10000}
@@ -227,14 +237,14 @@ export default class ListLocation extends Component {
                      renderItem={({item}) => (
                        <View style={flatlistItemCat}>
                            <TouchableOpacity
-                           onPress={()=>navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc:{latitude:item.lat,longitude:item.lng},lang})}
+                           onPress={()=>navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc:this.state.curLoc,lang})}
                            >
                              <Image style={imgFlatItem} source={{uri:`${global.url_media}${item.avatar}`}} />
                            </TouchableOpacity>
                            <View style={wrapInfoOver}>
                              <View>
                                <TouchableOpacity
-                               onPress={()=>navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng})}
+                               onPress={()=>navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc:this.state.curLoc,lang})}
                                >
                                    <Text style={txtTitleOverCat} numberOfLines={2}>{item.name}</Text>
                                </TouchableOpacity>
@@ -297,7 +307,7 @@ export default class ListLocation extends Component {
             <TouchableOpacity
                 onPress={()=>{
                   this.getContentByDist(this.state.idDist,null,this.state.id_serv);
-                  this.setState({listSubCat:{showList:!this.state.listSubCat.showList},id_sub:null});
+                  this.setState({listSubCat:{showList:!this.state.listSubCat.showList},id_sub:null,labelCat:'Danh mục'});
               }}
                 style={listCatOver}>
                   <Text style={colorText}>Tất cả</Text>
@@ -322,18 +332,42 @@ export default class ListLocation extends Component {
               <View  style={listOverService}>
               <TouchableOpacity
                  onPress={()=>{
-                  let idServ = this.state.id_serv===null ? item.id : `${this.state.id_serv}${', '}${item.id}`;
-                  let labelServ = this.state.labelSer==='Dịch vụ' ? item.name : `${this.state.labelSer}${','}${item.name}`;
+                  let idServ;
+                  const arr = JSON.parse(`[${this.state.id_serv}]`);
+
+                  if(this.state.id_serv==='-1'){ idServ=`-1,${item.id}`; }else{
+                    if(arr.includes(item.id)){
+                      remove(arr, item.id);idServ = arr.toString();
+                      if(idServ==='') idServ='-1,';
+                      }else {
+                      idServ= `${this.state.id_serv},${item.id}`;
+                    }
+                  }
+                  //console.log('idServ',idServ);
+                  let lblArr;
+                  if(this.state.labelSer!=='Dịch vụ'){
+                    if( `${this.state.labelSer}`.includes(`${item.name}`) ){
+                      lblArr = `${this.state.labelSer}`.replace(`,${item.name}`,'');
+                      lblArr = `${this.state.labelSer}`.replace(`${item.name},`,'');
+                      if( lblArr ===item.name) lblArr='Dịch vụ';
+                    }else {
+                      lblArr =`${this.state.labelSer},${item.name}`;
+                    }
+                  }
+                  let labelSer = this.state.labelSer==='Dịch vụ' ? item.name : lblArr;
                   this.getContentByDist(this.state.idDist,this.state.id_sub,idServ);
 
                   if(this.state.showServie[`${item.id}`]!==item.id)
-                    this.setState({ showServie: Object.assign(this.state.showServie,{[item.id]:item.id}),labelSer:labelServ });
+                    this.setState({
+                      showServie: Object.assign(this.state.showServie,{[item.id]:item.id}), labelSer
+                    });
                     //if(`${this.state.labelSer}`.includes(labelServ)) this.setState({labelSer:labelServ});
-
                   else
-                    this.setState({showServie: Object.assign(this.state.showServie,{[item.id]:!item.id})});
+                    this.setState({
+                      showServie: Object.assign(this.state.showServie,{[item.id]:!item.id}),labelSer
+                    });
                   }}
-                  style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',}}
+                  style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',padding:15}}
                 >
                    <Text style={colorText}>{item.name}</Text>
                    <Image style={[imgInfo, this.state.showServie[`${item.id}`]===item.id  ? show : hide]} source={checkIC}/>
@@ -343,10 +377,10 @@ export default class ListLocation extends Component {
             )} />
 
             <View style={listOverService}>
-                <TouchableOpacity
+                <TouchableOpacity  style={{padding:15}}
                    onPress={()=>{
-                    this.getContentByDist(this.state.idDist,this.state.id_sub,null);
-                    this.setState({listSerItem:{showList:!this.state.listSerItem.showList},id_serv:null,labelSer:'Dịch vụ'});
+                    this.getContentByDist(this.state.idDist,this.state.id_sub,'-1,');
+                    this.setState({listSerItem:{showList:!this.state.listSerItem.showList},id_serv:'-1',labelSer:'Dịch vụ'});
                     }}
                   >
                      <Text style={colorText}>Tất cả</Text>

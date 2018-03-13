@@ -12,7 +12,6 @@ import {Select, Option} from "react-native-chooser";
 import getApi from '../api/getApi';
 import global from '../global';
 
-import searchIC from '../../src/icon/ic-gray/ic-search.png';
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
 import dollarIC from '../../src/icon/ic-dollar.png';
 
@@ -23,12 +22,6 @@ export default class Transfer extends Component {
     this.state = {
       choose_loc:global.choose_loc,
       showCode:false,
-      listLoc:{
-        your_location:[],
-        new_location:0,
-        pay_money:{},
-        make_money:0
-      },
     }
   }
 

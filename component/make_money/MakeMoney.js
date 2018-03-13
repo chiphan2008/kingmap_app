@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image,
   TextInput, TouchableOpacity,
-  FlatList,
+  ScrollView,
 } from 'react-native';
 const {height, width} = Dimensions.get('window');
 import {Select, Option} from "react-native-chooser";
@@ -12,9 +12,16 @@ import {Select, Option} from "react-native-chooser";
 import getApi from '../api/getApi';
 import global from '../global';
 
+import logoTop from '../../src/icon/ic-white/Logo-ngang.png';
 import searchIC from '../../src/icon/ic-gray/ic-search.png';
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
-import dollarIC from '../../src/icon/ic-dollar.png';
+//import calendarIC from '../../src/icon/ic-wallet/ic-calendar.png';
+//import timeIC from '../../src/icon/ic-wallet/ic-time.png';
+import historyIC from '../../src/icon/ic-wallet/ic-history.png';
+import receiveIC from '../../src/icon/ic-wallet/ic-receive.png';
+import walletIC from '../../src/icon/ic-wallet/ic-wallet.png';
+import transferIC from '../../src/icon/ic-wallet/ic-transfer.png';
+import withdrawIC from '../../src/icon/ic-wallet/ic-withdraw.png';
 
 
 export default class MakeMoney extends Component {
@@ -22,12 +29,6 @@ export default class MakeMoney extends Component {
     super(props);
     this.state = {
       choose_loc:global.choose_loc,
-      listLoc:{
-        your_location:[],
-        new_location:0,
-        pay_money:{},
-        make_money:0
-      },
     }
   }
   onSelectLoc(value, label) {
@@ -50,95 +51,77 @@ export default class MakeMoney extends Component {
     this.callData(code_user);
   }
   render() {
-    const { lang,code_user } = this.props.navigation.state.params;
+    const { lang,code_user,name_module } = this.props.navigation.state.params;
     const { navigation } = this.props;
     const {
-      container,contentWrap,headCatStyle,headContent,titleCreate,
-      headLocationStyle, inputSearch,wrapWhite,marTop,titleKcoin,
-      selectBox,selectBoxCity,optionListStyle,optionListStyleCity,
-      imgInfo,colorTitle,
+      container,contentWrap,headCatStyle,headContent,titleCreate,wrapDes,
+      headLocationStyle, inputSearch,wrapWhite,marTop,titleHead,titleNormal,
+      imgLogoTop,imgContent,colorTitle,titleCoin,contentKcoin,btnTransfer,
     } = styles;
 
     return (
-      <View style={container}>
+      <ScrollView style={container}>
 
       <View style={headCatStyle}>
           <View style={headContent}>
               <TouchableOpacity onPress={()=>navigation.goBack()}>
               <Image source={arrowLeft} style={{width:16, height:16,marginTop:5}} />
               </TouchableOpacity>
-                <Text style={titleCreate}> {`${lang.my_wallet}`.toUpperCase()} </Text>
+                <Image source={logoTop} style={imgLogoTop} />
               <View></View>
           </View>
       </View>
 
         <View style={contentWrap}>
-        <View style={{backgroundColor:'#2e3c52',width,height:110,justifyContent:'center',alignItems:'center'}}>
-        <Text style={{color:'white'}}> {`${'Số Kcoin bạn đang có trong ví'}`} </Text>
-        <Text style={titleKcoin}> {`${'200.000'}`.toUpperCase()} </Text>
+
+        <View style={{width:width-80,height:110,justifyContent:'center',alignItems:'center'}}>
+        <Text style={titleHead}> {`${name_module}`.toUpperCase()} </Text>
+        <Text style={titleNormal}> {`${'Giúp bạn kiếm tiền mọi lúc, mọi nơi bằng một công việc đơn giản và hợp pháp'}`} </Text>
         </View>
 
         <View>
-          <TouchableOpacity
-          onPress={()=> navigation.navigate('TransferScr',{lang,title:lang.transfer,code_user})}
-          style={wrapWhite}>
-          <Image source={dollarIC} style={imgInfo} />
-          <Text style={colorTitle}>{lang.transfer}</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={wrapWhite}>
-          <Image source={dollarIC} style={imgInfo} />
-          <Text style={colorTitle}>Chuyển đến</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={wrapWhite}>
-          <Image source={dollarIC} style={imgInfo} />
-          <Text style={colorTitle}>Nạp tiền vào ví</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-          onPress={()=> navigation.navigate('RequestTransferScr',{lang,title:lang.request_transfer})}
-          style={wrapWhite}>
-          <Image source={dollarIC} style={imgInfo} />
-          <Text style={colorTitle}>Yêu cầu rút tiền</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={wrapWhite}>
-          <Image source={dollarIC} style={imgInfo} />
-          <Text style={colorTitle}>Lịch sử giao dịch</Text>
-          </TouchableOpacity>
-          {/*
-            <View style={{padding:20}}>
-              <Text>Địa điểm mới: {this.state.listLoc.new_location}</Text>
-              <Text>Bạn đang có: {this.state.listLoc.make_money} kcoin</Text>
-              <Text>Thống kê chi phí trong tháng: </Text>
-              <Text>- Phí quảng cáo:  {this.state.listLoc.pay_money.quang_cao}</Text>
-              <Text>- Phí rao vặt:  {this.state.listLoc.pay_money.rao_vat}</Text>
-              <Text>- Phí tạo khuyến mãi:  {this.state.listLoc.pay_money.khuyen_mai}</Text>
-              <Text>- Phí thuê website:  {this.state.listLoc.pay_money.thue_web}</Text>
-              <Text>- Phí mua phần mềm:  {this.state.listLoc.pay_money.phan_mem}</Text>
+          <View style={wrapWhite}>
+            <Image source={transferIC} style={imgContent} />
+            <View style={contentKcoin}>
+              <View style={{width:width/2}}>
+                <Text style={colorTitle}>{`${'Số Kcoin bạn đang có trong ví'}`}</Text>
+              </View>
+              <Text style={titleCoin}>{`${'500.000'}`}</Text>
             </View>
-            <Select
-                  onSelect = {this.onSelectLoc.bind(this)}
-                  defaultText={lang.choose_loc}
-                  style = {[selectBox,selectBoxCity]}
-                  textStyle = {{color:'#5b89ab'}}
-                  optionListStyle={[optionListStyle,optionListStyleCity]}
-                  transparent
-                  indicatorColor="#5b89ab"
-                  indicator="down"
-                  indicatorSize={7}
-                >
-                {this.state.listLoc.your_location.map((e)=>(
-                  <Option numberOfLines={1} value={e.id} key={e.id}>{e.name}</Option>
-                ))}
+          </View>
 
-            </Select>*/}
+          <View style={wrapWhite} >
+            <Image source={receiveIC} style={imgContent} />
+            <View style={contentKcoin}>
+              <View style={{width:width/2}}>
+                <Text style={colorTitle}>{`${'Tổng Kcoin bạn kiếm đuược trong tháng này'}`}</Text>
+              </View>
+              <Text style={titleCoin}>{`${'500.000'}`}</Text>
+            </View>
+          </View>
+
+          <TouchableOpacity style={wrapWhite}
+          onPress={()=> navigation.navigate('ReceiveScr',{lang,title:lang.receive,code_user})}
+          >
+            <Image source={receiveIC} style={imgContent} />
+            <Text style={colorTitle}>{`${'Danh sách địa điểm của bạn'}`}</Text>
+          </TouchableOpacity>
+
+          <View style={{alignItems:'center'}}>
+            <TouchableOpacity style={[marTop,btnTransfer]}>
+            <Text style={titleCreate}>{`${'Nào cùng kiếm tiền'}`.toUpperCase()}</Text>
+            <Text style={{color:'#fff'}}>{`${'(Tạo địa điểm mới thêm vào danh sách)'}`}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={[marTop,wrapDes]}>
+        <Text style={{color:'#6587A8',fontSize:16,lineHeight:28}}>{`${'Bạn hãy thường xuyên quan tâm đến khách hàng của mình: \n + Sau 4 tuần địa chỉ sẽ bị chìm.\n + Sau 4 tuần địa chỉ sẽ bị chìm. '}`}</Text>
         </View>
 
         </View>
 
-      </View>
+      </ScrollView>
     );
   }
 }
@@ -149,13 +132,13 @@ const styles = StyleSheet.create({
     height,
     alignSelf: 'stretch',
   },
-
-  wrapper: {
-    flex: 1,
-    position: 'relative',
-    justifyContent: 'space-between',
-    backgroundColor: 'transparent',
+  btnTransfer:{width:width-40,alignItems:'center',justifyContent:'center',backgroundColor:'#d0021b',padding:10,borderRadius:5},
+  titleHead:{fontSize:20,fontWeight:'bold',color:'#2F353F'},
+  titleNormal:{fontSize:15,color:'#2F353F',marginTop:5,lineHeight:22,textAlign:'center'},
+  imgLogoTop : {
+      width: 138,height: 25,
   },
+  wrapDes:{width:width-40},
   marTop:{marginTop:20},
   wrapWhite:{
     backgroundColor:'#fff',
@@ -165,8 +148,14 @@ const styles = StyleSheet.create({
     marginBottom:1,
     width
   },
+  titleCoin : {
+    fontSize: 20,
+    fontWeight:'500',
+    color:'#d0021b',
+  },
+  contentKcoin:{flexDirection:'row',justifyContent:'space-between',width:width-80,alignItems:'center'},
   colorTitle:{color:'#2F353F',fontSize:16},
-  imgInfo:{width:32,height:32,marginRight:10},
+  imgContent:{width:38,height:38,marginRight:10},
   contentWrap : { flex : 1,alignItems: 'center',justifyContent: 'flex-start'},
   headCatStyle : {
       backgroundColor: '#D0021B',paddingTop: Platform.OS==='ios' ? 30 : 20, alignItems: 'center',height: 65,
@@ -185,8 +174,7 @@ const styles = StyleSheet.create({
   headContent : {
       width: width - 40,justifyContent: 'space-between',flexDirection: 'row',
   },
-  titleCreate:{color:'white',fontSize:18,paddingTop:5},
-  titleKcoin:{color:'white',fontSize:24,fontWeight:'bold',paddingTop:5},
+  titleCreate:{color:'white',fontSize:18,paddingTop:5,fontWeight:'500'},
   selectBoxCity : {
     marginBottom: 0,
   },

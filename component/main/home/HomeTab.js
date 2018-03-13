@@ -1,8 +1,8 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import {Platform, View, Text, StyleSheet, Dimensions, Image, TextInput,
-  Alert,TouchableOpacity,PermissionsAndroid, AsyncStorage, Modal } from 'react-native';
+import {Platform, View, Text, StyleSheet, Dimensions, Image, TextInput,ScrollView,
+  TouchableOpacity,PermissionsAndroid, AsyncStorage, Modal,Keyboard } from 'react-native';
 import RNSettings from 'react-native-settings';
 const {height, width} = Dimensions.get('window');
 
@@ -38,7 +38,7 @@ import {Select, Option} from "react-native-chooser";
 export default class HomeTab extends Component {
   constructor(props) {
     super(props);
-
+    Keyboard.dismiss;
     this.state = {
       //permission: PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       Width_Layout:'',
@@ -63,8 +63,7 @@ export default class HomeTab extends Component {
       valSearch:'',
     };
     checkLogin().then(e=>{
-      console.log(e);
-      //loginServer(this.state.ema,this.state.pwd)
+
       if(e.id===undefined){
         this.setState({isLogin:false})
       }else {
@@ -80,6 +79,7 @@ export default class HomeTab extends Component {
   getLoc(){
     navigator.geolocation.getCurrentPosition(
           (position) => {
+            console.log('position',position);
             const latlng = `${position.coords.latitude}${','}${position.coords.longitude}`;
             this.setState({
               curLoc : {
@@ -95,6 +95,7 @@ export default class HomeTab extends Component {
            },
            (error) => {
             getLocationByIP().then((e) => {
+              //console.log('e',e);
                 this.setState({
                   curLoc : {
                     latitude:e.latitude,
@@ -136,7 +137,7 @@ export default class HomeTab extends Component {
   onSelectLang(value, label) {
     AsyncStorage.setItem('@MyLanguage:key',JSON.stringify({valueLang:value,labelLang :label}));
     value==='vn' ?  this.setState({lang : lang_vn}) : this.setState({lang : lang_en});
-    this.getCategory(value)
+    //this.getCategory(value);
     this.setState({
       selectLang: {
         valueLang : value,
@@ -145,10 +146,15 @@ export default class HomeTab extends Component {
       showShare:false,
       showInfo:false,
     });
+
+    setTimeout(() => {
+        this.props.screenProps(value);
+    }, 2000);
   }
   getCategory(lang){
     getApi(global.url+'modules?language='+lang)
     .then(arrCategory => {
+      //console.log('arrCategory',arrCategory);
         this.setState({ listCategory: arrCategory.data });
     })
     .catch(err => console.log(err));
@@ -173,7 +179,7 @@ export default class HomeTab extends Component {
       return result;
   }
   render() {
-    //console.log('curLoc',this.state.curLoc);
+    //console.log('this.props',this.props);
     const {height, width} = Dimensions.get('window');
     const {navigate} = this.props.navigation;
     //console.log("this.props.Hometab=",util.inspect(this.state.listCategory,false,null));
@@ -229,7 +235,9 @@ export default class HomeTab extends Component {
           </TouchableOpacity>
         </View>
 
+        <ScrollView>
         <View style={wrapContent}>
+
             <View style={square}>
             {
 
@@ -249,20 +257,45 @@ export default class HomeTab extends Component {
                           <Text style={labelNum}>(25)</Text>
                         <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                         <Text style={labelCat}>{e.name}</Text>
-
                       </TouchableOpacity>);
                         break;
-                      case 'wallet':
-                          i=1;
-                          return (<TouchableOpacity
-                              key={e.id}
-                              onPress={()=>navigate('MakeMoneyScr',{code_user:this.state.code_user,lang:this.state.lang})}
-                              style={[wrapCircle,logoCenter]}>
-                              <Image style={imgContent} source={logoHome} />
-                              <Text style={labelCat}>{e.name}</Text>
+                  case 'ads':
+                      angle *= index-i;
+                      pos = this.findNewPoint(x, y, angle, distance);
+                      return (<TouchableOpacity
+                          key={e.id}
+                          style={{position:'absolute',alignItems:'center',top:pos.y,left :pos.x,overflow: 'visible'}}
+                          onPress={() => navigate('AdsScr',{icon:`${global.url_media}${e.image}`,name_module:e.name,lang:this.state.lang}) }
+                          >
+                          <Text style={labelNum}>(25)</Text>
+                        <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
+                        <Text style={labelCat}>{e.name}</Text>
+                      </TouchableOpacity>);
+                        break;
+                  case 'make-money':
+                      angle *= index-i;
+                      pos = this.findNewPoint(x, y, angle, distance);
+                      return (<TouchableOpacity
+                          key={e.id}
+                          style={{position:'absolute',alignItems:'center',top:pos.y,left :pos.x,overflow: 'visible'}}
+                          onPress={() => navigate('MakeMoneyScr',{icon:`${global.url_media}${e.image}`,name_module:e.name,lang:this.state.lang}) }
+                          >
+                          <Text style={labelNum}>(25)</Text>
+                        <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
+                        <Text style={labelCat}>{e.name}</Text>
+                      </TouchableOpacity>);
+                        break;
+                  case 'wallet':
+                      i=1;
+                      return (<TouchableOpacity
+                          key={e.id}
+                          onPress={()=>navigate('WalletScr',{code_user:this.state.code_user,lang:this.state.lang})}
+                          style={[wrapCircle,logoCenter]}>
+                          <Image style={imgContent} source={logoHome} />
+                          <Text style={labelCat}>{e.name}</Text>
 
-                              </TouchableOpacity>);
-                          break;
+                          </TouchableOpacity>);
+                        break;
                   default:
                   angle *= index-i;
                   pos = this.findNewPoint(x, y, angle, distance);
@@ -283,6 +316,8 @@ export default class HomeTab extends Component {
 
             </View>
         </View>
+        </ScrollView>
+
         <TouchableOpacity
         onPress={()=>{
           this.requestLogin();

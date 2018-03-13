@@ -172,7 +172,7 @@ export default class FormCreate extends Component {
       });
 
     });
-    console.log('arr',arr);
+    //console.log('arr',arr);
     postApi(`${global.url}${'create-location'}`,arr).then((e)=>{
       console.log('e',e);
       if(e.code===200){

@@ -6,6 +6,8 @@ const h = width>height ? height : width;
 
 module.exports = {
   container: {flex: 1,backgroundColor:'#F1F2F5'},
+  wrapper: {width,height,backgroundColor:'#F1F2F5'},
+  wrapSetting: {width,height,backgroundColor:'#F1F2F5',position:'absolute',zIndex:9999,top:0,left:0},
   bgImg : {
     width,height,position: 'absolute',justifyContent: 'center',alignItems: 'center',alignSelf: 'stretch',resizeMode: 'stretch',
   },
@@ -165,6 +167,7 @@ module.exports = {
   wrapCircle:{
     position:'absolute',flex:1,alignItems:'center',
   },
+  rowItem:{flexDirection: 'row',alignItems:'center'},
   flexRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -173,26 +176,26 @@ module.exports = {
     height:28,
     paddingRight:4,
   },
-  // circle1:{top:-5,left :120,},
-  // circle2:{top:44,left:222,},
-  // circle3:{top:154,left :247,},
-  // circle4:{top:242,left :176,},
-  // circle5:{top:242,left :64,},
-  // circle6:{top:154,left :-7,},
-  // circle7:{top:44,left :22,},
-  // circle1:{top:0,left :120,},
-  // circle2:{top:60,left :224,},
-  // circle3:{top:180,left :224,},
-  // circle4:{top:240,left :120,},
-  // circle5:{top:180,left :16,},
-  // circle6:{top:60,left :16,},
-  logoCenter:{top:120},
 
+  marTop:{marginTop: 15},
+  logoCenter:{top:120},
+  btnPress: {
+    padding:15,
+    borderRadius : 5,
+    minWidth: width/3,
+    borderWidth: 1,
+    borderColor : "#D0021B",
+    alignItems:'center'
+  },
+  colorNext : {
+    color: '#D0021B',
+    textAlign: 'center',
+  },
   wrapContent :{
     //flexDirection:'row',
     alignItems:'center',
     justifyContent:'center',
-    flex:1,
+    width,height:Platform.OS==='ios' ? height-200 : height-230
   },
   labelCat :{
     backgroundColor:'transparent',textAlign:'center',position:'relative'
@@ -278,6 +281,7 @@ module.exports = {
   overLayout:{
     backgroundColor:'#fff',width: width-20,borderRadius:6,overflow:'hidden',top:7,
     maxHeight:Platform.OS ==='ios' ? 350 : 380,
+    //position:'absolute',zIndex:999,
   },
   overLayoutCat:{
       backgroundColor:'#fff',
@@ -304,7 +308,13 @@ module.exports = {
   overLayoutSer:{
       alignSelf:'flex-end',right:10
   },
+  colorTitle:{color:'#2F353F',fontSize:16},
   marRight:{marginRight:5},
+  titlePer:{color:'#fff',fontSize:17},
+  borderItemPer:{borderBottomColor:'#616A78',borderBottomWidth:1,paddingTop:15,width:width-75},
+  borderItemInfoPer:{marginLeft:40,borderBottomColor:'#616A78',borderBottomWidth:1,paddingTop:15,width:width-75},
+  imgIconPerInfo:{width:24,height:24,marginRight:15},
+  imgIconPer:{width:24,height:24,marginRight:15,marginTop:15},
   titleTab:{color:'#9B9A9B',fontSize:18},
   titleTabActive:{color:'#000',fontSize:18},
   titleActive:{color:'#fff',fontSize:18},
@@ -339,11 +349,12 @@ module.exports = {
   listCatOver:{paddingRight:20,paddingBottom:20,paddingLeft:20,},
   listCatAll:{padding:10,paddingRight:15,paddingLeft:15},
   listCatBG:{backgroundColor:'#F0EEF0'},
+  headPerBG:{backgroundColor:'#2B3546',padding:15},
+  infoPerBG:{backgroundColor:'#394456',padding:15},
   listCatW:{backgroundColor:'#FFF'},
   listOver:{alignItems:'center',flexDirection:'row',padding:10,borderBottomColor:'#EEEDEE', borderBottomWidth:1,},
   listOverShare:{alignItems:'center',flexDirection:'row',paddingLeft:5},
   listOverService:{
-      padding:15,
       borderBottomColor:'#EEEDEE',
       borderBottomWidth:1,
   },
@@ -353,6 +364,8 @@ module.exports = {
   wrapInfoOver:{flex:1,flexWrap: 'wrap'},
   txtTitleOver:{color:'#2F353F',fontSize:20,marginBottom:10,maxHeight:50,overflow:'hidden'},
   txtAddrOver:{color:'#6587A8',fontSize:14,overflow:'hidden',},
+  txt:{color:'#6587A8',fontSize:16},
+  titleHead:{color:'#fff',fontSize:24,fontWeight:'500'},
   show : { display: 'flex'},
   hide : { display: 'none'},
   hidden:{ position:'absolute',right:-width}

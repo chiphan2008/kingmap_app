@@ -13,10 +13,11 @@ import LogoHome from '../../src/icon/ic-home/Logo-home.png';
 import bgMap from '../../src/icon/bg-map.png';
 const {height, width} = Dimensions.get('window');
 
-
+var com;
 export default class CityScreen extends Component {
   constructor(props) {
     super(props);
+    com = this;
     this.state = {
       listCountry : [],
       listCity : [],
@@ -29,7 +30,11 @@ export default class CityScreen extends Component {
         id:-1,
       },
     };
-
+    checkLocation().then(e=>{
+      if(e.idCountry===undefined){
+        this.getCountry();
+      }
+    });
   }
 
   onSelectCountry(value, label) {
@@ -39,7 +44,6 @@ export default class CityScreen extends Component {
           id:value,
       }
     });
-    //console.log('idCountry',value);
     this.getCity(value);
   }
   onSelectCity(value, label) {
@@ -76,9 +80,10 @@ export default class CityScreen extends Component {
     getApi(`${global.url}${'countries'}`)
     .then(arrCountry => {
       //console.log('arrCountry',arrCountry);
-        this.setState({ listCountry: arrCountry.data });
+      com.setState({ listCountry: arrCountry.data });
+
     })
-    .catch(err => console.log(err));
+    //.catch(err => console.log(err));
   }
 
   getCity(id_country){
@@ -89,14 +94,7 @@ export default class CityScreen extends Component {
     })
     .catch(err => console.log(err));
   }
-  componentWillMount(){
-    checkLocation().then(e=>{
-      //console.log('e.idCountry',e.idCountry);
-      if(e.idCountry===undefined){
-        this.getCountry();
-      }
-    });
-  }
+
 
   render() {
     const { width, height } = Dimensions.get('window');
@@ -118,6 +116,7 @@ export default class CityScreen extends Component {
               <Image style={imgLogo} source={LogoHome} />
               <Text style={title}>COUNTRY/ CITY</Text>
               <Select
+                    extraData={this.state}
                     onSelect = {this.onSelectCountry.bind(this)}
                     defaultText  = {this.state.slCountry.name}
                     style = {[selectBox,selectBoxCountry]}
@@ -128,9 +127,14 @@ export default class CityScreen extends Component {
                     indicator="down"
                     indicatorSize={7}
                   >
-                  {this.state.listCountry.map((e)=>(
-                    <Option value={e.id} key={e.id}>{e.name}</Option>
-                  ))}
+                  {this.state.listCountry.length>0 ?
+                    this.state.listCountry.map((e)=>{
+                      return (
+                      <Option value={e.id} key={e.id}>{e.name}</Option>
+                    )})
+                    :
+                    <View></View>
+                  }
               </Select>
 
               <Select

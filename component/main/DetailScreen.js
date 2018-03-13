@@ -34,7 +34,7 @@ export default class DetailScreen extends Component {
         longitudeDelta: 0.011121,
         latlng: '10.7818513,106.6769368',
       },
-      curLoc:this.props.navigation.state.params.curLoc,
+      curLoc:this.props.navigation.state.params.curLoc || '10.7818513,106.6769368',
       listData:{
         image_space:[],
         image_menu:[],
@@ -81,7 +81,8 @@ export default class DetailScreen extends Component {
   }
 
   getContent(idContent){
-    const url = `${global.url}${'content/'}${idContent}${'?location='}${this.props.navigation.state.params.curLoc.latlng}`;
+    let latlng = this.props.navigation.state.params.curLoc.latlng || '10.7818513,106.6769368';
+    const url = `${global.url}${'content/'}${idContent}${'?location='}${latlng}`;
     //console.log('url',url);
     getApi(url)
     .then(arrData => {
@@ -230,13 +231,12 @@ export default class DetailScreen extends Component {
         />
 
 
-        <View style={[saveContentStyle, this.state.savelike ? show : hide]}>
-          <TouchableOpacity
-          onPress={()=>this.setState({scroll:true,savelike:false})}>
+        <TouchableOpacity
+        onPress={()=>this.setState({scroll:true,savelike:false})}
+        style={[saveContentStyle, this.state.savelike ? show : hide]}>
           <Image source={checkinIC} style={imgSave} />
-          </TouchableOpacity>
           <Text style={{color:'#fff',fontSize:18}}>{this.state.notifyInfo}</Text>
-        </View>
+        </TouchableOpacity>
 
         <TouchableOpacity
         onPress={()=>this.setState({collection:false,scroll:true})}

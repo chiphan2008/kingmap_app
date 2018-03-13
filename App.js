@@ -6,10 +6,14 @@ import {
 import { StackNavigator,TabNavigator,Animated, } from 'react-navigation';
 //import util from 'util';
 //import icon tabBarIcon
+import getLanguage from './component/api/getLanguage';
+import lang_vn from './component/lang/vn/language';
+import lang_en from './component/lang/en/language';
 import homeIC from './src/icon/ic-home/ic-home.png';
 import locationIC from './src/icon/ic-home/ic-location.png';
 import infoIC from './src/icon/ic-home/ic-info.png';
 import notifyIC from './src/icon/ic-home/ic-notification.png';
+import moreIC from './src/icon/ic-home/ic-more.png';
 import personalIC from './src/icon/ic-home/ic-personal.png';
 
 //create-location
@@ -25,8 +29,13 @@ import ListCategory from './component/main/home/ListCategory';
 
 import HomeTab from './component/main/home/HomeTab';
 import MakeMoney from './component/make_money/MakeMoney';
+import Wallet from './component/make_money/Wallet';
 import Transfer from './component/make_money/Transfer';
+import History from './component/make_money/History';
 import RequestTransfer from './component/make_money/RequestTransfer';
+
+import Ads from './component/ads/Ads';
+
 import LocationTab from './component/main/home/LocationTab';
 import ListLocation from './component/main/home/ListLocation';
 import DistributeTab from './component/main/home/DistributeTab';
@@ -44,127 +53,136 @@ import checkLocation from './component/api/checkLocation';
 
 //AsyncStorage.removeItem('@LocationKey:key');
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  icon: {
-    width: 24,
-    height: 24,
-  },
-});
 
-const HomeScreen = StackNavigator({
-  HomeTabs: { screen: HomeTab },
-  OtherCatScr: { screen: LocationTab },
-  ListLocScr: { screen: ListLocation },
-  SearchScr: { screen: SearchScreen },
-  //CatScr: { screen: CategoryScreen },
-  //ListCatScr: { screen: ListCategory },
-  //OtherCatScr: { screen: DistributeTab },
-},{
-  headerMode: 'none',
-});
-
-// const LocationScreen = StackNavigator({
-//   LocTab: { screen: LocationTab },
-//   ListLocScr: { screen: ListLocation },
-// },{
-//   headerMode: 'none',
-// });
-
-const RootTabs = TabNavigator({
-  HomeT: {
-    screen: HomeScreen,
-    navigationOptions: {
-      tabBarLabel: 'Home',
-      tabBarIcon: ({ tintColor }) => (
-        <Image source={homeIC} style={[styles.icon, {tintColor}]} />
-      ),
-    },
-  },
-
-  NotifyT: {
-    screen: NotifyTab,
-    navigationOptions: {
-      tabBarLabel: 'Thông báo',
-      tabBarIcon: ({ tintColor }) => (
-        <Image source={notifyIC} style={[styles.icon, {tintColor}]} />
-      ),
-    },
-  },
-  PersonalT: {
-    screen: PersonalTab,
-    navigationOptions: {
-      tabBarLabel: 'Cá nhân',
-      tabBarIcon: ({ tintColor }) => (
-        <Image source={personalIC} style={[styles.icon, {tintColor}]} />
-      ),
-      style : {
-        borderBottomWidth:0,
-      },
-    },
-  },
-  InfoT: {
-    screen: PersonalTab,
-    navigationOptions: {
-      tabBarLabel: 'Info',
-      tabBarIcon: ({ tintColor }) => (
-        <Image source={infoIC} style={[styles.icon, {tintColor}]} />
-      ),
-      style : {
-        borderBottomWidth:0,
-      },
-    },
-  },
-
-
-}, {
-  //initialRouteName:'LocationT',
-  tabBarPosition: 'bottom',
-  animationEnabled: false,
-  swipeEnabled: false,
-  tabBarSelected: 'Home',
-  tabBarOptions: {
-    showLabel:true,
-    showIcon:true,
-    labelStyle: {
-      fontSize: 10.5,
-    },
-    activeTintColor: '#fff',
-    inactiveTintColor: '#B8BBC0',
-    activeBackgroundColor:'#D0021B',
-    borderBottomWidth: 0,
-    style : {
-        backgroundColor:'#D0021B',
-        height: Platform.OS==='ios' ? 55 : 60,
-
-    },
-    tabStyle:{
-      paddingBottom:3,
-    },
-    indicatorStyle: {
-        backgroundColor: 'transparent',
-    },
-  },
-});
 
 export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       initApp : false,
+      initRoute : 'HomeT',
+      isLogin : false,
+      lang : lang_vn,
     }
+    getLanguage().then((e) =>{
+      if(e!==null){
+          e.valueLang==='vn' ?  this.setState({lang : lang_vn}) : this.setState({lang : lang_en});
+     }
+    });
   }
   componentWillMount(){
     checkLocation().then(e=>{
-      //console.log('e',e.idCountry);
       if(e.idCountry!==undefined){
         this.setState({initApp:true});
       }
     });
   }
+
   render(){
+    const styles = StyleSheet.create({
+      container: {
+        flex: 1,
+      },
+      icon: {
+        width: 24,
+        height: 24,
+      },
+    });
+
+    const HomeScreen = StackNavigator({
+      HomeTabs: { screen: HomeTab },
+      OtherCatScr: { screen: LocationTab },
+      ListLocScr: { screen: ListLocation },
+      SearchScr: { screen: SearchScreen },
+      MakeMoneyScr: { screen: MakeMoney },
+      WalletScr: { screen: Wallet },
+      TransferScr: { screen: Transfer },
+      HistoryScr: { screen: History },
+      AdsScr: { screen: Ads },
+      RequestTransferScr: { screen: RequestTransfer },
+      //CatScr: { screen: CategoryScreen },
+      //ListCatScr: { screen: ListCategory },
+      //OtherCatScr: { screen: DistributeTab },
+    },{
+      headerMode: 'none',
+    });
+
+
+    const RootTabs = TabNavigator({
+      HomeT: {
+        screen: HomeScreen,
+        navigationOptions: {
+          tabBarLabel: `${this.state.lang.home}`,
+          tabBarIcon: ({ tintColor }) => (
+            <Image source={homeIC} style={[styles.icon, {tintColor}]} />
+          ),
+        },
+      },
+      NotifyT: {
+        screen: NotifyTab,
+        navigationOptions: {
+          tabBarLabel: `${this.state.lang.notify}`,
+          tabBarIcon: ({ tintColor }) => (
+            <Image source={notifyIC} style={[styles.icon, {tintColor}]} />
+          ),
+        },
+      },
+      PersonalT: {
+        screen: PersonalTab,
+        navigationOptions: {
+          tabBarLabel: `${this.state.lang.personal}`,
+          tabBarIcon: ({ tintColor }) => (
+            <Image source={personalIC} style={[styles.icon, {tintColor}]} />
+          ),
+          style : {
+            borderBottomWidth:0,
+          },
+        },
+      },
+      InfoT: {
+        screen: PersonalTab,
+        navigationOptions: {
+          tabBarLabel: `${this.state.lang.other}`,
+          tabBarIcon: ({ tintColor }) => (
+            <Image source={moreIC} style={[styles.icon, {tintColor}]} />
+          ),
+          style : {
+            borderBottomWidth:0,
+          },
+        },
+      },
+
+
+    }, {
+      initialRouteName:this.state.initRoute,
+      tabBarPosition: 'bottom',
+      animationEnabled: false,
+      swipeEnabled: false,
+      tabBarSelected: 'Home',
+      tabBarOptions: {
+        showLabel:true,
+        showIcon:true,
+        labelStyle: {
+          fontSize: 10.5,
+        },
+        activeTintColor: '#fff',
+        inactiveTintColor: '#B8BBC0',
+        activeBackgroundColor:'#D0021B',
+        borderBottomWidth: 0,
+        style : {
+            backgroundColor:'#D0021B',
+            height: Platform.OS==='ios' ? 55 : 60,
+
+        },
+        tabStyle:{
+          paddingBottom:3,
+        },
+        indicatorStyle: {
+            backgroundColor: 'transparent',
+        },
+      },
+    });
+
     const RootNav = StackNavigator(
       {
       IntroSrc: {
@@ -173,15 +191,7 @@ export default class App extends Component {
       MainScr: {
         screen: RootTabs,
       },
-      MakeMoneyScr: {
-        screen: MakeMoney
-      },
-      TransferScr: {
-        screen: Transfer
-      },
-      RequestTransferScr: {
-        screen: RequestTransfer
-      },
+
       DetailScr: {
         screen: DetailScreen,
       },
@@ -210,6 +220,6 @@ export default class App extends Component {
       initialRouteName: this.state.initApp ? 'MainScr' : 'IntroSrc',
     });
 
-    return (<RootNav />);
+    return (<RootNav screenProps={(value)=>{value==='vn' ?  this.setState({lang : lang_vn}) : this.setState({lang : lang_en});}} />);
   }
 } ;

@@ -47,12 +47,13 @@ export default class Services extends Component {
 const styles = StyleSheet.create({
   rowFlex:{flexDirection:'row',paddingLeft:10,paddingRight:10,marginTop:10},
   colorContent:{color:'#6587A8',overflow:'hidden',fontSize:15,},
-  widthHafl:{width:(width-40)/2,overflow:'hidden'},
+  widthHafl:{width:(width-50)/2,overflow:'hidden'},
   colorBlack:{color:'#303B50',overflow:'hidden',fontSize:15,},
   colorTextPP :{color:'#B8BBC0'},
   wrapContentDetail:{flexWrap:'wrap',padding:10,backgroundColor:'#fff'},
   wrapService:{
-    flexDirection: 'row',
+      justifyContent:'space-between',
+      flexDirection: 'row',
       flexWrap: 'wrap',
       flex: 1,
     },

@@ -2,55 +2,26 @@
 
 import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image,
-  TextInput, TouchableOpacity,
-  FlatList,
+  TouchableOpacity,
 } from 'react-native';
 const {height, width} = Dimensions.get('window');
-import {Select, Option} from "react-native-chooser";
 
-//import styles from '../styles';
-import getApi from '../api/getApi';
-import global from '../global';
-
-import searchIC from '../../src/icon/ic-gray/ic-search.png';
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
-//import calendarIC from '../../src/icon/ic-wallet/ic-calendar.png';
-//import timeIC from '../../src/icon/ic-wallet/ic-time.png';
 
 export default class Ads extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      choose_loc:global.choose_loc,
 
-    }
   }
-  onSelectLoc(value, label) {
-    const { navigate } = this.props.navigation;
-    const { lang,code_user } = this.props.navigation.state.params;
-    navigate('DetailScr',{
-      idContent:value,lat:0,lng:0,curLoc:{latitude:10.8142,longitude:106.6438,},lang
-    });
-  }
-  callData(code){
-    getApi(`${global.url}${'list-location?code='}${code}`)
-    .then(arrLoc => {
-      //console.log('arrLoc',arrLoc);
-        this.setState({ listLoc: arrLoc.data });
-    })
-    .catch(err => console.log(err));
-  }
-  componentWillMount(){
-    const { code_user } = this.props.navigation.state.params;
-    this.callData(code_user);
-  }
+
   render() {
     const { lang,code_user,name_module,icon } = this.props.navigation.state.params;
+
     const { navigation } = this.props;
     const {
       container,contentWrap,headCatStyle,headContent,titleCreate,
       headLocationStyle, inputSearch,wrapWhite,marTop,titleKcoin,
-      titleHead,titleNormal,
+      titleHead,titleNormal,wrapBtn,btn,btnAd,btnTK,titleText,
     } = styles;
 
     return (
@@ -74,9 +45,17 @@ export default class Ads extends Component {
             <Text style={titleNormal}>Quảng cáo đơn giản và hiệu quả nhất tại KingMap với thao tác nhanh chóng.</Text>
           </View>
 
-          <TouchableOpacity >
-            <Text>{`${'Đăng quảng cáo ngay'}`.toUpperCase()}</Text>
+          <View style={[wrapBtn,marTop]}>
+          <TouchableOpacity style={[btn,btnTK]}
+          onPress={()=>navigation.navigate('DesignAdsScr',{lang,name_module:'Thiết kế quảng cáo'})}>
+            <Text style={titleText}>{`${'Thiết kế quảng cáo'}`.toUpperCase()}</Text>
           </TouchableOpacity>
+
+          <TouchableOpacity style={[btn,btnAd]}>
+            <Text style={titleText}>{`${'Đăng quảng cáo'}`.toUpperCase()}</Text>
+          </TouchableOpacity>
+          </View>
+
         </View>
 
       </View>
@@ -99,7 +78,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   marTop:{marginTop:20},
-
+  wrapBtn:{flexDirection:'row',width:width-30,justifyContent:'space-between'},
+  btn:{borderRadius:5,width:(width-40)/2,padding:5,paddingTop:15,paddingBottom:15,alignItems:'center'},
+  btnTK:{backgroundColor:'#777E8A'},
+  btnAd:{backgroundColor:'#d0021b'},
   contentWrap : { width,height:height-155,alignItems: 'center',justifyContent: 'center'},
   headCatStyle : {
       backgroundColor: '#D0021B',paddingTop: Platform.OS==='ios' ? 30 : 20, alignItems: 'center',height: 65,
@@ -109,6 +91,7 @@ const styles = StyleSheet.create({
   headContent : {
       width: width - 40,justifyContent: 'space-between',flexDirection: 'row',
   },
+  titleText:{color:'white',fontSize: Platform.OS==='ios' ? 13 : 15,},
   titleCreate:{color:'white',fontSize:18,paddingTop:5},
   titleKcoin:{color:'white',fontSize:24,fontWeight:'bold',paddingTop:5},
   selectBoxCity : {

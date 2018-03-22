@@ -8,6 +8,9 @@ import UpdateInfo from './UpdateInfo';
 import Setting from './Setting';
 import ListCheckin from './ListCheckin';
 import LikeLocation from './LikeLocation';
+import ListLocation from './ListLocation';
+import Collection from './Collection';
+
 import styles from '../../styles';
 import global from '../../global';
 import getApi from '../../api/getApi';
@@ -42,10 +45,12 @@ export default class PersonalTab extends Component {
       showSetting:false,
       showCheckin:false,
       showLikeLoc:false,
-
+      showListLoc:false,
+      showCollection:false,
     };
     this.getLoc();
     getLanguage().then((e) =>{
+      //console.log('e',e);
       if(e!==null){
           e.valueLang==='vn' ?  this.setState({lang : lang_vn}) : this.setState({lang : lang_en});
         }
@@ -114,14 +119,16 @@ export default class PersonalTab extends Component {
 
 
   render() {
-    console.log(this.state.lang);
+    const {lang, valSearch, curLoc, isLogin, user_profile,
+    showUpdateInfo,countEntry,showCheckin,showLikeLoc,showListLoc,showCollection,showSetting} = this.state;
+    //console.log(lang);
     const {navigate} = this.props.navigation;
     //console.log("this.props.Hometab=",this.props);
     const {
       container, colorNext,btnPress,marTop,rowItem,headPerBG,infoPerBG,
       headStyle, imgLogoTop,imgSocial, imgInfo,wrapIcRight,headContent,
       inputSearch,show,hide,titleHead,colorWhite,borderItemPer,titlePer,
-      wrapContent,borderItemInfoPer,imgIconPer,imgIconPerInfo,
+      wrapContent,borderItemInfoPer,imgIconPer,imgIconPerInfo,padPerInfo,
       plusStyle,popover,overLayout,listOver,imgMargin,imgUp,imgUpInfo,imgUpShare
     } = styles;
 
@@ -136,64 +143,64 @@ export default class PersonalTab extends Component {
           </View>
           <View style={{height:11}}></View>
           <TextInput underlineColorAndroid='transparent'
-          placeholder={this.state.lang.search} style={inputSearch}
-          onSubmitEditing={() => { if (this.state.valSearch!==''){navigate('SearchScr',{keyword:this.state.valSearch,lat:this.state.curLoc.lat,lng:this.state.curLoc.lng,lang:this.state.lang})} }}
+          placeholder={lang.search} style={inputSearch}
+          onSubmitEditing={() => { if (valSearch!==''){navigate('SearchScr',{keyword:valSearch,lat:curLoc.lat,lng:curLoc.lng,lang})} }}
           onChangeText={(valSearch) => this.setState({valSearch})}
-          value={this.state.valSearch} />
+          value={valSearch} />
 
           <TouchableOpacity style={{top:Platform.OS==='ios' ? 75 : 65,left:(width-50),position:'absolute'}}
           onPress={()=>{
-            if (this.state.valSearch!=='') {
-              navigate('SearchScr',{keyword:this.state.valSearch,lat:this.state.curLoc.lat,lng:this.state.curLoc.lng,lang:this.state.lang});
+            if (valSearch!=='') {
+              navigate('SearchScr',{keyword:valSearch,lat:curLoc.lat,lng:curLoc.lng,lang});
             }
           }}>
             <Image style={{width:16,height:16,}} source={searchIC} />
           </TouchableOpacity>
         </View>
 
-        <View style={[wrapContent, this.state.isLogin ? hide : show]}>
-          <Text style={{color:'#B8B9BD'}}>{this.state.lang.request_login}</Text>
+        <View style={[wrapContent, isLogin ? hide : show]}>
+          <Text style={{color:'#B8B9BD'}}>{lang.request_login}</Text>
           <TouchableOpacity onPress={()=>navigate('LoginScr',{backScr:''})} style={[btnPress,marTop]}>
-          <Text style={colorNext}> {this.state.lang._login}</Text>
+          <Text style={colorNext}> {lang._login}</Text>
           </TouchableOpacity>
         </View>
-        <ScrollView style={this.state.isLogin ? show : hide}>
+        <ScrollView style={isLogin ? show : hide}>
           <View style={headPerBG}>
 
             <View style={rowItem}>
-              <Image source={{uri:`${global.url_media}/${this.state.user_profile.avatar}`}} style={{width:70,height:70,borderRadius:35,marginRight:15}} />
+              <Image source={{uri:`${global.url_media}/${user_profile.avatar}`}} style={{width:70,height:70,borderRadius:35,marginRight:15}} />
               <View>
-                <Text style={titleHead}>{this.state.user_profile.full_name}</Text>
-                <Text style={colorWhite}>{this.state.user_profile.email}</Text>
+                <Text style={titleHead}>{user_profile.full_name}</Text>
+                <Text style={colorWhite}>{user_profile.email}</Text>
               </View>
             </View>
 
             <View>
                 <View style={[rowItem,marTop]}>
                   <Image source={plusWhiteIC} style={imgIconPer} />
-                  <TouchableOpacity style={marTop}
-                  onPress={()=>navigate('ChooseCatScr',{lang:this.state.lang.lang})}>
-                  <Text style={titlePer}>{`${'Tạo địa điểm'}`}</Text>
+                  <TouchableOpacity style={[marTop,padPerInfo]}
+                  onPress={()=>navigate('ChooseCatScr',{lang:lang.lang})}>
+                  <Text style={titlePer}>{`${lang.create_location}`}</Text>
                   </TouchableOpacity>
                 </View>
                 <View style={borderItemInfoPer}></View>
             </View>
 
             <View>
-              <View style={[rowItem,marTop]}>
+              <View style={[rowItem]}>
                 <Image source={plusWhiteIC} style={imgIconPerInfo} />
-                <TouchableOpacity>
-                <Text style={titlePer}>{`${'Tạo khuyến mãi'}`}</Text>
+                <TouchableOpacity style={padPerInfo}>
+                <Text style={titlePer}>{`${lang.create_prom}`}</Text>
                 </TouchableOpacity>
               </View>
               <View style={borderItemInfoPer}></View>
             </View>
 
 
-          <View style={[rowItem,marTop]}>
+          <View style={[rowItem]}>
               <Image source={plusWhiteIC} style={imgIconPerInfo} />
-              <TouchableOpacity>
-              <Text style={titlePer}>{`${'Tạo quảng cáo'}`}</Text>
+              <TouchableOpacity style={padPerInfo}>
+              <Text style={titlePer}>{`${lang.create_ads}`}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -201,87 +208,112 @@ export default class PersonalTab extends Component {
 
           <View style={infoPerBG}>
               <View style={[rowItem]}>
-              <Text style={titlePer}>{`${'Thông tin'}`.toUpperCase()}</Text>
+              <Text style={titlePer}>{`${lang.info_general}`.toUpperCase()}</Text>
               </View>
-              <View style={borderItemInfoPer}></View>
+              <View style={[borderItemInfoPer,marTop]}></View>
 
               <View>
-                <View style={[rowItem,marTop]}>
+                <View style={[rowItem]}>
                   <Image source={infoIC} style={imgIconPerInfo} />
-                  <TouchableOpacity onPress={()=>this.setState({showUpdateInfo:true})}>
-                  <Text style={titlePer}>{`${'Thông tin cá nhân'}`}</Text>
+                  <TouchableOpacity style={padPerInfo} onPress={()=>this.setState({showUpdateInfo:true})}>
+                  <Text style={titlePer}>{`${lang.info_per}`}</Text>
                   </TouchableOpacity>
                   <UpdateInfo
                   //navigation={this.props.navigation}
-                  lang={this.state.lang.lang}
-                  userId={this.state.user_profile.id}
-                  labelTitle={`${'Thông tin cá nhân'}`}
-                  visible={this.state.showUpdateInfo}
+                  lang={lang}
+                  userId={user_profile.id}
+                  labelTitle={`${lang.info_per}`}
+                  visible={showUpdateInfo}
                   closeModal={()=>{this.setState({showUpdateInfo:false});this.reqLogin()}} />
                 </View>
               <View style={borderItemInfoPer}></View>
             </View>
 
             <View>
-              <View style={[rowItem,marTop]}>
+              <View style={[rowItem]}>
                 <Image source={locationIC} style={imgIconPerInfo} />
-                <TouchableOpacity onPress={()=>this.setState({showCheckin:true})}>
-                <Text style={titlePer}>{`${'Checkin '}(${this.state.countEntry.count_checkin})`}</Text>
+                <TouchableOpacity style={padPerInfo} onPress={()=>this.setState({showCheckin:true})}>
+                <Text style={titlePer}>{`${'Check in'}(${countEntry.count_checkin})`}</Text>
                 </TouchableOpacity>
               </View>
               <View style={borderItemInfoPer}></View>
               <ListCheckin
-              labelTitle={'Danh sách checkin'}
-              visible={this.state.showCheckin}
+              lang={lang}
+              curLoc={curLoc}
+              navigation={this.props.navigation}
+              labelTitle={'Check in'}
+              visible={showCheckin}
               closeModal={()=>this.setState({showCheckin:false})}
               />
             </View>
 
             <View>
-              <View style={[rowItem,marTop]}>
+              <View style={[rowItem]}>
                 <Image source={starIC} style={imgIconPerInfo} />
-                <TouchableOpacity  onPress={()=>this.setState({showLikeLoc:true})}>
-                <Text style={titlePer}>{`${'Địa điểm yêu thích '}(${this.state.countEntry.count_like})`}</Text>
+                <TouchableOpacity style={padPerInfo} onPress={()=>this.setState({showLikeLoc:true})}>
+                <Text style={titlePer}>{`${lang.like_location}(${countEntry.count_like})`}</Text>
                 </TouchableOpacity>
               </View>
               <View style={borderItemInfoPer}></View>
               <LikeLocation
-              labelTitle={'Địa điểm yêu thích'}
-              visible={this.state.showLikeLoc}
+              lang={lang}
+              curLoc={curLoc}
+              navigation={this.props.navigation}
+              labelTitle={lang.like_location}
+              visible={showLikeLoc}
               closeModal={()=>this.setState({showLikeLoc:false})}
               />
             </View>
 
             <View>
-              <View style={[rowItem,marTop]}>
+              <View style={[rowItem]}>
                 <Image source={collectionIC} style={imgIconPerInfo} />
-                <TouchableOpacity>
-                <Text style={titlePer}>{`${'Bộ sưu tập '}(${this.state.countEntry.count_collection})`}</Text>
+                <TouchableOpacity style={padPerInfo} onPress={()=>this.setState({showCollection:true})}>
+                <Text style={titlePer}>{`${lang.collection}(${countEntry.count_collection})`}</Text>
                 </TouchableOpacity>
               </View>
               <View style={borderItemInfoPer}></View>
+
+              <Collection
+              lang={lang}
+              curLoc={curLoc}
+              navigation={this.props.navigation}
+              labelTitle={lang.collection}
+              visible={showCollection}
+              closeModal={()=>this.setState({showCollection:false})}
+              />
+
             </View>
 
             <View>
-              <View style={[rowItem,marTop]}>
+              <View style={[rowItem]}>
                 <Image source={menuIC} style={imgIconPerInfo} />
-                <TouchableOpacity>
-                <Text style={titlePer}>{`${'Danh sách các địa điểm '}(${this.state.countEntry.count_location})`}</Text>
+                <TouchableOpacity style={padPerInfo}
+                onPress={()=>this.setState({showListLoc:true})}>
+                <Text style={titlePer}>{`${lang.list_location}(${countEntry.count_location})`}</Text>
                 </TouchableOpacity>
               </View>
               <View style={borderItemInfoPer}></View>
+              <ListLocation
+              lang={lang}
+              curLoc={curLoc}
+              navigation={this.props.navigation}
+              labelTitle={lang.list_location}
+              visible={showListLoc}
+              closeModal={()=>this.setState({showListLoc:false})}
+              />
             </View>
 
               <View style={[rowItem,marTop]}>
-              <Text style={titlePer}>{`${'Hệ thống kingmap'}`.toUpperCase()}</Text>
+              <Text style={titlePer}>{`${lang.sys_kingmap}`.toUpperCase()}</Text>
               </View>
-              <View style={borderItemInfoPer}></View>
+              <View style={[borderItemInfoPer,marTop]}></View>
 
               <View>
-                <View style={[rowItem,marTop]}>
+                <View style={[rowItem]}>
                   <Image source={settingIC} style={imgIconPerInfo} />
-                  <TouchableOpacity onPress={()=>this.setState({showSetting:true})}>
-                  <Text style={titlePer}>{`${'Cài đặt tài khoản'}`}</Text>
+                  <TouchableOpacity style={padPerInfo} onPress={()=>this.setState({showSetting:true})}>
+                  <Text style={titlePer}>{`${lang.setting_account}`}</Text>
                   </TouchableOpacity>
 
                 </View>
@@ -289,10 +321,10 @@ export default class PersonalTab extends Component {
               </View>
 
               <View>
-                <View style={[rowItem,marTop]}>
+                <View style={[rowItem]}>
                   <Image source={logoutIC} style={imgIconPerInfo} />
-                  <TouchableOpacity onPress={()=>this.logoutUser()}>
-                  <Text style={titlePer}>{`${'Thoát'}`}</Text>
+                  <TouchableOpacity style={padPerInfo} onPress={()=>this.logoutUser()}>
+                  <Text style={titlePer}>{`${lang.logout}`}</Text>
                   </TouchableOpacity>
                 </View>
                 <View style={borderItemInfoPer}></View>
@@ -304,9 +336,9 @@ export default class PersonalTab extends Component {
 
         <Setting
         navigation={this.props.navigation}
-        userId={this.state.user_profile.id}
-        labelTitle={`${'Cài đặt tài khoản'}`}
-        visible={this.state.showSetting}
+        userId={user_profile.id}
+        labelTitle={`${lang.setting_account}`}
+        visible={showSetting}
         closeModal={()=>{this.setState({showSetting:false});this.reqLogin()}} />
       </View>
     );

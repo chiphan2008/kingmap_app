@@ -96,7 +96,7 @@ export default class Comments extends Component {
     } = styles;
     //console.log("this.props.navigation=",util.inspect(this.props.navigation,false,null));
     const {idContent,listComment} = this.props;
-    //console.log('this.state.idContent====',_has_liked)
+    console.log('this.state.idContent====',listComment)
 
     return (
       <View>
@@ -135,7 +135,7 @@ export default class Comments extends Component {
                 _has_liked: Object.assign(this.state._has_liked,{[e.id]:e._has_liked.length}) }); }}
               key={e.id} style={{borderBottomWidth:1,borderBottomColor:'#E1E7EC',paddingBottom:10}}>
               <View style={rowFlex}>
-                <Image source={{uri:`${e._comment_by.avatar}`}} style={{width:66,height:66,borderRadius:33}} />
+                <Image source={{uri:`${global.url_media}/${e._comment_by.avatar}`}} style={{width:66,height:66,borderRadius:33}} />
                 <View>
 
                     <View style={{paddingLeft:10}}>

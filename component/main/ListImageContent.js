@@ -160,7 +160,6 @@ export default class ListImageContent extends Component {
         <View style={[wrapListImage,this.state.showVideo==='active' ? show : hide]}>
           {this.state.listVideo.map((e,index) => (
             <View key={index}>
-            {console.log('e',e)}
               <WebView
                 source={{uri: `${e}`}}
                 style={imgTab}
@@ -168,6 +167,7 @@ export default class ListImageContent extends Component {
               />
             </View>
           ))}
+
         </View>
         </ScrollView>
       </View>

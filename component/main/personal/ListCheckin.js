@@ -46,7 +46,8 @@ export default class ListCheckin extends Component {
     .catch(err => console.log(err));
   }
   render() {
-    //const { userId } = this.props;
+    const { navigation,lang,curLoc } = this.props;
+    //console.log('curLoc',curLoc);
     const {
       container,headCatStyle,headContent,titleCreate,
       titleTab,titleActive,listCreate,widthLblCre,show,hide,
@@ -74,15 +75,23 @@ export default class ListCheckin extends Component {
             this.state.listData.map((e)=>(
               <View key={e.id}>
                 <View style={{backgroundColor:'#fff'}}>
+                  <TouchableOpacity onPress={()=>{
+                      this.props.closeModal()
+                      navigation.navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang})
+                  }}>
                     <Image source={{uri:`${global.url_media}${e.avatar}`}} style={{width:width,minHeight:200,marginBottom:10}} />
+                    </TouchableOpacity>
                     <View style={listCreate}>
                       <View style={{width:width-80}}>
-                          <Text numberOfLines={1} style={txtTitleOverCat}>{e.name}</Text>
-                          <Text style={{color:'#6587A8'}}>{`${e.address}, ${e._district.name}, ${e._city.name}, ${e._country.name}`}</Text>
+                          <TouchableOpacity onPress={()=>{
+                              this.props.closeModal()
+                              navigation.navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang})
+                          }}>
+                            <Text numberOfLines={1} style={txtTitleOverCat}>{e.name}</Text>
+                          </TouchableOpacity>
+                          <Text numberOfLines={1} style={{color:'#6587A8',lineHeight:24}}>{`${e.address}, ${e._district.name}, ${e._city.name}, ${e._country.name}`}</Text>
                       </View>
-                      <TouchableOpacity>
-                      <Image source={moreIC} style={{width:20,height:20}} />
-                      </TouchableOpacity>
+                      <View></View>
                     </View>
                 </View>
                 <View style={{height:14}}></View>

@@ -34,7 +34,7 @@ export default class DetailScreen extends Component {
         longitudeDelta: 0.011121,
         latlng: '10.7818513,106.6769368',
       },
-      curLoc:this.props.navigation.state.params.curLoc || '10.7818513,106.6769368',
+      curLoc:this.props.navigation.state.params.curLoc,
       listData:{
         image_space:[],
         image_menu:[],
@@ -81,7 +81,8 @@ export default class DetailScreen extends Component {
   }
 
   getContent(idContent){
-    let latlng = this.props.navigation.state.params.curLoc.latlng || '10.7818513,106.6769368';
+    let latlng = this.props.navigation.state.params.curLoc.latlng;
+    if(latlng===undefined) latlng='10.7818513,106.6769368';
     const url = `${global.url}${'content/'}${idContent}${'?location='}${latlng}`;
     //console.log('url',url);
     getApi(url)
@@ -226,6 +227,8 @@ export default class DetailScreen extends Component {
         </View>
 
         <Suggest
+        lang={lang}
+        curLoc={this.state.curLoc}
         listSuggest={this.state.listData.list_suggest}
         navigation={this.props.navigation}
         />

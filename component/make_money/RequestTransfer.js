@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
   container: {
     width,
     height,
-    alignSelf: 'stretch',
+
   },
   titleVer : {
     fontSize: 22,
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
 
   colorTitle:{color:'#2F353F'},
   imgInfo:{width:32,height:32,marginRight:10},
-  contentWrap : { flex : 1,alignItems: 'center',justifyContent: 'flex-start'},
+  contentWrap : { width,height,alignItems: 'center',justifyContent: 'flex-start',marginBottom:height/4,},
   headCatStyle : {
       backgroundColor: '#D0021B',paddingTop: Platform.OS==='ios' ? 30 : 20, alignItems: 'center',height: 65,
       position:'relative',zIndex:5,

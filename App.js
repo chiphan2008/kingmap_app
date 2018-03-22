@@ -16,6 +16,8 @@ import notifyIC from './src/icon/ic-home/ic-notification.png';
 import moreIC from './src/icon/ic-home/ic-more.png';
 import personalIC from './src/icon/ic-home/ic-personal.png';
 
+//import Chat
+import Contact from './component/conversation/Contact';
 //create-location
 import ChooseCat from './component/create_location/ChooseCat';
 import FormCreate from './component/create_location/FormCreate';
@@ -30,11 +32,13 @@ import ListCategory from './component/main/home/ListCategory';
 import HomeTab from './component/main/home/HomeTab';
 import MakeMoney from './component/make_money/MakeMoney';
 import Wallet from './component/make_money/Wallet';
+import WalletGuide from './component/make_money/WalletGuide';
 import Transfer from './component/make_money/Transfer';
 import History from './component/make_money/History';
 import RequestTransfer from './component/make_money/RequestTransfer';
 
 import Ads from './component/ads/Ads';
+import DesignAds from './component/ads/DesignAds';
 
 import LocationTab from './component/main/home/LocationTab';
 import ListLocation from './component/main/home/ListLocation';
@@ -49,9 +53,6 @@ import SignUpScreen from './component/page_user/SignUpScreen';
 import ForgotPasswordScreen from './component/page_user/ForgotPasswordScreen';
 import VerifyAccountScreen from './component/page_user/VerifyAccountScreen';
 import checkLocation from './component/api/checkLocation';
-//import getApiKey from './component/api/getApiKey';
-
-//AsyncStorage.removeItem('@LocationKey:key');
 
 
 
@@ -96,9 +97,11 @@ export default class App extends Component {
       SearchScr: { screen: SearchScreen },
       MakeMoneyScr: { screen: MakeMoney },
       WalletScr: { screen: Wallet },
+      WalletGuideScr: { screen: WalletGuide },
       TransferScr: { screen: Transfer },
       HistoryScr: { screen: History },
       AdsScr: { screen: Ads },
+      DesignAdsScr: { screen: DesignAds },
       RequestTransferScr: { screen: RequestTransfer },
       //CatScr: { screen: CategoryScreen },
       //ListCatScr: { screen: ListCategory },
@@ -157,7 +160,7 @@ export default class App extends Component {
       initialRouteName:this.state.initRoute,
       tabBarPosition: 'bottom',
       animationEnabled: false,
-      swipeEnabled: false,
+      swipeEnabled: true,
       tabBarSelected: 'Home',
       tabBarOptions: {
         showLabel:true,
@@ -212,6 +215,9 @@ export default class App extends Component {
       },
       ForgotScr: {
         screen: ForgotPasswordScreen,
+      },
+      ContactScr: {
+        screen: Contact,
       },
 
     },

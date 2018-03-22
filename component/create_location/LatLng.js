@@ -109,7 +109,7 @@ export default class LatLng extends Component {
             latitude: Number(this.state.curLocation.latitude),
             longitude: Number(this.state.curLocation.longitude),
           }}
-          onPress={ (event) => console.log(event.nativeEvent.coordinate) }
+          onPress={ (event) => //console.log(event.nativeEvent.coordinate) }
           onDragEnd={(e) => {
             this.props.getLatLng(e.nativeEvent.coordinate);
             this.setState({curLocation:{

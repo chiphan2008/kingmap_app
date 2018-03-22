@@ -28,8 +28,8 @@ export default class Suggest extends Component {
       colorText,colorNumPP,sizeTitle,widthHafl,
       txtAddrOver,imgSpace,
     } = styles;
-    const {listSuggest} = this.props;
-    const {navigate} = this.props.navigation;
+    const {listSuggest,curLoc,lang} = this.props;
+    const {navigate } = this.props.navigation;
 
     return (
       <View style={wrapContentDetail}>
@@ -42,12 +42,12 @@ export default class Suggest extends Component {
           <View style={{flexDirection:'row',justifyContent:'space-between'}}>
           <View style={widthHafl}>
             <TouchableOpacity
-            onPress={()=>navigate('DetailScr',{idContent:listSuggest[0].id,lat:listSuggest[0].lat,lng:listSuggest[0].lng,})}
+            onPress={()=>navigate('DetailScr',{idContent:listSuggest[0].id,lat:listSuggest[0].lat,lng:listSuggest[0].lng,curLoc})}
             >
             <Image source={{uri :`${global.url_media}${listSuggest[0].avatar}`}} style={imgSpace}/>
             </TouchableOpacity>
             <TouchableOpacity
-            onPress={()=>navigate('DetailScr',{idContent:listSuggest[0].id,lat:listSuggest[0].lat,lng:listSuggest[0].lng,})}
+            onPress={()=>navigate('DetailScr',{idContent:listSuggest[0].id,lat:listSuggest[0].lat,lng:listSuggest[0].lng,curLoc})}
             >
             <Text style={colorText} numberOfLines={2}>{listSuggest[0].name}</Text>
             </TouchableOpacity>

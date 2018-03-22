@@ -125,19 +125,22 @@ export default class SignUpScreen extends Component {
     const {lang,errMsg,err_fullname, err_email,err_phone, err_pwd} =this.state;
     const {navigate,goBack} = this.props.navigation;
     return (
-      <ScrollView>
+
       <View style={container}>
+
       <Image source={bgMap} style={bgImg} />
+
+      <ScrollView>
         <View style={contentWrap}>
-            <TouchableOpacity style={{position:'absolute',top:15,right:15,zIndex:9}}
-            onPress={()=>goBack()}>
-            <Image source={closeIC} style={{width:24,height:24}} />
-            </TouchableOpacity>
+              <TouchableOpacity style={{position:'absolute',top:15,right:15,zIndex:9}}
+              onPress={()=>goBack()}>
+                  <Image source={closeIC} style={{width:24,height:24}} />
+              </TouchableOpacity>
 
               <Image style={imgLogo} source={LogoHome} />
               <Text style={title}>{`${lang.register}`.toUpperCase()}</Text>
-              <View style={mrgTop}>
 
+          <View style={mrgTop}>
               <TextInput underlineColorAndroid='transparent' style={txtInput} selectionColor='#5b89ab' placeholder={`${lang.full_name}`} placeholderTextColor="#ddd"
                 autoFocus onSubmitEditing={(event)=> this.refs.email.focus()}
                 value={this.state.full_name}
@@ -168,9 +171,7 @@ export default class SignUpScreen extends Component {
 
               <TextInput underlineColorAndroid='transparent' style={txtInput} selectionColor='#5b89ab' placeholder={`${lang.pwd}`} placeholderTextColor="#ddd" secureTextEntry
               onSubmitEditing={(event)=> this.refs.repwd.focus()}
-              maxLength={32}
-              ref='pwd'
-              value={this.state.pwd}
+              maxLength={32} ref='pwd' value={this.state.pwd}
               onChangeText={(pwd)=>this.setState({pwd})} />
 
               <View style={[mrgTop,err_pwd !=='' ? show : hide]}>
@@ -178,53 +179,55 @@ export default class SignUpScreen extends Component {
               </View>
 
               <TextInput underlineColorAndroid='transparent' style={txtInput} selectionColor='#5b89ab' placeholder={`${lang.re_pwd}`} placeholderTextColor="#ddd" secureTextEntry
-              ref='repwd' value={this.state.re_pwd}
-              maxLength={32}
+              ref='repwd' value={this.state.re_pwd} maxLength={32}
               onChangeText={(re_pwd)=>this.setState({re_pwd})}/>
+
               <View style={[flexStart,mrgTop,errMsg!=='' ? show : hide]}>
               <Text style={txtErr}>{errMsg}</Text>
               </View>
-              </View>
-
+              <View style={{height:30}}></View>
               <TouchableOpacity style={[mrgTop]} onPress={()=>this.signUp()}>
               <Text style={[btn,colorPress]}>{`${lang.register}`.toUpperCase()}</Text>
               </TouchableOpacity>
 
+
+        </View>
               <View style={[btnWrapSoci,mrgTop]}>
                   <Image style={imgSoci} source={FacebookColor} />
                   <Image style={imgSoci} source={GoogleColor} />
               </View>
+              <View style={[btnWrap]}>
+                  <Text>{`${lang.ask_acc_login}`}  </Text><TouchableOpacity onPress={()=>navigate('LoginScr',{backScr:''})}>
+                  <Text style={forgotpwd}>{`${lang.log_now}`}</Text></TouchableOpacity>
+              </View>
 
         </View>
+        </ScrollView>
 
-            <View style={btnWrap}>
-                <Text>{`${lang.ask_acc}`}  </Text><TouchableOpacity onPress={()=>navigate('LoginScr',{backScr:''})}>
-                <Text style={forgotpwd}>{`${lang.log_now}`}</Text></TouchableOpacity>
-            </View>
       </View>
 
-      </ScrollView>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    width,height:height-25,
-    justifyContent: 'space-between',
+    width,minHeight:height,
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor:'transparent',
   },
   flexStart:{alignSelf:'flex-start',alignItems:'flex-start',},
   show:{display:'flex'},
   hide:{display:'none'},
   txtErr:{color:'#BF2827'},
-  btnWrap :{flexDirection: 'row',alignItems: 'center',justifyContent:'center',bottom:20},
+  btnWrap :{flexDirection: 'row',alignItems: 'center',justifyContent:'center',marginTop:40},
   forgotpwd : {textAlign: 'right', color: '#5b89ab'},
   pullL : {textAlign: 'left',},
   pullR : {textAlign: 'right',},
   mrgTop:{ marginTop : 15},
   btnWrapSoci: {width: 90, justifyContent: 'space-between', flexDirection:'row',},
-  contentWrap : { width,height:height-45,alignItems: 'center',justifyContent: 'center',},
+  contentWrap : {width,minHeight:height, padding:25,paddingTop:55,marginBottom:75,alignItems: 'center',justifyContent: 'center',},
   imgLogo : {
     width : 60,
     height : 60,

@@ -1,4 +1,6 @@
 import { AsyncStorage } from 'react-native';
+import encodeApi from './encodeApi';
+import global from '../global';
 
 const loginApi = async (url,param) => {
   try {
@@ -20,6 +22,7 @@ const loginApi = async (url,param) => {
       });
     let responseJson = await response.json();
     if(responseJson.code===200){
+      encodeApi(`${global.url_node}${'person'}`,'POST',responseJson.data[0]);
       AsyncStorage.setItem('@MyAccount:key', JSON.stringify(Object.assign(responseJson.data[0],{'pwd':param.password.toString()})));
     }
     return responseJson;

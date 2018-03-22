@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import {
   View,Text,Modal,TouchableOpacity,Image,
-  Dimensions,ScrollView,
+  Dimensions,ScrollView,Alert,
 } from 'react-native';
 
 import getApi from '../../api/getApi';
@@ -13,6 +13,7 @@ import styles from '../../styles';
 
 import arrowLeft from '../../../src/icon/ic-white/arrow-left.png';
 import moreIC from '../../../src/icon/ic-create/ic-more.png';
+import closeIC from '../../../src/icon/ic-create/ic-close.png';
 
 const {width,height} = Dimensions.get('window');
 
@@ -45,8 +46,23 @@ export default class LikeLocation extends Component {
     })
     .catch(err => console.log(err));
   }
+  deleteLike(idContent){
+    const url = `${global.url}${'delete-like/'}${idContent}`;
+    console.log('url',url);
+    getApi(url).then(e => console.log(e)).catch(err => console.log(err));
+    this.getData(this.state.user_profile.id);
+  }
+  confirmDel(id){
+    const {lang} = this.props;
+    Alert.alert(lang.notify,lang.confirm_like_del,[
+      {text: 'Cancel', style: 'cancel'},
+      {text: 'OK', onPress: () => this.deleteLike(id)},
+    ],
+   { cancelable: false } )
+  }
   render() {
-    //const { userId } = this.props;
+    const { lang,navigation,curLoc } = this.props;
+    //console.log('lang',lang);
     const {
       container,headCatStyle,headContent,titleCreate,
       titleTab,titleActive,listCreate,widthLblCre,show,hide,
@@ -74,15 +90,28 @@ export default class LikeLocation extends Component {
             this.state.listData.map((e)=>(
               <View key={e.id}>
                 <View style={{backgroundColor:'#fff'}}>
+                  <TouchableOpacity onPress={()=>{
+                    this.props.closeModal()
+                    navigation.navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang})
+                  }}>
                     <Image source={{uri:`${global.url_media}${e.avatar}`}} style={{width:width,minHeight:200,marginBottom:10}} />
+                  </TouchableOpacity>
+                  <TouchableOpacity style={{position:'absolute',top:7,right:7}}
+                    onPress={()=>this.confirmDel(e.id)}>
+                    <Image source={closeIC} style={{width:20,height:20}} />
+                    </TouchableOpacity>
+
                     <View style={listCreate}>
                       <View style={{width:width-80}}>
+                        <TouchableOpacity onPress={()=>{
+                          this.props.closeModal()
+                          navigation.navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang})
+                        }}>
                           <Text numberOfLines={1} style={txtTitleOverCat}>{e.name}</Text>
-                          <Text style={{color:'#6587A8'}}>{`${e.address}, ${e._district.name}, ${e._city.name}, ${e._country.name}`}</Text>
+                        </TouchableOpacity>
+                          <Text numberOfLines={1} style={{color:'#6587A8',lineHeight:24}}>{`${e.address}, ${e._district.name}, ${e._city.name}, ${e._country.name}`}</Text>
                       </View>
-                      <TouchableOpacity>
-                      <Image source={moreIC} style={{width:20,height:20}} />
-                      </TouchableOpacity>
+
                     </View>
                 </View>
                 <View style={{height:14}}></View>

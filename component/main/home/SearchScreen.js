@@ -62,7 +62,7 @@ export default class SearchScreen extends Component {
   getCategory(keyword,lat,lng){
     let url = `${global.url}${'search-content?keyword='}${keyword}${'&limit=5000'}${'&distance=500'}`;
     if(lat!==0 && lng!==0) url += `${'&location='}${lat},${lng}`;
-    console.log('url',url);
+    //console.log('url',url);
       getApi(url)
       .then(arrData => {
           this.setState({ markers: arrData.data,onchange:true,showInfoOver:true,

@@ -63,7 +63,7 @@ export default class HomeTab extends Component {
       valSearch:'',
     };
     checkLogin().then(e=>{
-
+      //console.log(e);
       if(e.id===undefined){
         this.setState({isLogin:false})
       }else {
@@ -79,7 +79,7 @@ export default class HomeTab extends Component {
   getLoc(){
     navigator.geolocation.getCurrentPosition(
           (position) => {
-            console.log('position',position);
+            //console.log('position',position);
             const latlng = `${position.coords.latitude}${','}${position.coords.longitude}`;
             this.setState({
               curLoc : {
@@ -265,13 +265,38 @@ export default class HomeTab extends Component {
                       return (<TouchableOpacity
                           key={e.id}
                           style={{position:'absolute',alignItems:'center',top:pos.y,left :pos.x,overflow: 'visible'}}
-                          onPress={() => navigate('AdsScr',{icon:`${global.url_media}${e.image}`,name_module:e.name,lang:this.state.lang}) }
+                          onPress={() => {
+                            this.requestLogin();
+                            if(this.state.isLogin){
+                              navigate('AdsScr',{icon:`${global.url_media}${e.image}`,name_module:e.name,code_user:this.state.code_user,lang:this.state.lang});
+                            }
+                          }}
                           >
                           <Text style={labelNum}>(25)</Text>
                         <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                         <Text style={labelCat}>{e.name}</Text>
                       </TouchableOpacity>);
                         break;
+
+                  case 'chat':
+                      angle *= index-i;
+                      pos = this.findNewPoint(x, y, angle, distance);
+                      return (<TouchableOpacity
+                          key={e.id}
+                          style={{position:'absolute',alignItems:'center',top:pos.y,left :pos.x,overflow: 'visible'}}
+                          onPress={() => {
+                            this.requestLogin();
+                            if(this.state.isLogin){
+                              navigate('ContactScr',{name_module:e.name,lang:this.state.lang});
+                            }
+                          }}
+                          >
+                          <Text style={labelNum}>(25)</Text>
+                        <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
+                        <Text style={labelCat}>{e.name}</Text>
+                      </TouchableOpacity>);
+                        break;
+
                   case 'make-money':
                       angle *= index-i;
                       pos = this.findNewPoint(x, y, angle, distance);

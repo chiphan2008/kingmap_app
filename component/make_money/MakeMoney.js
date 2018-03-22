@@ -116,11 +116,11 @@ export default class MakeMoney extends Component {
         </View>
 
         <View style={[marTop,wrapDes]}>
-        <Text style={{color:'#6587A8',fontSize:16,lineHeight:28}}>{`${'Bạn hãy thường xuyên quan tâm đến khách hàng của mình: \n + Sau 4 tuần địa chỉ sẽ bị chìm.\n + Sau 4 tuần địa chỉ sẽ bị chìm. '}`}</Text>
+        <Text style={{color:'#6587A8',fontSize:16,lineHeight:28}}>{`${'Lưu ý : \n- Các địa điểm cần cập nhật mỗi tuần 1 lần để người dùng biết là địa điểm còn đang hoạt động.\n- Sau 03 tháng, điạ điểm nào không có các tương tác gì khác ngoài tìm kiếm thông tin thì các nhân viên quản lý địa điểm có trách nhiệm tiếp cận địa điểm để hai bên cùng hoạt động hiệu quả.\n- Sau 02 năm, các địa điểm của bạn sẽ tự động thoát ra khoải danh sách quản lý của bạn. \n\nVậy nên, bạn hay cố gắng tương tác nhiều với các địa điểm mà bạn đang quản lý trực tiếp.'}`}</Text>
         </View>
 
         </View>
-
+        <View style={{height:height/6}}></View>
       </ScrollView>
     );
   }
@@ -130,7 +130,6 @@ const styles = StyleSheet.create({
   container: {
     width,
     height,
-    alignSelf: 'stretch',
   },
   btnTransfer:{width:width-40,alignItems:'center',justifyContent:'center',backgroundColor:'#d0021b',padding:10,borderRadius:5},
   titleHead:{fontSize:20,fontWeight:'bold',color:'#2F353F'},

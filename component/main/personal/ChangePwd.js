@@ -62,7 +62,7 @@ export default class ChangePwd extends Component {
 
 
     postApi(`${global.url}${'user/change-password'}`,arr).then(e=>{
-      console.log('e',e);
+      //console.log('e',e);
       if(e.code===200){
         AsyncStorage.removeItem('@MyAccount:key');
         Alert.alert(

@@ -86,9 +86,10 @@ export default class Wallet extends Component {
           <Text style={colorTitle}>{lang.transfer}</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={wrapWhite}>
+          <TouchableOpacity style={wrapWhite}
+          onPress={()=> navigation.navigate('WalletGuideScr',{lang,title:lang.wallet_guide,code_user})}>
           <Image source={walletIC} style={imgContent} />
-          <Text style={colorTitle}>Nạp tiền vào ví</Text>
+          <Text style={colorTitle}>{lang.wallet_guide}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity

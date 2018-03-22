@@ -29,7 +29,7 @@ function remove(array, element) {
     const index = array.indexOf(element);
     array.splice(index, 1);
 }
-
+var timeout;
 export default class ListLocation extends Component {
   constructor(props) {
     super(props);
@@ -73,7 +73,9 @@ export default class ListLocation extends Component {
     getApi(url)
     .then(arrData => {
       //console.log('arrData',arrData);
+      timeout = setTimeout(()=>{
         this.setState({ listData: arrData.data });
+      }, 3000);
     })
     .catch(err => console.log(err));
   }
@@ -98,10 +100,11 @@ export default class ListLocation extends Component {
       this.setState({id_serv});
       url += `${'&service='}${id_serv}`;
     }
-    console.log('-----url-----',url);
+    //console.log('-----url-----',url);
     getApi(url)
     .then(arrData => {
       //console.log('count',arrData.data.length);
+
         this.setState({ listData: arrData.data });
     })
     .catch(err => console.log(err));
@@ -133,7 +136,7 @@ export default class ListLocation extends Component {
             });
            },
            (error) => {
-             console.log('error',id);
+             //console.log('error',id);
              getLocationByIP().then(e => {
                this.setState({
                  curLoc:{
@@ -148,9 +151,8 @@ export default class ListLocation extends Component {
           {enableHighAccuracy: true, timeout: 20000, maximumAge: 10000}
     );
   }
-
   render() {
-    console.log('ListLocation');
+    //console.log('ListLocation');
     const { keyword,lang,idDist,id_sub,id_serv } = this.state;
     const { goBack,navigate } = this.props.navigation;
     const {idCat,sub_cat,serv_items} = this.props.navigation.state.params;
@@ -296,6 +298,7 @@ export default class ListLocation extends Component {
                renderItem={({item}) => (
                  <TouchableOpacity
                  onPress={()=>{
+                   clearTimeout(timeout);
                    this.getContentByDist(this.state.idDist,item.id,this.state.id_serv);
                    this.setState({listSubCat:{showList:!this.state.listSubCat.showList},id_sub:item.id,labelCat:item.name});
                }}
@@ -306,6 +309,7 @@ export default class ListLocation extends Component {
 
             <TouchableOpacity
                 onPress={()=>{
+                  clearTimeout(timeout);
                   this.getContentByDist(this.state.idDist,null,this.state.id_serv);
                   this.setState({listSubCat:{showList:!this.state.listSubCat.showList},id_sub:null,labelCat:'Danh mục'});
               }}
@@ -333,6 +337,7 @@ export default class ListLocation extends Component {
               <TouchableOpacity
                  onPress={()=>{
                   let idServ;
+                  clearTimeout(timeout);
                   const arr = JSON.parse(`[${this.state.id_serv}]`);
 
                   if(this.state.id_serv==='-1'){ idServ=`-1,${item.id}`; }else{
@@ -379,6 +384,7 @@ export default class ListLocation extends Component {
             <View style={listOverService}>
                 <TouchableOpacity  style={{padding:15}}
                    onPress={()=>{
+                    clearTimeout(timeout);
                     this.getContentByDist(this.state.idDist,this.state.id_sub,'-1,');
                     this.setState({listSerItem:{showList:!this.state.listSerItem.showList},id_serv:'-1',labelSer:'Dịch vụ'});
                     }}

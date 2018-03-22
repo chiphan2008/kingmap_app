@@ -49,7 +49,7 @@ export default class Hometab extends Component {
   }
 
   render() {
-    console.log('LocationTab');
+    //console.log('LocationTab');
     const {navigate, goBack} = this.props.navigation;
     const {
       container,

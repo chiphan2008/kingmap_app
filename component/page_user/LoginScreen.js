@@ -32,6 +32,7 @@ export default class LoginScreen extends Component {
     this.state = {
       isSelected: true,
       isCheck:true,
+      disable:false,
       txtUsername:'',
       txtPassword:'',
       errMsg:null,
@@ -53,14 +54,15 @@ export default class LoginScreen extends Component {
     const {txtUsername, txtPassword, lang} = this.state;
     if(txtUsername==='') return this.setState({errMsg:lang.err_email});
     if(txtPassword==='') return this.setState({errMsg:lang.err_pwd});
+    this.setState({disable:true});
     const param = {username:txtUsername,password:txtPassword};
     loginApi(`${global.url}${'login'}`,param).then(e=>{
       if(e.code!==200){
-        this.setState({errMsg:this.state.lang.wrong_pwd})
+        this.setState({errMsg:this.state.lang.wrong_pwd,disable:false})
       }else{
-        if(backScr!=='')
-        this.props.navigation.goBack();
-        else
+        // if(backScr!=='')
+        // this.props.navigation.goBack();
+        // else
         this.props.navigation.navigate('MainScr');
       }
     })
@@ -72,7 +74,7 @@ export default class LoginScreen extends Component {
       bgImg,imgCheck,txtErr,show,hide,
     } = styles;
     //console.log('this.props.navigation',this.props.navigation);
-    const {lang} = this.state;
+    const {lang,disable} = this.state;
     const {navigate, goBack} = this.props.navigation;
     const {backScr} = this.props.navigation.state.params;
     return (
@@ -80,7 +82,7 @@ export default class LoginScreen extends Component {
         <Image source={bgMap} style={bgImg} />
         <ScrollView>
         <TouchableOpacity style={{position:'absolute',top:15,right:15,zIndex:9}}
-        onPress={()=>goBack()}>
+        onPress={()=>navigate('MainScr')}>
         <Image source={closeIC} style={{width:24,height:24}} />
         </TouchableOpacity>
         <View style={contentWrap}>
@@ -114,7 +116,7 @@ export default class LoginScreen extends Component {
                     <Text style={[rememberClass,forgotpwd]}>{lang.forgot_pwd}</Text>
                     </TouchableOpacity>
               </View>
-              <TouchableOpacity onPress={()=>this.callLogin(backScr)}>
+              <TouchableOpacity disabled={disable} onPress={()=>{this.callLogin(backScr)}}>
               <Text style={[btn,colorPress]}>{`${lang.login}`.toUpperCase()}</Text>
               </TouchableOpacity>
               <View style={[btnWrapSoci,mrgTop]}>

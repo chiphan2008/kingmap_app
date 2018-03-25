@@ -59,6 +59,7 @@ export default class HomeTab extends Component {
       code_user:null,
       isLogin:false,
       user_id:0,
+      avatar:'',
       curLoc:{},
       valSearch:'',
     };
@@ -68,7 +69,7 @@ export default class HomeTab extends Component {
         this.setState({isLogin:false})
       }else {
         loginServer(e.email,e.pwd);
-        this.setState({user_id:e.id,code_user:e.phone,isLogin:true});
+        this.setState({user_id:e.id,avatar:e.avatar,code_user:e.phone,isLogin:true});
       }
     })
     this.getLoc();
@@ -287,7 +288,7 @@ export default class HomeTab extends Component {
                           onPress={() => {
                             this.requestLogin();
                             if(this.state.isLogin){
-                              navigate('ContactScr',{name_module:e.name,lang:this.state.lang});
+                              navigate('ContactScr',{user_id:this.state.user_id,avatar:this.state.avatar, name_module:e.name,lang:this.state.lang});
                             }
                           }}
                           >

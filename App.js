@@ -18,6 +18,7 @@ import personalIC from './src/icon/ic-home/ic-personal.png';
 
 //import Chat
 import Contact from './component/conversation/Contact';
+import Messenger from './component/conversation/Messenger';
 //create-location
 import ChooseCat from './component/create_location/ChooseCat';
 import FormCreate from './component/create_location/FormCreate';
@@ -218,6 +219,9 @@ export default class App extends Component {
       },
       ContactScr: {
         screen: Contact,
+      },
+      MessengerScr: {
+        screen: Messenger,
       },
 
     },

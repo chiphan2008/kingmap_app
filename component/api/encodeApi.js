@@ -2,7 +2,7 @@ import { AsyncStorage } from 'react-native';
 
 const encodeApi = async (url,method,param) => {
   try {
-    console.log('url,method,param',url,method,param);
+    //console.log('url,method,param',url,method,param);
     let formBody = `${'id='}${param.id}&${'name='}${param.full_name}&${'urlhinh='}${param.avatar}`;
 
     let params = {

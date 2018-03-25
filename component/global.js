@@ -7,6 +7,7 @@ module.exports = {
   },
   url: 'https://kingmap.vn/api/',
   url_media: 'https://kingmap.vn',
+  url_server:'http://112.213.94.96:2309',
   url_node:'http://112.213.94.96:2309/api/',
   secret_key: {
     token_type: "Bearer",

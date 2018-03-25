@@ -9,6 +9,9 @@ import getApi from '../api/getApi';
 import global from '../global';
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
 
+function checkUrl(url){
+  return url.indexOf('http')!=-1;
+}
 export default class Contact extends Component {
   constructor(props) {
     super(props);
@@ -17,17 +20,20 @@ export default class Contact extends Component {
     };
     this.getData();
   }
+
   getData(){
-    const url = `${global.url_node}${'person'}`;
+    const { user_id } = this.props.navigation.state.params;
+    const url = `${global.url_node}${'except-person/'}${user_id}`;
     getApi(url).then(e=>{
-      this.setState({listData:e.person})
+      this.setState({listData:e.data})
     })
   }
 
   render() {
-    const { lang,name_module } = this.props.navigation.state.params;
+    const { lang,name_module,user_id,avatar } = this.props.navigation.state.params;
     const { navigation } = this.props;
     const { listData } = this.state;
+    //console.log('listData',listData);
     const {
       container,contentWrap,headCatStyle,headContent,titleCreate,
       wrapItems,colorName,
@@ -55,10 +61,11 @@ export default class Contact extends Component {
              keyExtractor={(item, index) => index}
              data={listData}
              renderItem={({item}) => (
-
-               <TouchableOpacity style={wrapItems}>
-                 <Image source={{uri:`${global.url_media}/${item.urlhinh}`}} style={{width:50,height:50,borderRadius:25,marginRight:7}} />
+               <TouchableOpacity style={wrapItems}
+               onPress={()=>navigation.navigate('MessengerScr',{user_id,urlhinh:avatar,name:item.name,port_connect:user_id<item.id ? `${user_id}_${item.id}` : `${item.id}_${user_id}`})}>
+                 <Image source={{uri: checkUrl(item.urlhinh) ? `${item.urlhinh}` : `${global.url_media}/${item.urlhinh}`}} style={{width:50,height:50,borderRadius:25,marginRight:7}} />
                  <Text style={colorName}>{item.name}</Text>
+
                </TouchableOpacity>
           )} />
           </View>
@@ -78,7 +85,6 @@ const styles = StyleSheet.create({
   container: {
     width,
     height,
-
   },
   contentWrap : { width,height:height-155,alignItems: 'center',justifyContent: 'center'},
   wrapItems:{flexDirection:'row',width,alignItems:'center',padding:15,backgroundColor:'#fff',marginBottom:1},

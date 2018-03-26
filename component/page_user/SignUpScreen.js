@@ -134,7 +134,7 @@ export default class SignUpScreen extends Component {
         <View style={contentWrap}>
               <TouchableOpacity style={{position:'absolute',top:15,right:15,zIndex:9}}
               onPress={()=>goBack()}>
-                  <Image source={closeIC} style={{width:24,height:24}} />
+                  <Image source={closeIC} style={{width:20,height:20}} />
               </TouchableOpacity>
 
               <Image style={imgLogo} source={LogoHome} />

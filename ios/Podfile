@@ -17,11 +17,14 @@ target 'kingmap_app' do
     'RCTWebSocket',
     'BatchedBridge'
   ]
-
+  
+  pod 'Google/SignIn'
   pod 'GoogleMaps'
   pod 'react-native-maps', path: rn_maps_path
   pod 'RSKImageCropper'
   pod 'QBImagePickerController'
+
+
 
   pod 'RNSVG', :path => '../node_modules/react-native-svg'
 

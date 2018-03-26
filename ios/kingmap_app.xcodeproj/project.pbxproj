@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -34,12 +33,14 @@
 		2D02E4C81E0B4AEC006451C7 /* libRCTWebSocket-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3E991DF850E9000B6D8A /* libRCTWebSocket-tvOS.a */; };
 		2D16E6881FA4F8E400B85C8A /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D16E6891FA4F8E400B85C8A /* libReact.a */; };
 		2DCD954D1E0B4F2C00145EB5 /* kingmap_appTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* kingmap_appTests.m */; };
-		3A99B58CE57A9160B56E7E9A /* libPods-kingmap_app.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4ACC00796F55B4D015F994EB /* libPods-kingmap_app.a */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		761127E62018C7EF009DC538 /* RSKImageCropper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 761127E52018C7EF009DC538 /* RSKImageCropper.framework */; };
 		761127E72018C7EF009DC538 /* RSKImageCropper.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 761127E52018C7EF009DC538 /* RSKImageCropper.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		761128112018C810009DC538 /* QBImagePicker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 761128102018C810009DC538 /* QBImagePicker.framework */; };
 		761128122018C810009DC538 /* QBImagePicker.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 761128102018C810009DC538 /* QBImagePicker.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		7620E67E2067DE8800207637 /* GoogleSignIn.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7620E67B2067DE8600207637 /* GoogleSignIn.framework */; };
+		7620E6802067DE8800207637 /* GoogleSignIn.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 7620E67D2067DE8800207637 /* GoogleSignIn.bundle */; };
+		7620E6822067DEE000207637 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7620E6812067DEE000207637 /* GoogleService-Info.plist */; };
 		76E07328201195680081F946 /* AIRGoogleMapUrlTile.m in Sources */ = {isa = PBXBuildFile; fileRef = 76E07303201195680081F946 /* AIRGoogleMapUrlTile.m */; };
 		76E07329201195680081F946 /* AIRGoogleMapPolygonManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 76E07306201195680081F946 /* AIRGoogleMapPolygonManager.m */; };
 		76E0732A201195680081F946 /* AIRGoogleMapMarker.m in Sources */ = {isa = PBXBuildFile; fileRef = 76E07309201195680081F946 /* AIRGoogleMapMarker.m */; };
@@ -60,6 +61,7 @@
 		76E07339201195680081F946 /* AIRGoogleMapPolygon.m in Sources */ = {isa = PBXBuildFile; fileRef = 76E07325201195680081F946 /* AIRGoogleMapPolygon.m */; };
 		76E0733A201195680081F946 /* AIRGMSMarker.m in Sources */ = {isa = PBXBuildFile; fileRef = 76E07326201195680081F946 /* AIRGMSMarker.m */; };
 		78D024FDB52F4569B0B9FA45 /* libRNSettings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C0A51486BFE441C18BC7DB0B /* libRNSettings.a */; };
+		7D57AC157BBE4985E2A95AB0 /* libPods-kingmap_app.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 33F744B0687F2869FC028245 /* libPods-kingmap_app.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
 		FB2FDCBB4AAD40EAA9E399EF /* libimageCropPicker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E47A45BBAB874D4292C725DE /* libimageCropPicker.a */; };
@@ -393,10 +395,15 @@
 		2D02E47B1E0B4A5D006451C7 /* kingmap_app-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "kingmap_app-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* kingmap_app-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "kingmap_app-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		4ACC00796F55B4D015F994EB /* libPods-kingmap_app.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-kingmap_app.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		33F744B0687F2869FC028245 /* libPods-kingmap_app.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-kingmap_app.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		486295906C7F79A50E681084 /* Pods-kingmap_app.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kingmap_app.release.xcconfig"; path = "Pods/Target Support Files/Pods-kingmap_app/Pods-kingmap_app.release.xcconfig"; sourceTree = "<group>"; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
 		761127E52018C7EF009DC538 /* RSKImageCropper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSKImageCropper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		761128102018C810009DC538 /* QBImagePicker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = QBImagePicker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7620E67B2067DE8600207637 /* GoogleSignIn.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleSignIn.framework; sourceTree = "<group>"; };
+		7620E67C2067DE8700207637 /* GoogleSignInDependencies.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleSignInDependencies.framework; sourceTree = "<group>"; };
+		7620E67D2067DE8800207637 /* GoogleSignIn.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = GoogleSignIn.bundle; sourceTree = "<group>"; };
+		7620E6812067DEE000207637 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		76E07302201195680081F946 /* AIRGoogleMapPolyline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIRGoogleMapPolyline.h; sourceTree = "<group>"; };
 		76E07303201195680081F946 /* AIRGoogleMapUrlTile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIRGoogleMapUrlTile.m; sourceTree = "<group>"; };
 		76E07304201195680081F946 /* AIRGoogleMapMarkerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIRGoogleMapMarkerManager.h; sourceTree = "<group>"; };
@@ -438,10 +445,9 @@
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		7F3ECB8FA8E04289A7F4DF6C /* imageCropPicker.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = imageCropPicker.xcodeproj; path = "../node_modules/react-native-image-crop-picker/ios/imageCropPicker.xcodeproj"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
-		8E111F79226CE07D4405E8F5 /* Pods-kingmap_app.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kingmap_app.release.xcconfig"; path = "Pods/Target Support Files/Pods-kingmap_app/Pods-kingmap_app.release.xcconfig"; sourceTree = "<group>"; };
+		A980EBE79AF5E22675406140 /* Pods-kingmap_app.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kingmap_app.debug.xcconfig"; path = "Pods/Target Support Files/Pods-kingmap_app/Pods-kingmap_app.debug.xcconfig"; sourceTree = "<group>"; };
 		ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTBlob.xcodeproj; path = "../node_modules/react-native/Libraries/Blob/RCTBlob.xcodeproj"; sourceTree = "<group>"; };
 		C0A51486BFE441C18BC7DB0B /* libRNSettings.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNSettings.a; sourceTree = "<group>"; };
-		CF2FD0F8E1961C4648B3DD39 /* Pods-kingmap_app.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kingmap_app.debug.xcconfig"; path = "Pods/Target Support Files/Pods-kingmap_app/Pods-kingmap_app.debug.xcconfig"; sourceTree = "<group>"; };
 		E47A45BBAB874D4292C725DE /* libimageCropPicker.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libimageCropPicker.a; sourceTree = "<group>"; };
 		EB81BA4EA2C840BD9C2B2464 /* RNSettings.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNSettings.xcodeproj; path = "../node_modules/react-native-settings/ios/RNSettings.xcodeproj"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -466,6 +472,7 @@
 				00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */,
 				00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */,
 				00C302E81ABCBA2D00DB3ED1 /* libRCTImage.a in Frameworks */,
+				7620E67E2067DE8800207637 /* GoogleSignIn.framework in Frameworks */,
 				133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */,
 				761127E62018C7EF009DC538 /* RSKImageCropper.framework in Frameworks */,
 				00C302E91ABCBA2D00DB3ED1 /* libRCTNetwork.a in Frameworks */,
@@ -474,9 +481,9 @@
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
 				78D024FDB52F4569B0B9FA45 /* libRNSettings.a in Frameworks */,
-				3A99B58CE57A9160B56E7E9A /* libPods-kingmap_app.a in Frameworks */,
 				FB2FDCBB4AAD40EAA9E399EF /* libimageCropPicker.a in Frameworks */,
 				761128112018C810009DC538 /* QBImagePicker.framework in Frameworks */,
+				7D57AC157BBE4985E2A95AB0 /* libPods-kingmap_app.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -587,6 +594,7 @@
 		13B07FAE1A68108700A75B9A /* kingmap_app */ = {
 			isa = PBXGroup;
 			children = (
+				7620E6812067DEE000207637 /* GoogleService-Info.plist */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -624,8 +632,11 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7620E67D2067DE8800207637 /* GoogleSignIn.bundle */,
+				7620E67B2067DE8600207637 /* GoogleSignIn.framework */,
+				7620E67C2067DE8700207637 /* GoogleSignInDependencies.framework */,
 				2D16E6891FA4F8E400B85C8A /* libReact.a */,
-				4ACC00796F55B4D015F994EB /* libPods-kingmap_app.a */,
+				33F744B0687F2869FC028245 /* libPods-kingmap_app.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -652,6 +663,7 @@
 			children = (
 				C0A51486BFE441C18BC7DB0B /* libRNSettings.a */,
 				E47A45BBAB874D4292C725DE /* libimageCropPicker.a */,
+				179D98A98A1D4FE8A7FBD085 /* libRNGoogleSignin.a */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -760,8 +772,8 @@
 				00E356EF1AD99517003FC87E /* kingmap_appTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				E57D66C8E05B80A71273390C /* Pods */,
 				76E072C620118E280081F946 /* Recovered References */,
+				87EA868A1829F50A9391EAF6 /* Pods */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -779,6 +791,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		87EA868A1829F50A9391EAF6 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				A980EBE79AF5E22675406140 /* Pods-kingmap_app.debug.xcconfig */,
+				486295906C7F79A50E681084 /* Pods-kingmap_app.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		ADBDB9201DFEBF0600ED6528 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -786,15 +807,6 @@
 				2D16E6721FA4F8DC00B85C8A /* libRCTBlob-tvOS.a */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		E57D66C8E05B80A71273390C /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				CF2FD0F8E1961C4648B3DD39 /* Pods-kingmap_app.debug.xcconfig */,
-				8E111F79226CE07D4405E8F5 /* Pods-kingmap_app.release.xcconfig */,
-			);
-			name = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -822,14 +834,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "kingmap_app" */;
 			buildPhases = (
-				B04682C9F8DD4954AC8E4901 /* [CP] Check Pods Manifest.lock */,
+				E2DB801C2079D8FA793B9BC0 /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				ADA60DAB2F887AB56B9F2C45 /* [CP] Embed Pods Frameworks */,
-				181C4A69E5CCEA66D12CE5B6 /* [CP] Copy Pods Resources */,
 				7611280F2018C7EF009DC538 /* Embed Frameworks */,
+				864CCC808B53FF5006FFFCE1 /* [CP] Embed Pods Frameworks */,
+				E6659735504293BBE6390EDE /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1271,7 +1283,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				7620E6802067DE8800207637 /* GoogleSignIn.bundle in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
+				7620E6822067DEE000207637 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1307,26 +1321,6 @@
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
 		};
-		181C4A69E5CCEA66D12CE5B6 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-kingmap_app/Pods-kingmap_app-resources.sh",
-				"${PODS_ROOT}/GoogleMaps/Maps/Frameworks/GoogleMaps.framework/Resources/GoogleMaps.bundle",
-				$PODS_CONFIGURATION_BUILD_DIR/QBImagePickerController/QBImagePicker.bundle,
-				"${PODS_ROOT}/RSKImageCropper/RSKImageCropper/RSKImageCropperStrings.bundle",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-kingmap_app/Pods-kingmap_app-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		2D02E4CB1E0B4B27006451C7 /* Bundle React Native Code And Images */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1341,7 +1335,7 @@
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
 		};
-		ADA60DAB2F887AB56B9F2C45 /* [CP] Embed Pods Frameworks */ = {
+		864CCC808B53FF5006FFFCE1 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1356,7 +1350,7 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-kingmap_app/Pods-kingmap_app-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		B04682C9F8DD4954AC8E4901 /* [CP] Check Pods Manifest.lock */ = {
+		E2DB801C2079D8FA793B9BC0 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1372,6 +1366,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E6659735504293BBE6390EDE /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-kingmap_app/Pods-kingmap_app-resources.sh",
+				"${PODS_ROOT}/GTMOAuth2/Source/Touch/GTMOAuth2ViewTouch.xib",
+				"${PODS_ROOT}/GoogleMaps/Maps/Frameworks/GoogleMaps.framework/Resources/GoogleMaps.bundle",
+				"${PODS_ROOT}/GoogleSignIn/Resources/GoogleSignIn.bundle",
+				$PODS_CONFIGURATION_BUILD_DIR/QBImagePickerController/QBImagePicker.bundle,
+				"${PODS_ROOT}/RSKImageCropper/RSKImageCropper/RSKImageCropperStrings.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-kingmap_app/Pods-kingmap_app-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -1476,7 +1492,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -1502,7 +1517,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -1515,21 +1529,36 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF2FD0F8E1961C4648B3DD39 /* Pods-kingmap_app.debug.xcconfig */;
+			baseConfigurationReference = A980EBE79AF5E22675406140 /* Pods-kingmap_app.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = KGT2LPRT32;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-settings/ios",
-					"$(SRCROOT)/../node_modules/react-native/React/**",
 					"$(SRCROOT)/../node_modules/react-native-maps/lib/ios/AirMaps/**",
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
 				);
 				INFOPLIST_FILE = kingmap_app/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$PODS_CONFIGURATION_BUILD_DIR/GTMOAuth2\"",
+					"\"$PODS_CONFIGURATION_BUILD_DIR/GTMSessionFetcher\"",
+					"\"$PODS_CONFIGURATION_BUILD_DIR/GoogleToolboxForMac\"",
+					"\"$PODS_CONFIGURATION_BUILD_DIR/QBImagePickerController\"",
+					"\"$PODS_CONFIGURATION_BUILD_DIR/RNSVG\"",
+					"\"$PODS_CONFIGURATION_BUILD_DIR/RSKImageCropper\"",
+					"\"$PODS_CONFIGURATION_BUILD_DIR/react-native-maps\"",
+					"\"$PODS_CONFIGURATION_BUILD_DIR/yoga\"",
+					"\"$PODS_CONFIGURATION_BUILD_DIR/React\"",
+				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-lc++",
@@ -1541,20 +1570,35 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8E111F79226CE07D4405E8F5 /* Pods-kingmap_app.release.xcconfig */;
+			baseConfigurationReference = 486295906C7F79A50E681084 /* Pods-kingmap_app.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = KGT2LPRT32;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-settings/ios",
-					"$(SRCROOT)/../node_modules/react-native/React/**",
 					"$(SRCROOT)/../node_modules/react-native-maps/lib/ios/AirMaps/**",
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
 				);
 				INFOPLIST_FILE = kingmap_app/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$PODS_CONFIGURATION_BUILD_DIR/GTMOAuth2\"",
+					"\"$PODS_CONFIGURATION_BUILD_DIR/GTMSessionFetcher\"",
+					"\"$PODS_CONFIGURATION_BUILD_DIR/GoogleToolboxForMac\"",
+					"\"$PODS_CONFIGURATION_BUILD_DIR/QBImagePickerController\"",
+					"\"$PODS_CONFIGURATION_BUILD_DIR/RNSVG\"",
+					"\"$PODS_CONFIGURATION_BUILD_DIR/RSKImageCropper\"",
+					"\"$PODS_CONFIGURATION_BUILD_DIR/react-native-maps\"",
+					"\"$PODS_CONFIGURATION_BUILD_DIR/yoga\"",
+					"\"$PODS_CONFIGURATION_BUILD_DIR/React\"",
+				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-lc++",
@@ -1585,7 +1629,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -1620,7 +1663,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -1649,7 +1691,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.kingmap_app-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1674,7 +1715,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.kingmap_app-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";

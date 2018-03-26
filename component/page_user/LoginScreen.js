@@ -6,6 +6,8 @@ import {
   Dimensions, TextInput, ScrollView } from 'react-native';
 //import { CheckBox } from 'react-native-elements';
 //import RoundCheckbox from 'rn-round-checkbox';
+import {GoogleSignin} from 'react-native-google-signin';
+
 import loginApi from '../api/loginApi';
 import getLanguage from '../api/getLanguage';
 import lang_en from '../lang/en/user/language';
@@ -39,6 +41,7 @@ export default class LoginScreen extends Component {
       lang: lang_vn,
     }
     this.getLang();
+
   }
 
   getLang(){
@@ -49,7 +52,16 @@ export default class LoginScreen extends Component {
      }
     });
   }
-
+  loginGooIOS(){
+    GoogleSignin.signIn()
+    .then((user) => {
+      this.setState({txtUsername:user.id})
+    })
+    .catch((err) => {
+      console.log('WRONG SIGNIN', err);
+    })
+    .done();
+  }
   callLogin(backScr){
     const {txtUsername, txtPassword, lang} = this.state;
     if(txtUsername==='') return this.setState({errMsg:lang.err_email});
@@ -65,6 +77,11 @@ export default class LoginScreen extends Component {
         // else
         this.props.navigation.navigate('MainScr');
       }
+    })
+  }
+  componentWillMount(){
+    GoogleSignin.configure({
+      iosClientId: '1004951541310-3ns8ppuvvallfta76rchcarcq1acbttl.apps.googleusercontent.com', // only for iOS
     })
   }
   render() {
@@ -83,7 +100,7 @@ export default class LoginScreen extends Component {
         <ScrollView>
         <TouchableOpacity style={{position:'absolute',top:15,right:15,zIndex:9}}
         onPress={()=>navigate('MainScr')}>
-        <Image source={closeIC} style={{width:24,height:24}} />
+        <Image source={closeIC} style={{width:20,height:20}} />
         </TouchableOpacity>
         <View style={contentWrap}>
               <View></View>
@@ -93,12 +110,12 @@ export default class LoginScreen extends Component {
               <TextInput underlineColorAndroid='transparent' style={txtInput} selectionColor='#5b89ab' placeholderTextColor="#ddd"
               placeholder={lang.username}
               onSubmitEditing={(event)=> this.refs.pwd.focus()}
-              autoFocus
-              onChangeText={(text) => this.setState({txtUsername: text})}
+              autoFocus value={this.state.txtUsername}
+              onChangeText={(txtUsername) => this.setState({txtUsername})}
                />
               <TextInput underlineColorAndroid='transparent' style={txtInput} selectionColor='#5b89ab' placeholderTextColor="#ddd" secureTextEntry
               placeholder={lang.pwd} ref='pwd'
-              onChangeText={(text) => this.setState({txtPassword: text})}
+              onChangeText={(txtPassword) => this.setState({txtPassword})}
               />
               </View>
               <View style={[wrapAdv, this.state.errMsg!==null? show : hide]}>
@@ -121,7 +138,9 @@ export default class LoginScreen extends Component {
               </TouchableOpacity>
               <View style={[btnWrapSoci,mrgTop]}>
                   <Image style={imgSoci} source={FacebookColor} />
+                  <TouchableOpacity onPress={()=>this.loginGooIOS()}>
                   <Image style={imgSoci} source={GoogleColor} />
+                  </TouchableOpacity>
               </View>
         </View>
         <View style={btnWrap}>

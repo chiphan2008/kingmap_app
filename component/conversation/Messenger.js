@@ -133,6 +133,7 @@ export default class Messenger extends Component {
         }}
         value={text}
         style={txtInput} />
+        
         <TouchableOpacity
         onPress={()=>{
           if(text!==''){this.sendMessage()}

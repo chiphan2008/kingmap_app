@@ -68,7 +68,7 @@ export default class HomeTab extends Component {
       if(e.id===undefined){
         this.setState({isLogin:false})
       }else {
-        loginServer(e.email,e.pwd);
+        loginServer(e);
         this.setState({user_id:e.id,avatar:e.avatar,code_user:e.phone,isLogin:true});
       }
     })

@@ -9,6 +9,7 @@ import {
 import {GoogleSignin} from 'react-native-google-signin';
 
 import loginApi from '../api/loginApi';
+import gooApi from '../api/gooApi';
 import getLanguage from '../api/getLanguage';
 import lang_en from '../lang/en/user/language';
 import lang_vn from '../lang/vn/user/language';
@@ -55,12 +56,16 @@ export default class LoginScreen extends Component {
   loginGooIOS(){
     GoogleSignin.signIn()
     .then((user) => {
-      this.setState({txtUsername:user.id})
-    })
-    .catch((err) => {
-      console.log('WRONG SIGNIN', err);
-    })
-    .done();
+      gooApi(`${global.url}${'login-google'}`,user).then(e =>{
+        if(e.code===200){
+          this.props.navigation.navigate('MainScr');
+        }else{
+          this.setState({errMsg:e.message})
+        }
+      })
+    }).catch((err) => {
+      return false;
+    }).done();
   }
   callLogin(backScr){
     const {txtUsername, txtPassword, lang} = this.state;

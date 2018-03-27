@@ -65,7 +65,7 @@ export default class DetailScreen extends Component {
     checkLogin().then(e=>{
       if(e.id!==undefined){
         this.setState({user_id:e.id,ema:e.email,pwd:e.pwd});
-        loginServer(e.email,e.pwd);
+        loginServer(e);
       }
     });
   }

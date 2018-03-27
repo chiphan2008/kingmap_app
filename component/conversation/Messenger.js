@@ -26,22 +26,26 @@ export default class Messenger extends Component {
       text:'',
       checkID:-1,
       checkDate:'',
+      showType:false,
+      myID:'',
     };
+
     this.socket = io(`${global.url_server}`,{jsonp:false});
+    this.socket.on('replyStatus-'+this.props.navigation.state.params.port_connect,function(data){
+      element.setState({showType:data.showType,myID:data.user_id})
+    })
     this.socket.on('replyMessage-'+this.props.navigation.state.params.port_connect,function(data){
-      //console.log('data',data);
       const {listData,index_item, checkID, checkDate} = element.state;
       const { user_id } =element.props.navigation.state.params;
       let arr = [];
       let countID=0;
       let countDate='';
-      //let countData ='';
 
       // load first have one array: data.length!==undefined
       if(data.length>listData.length && data.length!==undefined){
         data.forEach((e,i)=>{
           const countData = data[i+1];
-          listData.push(<ListMsg showHour={countData===undefined || (e.user_id!==countData.user_id && formatHour(e.create_at)===formatHour(countData.create_at)) ? true : false} checkDate={countDate} checkID={countID} data={e} userId={user_id} key={i} />);
+          listData.push(<ListMsg showHour={countData===undefined || e.user_id!==countData.user_id || (e.user_id===countData.user_id && formatHour(e.create_at)!==formatHour(countData.create_at)) ? true : false} checkDate={countDate} checkID={countID} data={e} userId={user_id} key={i} />);
           countID=e.user_id;
           countDate = e.create_at;
           //console.log('data[]',i+1,data[i+1]);
@@ -91,19 +95,25 @@ export default class Messenger extends Component {
     }
     if(text==='') data={};
     this.socket.emit('sendMessage',port_connect,data);
-    this.setState({text:''});
+    this.setState({text:'',showType:false});
+  }
+  handleEnterText(showType){
+    const { user_id,port_connect } = this.props.navigation.state.params;
+    const data = {showType,user_id}
+    this.socket.emit('handleEnterText',port_connect,data);
   }
   componentWillMount(){
+    //this.scroll.scrollToEnd();
     this.sendMessage();
   }
   render() {
-    const { name,urlhinh } = this.props.navigation.state.params;
+    const { name,urlhinh,user_id } = this.props.navigation.state.params;
     const { navigation } = this.props;
-    const { listData,text,index_item } = this.state;
+    const { listData,text,index_item,showType,myID } = this.state;
     const {
       container,contentWrap,headCatStyle,headContent,titleCreate,
-      wrapItems,colorName,bottomSend,txtInput,
-
+      wrapItems,colorName,bottomSend,txtInput,show,hide,
+      wrapShowType
     } = styles;
 
     return (
@@ -119,21 +129,37 @@ export default class Messenger extends Component {
                 <View></View>
             </View>
         </View>
-        <ScrollView style={{width,marginTop:75}}>
-        {index_item>1 ? listData : <View key={0}></View>}
+
+        <ScrollView  scrollEnabled keyboardDismissMode='on-drag'>
+        <View style={{width,marginTop:70,marginBottom:70}}>
+          {index_item>1 ? listData : <View key={0}></View>}
+        </View>
         </ScrollView>
+
+        <View style={[wrapShowType, showType && user_id!==myID ? show : hide]}>
+          <Text style={{fontSize:12,fontStyle:'italic',color:'#fff'}}>{name} đang nhập ...</Text>
+        </View>
 
         <View style={bottomSend}>
         <TextInput
         underlineColorAndroid='transparent'
         placeholder={`${'Nhập nội dung ...'}`}
-        onChangeText={(text) => this.setState({text})}
+        onChangeText={(text) => {
+          this.setState({text})
+          if(text.length===1 && showType===false){
+            this.handleEnterText(true)
+          }
+          if(text.length===0){
+            this.handleEnterText(false)
+          }
+          console.log('showType',showType);
+        }}
         onSubmitEditing={(event) => {
           if(text!==''){this.sendMessage()}
         }}
         value={text}
         style={txtInput} />
-        
+
         <TouchableOpacity
         onPress={()=>{
           if(text!==''){this.sendMessage()}
@@ -206,7 +232,7 @@ const styles = StyleSheet.create({
     width,
     height,
   },
-  emp:{},
+  wrapShowType:{position:'absolute', zIndex:98,bottom:Platform.OS==='ios' ? 50 : 75,backgroundColor:'rgba(179, 181, 183, 0.25)',padding:10,paddingTop:5,paddingBottom:5,},
   contentWrap : { width},
   colorMsg:{color:'#2F353F',lineHeight:22},
   colorWhite:{color:'#fff',lineHeight:22},
@@ -267,7 +293,7 @@ const styles = StyleSheet.create({
     borderColor:'#E1E7EC',
     borderTopWidth:1,
     position:'absolute',
-    zIndex:999,bottom:Platform.OS==='ios' ? 0 : 25,
+    zIndex:99,bottom:Platform.OS==='ios' ? 0 : 25,
     flexDirection:'row',
 
     alignItems:'center',

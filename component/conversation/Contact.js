@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     width,
     height,
   },
-  contentWrap : { width,height,alignItems: 'center',justifyContent: 'center'},
+  contentWrap : { width,height,alignItems: 'center',justifyContent: 'center',paddingBottom:70},
   wrapItems:{flexDirection:'row',width,alignItems:'center',padding:15,backgroundColor:'#fff',marginBottom:1},
   headCatStyle : {
       backgroundColor: '#D0021B',paddingTop: Platform.OS==='ios' ? 30 : 20, alignItems: 'center',height: 65,

@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image,
-  TouchableOpacity,TextInput,ScrollView,
+  TouchableOpacity,TextInput,ScrollView,Keyboard,
 } from 'react-native';
 const {height, width} = Dimensions.get('window');
 import io from 'socket.io-client/dist/socket.io.js';
@@ -32,11 +32,15 @@ export default class Messenger extends Component {
 
     this.socket = io(`${global.url_server}`,{jsonp:false});
     this.socket.on('replyStatus-'+this.props.navigation.state.params.port_connect,function(data){
-      element.setState({showType:data.showType,myID:data.user_id})
+      //console.log('replyStatus',data);
+      if(data.showType!==undefined){
+        element.setState({showType:data.showType,myID:data.user_id})
+      }
     })
     this.socket.on('replyMessage-'+this.props.navigation.state.params.port_connect,function(data){
+      //console.log('replyMessage',data);
       const {listData,index_item, checkID, checkDate} = element.state;
-      const { user_id } =element.props.navigation.state.params;
+      const { user_id,name } =element.props.navigation.state.params;
       let arr = [];
       let countID=0;
       let countDate='';
@@ -45,7 +49,7 @@ export default class Messenger extends Component {
       if(data.length>listData.length && data.length!==undefined){
         data.forEach((e,i)=>{
           const countData = data[i+1];
-          listData.push(<ListMsg showHour={countData===undefined || e.user_id!==countData.user_id || (e.user_id===countData.user_id && formatHour(e.create_at)!==formatHour(countData.create_at)) ? true : false} checkDate={countDate} checkID={countID} data={e} userId={user_id} key={i} />);
+          listData.push(<ListMsg name={name} showHour={countData===undefined || e.user_id!==countData.user_id || (e.user_id===countData.user_id && formatHour(e.create_at)!==formatHour(countData.create_at)) ? true : false} checkDate={countDate} checkID={countID} data={e} userId={user_id} key={i} />);
           countID=e.user_id;
           countDate = e.create_at;
           //console.log('data[]',i+1,data[i+1]);
@@ -56,6 +60,7 @@ export default class Messenger extends Component {
             checkID:countID,
             index_item: data.length,
             listData: arr,
+            showType:false,
         });
       }
       if(data.length===undefined){
@@ -63,19 +68,20 @@ export default class Messenger extends Component {
         countDate = checkDate;
         if(index_item>1){
           //load continue…: data.length===undefined
-          listData.push(<ListMsg showHour={checkID!==data.user_id ? true : false} checkDate={countDate} checkID={countID} data={data} userId={user_id} key={index_item} />)
+          listData.push(<ListMsg name={name} showHour={checkID!==data.user_id ? true : false} checkDate={countDate} checkID={countID} data={data} userId={user_id} key={index_item} />)
           arr = listData;
           countID = data.user_id;
           countDate = data.create_at;
         }else {
           //load first, but don’t have data: data.length===undefined
-          arr = [<ListMsg showHour={true} checkDate={countDate} checkID={countID} data={data} userId={user_id} key={index_item} />]
+          arr = [<ListMsg name={name} showHour={true} checkDate={countDate} checkID={countID} data={data} userId={user_id} key={index_item} />]
         }
         element.setState({
             checkDate:countDate,
             checkID:countID,
             index_item: index_item + 1,
-            listData: arr
+            listData: arr,
+            showType:false,
         });
       }
       //console.log('index_item',index_item);
@@ -95,7 +101,8 @@ export default class Messenger extends Component {
     }
     if(text==='') data={};
     this.socket.emit('sendMessage',port_connect,data);
-    this.setState({text:'',showType:false});
+    this.setState({text:''});
+
   }
   handleEnterText(showType){
     const { user_id,port_connect } = this.props.navigation.state.params;
@@ -103,9 +110,9 @@ export default class Messenger extends Component {
     this.socket.emit('handleEnterText',port_connect,data);
   }
   componentWillMount(){
-    //this.scroll.scrollToEnd();
     this.sendMessage();
   }
+
   render() {
     const { name,urlhinh,user_id } = this.props.navigation.state.params;
     const { navigation } = this.props;
@@ -130,8 +137,14 @@ export default class Messenger extends Component {
             </View>
         </View>
 
-        <ScrollView  scrollEnabled keyboardDismissMode='on-drag'>
-        <View style={{width,marginTop:70,marginBottom:70}}>
+        <ScrollView
+        onContentSizeChange={(contentWidth, contentHeight)=>{
+            this.scrollView.scrollToEnd({animated: false});
+        }}
+        ref={(scrollView) => { this.scrollView = scrollView }}
+        scrollEnabled
+        >
+        <View style={{width,marginTop: 70,marginBottom:Platform.OS==='ios' ? 70 :90}}>
           {index_item>1 ? listData : <View key={0}></View>}
         </View>
         </ScrollView>
@@ -152,17 +165,21 @@ export default class Messenger extends Component {
           if(text.length===0){
             this.handleEnterText(false)
           }
-          console.log('showType',showType);
+          //console.log('showType',showType);
         }}
         onSubmitEditing={(event) => {
-          if(text!==''){this.sendMessage()}
+          if(text!==''){
+            this.sendMessage();
+          }
         }}
         value={text}
         style={txtInput} />
 
         <TouchableOpacity
         onPress={()=>{
-          if(text!==''){this.sendMessage()}
+          if(text!==''){
+            this.sendMessage();
+          }
         }}>
         <Image source={sendEmailIC} style={{width:20,height:20}} />
         </TouchableOpacity>
@@ -184,16 +201,17 @@ export class ListMsg extends Component {
     super(props);
   }
   render(){
-    const {data, userId, checkID, checkDate, showHour} = this.props;
-    //console.log('userId===data.user_id',userId,data.user_id);
-    //console.log('showHour',showHour,data.message);
+    const {data, userId,name, checkID, checkDate, showHour} = this.props;
+    //console.log(checkID);
     const {
-      wrapAva,radiusAva,wrapMsg,colorMsg,avatarRight,avatarLeft,
+      wrapAva,widthAva,radiusAva,wrapMsg,colorMsg,avatarRight,avatarLeft,
       msgLeft,msgRight,bgMe,show,hide,colorWhite,groupTop,wrapDate,
-      lineDate,wrapDatePaging,groupTopRight,
+      lineDate,wrapDatePaging,groupTopRight,colorItemName,
+      dateStyle,dateDirRight,dateDirLeft,
     } = styles;
     return(
       <View>
+      <View style={{height: checkID!==0 && checkID!==data.user_id && formatDate(checkDate)===formatDate(data.create_at) ? 20 : 0}}></View>
       {data.message!==undefined ?
         <View style={{paddingLeft:10,paddingRight:10,marginBottom:7}}>
           <View style={[wrapDatePaging,formatDate(checkDate)!==formatDate(data.create_at) ? show :hide ]}>
@@ -204,18 +222,22 @@ export class ListMsg extends Component {
           </View>
 
           <View style={[userId===data.user_id ? avatarRight : avatarLeft,checkID===data.user_id && userId===data.user_id ? groupTopRight : '']}>
-            <View style={[wrapAva,userId===data.user_id || checkID===data.user_id ? hide : show]}>
+            <View style={widthAva}>
+              <View style={[wrapAva,userId===data.user_id || checkID===data.user_id ? hide : show]}>
               <Image source={{uri: checkUrl(data.urlhinh) ? `${data.urlhinh}` : `${global.url_media}/${data.urlhinh}`}} style={radiusAva} />
+              </View>
             </View>
+
             <View style={[wrapDate,userId===data.user_id ? msgRight : msgLeft,checkID===data.user_id  ? groupTop : '']}>
               <View style={[wrapMsg,userId===data.user_id ? bgMe : '']}>
+                <Text style={userId!==data.user_id && checkID!==data.user_id  ? [colorItemName,show] : hide}>{name}</Text>
                 <Text style={userId===data.user_id ? colorWhite : colorMsg}>{data.message}</Text>
               </View>
-              <View style={showHour ? show : hide}>
-                <Text style={{color:'#6587A8',fontSize:12}}> {formatHour(data.create_at)}</Text>
+              <View style={[showHour ? show : hide]}>
+                <Text style={[dateStyle, userId===data.user_id ? dateDirRight : dateDirLeft]}>{formatHour(data.create_at)}</Text>
               </View>
-
             </View>
+
           </View>
 
         </View>
@@ -231,11 +253,13 @@ const styles = StyleSheet.create({
   container: {
     width,
     height,
+    justifyContent:'flex-end',
   },
-  wrapShowType:{position:'absolute', zIndex:98,bottom:Platform.OS==='ios' ? 50 : 75,backgroundColor:'rgba(179, 181, 183, 0.25)',padding:10,paddingTop:5,paddingBottom:5,},
+  colorItemName:{color:'#606B85',fontSize:13},
+  wrapShowType:{position:'absolute', zIndex:98,bottom:Platform.OS==='ios' ? 50 : 75,backgroundColor:'rgba(179, 181, 183, 0.45)',padding:10,paddingTop:5,paddingBottom:5,},
   contentWrap : { width},
-  colorMsg:{color:'#2F353F',lineHeight:22},
-  colorWhite:{color:'#fff',lineHeight:22},
+  colorMsg:{color:'#2F353F',lineHeight:22,fontSize:16},
+  colorWhite:{color:'#fff',lineHeight:22,fontSize:16},
   wrapMsg:{
     borderColor:'#E1E7EC',
     borderWidth:1,
@@ -244,31 +268,38 @@ const styles = StyleSheet.create({
     padding:10,
     paddingTop:5,
     paddingBottom:5,
-
+    marginBottom:-5,
   },
-  lineDate:{width:width-110,borderBottomWidth:1,borderColor:'#C5C4CE',position:'absolute',top:11,zIndex:-1},
-  wrapDate:{
-    maxWidth:width-110,
-    justifyContent:'center',
-    position:'absolute',
-    top:0,
-  },
-  wrapDatePaging:{width,alignItems:'center',marginBottom:10},
-  groupTop:{top:-24},
-  groupTopRight:{top:3},
-  msgLeft:{left:60,},
+  lineDate:{width:width-110,borderBottomWidth:1,borderColor:'#C5C4CE',position:'absolute',top:30,zIndex:-1},
+  wrapDatePaging:{width,alignItems:'center',height:60,justifyContent:'center'},
+  groupTop:{top:-7},
+  groupTopRight:{top:7},
+  msgLeft:{left:0,},
   msgRight:{right:0},
-  bgMe:{backgroundColor:'#303B50'},
+  bgMe:{backgroundColor:'#3E4C6A'},
   radiusAva:{width:50,height:50,borderRadius:25},
-  wrapAva:{width:54,height:54,borderRadius:27,backgroundColor:'#fff',justifyContent:'center',alignItems:'center'},
+  widthAva:{width:54,marginRight:5},
+  dateStyle:{color:'#6587A8',fontSize:12,paddingTop:5},
+  dateDirRight:{textAlign:'right',paddingRight:3},
+  dateDirLeft:{textAlign:'left'},
+  wrapAva:{
+    width:54,height:54,
+    borderRadius:27,
+    backgroundColor:'#fff',
+    justifyContent:'center',
+    alignItems:'center'
+  },
+  wrapDate:{
+    maxWidth:width-100,
+    justifyContent:'center',
+  },
   avatarRight:{
     flexDirection:'row',
     width:width-25,
-    alignItems:'flex-end',
-    minHeight:50,
+    justifyContent:'space-between'
   },
-  avatarLeft:{flexDirection:'row',width:width-25,alignItems:'flex-start',
-    minHeight:30
+  avatarLeft:{
+    flexDirection:'row',width:width-25,alignItems:'flex-start',
   },
   wrapItems:{flexDirection:'row',width,alignItems:'center',padding:15,backgroundColor:'#fff',marginBottom:1},
   headCatStyle : {

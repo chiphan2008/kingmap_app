@@ -11,10 +11,9 @@ const loginServer = async (param) => {
       //console.log('arr.data.length',arr.data);
       if(arr.data.length===0){
         if(param.id_google!==null){
-          //console.log(param);
           gooApi(`${global.url}${'login-google'}`,param);
         }
-        if(param.pwd!==undefined){
+        if(param.pwd===undefined){
           const params = {username:param.email,password:param.pwd};
           loginApi(`${global.url}${'login'}`,params);
         }

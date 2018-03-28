@@ -53,10 +53,11 @@ export default class LoginScreen extends Component {
      }
     });
   }
-  loginGooIOS(){
-    GoogleSignin.signIn()
-    .then((user) => {
+  googleSign(){
+    GoogleSignin.signIn().then((user) => {
+      //console.log('user',user);
       gooApi(`${global.url}${'login-google'}`,user).then(e =>{
+        //console.log(e);
         if(e.code===200){
           this.props.navigation.navigate('MainScr');
         }else{
@@ -143,7 +144,7 @@ export default class LoginScreen extends Component {
               </TouchableOpacity>
               <View style={[btnWrapSoci,mrgTop]}>
                   <Image style={imgSoci} source={FacebookColor} />
-                  <TouchableOpacity onPress={()=>this.loginGooIOS()}>
+                  <TouchableOpacity onPress={()=>this.googleSign()}>
                   <Image style={imgSoci} source={GoogleColor} />
                   </TouchableOpacity>
               </View>

@@ -32,6 +32,9 @@ import menuIC from '../../../src/icon/ic-white/ic-menu.png';
 import settingIC from '../../../src/icon/ic-white/ic-setting.png';
 import logoutIC from '../../../src/icon/ic-white/ic-logout.png';
 
+function checkUrl(url){
+  return url.indexOf('http')!=-1;
+}
 export default class PersonalTab extends Component {
   constructor(props) {
     super(props);
@@ -168,7 +171,7 @@ export default class PersonalTab extends Component {
           <View style={headPerBG}>
 
             <View style={rowItem}>
-              <Image source={{uri:`${global.url_media}/${user_profile.avatar}`}} style={{width:70,height:70,borderRadius:35,marginRight:15}} />
+              <Image source={{uri: checkUrl(`${user_profile.avatar}`) ? `${user_profile.avatar}` : `${global.url_media}/${user_profile.avatar}`}} style={{width:70,height:70,borderRadius:35,marginRight:15}} />
               <View>
                 <Text style={titleHead}>{user_profile.full_name}</Text>
                 <Text style={colorWhite}>{user_profile.email}</Text>

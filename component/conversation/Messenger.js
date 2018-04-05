@@ -38,9 +38,9 @@ export default class Messenger extends Component {
       }
     })
     this.socket.on('replyMessage-'+this.props.navigation.state.params.port_connect,function(data){
-      //console.log('replyMessage',data);
+      console.log('replyMessage',data);
       const {listData,index_item, checkID, checkDate} = element.state;
-      const { user_id,name } =element.props.navigation.state.params;
+      const { user_id,name,yf_avatar } =element.props.navigation.state.params;
       let arr = [];
       let countID=0;
       let countDate='';
@@ -49,7 +49,7 @@ export default class Messenger extends Component {
       if(data.length>listData.length && data.length!==undefined){
         data.forEach((e,i)=>{
           const countData = data[i+1];
-          listData.push(<ListMsg name={name} showHour={countData===undefined || e.user_id!==countData.user_id || (e.user_id===countData.user_id && formatHour(e.create_at)!==formatHour(countData.create_at)) ? true : false} checkDate={countDate} checkID={countID} data={e} userId={user_id} key={i} />);
+          listData.push(<ListMsg name={name} showHour={countData===undefined || e.user_id!==countData.user_id || (e.user_id===countData.user_id && formatHour(e.create_at)!==formatHour(countData.create_at) )  ? true : false} checkDate={countDate} checkID={countID} data={e} userId={user_id} key={i} yf_avatar={yf_avatar} />);
           countID=e.user_id;
           countDate = e.create_at;
           //console.log('data[]',i+1,data[i+1]);
@@ -68,13 +68,13 @@ export default class Messenger extends Component {
         countDate = checkDate;
         if(index_item>1){
           //load continue…: data.length===undefined
-          listData.push(<ListMsg name={name} showHour={checkID!==data.user_id ? true : false} checkDate={countDate} checkID={countID} data={data} userId={user_id} key={index_item} />)
+          listData.push(<ListMsg name={name} showHour={checkID!==data.user_id ? true : false} checkDate={countDate} checkID={countID} data={data} userId={user_id} key={index_item} yf_avatar={yf_avatar} />)
           arr = listData;
           countID = data.user_id;
           countDate = data.create_at;
         }else {
           //load first, but don’t have data: data.length===undefined
-          arr = [<ListMsg name={name} showHour={true} checkDate={countDate} checkID={countID} data={data} userId={user_id} key={index_item} />]
+          arr = [<ListMsg name={name} showHour={true} checkDate={countDate} checkID={countID} data={data} userId={user_id} key={index_item} yf_avatar={yf_avatar} />]
         }
         element.setState({
             checkDate:countDate,
@@ -90,16 +90,19 @@ export default class Messenger extends Component {
   }
 
   sendMessage(){
-    const { port_connect,urlhinh,user_id } = this.props.navigation.state.params;
+    const { port_connect,user_id,yf_avatar,yf_id } = this.props.navigation.state.params;
     const { text } = this.state;
     let data = {
       group:port_connect,
       user_id,
       message : text,
-      urlhinh,
+      urlhinh: yf_avatar
       //create_at:Moment(new Date()),
     }
-    if(text==='') data={};
+    if(text==='') data={
+      yf_id:yf_id,
+      notification:'Bạn chưa thể gửi tin nhắn cho người này. Vui lòng gửi yêu cầu kết bạn.'
+    };
     this.socket.emit('sendMessage',port_connect,data);
     this.setState({text:''});
 
@@ -114,7 +117,7 @@ export default class Messenger extends Component {
   }
 
   render() {
-    const { name,urlhinh,user_id } = this.props.navigation.state.params;
+    const { name,yf_avatar,user_id } = this.props.navigation.state.params;
     const { navigation } = this.props;
     const { listData,text,index_item,showType,myID } = this.state;
     const {
@@ -179,6 +182,7 @@ export default class Messenger extends Component {
         onPress={()=>{
           if(text!==''){
             this.sendMessage();
+            Keyboard.dismiss()
           }
         }}>
         <Image source={sendEmailIC} style={{width:20,height:20}} />
@@ -194,18 +198,18 @@ function formatDate(d){
   return Moment(d).format('DD/MM/YY');
 }
 function formatHour(h){
-  return Moment(h).add(12, 'hours').format('HH:mm');
+  return Moment(h).format('HH:mm');
 }
 export class ListMsg extends Component {
   constructor(props) {
     super(props);
   }
   render(){
-    const {data, userId,name, checkID, checkDate, showHour} = this.props;
+    const {data, userId,name, checkID, checkDate, showHour ,yf_avatar} = this.props;
     //console.log(checkID);
     const {
       wrapAva,widthAva,radiusAva,wrapMsg,colorMsg,avatarRight,avatarLeft,
-      msgLeft,msgRight,bgMe,show,hide,colorWhite,groupTop,wrapDate,
+      msgLeft,msgRight,bgMe,show,hide,colorWhite,groupFirstLeft,wrapDate,
       lineDate,wrapDatePaging,groupTopRight,colorItemName,
       dateStyle,dateDirRight,dateDirLeft,
     } = styles;
@@ -224,11 +228,11 @@ export class ListMsg extends Component {
           <View style={[userId===data.user_id ? avatarRight : avatarLeft,checkID===data.user_id && userId===data.user_id ? groupTopRight : '']}>
             <View style={widthAva}>
               <View style={[wrapAva,userId===data.user_id || checkID===data.user_id ? hide : show]}>
-              <Image source={{uri: checkUrl(data.urlhinh) ? `${data.urlhinh}` : `${global.url_media}/${data.urlhinh}`}} style={radiusAva} />
+              <Image source={{uri: checkUrl(yf_avatar) ? `${yf_avatar}` : `${global.url_media}/${yf_avatar}`}} style={radiusAva} />
               </View>
             </View>
 
-            <View style={[wrapDate,userId===data.user_id ? msgRight : msgLeft,checkID===data.user_id  ? groupTop : '']}>
+            <View style={[wrapDate,userId===data.user_id ? msgRight : msgLeft,  userId!==data.user_id ? groupFirstLeft : '']}>
               <View style={[wrapMsg,userId===data.user_id ? bgMe : '']}>
                 <Text style={userId!==data.user_id && checkID!==data.user_id  ? [colorItemName,show] : hide}>{name}</Text>
                 <Text style={userId===data.user_id ? colorWhite : colorMsg}>{data.message}</Text>
@@ -253,11 +257,11 @@ const styles = StyleSheet.create({
   container: {
     width,
     height,
-    justifyContent:'flex-end',
+    alignSelf: 'stretch',
   },
   colorItemName:{color:'#606B85',fontSize:13},
   wrapShowType:{position:'absolute', zIndex:98,bottom:Platform.OS==='ios' ? 50 : 75,backgroundColor:'rgba(179, 181, 183, 0.45)',padding:10,paddingTop:5,paddingBottom:5,},
-  contentWrap : { width},
+  contentWrap : { width,height,alignItems: 'center',justifyContent: 'flex-start',marginBottom:height/4,},
   colorMsg:{color:'#2F353F',lineHeight:22,fontSize:16},
   colorWhite:{color:'#fff',lineHeight:22,fontSize:16},
   wrapMsg:{
@@ -268,20 +272,17 @@ const styles = StyleSheet.create({
     padding:10,
     paddingTop:5,
     paddingBottom:5,
-    marginBottom:-5,
   },
   lineDate:{width:width-110,borderBottomWidth:1,borderColor:'#C5C4CE',position:'absolute',top:30,zIndex:-1},
   wrapDatePaging:{width,alignItems:'center',height:60,justifyContent:'center'},
-  groupTop:{top:-7},
-  groupTopRight:{top:7},
   msgLeft:{left:0,},
   msgRight:{right:0},
   bgMe:{backgroundColor:'#3E4C6A'},
   radiusAva:{width:50,height:50,borderRadius:25},
   widthAva:{width:54,marginRight:5},
   dateStyle:{color:'#6587A8',fontSize:12,paddingTop:5},
-  dateDirRight:{textAlign:'right',paddingRight:3},
-  dateDirLeft:{textAlign:'left'},
+  dateDirRight:{textAlign:'right',paddingRight:3,marginTop:-6},
+  dateDirLeft:{textAlign:'left',paddingLeft:3,marginTop:-6},
   wrapAva:{
     width:54,height:54,
     borderRadius:27,
@@ -292,7 +293,11 @@ const styles = StyleSheet.create({
   wrapDate:{
     maxWidth:width-100,
     justifyContent:'center',
+    marginTop:-5,
   },
+
+  groupFirstLeft:{top:5},
+  groupTopRight:{top:0},
   avatarRight:{
     flexDirection:'row',
     width:width-25,
@@ -301,12 +306,11 @@ const styles = StyleSheet.create({
   avatarLeft:{
     flexDirection:'row',width:width-25,alignItems:'flex-start',
   },
+
   wrapItems:{flexDirection:'row',width,alignItems:'center',padding:15,backgroundColor:'#fff',marginBottom:1},
   headCatStyle : {
-      backgroundColor: '#D0021B',
-      paddingTop: Platform.OS==='ios' ? 30 : 20,
-      alignItems: 'center',height: 65,width,
-      position:'absolute',zIndex:99,top:0
+    backgroundColor: '#D0021B',paddingTop: Platform.OS==='ios' ? 30 : 20, alignItems: 'center',height: 65,
+    position:'relative',zIndex:5,
   },
   txtInput:{
     borderRadius:3,

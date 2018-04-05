@@ -44,8 +44,8 @@ export default class ListImageContent extends Component {
       this.setState({
         listVideo:arrData.data.link_video,
       });
-      arrData.data.image_space.map(e=>arrSpace.push({url:`${global.url_media}${e}`}));
-      arrData.data.image_menu.map(e=>arrMenu.push({url:`${global.url_media}${e}`}));
+      //arrData.data.image_space.map(e=>arrSpace.push({url:`${global.url_media}${e}`}));
+      //arrData.data.image_menu.map(e=>arrMenu.push({url:`${global.url_media}${e}`}));
         this.setState({
           listSpace:arrSpace,
           listMenu:arrMenu,

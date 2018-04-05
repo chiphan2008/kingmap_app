@@ -247,19 +247,7 @@ export default class HomeTab extends Component {
                 let angle = (360/(this.state.listCategory.length-1));
                 let pos = this.findNewPoint(x, y, angle, distance);
                 switch (e.alias) {
-                  case 'location':
-                      angle *= index-i;
-                      pos = this.findNewPoint(x, y, angle, distance);
-                      return (<TouchableOpacity
-                          key={e.id}
-                          style={{position:'absolute',alignItems:'center',top:pos.y,left :pos.x,overflow: 'visible'}}
-                          onPress={() => navigate('OtherCatScr',{name_module:e.name,lang:this.state.lang}) }
-                          >
-                          <Text style={labelNum}>(25)</Text>
-                        <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
-                        <Text style={labelCat}>{e.name}</Text>
-                      </TouchableOpacity>);
-                        break;
+
                   case 'ads':
                       angle *= index-i;
                       pos = this.findNewPoint(x, y, angle, distance);
@@ -278,7 +266,25 @@ export default class HomeTab extends Component {
                         <Text style={labelCat}>{e.name}</Text>
                       </TouchableOpacity>);
                         break;
+                  case 'rao-vat':
+                      angle *= index-i;
+                      pos = this.findNewPoint(x, y, angle, distance);
+                      return (<TouchableOpacity
+                          key={e.id}
+                          style={{position:'absolute',alignItems:'center',top:pos.y,left :pos.x,overflow: 'visible'}}
+                          onPress={() => {
+                            //this.requestLogin();
+                            // if(this.state.isLogin){
+                            // }
+                            navigate('ListBuySellScr',{icon:`${global.url_media}${e.image}`,name_module:e.name,code_user:this.state.code_user,lang:this.state.lang});
 
+                          }}
+                          >
+                          <Text style={labelNum}>(25)</Text>
+                        <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
+                        <Text style={labelCat}>{e.name}</Text>
+                      </TouchableOpacity>);
+                        break;
                   case 'chat':
                       angle *= index-i;
                       pos = this.findNewPoint(x, y, angle, distance);
@@ -311,16 +317,33 @@ export default class HomeTab extends Component {
                         <Text style={labelCat}>{e.name}</Text>
                       </TouchableOpacity>);
                         break;
-                  case 'wallet':
-                      i=1;
-                      return (<TouchableOpacity
-                          key={e.id}
-                          onPress={()=>navigate('WalletScr',{code_user:this.state.code_user,lang:this.state.lang})}
-                          style={[wrapCircle,logoCenter]}>
-                          <Image style={imgContent} source={logoHome} />
-                          <Text style={labelCat}>{e.name}</Text>
+                case 'wallet':
+                    angle *= index-i;
+                    pos = this.findNewPoint(x, y, angle, distance);
+                    return (<TouchableOpacity
+                        key={e.id}
+                        onPress={()=>navigate('WalletScr',{code_user:this.state.code_user,lang:this.state.lang})}
+                        style={{position:'absolute',alignItems:'center',top:pos.y,left :pos.x,overflow: 'visible'}}
+                        >
+                        <Text style={labelNum}>(25)</Text>
+                        {/*<Image style={imgContent} source={logoHome} />*/}
+                        <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
+                        <Text style={labelCat}>{e.name}</Text>
 
-                          </TouchableOpacity>);
+                        </TouchableOpacity>);
+                      break;
+                  case 'location':
+                      i=1;
+                      return (
+                    <TouchableOpacity
+                      key={e.id}
+                      style={[wrapCircle,logoCenter]}
+                      onPress={() => navigate('OtherCatScr',{name_module:e.name,lang:this.state.lang}) }
+                      >
+                      <Text style={labelNum}>(25)</Text>
+                    <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
+                    <Text style={labelCat}>{e.name}</Text>
+                  </TouchableOpacity>);
                         break;
                   default:
                   angle *= index-i;

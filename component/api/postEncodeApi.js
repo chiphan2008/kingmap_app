@@ -1,22 +1,21 @@
 import { AsyncStorage } from 'react-native';
 import global from '../global';
 
-const encodeApi = async (url,method,param) => {
+const postEncodeApi = async (url,param) => {
   try {
     //console.log('url,method,param',url,method,param);
-    let formBody = `${'id='}${param.id}&${'name='}${param.full_name}&${'urlhinh='}${param.avatar}`;
 
     let params = {
-        method:method,
+        method:'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
           Authorization: global.auth_key.client_secret
         },
-        body: formBody,
+        body: param,
       };
     let response = await fetch(url, params);
     let responseJson = await response.json();
-    //console.log('encodeApi',responseJson);
+    //console.log('postEncodeApi',responseJson);
     return responseJson;
   } catch (error) {
 
@@ -24,4 +23,4 @@ const encodeApi = async (url,method,param) => {
 
 };
 
-export default encodeApi;
+export default postEncodeApi;

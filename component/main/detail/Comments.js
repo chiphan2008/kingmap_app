@@ -95,14 +95,14 @@ export default class Comments extends Component {
       txtComments,padLeft,colorText,mrgTop,show,hide,rowFlex
     } = styles;
     //console.log("this.props.navigation=",util.inspect(this.props.navigation,false,null));
-    const {idContent,listComment} = this.props;
-    console.log('this.state.idContent====',listComment)
+    const {idContent,listComment,lang} = this.props;
+    //console.log('this.state.idContent====',lang.your_comment)
 
     return (
       <View>
           <View>
             <TextInput onFocus={()=>{this.props.requestLogin();}} style={[txtComments,padLeft]} underlineColorAndroid='transparent'
-            placeholder={this.props.lang.your_comment}
+            placeholder={lang.your_comment}
             onChangeText={(text) => this.setState({inputComment: text})}
             value={this.state.inputComment}
              />
@@ -178,7 +178,7 @@ export default class Comments extends Component {
               <View style={this.state.showComments===e.id ? show : hide}>
               <View>
                 <TextInput onFocus={()=>{this.props.requestLogin(); }} style={[txtComments,padLeft]} underlineColorAndroid='transparent'
-                placeholder={this.props.lang.your_comment}
+                placeholder={lang.your_comment}
                 onChangeText={(cm) => this.setState({inputChildComment: cm})}
                 value={this.state.inputChildComment}
                  />

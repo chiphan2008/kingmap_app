@@ -62,32 +62,36 @@ export default class ListLocation extends Component {
       idDist:null,
       id_sub:null,
       id_serv:'-1',
-
+      isRefresh:false,
+      page:0,
+      pullToRefresh:true,
     }
 
   }
 
   getCategory(idcat,loc){
     const url = global.url+'content-by-category?category='+idcat+'&location='+loc;
-    //console.log('url',url);
+    console.log('url',url);
     getApi(url)
     .then(arrData => {
       //console.log('arrData',arrData);
-      timeout = setTimeout(()=>{
-        this.setState({ listData: arrData.data });
-      }, 3000);
+      this.setState({ listData: arrData.data });
     })
     .catch(err => console.log(err));
   }
 
-  getContentByDist(id_district,id_sub,id_serv){
-    const id_cat = this.props.navigation.state.params.idCat;
-    var url = `${global.url}${'search-content?category='}${id_cat}`;
-
-    const { keyword,curLocation } = this.state;
-    if(keyword!==''){
-      url += `${'&keyword='}${keyword}`;
+  getContentByDist(id_district,id_sub,id_serv,skip=null){
+    if(skip===null){
+      skip = 0; this.setState({page:0})
     }
+    //console.log('skip',skip);
+    const id_cat = this.props.navigation.state.params.idCat;
+    const { keyword,curLocation } = this.state;
+    var url = `${global.url}${'search-content?category='}${id_cat}&skip=${skip}&limit=20`;
+
+    if(keyword!=='') url += `${'&keyword='}${keyword}`;
+    //if(loc!=='') url += `${'&location='}${loc}`;
+
     if(id_district===null){
       url += `${'&location='}${curLocation.latlng}`;
     }else {
@@ -100,14 +104,28 @@ export default class ListLocation extends Component {
       this.setState({id_serv});
       url += `${'&service='}${id_serv}`;
     }
-    //console.log('-----url-----',url);
+    console.log('-----url-----',url);
     getApi(url)
     .then(arrData => {
       //console.log('count',arrData.data.length);
-
-        this.setState({ listData: arrData.data });
+      if(skip===0){
+        this.setState({ listData: arrData.data, isRefresh:false });
+      }else {
+        if(arrData.data.length===0) this.setState({ pullToRefresh:false });
+        this.setState({ listData: this.state.listData.concat(arrData.data), isRefresh:false });
+      }
     })
     .catch(err => console.log(err));
+  }
+  onRefresh(){
+    //console.log('refreshing')
+    const { idDist,id_sub,id_serv,page,pullToRefresh } = this.state;
+    const pos=page+20;
+    if(pullToRefresh){
+      this.setState({ isRefresh: true, page: page+20 }, function() {
+        this.getContentByDist(idDist,id_sub,id_serv,pos)
+      });
+    }
   }
 
   saveLocation(){
@@ -152,8 +170,8 @@ export default class ListLocation extends Component {
     );
   }
   render() {
-    //console.log('ListLocation');
-    const { keyword,lang,idDist,id_sub,id_serv } = this.state;
+    console.log('ListLocation1');
+    const { keyword,lang,idDist,id_sub,id_serv,isRefresh,listData } = this.state;
     const { goBack,navigate } = this.props.navigation;
     const {idCat,sub_cat,serv_items} = this.props.navigation.state.params;
     //console.log('lang',lang);
@@ -161,8 +179,8 @@ export default class ListLocation extends Component {
       container,
       headStyle, filterFrame,wrapFilter,headContent,imgLogoTop,
       inputSearch,show,hide,colorTextPP,colorNumPP,
-      selectBoxLoc,optionListLoc,OptionItemLoc,
-      wrapListLoc,flatItemLoc,imgFlatItem,wrapFlatRight,
+      selectBoxBuySell,widthLoc,optionListLoc,OptionItemLoc,
+      wrapListLoc,padLoc,flatItemLoc,imgFlatItem,wrapFlatRight,
       txtTitleOverCat,txtAddrOverCat,flatlistItemCat,wrapInfoOver,
       imgUpCreate,imgUpLoc,imgUpSubCat,imgUpInfo,popoverLoc,padCreate,overLayout,imgInfo,overLayoutLoc,shadown,overLayoutSer,listCatOver,listOverService,colorText
     } = styles;
@@ -205,37 +223,39 @@ export default class ListLocation extends Component {
       </View>
 
         <View style={wrapFilter}>
-
                 <View style={filterFrame}>
                 <TouchableOpacity
                   onPress={()=>this.setState({ showLoc:!this.state.showLoc,listSubCat:{showList:false},listSerItem:{showList:false}, })}
-                  style={selectBoxLoc}>
+                  style={[selectBoxBuySell,widthLoc]}>
                     <Text  numberOfLines={1} style={{color:'#303B50'}}>{this.state.labelLoc}</Text>
                     <Image source={sortDownIC} style={{width:12,height:13,top:13,right:5,position:'absolute'}} />
                 </TouchableOpacity>
 
                 <TouchableOpacity
                   onPress={()=>this.setState({ listSubCat:{showList:!this.state.listSubCat.showList},listSerItem:{showList:false}, showLoc:false})}
-                  style = {selectBoxLoc}>
+                  style = {[selectBoxBuySell,widthLoc]}>
                     <Text  numberOfLines={1} style={{color:'#303B50'}}>{this.state.labelCat}</Text>
                     <Image source={sortDownIC} style={{width:12,height:13,top:13,right:5,position:'absolute'}} />
                 </TouchableOpacity>
 
                 <TouchableOpacity
                 onPress={()=>this.setState({ listSubCat:{showList:false},listSerItem:{showList:!this.state.listSerItem.showList}, showLoc:false})}
-                style = {selectBoxLoc}>
+                style = {[selectBoxBuySell,widthLoc]}>
                     <Text numberOfLines={1} style={{color:'#303B50'}}>{this.state.labelSer}</Text>
                     <Image source={sortDownIC} style={{width:12,height:13,top:13,right:5,position:'absolute'}} />
                 </TouchableOpacity>
               </View>
         </View>
 
-        <View style={wrapListLoc}>
+        <View style={[wrapListLoc,padLoc]}>
               <FlatList
                      style={{marginBottom:190}}
                      ListEmptyComponent={<Text>Loading ...</Text>}
-                     data={this.state.listData}
-                     keyExtractor={item => item.id}
+                     refreshing={isRefresh}
+                     onEndReachedThreshold={0.5}
+                     onEndReached={() => this.onRefresh()}
+                     data={listData}
+                     keyExtractor={(item,index) => item.id || index}
                      renderItem={({item}) => (
                        <View style={flatlistItemCat}>
                            <TouchableOpacity

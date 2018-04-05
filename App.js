@@ -22,6 +22,15 @@ import Messenger from './component/conversation/Messenger';
 //create-location
 import ChooseCat from './component/create_location/ChooseCat';
 import FormCreate from './component/create_location/FormCreate';
+//import buy/sell
+import ListBuySell from './component/buysell/ListBuySell';
+import CreateBuySell from './component/buysell/CreateBuySell';
+import ListProductBS from './component/buysell/ListProductBS';
+import DetailBuySell from './component/buysell/DetailBuySell';
+
+//import ads
+import Ads from './component/ads/Ads';
+import DesignAds from './component/ads/DesignAds';
 // import screen
 import FadeView from './component/FadeView';
 import DetailScreen from './component/main/DetailScreen';
@@ -37,9 +46,6 @@ import WalletGuide from './component/make_money/WalletGuide';
 import Transfer from './component/make_money/Transfer';
 import History from './component/make_money/History';
 import RequestTransfer from './component/make_money/RequestTransfer';
-
-import Ads from './component/ads/Ads';
-import DesignAds from './component/ads/DesignAds';
 
 import LocationTab from './component/main/home/LocationTab';
 import ListLocation from './component/main/home/ListLocation';
@@ -101,6 +107,10 @@ export default class App extends Component {
       WalletGuideScr: { screen: WalletGuide },
       TransferScr: { screen: Transfer },
       HistoryScr: { screen: History },
+      DetailBuySellScr: { screen: DetailBuySell },
+      ListProductBScr: { screen: ListProductBS },
+      CreateBuySellScr: { screen: CreateBuySell },
+      ListBuySellScr: { screen: ListBuySell },
       AdsScr: { screen: Ads },
       DesignAdsScr: { screen: DesignAds },
       RequestTransferScr: { screen: RequestTransfer },

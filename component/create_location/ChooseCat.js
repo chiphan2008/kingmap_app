@@ -53,7 +53,7 @@ export default class ChooseCat extends Component {
       container,
       headCatStyle,headContent, wrapDistribute,shadown,wrapFilter,
       show,hide,colorTextPP,colorNumPP,
-      wrapListLoc,flatItem,flatlistItem,imgFlatItemLoc,wrapFlatRight
+      flatItem,flatlistItem,imgFlatItemLoc,wrapFlatRight
     } = styles;
 
     return (

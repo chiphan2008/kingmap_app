@@ -90,29 +90,48 @@ export default class SelectLocation extends Component {
                 data={this.state.listDistrict}
                 keyExtractor={item => item.id}
                 renderItem={({item}) => (
-                  <View  style={styles.listItem}>
-                  <TouchableOpacity
-                     style={{justifyContent:'space-between',flexDirection:'row',width:-50,padding:15,}}
-                     onPress={() => {
-                          this.setState({showCheckDistrict:item.id});
-                         AsyncStorage.setItem('@LocationKey:key', JSON.stringify({
-                                   idCountry:this.state.showCheckCountry,
-                                   nameCountry:this.state.nameCountry,
-                                   idCity:this.state.showCheckCity,
-                                   nameCity:this.state.nameCity,
-                                   idDist:item.id,
-                                   nameDist:item.name,
-                         }));
-                         this.props.saveLocation();
 
-                     }}
-                   >
-                  <Text style={styles.txtItem} >{item.name}</Text>
-                  <Image style={[styles.imgCheck,this.state.showCheckDistrict===item.id ? styles.show : styles.hide]} source={checkIC}/>
-                  </TouchableOpacity>
-                  </View>
+                    <View style={styles.listItem}>
+                    <TouchableOpacity
+                       style={{justifyContent:'space-between',flexDirection:'row',width:-50,padding:15,}}
+                       onPress={() => {
+                            this.setState({showCheckDistrict:item.id});
+                           AsyncStorage.setItem('@LocationKey:key', JSON.stringify({
+                                     idCountry:this.state.showCheckCountry,
+                                     nameCountry:this.state.nameCountry,
+                                     idCity:this.state.showCheckCity,
+                                     nameCity:this.state.nameCity,
+                                     idDist:item.id,
+                                     nameDist:item.name,
+                           }));
+                           this.props.saveLocation();
+
+                       }}
+                     >
+                    <Text style={styles.txtItem} >{item.name}</Text>
+                    <Image style={[styles.imgCheck,this.state.showCheckDistrict===item.id ? styles.show : styles.hide]} source={checkIC}/>
+                    </TouchableOpacity>
+                    </View>
+
                 )} />
-
+                <View style={[styles.listItem,this.props.showAll ? styles.show : styles.hide]}>
+                <TouchableOpacity
+                   style={{justifyContent:'space-between',flexDirection:'row',width:-50,padding:15,}}
+                   onPress={() => {
+                       AsyncStorage.setItem('@LocationKey:key', JSON.stringify({
+                                 idCountry:this.state.showCheckCountry,
+                                 nameCountry:this.state.nameCountry,
+                                 idCity:this.state.showCheckCity,
+                                 nameCity:this.state.nameCity,
+                                 nameDist:this.state.nameCity,
+                                 idDist:0,
+                       }));
+                       this.props.saveLocation();
+                   }}
+                 >
+                <Text style={styles.txtItem} >Tất cả</Text>
+                </TouchableOpacity>
+                </View>
          </View>
 
          <View style={[styles.container,this.state.showCountry ? styles.show : styles.hide]}>
@@ -166,7 +185,9 @@ export default class SelectLocation extends Component {
                        this.getDistrict(item.id);
                        AsyncStorage.setItem('@LocationKey:key', JSON.stringify({
                                  idCountry:this.state.showCheckCountry,
+                                 nameCountry:this.state.nameCountry,
                                  idCity:item.id,
+                                 nameCity:item.name,
                        }));
                      }}
                    >
@@ -205,7 +226,6 @@ const styles = StyleSheet.create({
     borderBottomWidth:1,
   },
   listItem:{
-
     borderBottomColor:'#EEEDEE',
     borderBottomWidth:1,
   },
@@ -215,4 +235,6 @@ const styles = StyleSheet.create({
   txtNextItem:{
     color:'#6587A8',fontSize:17,paddingRight:20,
   },
+  show : { display: 'flex'},
+  hide : { display: 'none'},
 });

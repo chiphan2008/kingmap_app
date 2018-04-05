@@ -68,6 +68,7 @@ module.exports = {
   logout:'Logout',
   save:'Save',
   full_name:'Full name',
+  title_buysell:'You must enter title news',
   phone:'Phone number',
   description_persional:'Introduce personal',
   enter_numberic:'You must enter numberic.',

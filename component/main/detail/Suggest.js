@@ -42,12 +42,12 @@ export default class Suggest extends Component {
           <View style={{flexDirection:'row',justifyContent:'space-between'}}>
           <View style={widthHafl}>
             <TouchableOpacity
-            onPress={()=>navigate('DetailScr',{idContent:listSuggest[0].id,lat:listSuggest[0].lat,lng:listSuggest[0].lng,curLoc})}
+            onPress={()=>navigate('DetailScr',{idContent:listSuggest[0].id,lat:listSuggest[0].lat,lng:listSuggest[0].lng,curLoc,lang})}
             >
             <Image source={{uri :`${global.url_media}${listSuggest[0].avatar}`}} style={imgSpace}/>
             </TouchableOpacity>
             <TouchableOpacity
-            onPress={()=>navigate('DetailScr',{idContent:listSuggest[0].id,lat:listSuggest[0].lat,lng:listSuggest[0].lng,curLoc})}
+            onPress={()=>navigate('DetailScr',{idContent:listSuggest[0].id,lat:listSuggest[0].lat,lng:listSuggest[0].lng,curLoc,lang})}
             >
             <Text style={colorText} numberOfLines={2}>{listSuggest[0].name}</Text>
             </TouchableOpacity>

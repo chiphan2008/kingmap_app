@@ -72,9 +72,12 @@ module.exports = {
   inputSearch : {
     marginTop: 3,width:width-40,backgroundColor:'#fff',borderRadius:5,padding:10,paddingRight:70,
   },
-  selectBoxLoc:{
+
+  widthSubType:{width:(width-60),},
+  widthLoc:{width:(width-60)/3,},
+  widthBuySell:{width:(width-60)/2,},
+  selectBoxBuySell:{
     backgroundColor:'#fff',
-    width:(width-60)/3,
     borderRadius:4,
     borderColor:'#CED0D5',
     borderWidth:1,
@@ -90,13 +93,15 @@ module.exports = {
   },OptionItemLoc:{
     paddingTop: 7,paddingBottom: 0,marginTop: 0,marginBottom: 0,
   },
+
+  padLoc:{padding:20,},
   wrapListLoc:{
     backgroundColor:'#fff',
     shadowOffset:{  width: 1,  height: 1,  },
     shadowColor: '#ddd',
     shadowOpacity: .5,
     minHeight: height-50,
-    padding:20,
+    paddingBottom:50,
   },
   titleSubCat:{
     fontSize:20,
@@ -146,6 +151,7 @@ module.exports = {
   flatlistItem:{
     width:(width-20),
     flexDirection:'row',
+    marginBottom:Platform.OS==='ios' ? 55 : 130,
   },
   imgFlatItem:{
     marginRight:10,
@@ -258,6 +264,7 @@ module.exports = {
   },
 
   padCreate:{ paddingTop: 165},
+  padBuySell:{ paddingTop: 120},
   popoverLoc : {
     alignItems:'center',
     position:'absolute',
@@ -287,7 +294,7 @@ module.exports = {
   overLayoutShare:{
     backgroundColor:'#fff',width: 130,borderRadius:4,overflow:'hidden',top:7,right:10,paddingBottom:Platform.OS==='ios' ? 0 : 10,
   },
-  itemCreate:{marginBottom:10,backgroundColor:'#fff',width: 150,padding:15,borderRadius:5},
+  itemCreate:{marginBottom:10,backgroundColor:'#fff',width: 150,padding:15,borderRadius:5,alignItems:'center'},
   overLayout:{
     backgroundColor:'#fff',width: width-20,borderRadius:6,overflow:'hidden',top:7,
     maxHeight:Platform.OS ==='ios' ? 350 : 380,
@@ -358,6 +365,7 @@ module.exports = {
   colorNumPP :{fontWeight: 'bold',color:'#2F353F'},
   // imgUp:{width: 14,height: 7,top:166,position:'absolute'},
   imgUpCreate:{width: 14,height: 7,top:166,position:'absolute'},
+  imgUpBuySell:{width: 14,height: 7,top:120,position:'absolute'},
   imgUpInfo :{right:58},
   imgUpLoc :{left:58},
   listAdd:{padding:15,flexDirection:'row',justifyContent:'space-between',backgroundColor:'white',marginBottom:1},
@@ -379,7 +387,7 @@ module.exports = {
   serviceList:{flexDirection:'row',justifyContent:'center',alignItems:'center',borderBottomColor:'#C8C7C8',borderBottomWidth:1},
   serviceOver:{position:'absolute',zIndex:9,top: 65},
   catInfoOver:{padding:15,bottom:0,zIndex:6,backgroundColor:'#fff',width,flexDirection:'row'},
-  wrapInfoOver:{flex:1,flexWrap: 'wrap'},
+  wrapInfoOver:{flex:1,flexWrap: 'wrap',justifyContent:'space-between'},
   txtTitleOver:{color:'#2F353F',fontSize:20,marginBottom:10,maxHeight:50,overflow:'hidden'},
   txtAddrOver:{color:'#6587A8',fontSize:14,overflow:'hidden',},
   txt:{color:'#6587A8',fontSize:16},

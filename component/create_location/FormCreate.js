@@ -13,10 +13,11 @@ import global from '../global';
 import getApi from '../api/getApi';
 import postApi from '../api/postApi';
 import getLanguage from '../api/getLanguage';
-import checkLocation from '../api/checkLocation';
 import GroupProduct from './GroupProduct';
 import AddImageMore from './AddImageMore';
 import OpenTime from './OpenTime';
+//import la from '../api/checkLocation';
+import ChooseArea from './ChooseArea';
 //import LatLng from './LatLng';
 
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
@@ -53,9 +54,7 @@ export default class FormCreate extends Component {
       checkSubCat:{},
       showService:false,
       checkService:{},
-      idCountry:'',nameCountry:'',listCountry:[],showCountry:false,
-      idCity:'',nameCity:'',listCity:[],showCity:false,
-      idDist:'',nameDist:'Quận/Huyện',listDist:[],showDist:false,
+
       lat:'Lat 0.0',
       lng:'Lng 0.0',
       txtFromPrice:'',
@@ -82,10 +81,8 @@ export default class FormCreate extends Component {
       category_item:[],
       errArea:false,
       errMsg:'',
+      idCountry:'',idCity:'',idDist:'',
     };
-    checkLocation().then(e=>{
-      this.setState({idCountry:e.idCountry, nameCountry:e.nameCountry,idCity:e.idCity, nameCity:e.nameCity, })
-    });
 
   }
   postData(){
@@ -246,29 +243,7 @@ export default class FormCreate extends Component {
     }
   }
 
-  getCountry(){
-    getApi(`${global.url}${'countries'}`)
-    .then(arrData => {
-        this.setState({ listCountry:arrData.data });
-    })
-    .catch(err => console.log(err));
-  }
-  getCity(id){
-    getApi(`${global.url}${'cities/'}${id}`)
-    .then(arrData => {
 
-        this.setState({ listCity:arrData.data });
-    })
-    .catch(err => console.log(err));
-    //this.getDist();
-  }
-  getDist(id){
-    getApi(`${global.url}${'districts/'}${id}`)
-    .then(arrData => {
-        this.setState({ listDist:arrData.data });
-    })
-    .catch(err => console.log(err));
-  }
   createService(service,category){
 
   }
@@ -308,7 +283,7 @@ export default class FormCreate extends Component {
       container,
       headCatStyle,headContent, wrapDistribute,wrapFilter,
       show,hide,hidden,colorlbl,listAdd,txtKV,
-      listCreate,titleCreate,imgCamera,itemKV,colorErr,
+      listCreate,titleCreate,imgCamera,colorErr,
       imgShare,imgInfo,wrapInputCreImg,wrapCreImg,widthLblCre,
       imgUpCreate,imgUpLoc,imgUpInfo,overLayout,listOverService,shadown,popoverLoc,padCreate,
       upDDLoc,upDDSubCat,selectBox,optionUnitStyle,clockTime,
@@ -335,101 +310,12 @@ export default class FormCreate extends Component {
             <Text style={colorErr}>{this.state.lang.plz_choose_area}</Text>
           </View>
         </View>
-        <View style={listCreate}>
-            <TouchableOpacity
-            onPress={()=>{ this.setState({ showCountry:true });this.getCountry() }}
-            style={itemKV}>
-              <Text numberOfLines={1} style={txtKV}>{this.state.nameCountry}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-            onPress={()=>{this.setState({ showCity:true });this.getCity(this.state.idCountry)}}
-            style={itemKV}>
-              <Text numberOfLines={1} style={txtKV}>{this.state.nameCity}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-            onPress={()=>{this.setState({ showDist:true }); this.getDist(this.state.idCity)}}
-            style={itemKV}>
-              <Text numberOfLines={1} style={txtKV}>{this.state.nameDist}</Text>
-            </TouchableOpacity>
+        <ChooseArea
+        setCountry={(idCountry)=>this.setState({idCountry})}
+        setCity={(idCity)=>this.setState({idCity})}
+        setDist={(idCountry,idCity,idDist)=>this.setState({idCountry,idCity,idDist,errArea:false})}
+        lang={this.state.lang}/>
 
-            <Modal onRequestClose={() => null} transparent visible={this.state.showCountry}>
-            <TouchableOpacity
-            onPress={()=>this.setState({ showCountry:false }) }
-            style={[popoverLoc,padCreate]}>
-            <Image style={[imgUpCreate,imgUpLoc]} source={upDD} />
-                <View style={[overLayout,shadown]}>
-                <FlatList
-                   extraData={this.state}
-                   keyExtractor={(item, index) => index}
-                   data={this.state.listCountry}
-                   renderItem={({item}) => (
-                  <View  style={listOverService}>
-                  <TouchableOpacity
-                      onPress={()=>this.setState({
-                        idCountry:item.id,nameCountry:item.name,showCountry:false,
-                        idCity:'', nameCity:this.state.lang.city,idDist:'',nameDist:this.state.lang.district,
-                       })}
-                      style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',}} >
-                       <Text style={colorlbl}>{item.name}</Text>
-                   </TouchableOpacity>
-                  </View>
-                )} />
-                </View>
-            </TouchableOpacity>
-            </Modal>
-
-            <Modal onRequestClose={() => null} transparent visible={this.state.showCity}>
-            <TouchableOpacity
-            onPress={()=>this.setState({ showCity:false }) }
-            style={[popoverLoc,padCreate]}>
-            <Image style={[imgUpCreate]} source={upDD} />
-                <View style={[overLayout,shadown]}>
-                <FlatList
-                   extraData={this.state}
-                   keyExtractor={(item, index) => index}
-                   data={this.state.listCity}
-                   renderItem={({item}) => (
-                  <View  style={listOverService}>
-                  <TouchableOpacity
-                      onPress={()=>this.setState({
-                        idCity:item.id,nameCity:item.name,showCity:false,
-                        idDist:'',nameDist:this.state.lang.district,
-                       })}
-                      style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',}} >
-                       <Text style={colorlbl}>{item.name}</Text>
-                   </TouchableOpacity>
-                  </View>
-                )} />
-                </View>
-            </TouchableOpacity>
-            </Modal>
-
-            <Modal onRequestClose={() => null} transparent visible={this.state.showDist}>
-            <TouchableOpacity
-            onPress={()=>{this.setState({ showDist:false });}}
-            style={[popoverLoc,padCreate]}>
-            <Image style={[imgUpCreate,imgUpInfo]} source={upDD} />
-                <View style={[overLayout,shadown]}>
-                <FlatList
-                   extraData={this.state}
-                   keyExtractor={(item, index) => index}
-                   data={this.state.listDist}
-                   renderItem={({item}) => (
-                  <View  style={listOverService}>
-                  <TouchableOpacity
-                      onPress={()=>{ this.setState({ idDist:item.id,nameDist:item.name,showDist:false,errArea:false });
-                      }}
-                      style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',}} >
-                       <Text style={colorlbl}>{item.name}</Text>
-                   </TouchableOpacity>
-                  </View>
-                )} />
-                </View>
-
-            </TouchableOpacity>
-            </Modal>
-
-        </View>
         <View style={{padding:15,flexDirection:'row',justifyContent:'space-between'}}>
         <Text style={colorlbl}>{this.state.lang.info_general}</Text>
           <View style={this.state.errMsg!=='' ? show : hide}>

@@ -4,11 +4,13 @@ import React, { Component } from 'react';
 import {
   View,Text,StyleSheet,Image,TextInput,
   Platform,Dimensions,TouchableOpacity,
-  WebView,
+  WebView,Modal,
 } from 'react-native';
+import ImageViewer from 'react-native-image-zoom-viewer';
 //
 //import FacebookPlayer from 'react-facebook-player';
 import global from '../../global';
+import closeIC from '../../../src/icon/ic-white/ic-close.png';
 
 const {width,height} = Dimensions.get('window');
 
@@ -16,7 +18,11 @@ const {width,height} = Dimensions.get('window');
 export default class SpaceContent extends Component {
   constructor(props){
     super(props);
-
+    this.state = {
+      ind:0,
+      showImageMenu:false,
+      showImgSpace:false,
+    }
   }
 
   render() {
@@ -27,6 +33,7 @@ export default class SpaceContent extends Component {
     } = styles;
     const {listImgSpace,listImgMenu,listImgVideo,idContent} = this.props;
     const {navigate} = this.props.navigation;
+    const {showImgSpace,showImageMenu,ind} = this.state;
 
     return (
       <View style={spaceContent}>
@@ -40,14 +47,29 @@ export default class SpaceContent extends Component {
               <Text>Xem tất cả >></Text>
               </TouchableOpacity>
           </View>
+
           {listImgSpace.length>0 ?
             <View style={rowFlexImg}>
-            <Image source={{uri :`${global.url_media}${listImgSpace[0]}`}} style={imgSpace}/>
-            <Image source={{uri :`${global.url_media}${listImgSpace[1]}`}} style={imgSpace}/>
+            {listImgSpace.map((e,i)=>{
+              return (
+                i<2 &&
+                <TouchableOpacity key={i} onPress={()=>this.setState({ind:i,showImgSpace:true})} >
+                  <Image source={{uri :`${e.url}`}} style={imgSpace}/>
+                </TouchableOpacity>
+              )
+            })}
+
             </View>
             :
             <View></View>
           }
+          <Modal onRequestClose={() => null} visible={showImgSpace} transparent>
+            <TouchableOpacity onPress={()=>this.setState({showImgSpace:false})}
+            style={{position:'absolute',padding:10,alignSelf:'flex-end',zIndex:9999}}>
+              <Image source={closeIC} style={{width:18,height:18}} />
+            </TouchableOpacity>
+            <ImageViewer imageUrls={listImgSpace} index={ind}/>
+          </Modal>
 
           <View style={titleSpace}>
               <Text style={[colorNumPP,sizeTitle]}>MENU ({listImgMenu.length})</Text>
@@ -59,14 +81,31 @@ export default class SpaceContent extends Component {
               <Text>Xem tất cả >></Text>
               </TouchableOpacity>
           </View>
+
           {listImgMenu.length>0 ?
             <View style={rowFlexImg}>
-            <Image source={{uri :`${global.url_media}${listImgMenu[0]}`}} style={imgSpace}/>
-            <Image source={{uri :`${global.url_media}${listImgMenu[1]}`}} style={imgSpace}/>
+            {listImgMenu.map((e,i)=>{
+              return (
+                i<2 &&
+                <TouchableOpacity key={i} onPress={()=>this.setState({ind:i,showImageMenu:true})} >
+                  <Image source={{uri :`${e.url}`}} style={imgSpace}/>
+                </TouchableOpacity>
+              )
+            })}
+
+            <Modal onRequestClose={() => null} visible={showImageMenu} transparent>
+              <TouchableOpacity onPress={()=>this.setState({showImageMenu:false})}
+              style={{position:'absolute',padding:10,alignSelf:'flex-end',zIndex:9999}}>
+                <Image source={closeIC} style={{width:18,height:18}} />
+              </TouchableOpacity>
+              <ImageViewer imageUrls={listImgMenu} index={ind}/>
+            </Modal>
             </View>
           :
           <View></View>
           }
+
+
 
           <View style={titleSpace}>
               <Text style={[colorNumPP,sizeTitle]}>VIDEO</Text>

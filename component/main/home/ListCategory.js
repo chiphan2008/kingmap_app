@@ -48,7 +48,7 @@ export default class CategoryScreen extends Component {
     let url = `${global.url}${'search-content?category='}${idcat}${'&location='}${loc}`;
     if(idsub!==null) url += `${'&subcategory='}${idsub}`;
     if(id_service!==null) url += `${'&service='}${id_service}`;
-
+    //console.log('url',url);
     getApi(url)
     .then(arrData => {
       //console.log('parseFloat(marker.lat)',arrTest.data)

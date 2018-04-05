@@ -5,8 +5,10 @@ import {Platform, View, Text, StyleSheet, Dimensions, Image,
   TouchableOpacity,FlatList,
 } from 'react-native';
 const {height, width} = Dimensions.get('window');
-import getApi from '../api/getApi';
+import getEncodeApi from '../api/getEncodeApi';
+import postEncodeApi from '../api/postEncodeApi';
 import global from '../global';
+import ListChat from './ListChat';
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
 
 function checkUrl(url){
@@ -17,26 +19,37 @@ export default class Contact extends Component {
     super(props);
     this.state = {
       listData:[],
+      yf_id:'',
+      activeTab:'system',
     };
+
     this.getData();
   }
 
   getData(){
     const { user_id } = this.props.navigation.state.params;
     const url = `${global.url_node}${'except-person/'}${user_id}`;
-    getApi(url).then(e=>{
+    getEncodeApi(url).then(e=>{
+      //console.log('e',e.data);
       this.setState({listData:e.data})
     })
   }
-
+  addFriend(id,name,urlhinh){
+    const { user_id } = this.props.navigation.state.params;
+    const url = `${global.url_node}${'add-friend'}`;
+    const param = `${'id='}${user_id}&${'user_id='}${id}&${'name='}${name}&${'urlhinh='}${urlhinh}`;
+    //console.log('(url,param)',url,param);
+    postEncodeApi(url,param);
+  }
   render() {
     const { lang,name_module,user_id,avatar } = this.props.navigation.state.params;
     const { navigation } = this.props;
-    const { listData } = this.state;
+    const { listData,activeTab } = this.state;
     //console.log('listData',listData);
     const {
       container,contentWrap,headCatStyle,headContent,titleCreate,
-      wrapItems,colorName,
+      wrapItems,colorName,tabCenter,colorTabActive,wrapTab,borderActive,
+      show, hide
     } = styles;
 
     return (
@@ -51,8 +64,18 @@ export default class Contact extends Component {
               <View></View>
           </View>
       </View>
+      <View style={{backgroundColor:'#fff',flexDirection:'row',borderBottomWidth:1,borderColor:'#E9E8EF'}}>
+        <TouchableOpacity style={[wrapTab,activeTab==='system' ? borderActive : '']}
+        onPress={()=>{this.setState({activeTab:'system'})}}>
+        <Text style={[activeTab==='system' ? colorTabActive : colorName,tabCenter]}> Hệ thống </Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[wrapTab,activeTab==='contact' ? borderActive : '']}
+        onPress={()=>{this.setState({activeTab:'contact'})}}>
+        <Text style={[activeTab==='contact' ? colorTabActive : colorName,tabCenter]}> Danh bạ </Text>
+        </TouchableOpacity>
+      </View>
 
-        <View style={contentWrap}>
+        <View style={[contentWrap,activeTab==='system' ? show : hide]}>
         {listData.length>0 ?
           <View>
 
@@ -61,19 +84,31 @@ export default class Contact extends Component {
              keyExtractor={(item, index) => index}
              data={listData}
              renderItem={({item}) => (
-               <TouchableOpacity style={wrapItems}
-               onPress={()=>navigation.navigate('MessengerScr',{user_id,urlhinh:avatar,name:item.name,port_connect:user_id<item.id ? `${user_id}_${item.id}` : `${item.id}_${user_id}`})}>
+               <View style={wrapItems}>
+               <TouchableOpacity style={{flexDirection:'row',alignItems:'center',width:width-105}}
+               onPress={()=>navigation.navigate('MessengerScr',{user_id,yf_id:item.id,yf_avatar:item.urlhinh,name:item.name,port_connect:user_id<item.id ? `${user_id}_${item.id}` : `${item.id}_${user_id}`})}>
                  <Image source={{uri: checkUrl(item.urlhinh) ? `${item.urlhinh}` : `${global.url_media}/${item.urlhinh}`}} style={{width:50,height:50,borderRadius:25,marginRight:7}} />
                  <Text style={colorName}>{item.name}</Text>
-
                </TouchableOpacity>
+
+               <TouchableOpacity style={{flexDirection:'row',alignItems:'center',borderWidth:1,paddingLeft:10,paddingRight:10,padding:3,maxHeight:34,borderRadius:17,borderColor:'#5b89ab'}}
+               onPress={()=>this.addFriend(item.id,item.name,item.urlhinh)}>
+                 <Text style={{color:'#5b89ab',fontSize:14}}>Kết bạn</Text>
+               </TouchableOpacity>
+               </View>
           )} />
           </View>
 
           :
           <View></View>
         }
+        </View>
 
+        <View style={activeTab==='contact' ? show : hide}>
+          <ListChat
+          user_id={user_id}
+          navigation={this.props.navigation}
+          avatar={avatar}/>
         </View>
 
       </View>
@@ -84,10 +119,10 @@ export default class Contact extends Component {
 const styles = StyleSheet.create({
   container: {
     width,
-    height,
+    height
   },
-  contentWrap : { width,height,alignItems: 'center',justifyContent: 'center',paddingBottom:70},
-  wrapItems:{flexDirection:'row',width,alignItems:'center',padding:15,backgroundColor:'#fff',marginBottom:1},
+  contentWrap : { width,alignItems: 'center',justifyContent: 'center',paddingBottom:Platform.OS==='ios' ? 100 : 130},
+  wrapItems:{flexDirection:'row',width,justifyContent:'space-between',padding:15,backgroundColor:'#fff',marginBottom:1,alignItems:'center'},
   headCatStyle : {
       backgroundColor: '#D0021B',paddingTop: Platform.OS==='ios' ? 30 : 20, alignItems: 'center',height: 65,
       position:'relative',zIndex:5,
@@ -96,5 +131,11 @@ const styles = StyleSheet.create({
       width: width - 40,justifyContent: 'space-between',flexDirection: 'row',
   },
   titleCreate:{color:'white',fontSize:18,paddingTop:5},
-  colorName:{color:'#2F3540',fontSize:16}
+  colorName:{color:'#2F3540',fontSize:16},
+  colorTabActive:{color:'#5b89ab',fontSize:16,fontWeight:'400'},
+  wrapTab:{width:width/2,padding:10,borderBottomWidth:1},
+  borderActive:{borderColor:'#5b89ab',borderBottomWidth:2},
+  tabCenter:{textAlign:'center'},
+  show : { display: 'flex'},
+  hide : { display: 'none'},
 })

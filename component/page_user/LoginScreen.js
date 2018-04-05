@@ -3,10 +3,10 @@
 import React, { Component } from 'react';
 import {
   Platform, View, Text, Image, Button,TouchableOpacity,StyleSheet,
-  Dimensions, TextInput, ScrollView } from 'react-native';
+  Dimensions, TextInput, ScrollView,Alert } from 'react-native';
 //import { CheckBox } from 'react-native-elements';
 //import RoundCheckbox from 'rn-round-checkbox';
-import {GoogleSignin} from 'react-native-google-signin';
+import {GoogleSignin, GoogleSigninButton}  from 'react-native-google-signin';
 
 import loginApi from '../api/loginApi';
 import gooApi from '../api/gooApi';
@@ -53,21 +53,30 @@ export default class LoginScreen extends Component {
      }
     });
   }
-  googleSign(){
-    GoogleSignin.signIn().then((user) => {
-      //console.log('user',user);
+  getGoogleID(){
+      //Alert.alert('Thong bao','getGoogleID')
+    return new Promise((resolve,reject)=>{
+      GoogleSignin.currentUserAsync().then((user) => {
+        resolve(user)
+      }).done();
+    })
+  }
+  loginGooIOS(){
+    // const user = GoogleSignin.currentUser();
+    // this.setState({txtUsername:user.id})
+    //Alert.alert('Thong bao','loginGooIOS')
+    this.getGoogleID().then((user) => {
+      //Alert.alert('user',user.id)
+      //this.setState({txtUsername:user.id})
       gooApi(`${global.url}${'login-google'}`,user).then(e =>{
-        //console.log(e);
         if(e.code===200){
           this.props.navigation.navigate('MainScr');
         }else{
           this.setState({errMsg:e.message})
         }
       })
-    }).catch((err) => {
-      return false;
-    }).done();
-  }
+  })
+}
   callLogin(backScr){
     const {txtUsername, txtPassword, lang} = this.state;
     if(txtUsername==='') return this.setState({errMsg:lang.err_email});
@@ -86,6 +95,7 @@ export default class LoginScreen extends Component {
     })
   }
   componentWillMount(){
+
     GoogleSignin.configure({
       iosClientId: '1004951541310-3ns8ppuvvallfta76rchcarcq1acbttl.apps.googleusercontent.com', // only for iOS
     })
@@ -144,7 +154,7 @@ export default class LoginScreen extends Component {
               </TouchableOpacity>
               <View style={[btnWrapSoci,mrgTop]}>
                   <Image style={imgSoci} source={FacebookColor} />
-                  <TouchableOpacity onPress={()=>this.googleSign()}>
+                  <TouchableOpacity onPress={()=>this.loginGooIOS()}>
                   <Image style={imgSoci} source={GoogleColor} />
                   </TouchableOpacity>
               </View>

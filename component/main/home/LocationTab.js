@@ -31,7 +31,7 @@ export default class Hometab extends Component {
   }
 
   getCategory(lang){
-    getApi(global.url+'categories?language='+lang)
+    getApi(global.url+'categories?language='+lang+'&limit=100')
     .then(arrCategory => {
       //console.log('arrCategory',arrCategory.data);
         this.setState({ listCategory: arrCategory.data });
@@ -55,7 +55,7 @@ export default class Hometab extends Component {
       container,
       headCatStyle,headContent, wrapDistribute,shadown,wrapFilter,
       show,hide,colorTextPP,colorNumPP,
-      wrapListLoc,flatItem,flatlistItem,imgFlatItemLoc,wrapFlatRight
+      flatItem,flatlistItem,imgFlatItemLoc,wrapFlatRight
     } = styles;
 
     return (
@@ -86,7 +86,7 @@ export default class Hometab extends Component {
               onPress={()=>navigate('ListLocScr',{idCat:item.id,sub_cat:item.sub_category,serv_items:item.service_items,lang:this.state.selectLang.valueLang})}
               style={flatItem}>
                  <Image style={imgFlatItemLoc} source={{uri:`${global.url_media}${item.image}`}} />
-                 <Text>{item.name}</Text>
+                 <Text style={{textAlign:'center'}} numberOfLines={2}>{item.name}</Text>
              </TouchableOpacity>
            )}
            keyExtractor={item => item.id}

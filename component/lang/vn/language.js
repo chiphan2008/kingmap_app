@@ -68,6 +68,7 @@ module.exports = {
   logout:'Thoát',
   save:'Lưu',
   full_name:'Họ và tên',
+  title_buysell:'Bạn phải nhập tiêu đề tin',
   phone:'Số điện thoại',
   enter_numberic:'Bạn phải nhập kiểu số',
   description_persional:'Giới thiệu bản thân',

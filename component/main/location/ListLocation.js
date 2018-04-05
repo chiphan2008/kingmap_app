@@ -151,7 +151,7 @@ export default class ListLocation extends Component {
       container,
       headLocationStyle, filterFrame,wrapFilter,
       inputSearch,show,hide,colorTextPP,colorNumPP,
-      selectBoxLoc,optionListLoc,OptionItemLoc,
+      selectBoxBuySell,widthLoc,optionListLoc,OptionItemLoc,
       wrapListLoc,flatItemLoc,imgFlatItem,wrapFlatRight,
       txtTitleOverCat,txtAddrOverCat,flatlistItemCat,wrapInfoOver,
       imgUp,imgUpLoc,imgUpSubCat,imgUpInfo,popoverLoc,paddingLoc,overLayout,imgInfo,overLayoutLoc,shadown,overLayoutSer,listCatOver,listOverService,colorText
@@ -170,21 +170,21 @@ export default class ListLocation extends Component {
                 <View style={filterFrame}>
                 <TouchableOpacity
                   onPress={()=>this.setState({ showLoc:!this.state.showLoc,listSubCat:{showList:false},listSerItem:{showList:false}, })}
-                  style={selectBoxLoc}>
+                  style={[selectBoxBuySell,widthLoc]}>
                     <Text style={{color:'#303B50'}}>{this.state.labelLoc}</Text>
                     <Image source={sortDownIC} style={{width:12,height:13,top:13,right:5,position:'absolute'}} />
                 </TouchableOpacity>
 
                 <TouchableOpacity
                   onPress={()=>this.setState({ listSubCat:{showList:!this.state.listSubCat.showList},listSerItem:{showList:false}, showLoc:false})}
-                  style = {selectBoxLoc}>
+                  style = {[selectBoxBuySell,widthLoc]}>
                     <Text style={{color:'#303B50'}}>{this.state.labelCat}</Text>
                     <Image source={sortDownIC} style={{width:12,height:13,top:13,right:5,position:'absolute'}} />
                 </TouchableOpacity>
 
                 <TouchableOpacity
                 onPress={()=>this.setState({ listSubCat:{showList:false},listSerItem:{showList:!this.state.listSerItem.showList}, showLoc:false})}
-                style = {selectBoxLoc}>
+                style = {[selectBoxBuySell,widthLoc]}>
                     <Text numberOfLines={1} style={{color:'#303B50'}}>{this.state.labelSer}</Text>
                     <Image source={sortDownIC} style={{width:12,height:13,top:13,right:5,position:'absolute'}} />
                 </TouchableOpacity>

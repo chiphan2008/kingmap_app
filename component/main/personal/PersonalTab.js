@@ -199,14 +199,56 @@ export default class PersonalTab extends Component {
               <View style={borderItemInfoPer}></View>
             </View>
 
-
-          <View style={[rowItem]}>
+            <View>
+            <View style={[rowItem]}>
               <Image source={plusWhiteIC} style={imgIconPerInfo} />
               <TouchableOpacity style={padPerInfo}>
               <Text style={titlePer}>{`${lang.create_ads}`}</Text>
               </TouchableOpacity>
             </View>
+            <View style={borderItemInfoPer}></View>
           </View>
+
+              <View>
+              <View style={[rowItem]}>
+                <Image source={plusWhiteIC} style={imgIconPerInfo} />
+                <TouchableOpacity style={padPerInfo}>
+                <Text style={titlePer}>Tạo rao vặt</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={borderItemInfoPer}></View>
+            </View>
+
+            <View>
+            <View style={[rowItem]}>
+              <Image source={plusWhiteIC} style={imgIconPerInfo} />
+              <TouchableOpacity style={padPerInfo}>
+              <Text style={titlePer}>Tạo shop online</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={borderItemInfoPer}></View>
+          </View>
+
+          <View>
+          <View style={[rowItem]}>
+            <Image source={plusWhiteIC} style={imgIconPerInfo} />
+            <TouchableOpacity style={padPerInfo}>
+            <Text style={titlePer}>Tạo website cá nhân/công ty</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={borderItemInfoPer}></View>
+        </View>
+
+        
+        <View style={[rowItem]}>
+          <Image source={plusWhiteIC} style={imgIconPerInfo} />
+          <TouchableOpacity style={padPerInfo}>
+          <Text style={titlePer}>Cung cấp phần mềm quản lý doanh nghiệp</Text>
+          </TouchableOpacity>
+        </View>
+
+
+      </View>
 
 
           <View style={infoPerBG}>

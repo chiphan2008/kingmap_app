@@ -7,7 +7,9 @@ import {Keyboard,Platform, View, Text, StyleSheet, Dimensions, Image,
 } from 'react-native';
 const {height, width} = Dimensions.get('window');
 
+import Rating from '../detail/Rating'
 import styles from '../../styles';
+import loginServer from '../../api/loginServer';
 import getApi from '../../api/getApi';
 import getLocationByIP from '../../api/getLocationByIP';
 import global from '../../global';
@@ -15,12 +17,13 @@ import lang_vn from '../../lang/vn/language';
 import lang_en from '../../lang/en/language';
 import SelectLocation from '../../main/location/SelectLocation';
 import checkLocation from '../../api/checkLocation';
+import checkLogin from '../../api/checkLogin';
 
 import upDD from '../../../src/icon/ic-white/ic-dropdown_up.png';
 import sortDownIC from '../../../src/icon/ic-sort-down.png';
 import searchIC from '../../../src/icon/ic-gray/ic-search.png';
 import likeIC from '../../../src/icon/ic-like.png';
-import favoriteIC from '../../../src/icon/ic-favorite.png';
+import likeFullIcon from '../../../src/icon/ic-like-full.png';
 import checkIC from '../../../src/icon/ic-green/ic-check.png';
 import arrowLeft from '../../../src/icon/ic-white/arrow-left.png';
 import logoTop from '../../../src/icon/ic-white/Logo-ngang.png';
@@ -28,6 +31,15 @@ import logoTop from '../../../src/icon/ic-white/Logo-ngang.png';
 function remove(array, element) {
     const index = array.indexOf(element);
     array.splice(index, 1);
+    array.toString()
+}//.toString()
+function removeText(str,element){
+  var array = str.split(',');
+  remove(array, element);
+  //remove(array,'Dịch vụ');
+  array.toString();
+  //console.log(array);
+  return array.toString();
 }
 var timeout;
 export default class ListLocation extends Component {
@@ -64,23 +76,52 @@ export default class ListLocation extends Component {
       id_serv:'-1',
       isRefresh:false,
       page:0,
-      pullToRefresh:true,
+      pullToRefresh:false,
+      //disable:false,
+      user_id:0,
+      isLogin:false,
+      isLoad:true,
+    }
+    this.refresh();
+
+  }
+
+  refresh(){
+    checkLogin().then(e=>{
+      if(e.id!==undefined){
+        this.setState({user_id:e.id,isLogin:true});
+        loginServer(e);
+      }
+    });
+  }
+  getCategory(idcat,loc){
+    const url = global.url+'content-by-category?category='+idcat+'&location='+loc;
+    //console.log('url',url);
+    if(this.state.isLoad){
+      getApi(url)
+      .then(arrData => {
+        //console.log('arrData',arrData);
+        this.setState({ listData: arrData.data });
+      })
+      .catch(err => console.log(err));
     }
 
   }
 
-  getCategory(idcat,loc){
-    const url = global.url+'content-by-category?category='+idcat+'&location='+loc;
-    console.log('url',url);
-    getApi(url)
-    .then(arrData => {
-      //console.log('arrData',arrData);
-      this.setState({ listData: arrData.data });
-    })
-    .catch(err => console.log(err));
+  onRefresh(skip=null){
+    //console.log('refreshing')
+    const { idDist,id_sub,id_serv,page,pullToRefresh } = this.state;
+    const pos= skip!==null ? skip : page+20 ;
+
+    if(pullToRefresh){
+      this.setState({ isRefresh: true, page: page+20 }, function() {
+        this.getContentByDist(idDist,id_sub,id_serv,pos)
+      });
+    }
   }
 
   getContentByDist(id_district,id_sub,id_serv,skip=null){
+    clearTimeout(timeout);this.setState({isLoad:false});
     if(skip===null){
       skip = 0; this.setState({page:0})
     }
@@ -89,14 +130,16 @@ export default class ListLocation extends Component {
     const { keyword,curLocation } = this.state;
     var url = `${global.url}${'search-content?category='}${id_cat}&skip=${skip}&limit=20`;
 
-    if(keyword!=='') url += `${'&keyword='}${keyword}`;
-    //if(loc!=='') url += `${'&location='}${loc}`;
-
-    if(id_district===null){
-      url += `${'&location='}${curLocation.latlng}`;
+    if(keyword===''){
+      if(id_district===null){
+        url += `${'&location='}${curLocation.latlng}`;
+      }else {
+        url += `${'&district='}${id_district}`;
+      }
     }else {
-      url += `${'&district='}${id_district}`;
+      url += `${'&keyword='}${keyword}`;
     }
+    //if(loc!=='') url += `${'&location='}${loc}`;
 
     if(id_sub!==null) url += `${'&subcategory='}${id_sub}`;
     id_serv = id_serv.replace('-1,','');
@@ -109,26 +152,19 @@ export default class ListLocation extends Component {
     .then(arrData => {
       //console.log('count',arrData.data.length);
       if(skip===0){
+        //console.log('-----skip===0-----');
         this.setState({ listData: arrData.data, isRefresh:false });
       }else {
+        //console.log('-----skip!==-----');
         if(arrData.data.length===0) this.setState({ pullToRefresh:false });
         this.setState({ listData: this.state.listData.concat(arrData.data), isRefresh:false });
       }
     })
     .catch(err => console.log(err));
   }
-  onRefresh(){
-    //console.log('refreshing')
-    const { idDist,id_sub,id_serv,page,pullToRefresh } = this.state;
-    const pos=page+20;
-    if(pullToRefresh){
-      this.setState({ isRefresh: true, page: page+20 }, function() {
-        this.getContentByDist(idDist,id_sub,id_serv,pos)
-      });
-    }
-  }
 
   saveLocation(){
+    this.setState({keyword:''})
     checkLocation().then((e)=>{
       //console.log('saveLocation',e);
       this.getContentByDist(e.idDist,this.state.id_sub,this.state.id_serv);
@@ -137,15 +173,18 @@ export default class ListLocation extends Component {
   }
 
   componentDidMount() {
-    const id = this.props.navigation.state.params.idCat;
+    var _this = this;
+    const id = _this.props.navigation.state.params.idCat;
+    let latlng;
     navigator.geolocation.getCurrentPosition((position) => {
       //console.log('position');
-            const latlng = `${position.coords.latitude}${','}${position.coords.longitude}`;
-            this.getCategory(id,latlng);
-            this.setState({
+            latlng = `${position.coords.latitude}${','}${position.coords.longitude}`;
+            _this.getCategory(id,latlng);
+            _this.setState({
               curLocation : {
                 latlng:latlng,
               },
+
               curLoc:{
                 latlng:latlng,
                 latitude:`${position.coords.latitude}`,
@@ -156,21 +195,57 @@ export default class ListLocation extends Component {
            (error) => {
              //console.log('error',id);
              getLocationByIP().then(e => {
-               this.setState({
+               const latlng = `${e.latitude},${e.longitude}`;
+               _this.setState({
                  curLoc:{
                    latlng:`${e.latitude},${e.longitude}`,
                    latitude:`${e.latitude}`,
                    longitude:`${e.longitude}`,
-                 }
+                 },
                });
-               this.getCategory(id,`${e.latitude},${e.longitude}`)});
+               _this.getCategory(id,latlng);
+             });
              //console.log('ip',ip.latitude);
           },
           {enableHighAccuracy: true, timeout: 20000, maximumAge: 10000}
     );
+    _this.setState({pullToRefresh:true});
   }
+
+  requestLogin(){
+    const {idCat,sub_cat,serv_items,lang} = this.props.navigation.state.params;
+    var _this = this;
+    if(_this.state.isLogin===false){
+      _this.props.navigation.navigate('LoginScr',{backScr:'ListLocScr',param:{} });
+    }
+    //const backScr = this.props.navigation.getParam(backScr);
+    //console.log(backScr);
+  }
+  saveLike(id){
+    //console.log('like');
+    const {isLogin,user_id,page} = this.state;
+    if(isLogin===false){ this.requestLogin();}else {
+      getApi(`${global.url}${'like'}${'?content='}${id}${'&user='}${user_id}`).then(e=>{
+          this.onRefresh(0);
+        }
+      );
+    }
+
+  }
+
+  saveVote(rate,id){
+    const {isLogin,idDist,id_sub,id_serv,page,user_id}=this.state;
+    if(isLogin===false){this.requestLogin();}else {
+      const url =`${global.url}${'vote?content='}${id}${'&user='}${user_id}${'&point='}${rate}`;
+      getApi(url).then(e=>{
+        this.onRefresh(page);
+      }
+      );
+    }
+  }
+
   render() {
-    console.log('ListLocation1');
+    console.log('pullToRefresh',this.state.pullToRefresh);
     const { keyword,lang,idDist,id_sub,id_serv,isRefresh,listData } = this.state;
     const { goBack,navigate } = this.props.navigation;
     const {idCat,sub_cat,serv_items} = this.props.navigation.state.params;
@@ -182,7 +257,9 @@ export default class ListLocation extends Component {
       selectBoxBuySell,widthLoc,optionListLoc,OptionItemLoc,
       wrapListLoc,padLoc,flatItemLoc,imgFlatItem,wrapFlatRight,
       txtTitleOverCat,txtAddrOverCat,flatlistItemCat,wrapInfoOver,
-      imgUpCreate,imgUpLoc,imgUpSubCat,imgUpInfo,popoverLoc,padCreate,overLayout,imgInfo,overLayoutLoc,shadown,overLayoutSer,listCatOver,listOverService,colorText
+      imgUpCreate,imgUpLoc,imgUpSubCat,imgUpInfo,popoverLoc,
+      padCreate,overLayout,imgInfo,overLayoutLoc,shadown,overLayoutSer,listCatOver,listOverService,colorText,
+      favIC,marRight,
     } = styles;
     //console.log('lang',this.props.lang);
     return (
@@ -249,7 +326,7 @@ export default class ListLocation extends Component {
 
         <View style={[wrapListLoc,padLoc]}>
               <FlatList
-                     style={{marginBottom:190}}
+                     style={{marginBottom:Platform.OS==='ios' ? 130 : 150}}
                      ListEmptyComponent={<Text>Loading ...</Text>}
                      refreshing={isRefresh}
                      onEndReachedThreshold={0.5}
@@ -259,14 +336,14 @@ export default class ListLocation extends Component {
                      renderItem={({item}) => (
                        <View style={flatlistItemCat}>
                            <TouchableOpacity
-                           onPress={()=>navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc:this.state.curLoc,lang})}
+                           onPress={()=>navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc:this.state.curLoc,lang:lang.lang})}
                            >
                              <Image style={imgFlatItem} source={{uri:`${global.url_media}${item.avatar}`}} />
                            </TouchableOpacity>
                            <View style={wrapInfoOver}>
                              <View>
                                <TouchableOpacity
-                               onPress={()=>navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc:this.state.curLoc,lang})}
+                               onPress={()=>navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc:this.state.curLoc,lang:lang.lang})}
                                >
                                    <Text style={txtTitleOverCat} numberOfLines={2}>{item.name}</Text>
                                </TouchableOpacity>
@@ -275,14 +352,34 @@ export default class ListLocation extends Component {
 
                                <View style={{flexDirection:'row'}}>
                                    <View style={{flexDirection:'row',paddingRight:10}}>
-                                     <Image style={{width:22,height:18,marginRight:5}} source={likeIC} />
+                                      <TouchableOpacity onPress={()=>this.saveLike(item.id)}>
+                                     <Image style={{width:22,height:18,marginRight:5}} source={item.like>0 ? likeFullIcon : likeIC} />
+                                     </TouchableOpacity>
                                      <Text>{item.like}</Text>
                                    </View>
                                    <View style={{paddingRight:10}}>
                                      <Text> | </Text>
                                    </View>
                                    <View  style={{flexDirection:'row',paddingRight:10}}>
-                                     <Image style={{width:18,height:18,marginRight:5}} source={favoriteIC} />
+                                     <TouchableOpacity onPress={()=>{this.saveVote(1,item.id)} }>
+                                     <Rating rate={1} showVote={item.vote} styleIMG={favIC} />
+                                     </TouchableOpacity>
+                                     <TouchableOpacity onPress={()=>{this.saveVote(2,item.id)} }>
+                                     <Rating rate={2} showVote={item.vote} styleIMG={favIC} />
+                                     </TouchableOpacity>
+
+                                     <TouchableOpacity onPress={()=>{this.saveVote(3,item.id)} }>
+                                     <Rating rate={3} showVote={item.vote} styleIMG={favIC} />
+                                     </TouchableOpacity>
+
+                                     <TouchableOpacity onPress={()=>{this.saveVote(4,item.id)} }>
+                                     <Rating rate={4} showVote={item.vote} styleIMG={favIC} />
+                                     </TouchableOpacity>
+
+                                     <TouchableOpacity onPress={()=>{this.saveVote(5,item.id)} }>
+                                     <Rating rate={5} showVote={item.vote} styleIMG={[favIC,marRight]} />
+                                     </TouchableOpacity>
+
                                      <Text>{item.vote}</Text>
                                    </View>
                                </View>
@@ -311,14 +408,12 @@ export default class ListLocation extends Component {
         style={[popoverLoc,padCreate]}>
         <Image style={[imgUpCreate,imgUpSubCat]} source={upDD} />
             <View style={[overLayoutLoc,shadown]}>
-
             <FlatList
                keyExtractor={item => item.id}
                data={sub_cat}
                renderItem={({item}) => (
                  <TouchableOpacity
                  onPress={()=>{
-                   clearTimeout(timeout);
                    this.getContentByDist(this.state.idDist,item.id,this.state.id_serv);
                    this.setState({listSubCat:{showList:!this.state.listSubCat.showList},id_sub:item.id,labelCat:item.name});
                }}
@@ -329,7 +424,6 @@ export default class ListLocation extends Component {
 
             <TouchableOpacity
                 onPress={()=>{
-                  clearTimeout(timeout);
                   this.getContentByDist(this.state.idDist,null,this.state.id_serv);
                   this.setState({listSubCat:{showList:!this.state.listSubCat.showList},id_sub:null,labelCat:'Danh mục'});
               }}
@@ -357,39 +451,44 @@ export default class ListLocation extends Component {
               <TouchableOpacity
                  onPress={()=>{
                   let idServ;
-                  clearTimeout(timeout);
+                  let lblArr = this.state.labelSer;
+                  if(lblArr==='Dịch vụ'){ lblArr =`${item.name}`;}else {
+                    lblArr =`${this.state.labelSer}`;
+                  }
+                  //clearTimeout(timeout);
+                  console.log('lblArr1',lblArr);
                   const arr = JSON.parse(`[${this.state.id_serv}]`);
-
                   if(this.state.id_serv==='-1'){ idServ=`-1,${item.id}`; }else{
                     if(arr.includes(item.id)){
                       remove(arr, item.id);idServ = arr.toString();
-                      if(idServ==='') idServ='-1,';
+
+                      if(this.state.showServie[`${item.id}`]===item.id) lblArr = removeText(lblArr,item.name);
+                      if(idServ==='') {idServ='-1,';}
+                      console.log('lblArr2',lblArr);
                       }else {
-                      idServ= `${this.state.id_serv},${item.id}`;
-                    }
-                  }
-                  //console.log('idServ',idServ);
-                  let lblArr;
-                  if(this.state.labelSer!=='Dịch vụ'){
-                    if( `${this.state.labelSer}`.includes(`${item.name}`) ){
-                      lblArr = `${this.state.labelSer}`.replace(`,${item.name}`,'');
-                      lblArr = `${this.state.labelSer}`.replace(`${item.name},`,'');
-                      if( lblArr ===item.name) lblArr='Dịch vụ';
-                    }else {
+                      idServ = `${this.state.id_serv},${item.id}`;
                       lblArr =`${this.state.labelSer},${item.name}`;
+                      console.log(this.state.showServie);
+                      console.log(idServ);
+                      console.log('lblArr3',lblArr);
                     }
+                    //lblArr =`${this.state.labelSer},${item.name}`;
+
                   }
-                  let labelSer = this.state.labelSer==='Dịch vụ' ? item.name : lblArr;
+                  if(lblArr==='') lblArr='Dịch vụ';
+                  console.log('lblArr4',lblArr);
+
                   this.getContentByDist(this.state.idDist,this.state.id_sub,idServ);
+
 
                   if(this.state.showServie[`${item.id}`]!==item.id)
                     this.setState({
-                      showServie: Object.assign(this.state.showServie,{[item.id]:item.id}), labelSer
+                      showServie: Object.assign(this.state.showServie,{[item.id]:item.id}),labelSer:lblArr
                     });
                     //if(`${this.state.labelSer}`.includes(labelServ)) this.setState({labelSer:labelServ});
                   else
                     this.setState({
-                      showServie: Object.assign(this.state.showServie,{[item.id]:!item.id}),labelSer
+                      showServie: Object.assign(this.state.showServie,{[item.id]:!item.id}),labelSer:lblArr
                     });
                   }}
                   style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',padding:15}}
@@ -404,9 +503,9 @@ export default class ListLocation extends Component {
             <View style={listOverService}>
                 <TouchableOpacity  style={{padding:15}}
                    onPress={()=>{
-                    clearTimeout(timeout);
+
                     this.getContentByDist(this.state.idDist,this.state.id_sub,'-1,');
-                    this.setState({listSerItem:{showList:!this.state.listSerItem.showList},id_serv:'-1',labelSer:'Dịch vụ'});
+                    this.setState({listSerItem:{showList:!this.state.listSerItem.showList},id_serv:'-1',labelSer:'Dịch vụ',showServie:{} });
                     }}
                   >
                      <Text style={colorText}>Tất cả</Text>

@@ -80,8 +80,8 @@ export default class ListLocation extends Component {
     this.setState({showOption:false});
     const {lang} = this.props;
     Alert.alert(lang.notify,lang.confirm_loc_del,[
-      {text: 'Cancel', style: 'cancel'},
-      {text: 'OK', onPress: () => this.deleteLocation(id)},
+      {text: lang.cancel, style: 'cancel'},
+      {text: lang.confirm, onPress: () => this.deleteLocation(id)},
     ],
    { cancelable: false } )
   }
@@ -102,8 +102,7 @@ export default class ListLocation extends Component {
       animationType={'slide'}
       visible={visible}
       >
-      <View style={[actionSheetWrap,showOption ? show : hide]}
-      >
+      <View style={[actionSheetWrap,showOption ? show : hide]} >
         <View style={[actionSheetContent,actionSheetRadius]}>
           <TouchableOpacity style={pad15}>
           <Text style={colorTxt}>{lang.edit}</Text>

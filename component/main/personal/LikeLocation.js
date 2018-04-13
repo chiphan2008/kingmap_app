@@ -47,7 +47,7 @@ export default class LikeLocation extends Component {
     .catch(err => console.log(err));
   }
   deleteLike(idContent){
-    const url = `${global.url}${'delete-like/'}${idContent}`;
+    const url = `${global.url}${'user/delete-like/'}${idContent}`;
     console.log('url',url);
     getApi(url).then(e => console.log(e)).catch(err => console.log(err));
     this.getData(this.state.user_profile.id);
@@ -55,8 +55,8 @@ export default class LikeLocation extends Component {
   confirmDel(id){
     const {lang} = this.props;
     Alert.alert(lang.notify,lang.confirm_like_del,[
-      {text: 'Cancel', style: 'cancel'},
-      {text: 'OK', onPress: () => this.deleteLike(id)},
+      {text: lang.cancel, style: 'cancel'},
+      {text: lang.confirm, onPress: () => this.deleteLike(id)},
     ],
    { cancelable: false } )
   }

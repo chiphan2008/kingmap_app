@@ -8,7 +8,7 @@ import {
 import global from '../../global';
 
 const {width,height} = Dimensions.get('window');
-import checkBlueIC from '../../../src/icon/ic-blue/ic-check.png';
+import checkBlueIC from '../../../src/icon/ic-blue/ic-check-blue.png';
 import checkGreenIC from '../../../src/icon/ic-green/ic-check.png';
 
 export default class Services extends Component {
@@ -21,7 +21,8 @@ export default class Services extends Component {
     //console.log('this.props.listContent.vote',this.props.listContent.has_vote);
     const {
       colorBlack,wrapService,rowFlex,widthHafl,
-      colorTextPP,wrapContentDetail,colorContent,
+      colorTextPP,wrapContentDetail,colorHide,
+      FlatList,
     } = styles;
     const {listServices,serviceContent} = this.props;
 
@@ -30,10 +31,13 @@ export default class Services extends Component {
           <View style={wrapService}>
           {listServices.map((e,index) => {
               return (
-                  <View style={[rowFlex,widthHafl]} key={e.id_service_item}>
-                    <Image source={`${serviceContent}`.includes(e.id_service_item) ? checkGreenIC : checkBlueIC} style={{width: 20,height: 20,marginRight:10}} />
-                    <Text numberOfLines={2} style={`${serviceContent}`.includes(e.id_service_item) ? colorBlack : colorContent}>{e.name}</Text>
+
+                <View style={rowFlex} key={e.id_service_item}>
+                  <View style={[widthHafl,rowFlex]} >
+                    <Image source={`${serviceContent}`.includes(e.id_service_item) ? checkGreenIC : checkBlueIC} style={{width: 20,height: 20,marginRight:5}} />
+                    <Text numberOfLines={2} style={`${serviceContent}`.includes(e.id_service_item) ? colorBlack : colorHide}>{e.name}</Text>
                   </View>
+                </View>
               )
             })
           }
@@ -45,8 +49,9 @@ export default class Services extends Component {
 }
 
 const styles = StyleSheet.create({
-  rowFlex:{flexDirection:'row',paddingLeft:10,paddingRight:10,marginTop:10},
+  rowFlex:{flexDirection:'row',padding:5,paddingRight:10},
   colorContent:{color:'#6587A8',overflow:'hidden',fontSize:15,},
+  colorHide:{color:'#adc4d5',overflow:'hidden',fontSize:15,},
   widthHafl:{width:(width-50)/2,overflow:'hidden'},
   colorBlack:{color:'#303B50',overflow:'hidden',fontSize:15,},
   colorTextPP :{color:'#B8BBC0'},

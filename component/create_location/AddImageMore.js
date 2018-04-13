@@ -33,7 +33,7 @@ export default class AddImageMore extends Component {
     }).then(imgSpace => {
       //console.log(imgSpace);
       this.setState({imgSpace})
-    });
+    }).catch(e=>console.log('e'));
   }
   uploadMenu(){
     ImagePicker.openPicker({
@@ -41,7 +41,7 @@ export default class AddImageMore extends Component {
     }).then(imgMenu => {
       //console.log(imgMenu);
       this.setState({imgMenu})
-    });
+    }).catch(e=>console.log('e'));
   }
   uploadVideo(link){
     if(link!==''){

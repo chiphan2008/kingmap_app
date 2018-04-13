@@ -63,7 +63,7 @@ export default class DesignAds extends Component {
 
       }
     }).catch(e => {
-      alert(e);
+      //alert(e);
     });
   }
   saveDesign(){

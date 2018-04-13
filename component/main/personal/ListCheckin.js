@@ -13,6 +13,7 @@ import styles from '../../styles';
 
 import arrowLeft from '../../../src/icon/ic-white/arrow-left.png';
 import moreIC from '../../../src/icon/ic-create/ic-more.png';
+import closeIC from '../../../src/icon/ic-create/ic-close.png';
 
 const {width,height} = Dimensions.get('window');
 
@@ -25,8 +26,10 @@ export default class ListCheckin extends Component {
       isLogin:false,
       user_profile:{},
     }
+    this.refresh();
+  }
+  refresh(){
     checkLogin().then(e=>{
-      //console.log('checkLogin',e);
       if(e.id===undefined){
         this.setState({isLogin:false})
       }else {
@@ -35,13 +38,21 @@ export default class ListCheckin extends Component {
       }
     });
   }
-
   getData(id){
     const url = `${global.url}${'user/list-checkin/'}${id}`;
     getApi(url)
     .then(arrData => {
       //console.log('arrData',arrData);
         this.setState({ listData: arrData.data });
+    })
+    .catch(err => console.log(err));
+  }
+
+  delCheckin(id){
+    const url = `${global.url}${'user/delete-checkin/'}${id}`;
+    getApi(url)
+    .then((e)=>{
+      this.refresh();
     })
     .catch(err => console.log(err));
   }
@@ -79,6 +90,10 @@ export default class ListCheckin extends Component {
                       this.props.closeModal()
                       navigation.navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang})
                   }}>
+                    <TouchableOpacity style={{position:'absolute',top:5,right:5,zIndex:99}}
+                    onPress={()=>this.delCheckin(e.id)}>
+                    <Image source={closeIC} style={{width:20,height:20}} />
+                    </TouchableOpacity>
                     <Image source={{uri:`${global.url_media}${e.avatar}`}} style={{width:width,minHeight:200,marginBottom:10}} />
                     </TouchableOpacity>
                     <View style={listCreate}>
@@ -100,9 +115,6 @@ export default class ListCheckin extends Component {
             :
             <View></View>
           }
-
-
-
 
       </ScrollView>
     </Modal>

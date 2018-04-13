@@ -38,19 +38,11 @@ export default class ListImageContent extends Component {
     //console.log('idContent',idContent);
     getApi(`${global.url}${'content/'}${idContent}`)
     .then(arrData => {
-      //console.log('arrData',arrData.data.link_video);
-      var arrSpace = [];
-      var arrMenu = [];
       this.setState({
         listVideo:arrData.data.link_video,
+        listSpace:arrData.data.image_space,
+        listMenu:arrData.data.image_menu,
       });
-      //arrData.data.image_space.map(e=>arrSpace.push({url:`${global.url_media}${e}`}));
-      //arrData.data.image_menu.map(e=>arrMenu.push({url:`${global.url_media}${e}`}));
-        this.setState({
-          listSpace:arrSpace,
-          listMenu:arrMenu,
-        });
-
     })
     .catch(err => console.log(err));
   }
@@ -119,7 +111,7 @@ export default class ListImageContent extends Component {
         {this.state.listSpace.map((e,index) => (
           <TouchableOpacity key={index} onPress={() => {this.openModalSpace(index)}}>
            <Image
-             resizeMode="cover"
+             //resizeMode="cover"
              style={imgTab}
              source={{ uri: `${e.url}` }}
            />
@@ -132,7 +124,9 @@ export default class ListImageContent extends Component {
        style={{position:'absolute',padding:10,alignSelf:'flex-end',zIndex:9999}}>
        <Image source={closeIC} style={{width:18,height:18}} />
        </TouchableOpacity>
-        <ImageViewer imageUrls={this.state.listSpace} index={this.state.currentImageIndex}/>
+        <ImageViewer imageUrls={this.state.listSpace} index={this.state.currentImageIndex}
+        onChange={(currentImageIndex)=>this.setState({currentImageIndex})}
+        enableImageZoom saveToLocalByLongPress={false}/>
         </Modal>
         </View>
 
@@ -153,7 +147,9 @@ export default class ListImageContent extends Component {
           style={{position:'absolute',padding:10,alignSelf:'flex-end',zIndex:9999}}>
           <Image source={closeIC} style={{width:18,height:18}} />
           </TouchableOpacity>
-           <ImageViewer imageUrls={this.state.listMenu} index={this.state.currentImageIndex}/>
+           <ImageViewer imageUrls={this.state.listMenu} index={this.state.currentImageIndex}
+           enableImageZoom saveToLocalByLongPress={false}
+           />
            </Modal>
         </View>
 

@@ -13,6 +13,8 @@
 #import <React/RCTRootView.h>
 #import <GoogleMaps/GoogleMaps.h>
 #import <RNGoogleSignin/RNGoogleSignin.h>
+#import <FBSDKCoreKit/FBSDKCoreKit.h>
+#import <FBSDKLoginKit/FBSDKLoginKit.h>
 
 @implementation AppDelegate
 
@@ -36,10 +38,18 @@
   return YES;
 }
 
+- (void)applicationDidBecomeActive:(UIApplication *)application {
+  [FBSDKAppEvents activateApp];
+}
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
   sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
   
-  return [RNGoogleSignin application:application openURL:url sourceApplication:sourceApplication annotation:annotation];
+  return [[FBSDKApplicationDelegate sharedInstance] application:application
+                                                        openURL:url
+                                              sourceApplication:sourceApplication
+                                                     annotation:annotation
+          ]
+  || [RNGoogleSignin application:application openURL:url sourceApplication:sourceApplication annotation:annotation];
 }
 
 @end

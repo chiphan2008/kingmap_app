@@ -16,6 +16,13 @@ import FacebookColor from '../../src/icon/Facebook_color.png';
 import GoogleColor from '../../src/icon/Google_color.png';
 const {height, width} = Dimensions.get('window');
 
+import faceApi from '../api/faceApi';
+import {FBLogin, FBLoginManager} from 'react-native-facebook-login';
+var LoginBehavior = {
+  'ios': FBLoginManager.LoginBehaviors.Browser,
+  'android': FBLoginManager.LoginBehaviors.WebView
+}
+
 function hasNumber(text) {
   return /\d/.test(text);
 }
@@ -23,7 +30,21 @@ function isEmail(text){
   let email = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/ ;
   return email.test(text);
 }
-
+function xoa_dau(str) {
+  str = str.toLowerCase();
+	str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
+	str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
+	str = str.replace(/ì|í|ị|ỉ|ĩ/g, "i");
+	str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, "o");
+	str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u");
+	str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y");
+	str = str.replace(/đ/g, "d");
+	return str;
+}
+function onlyLetters(str) {
+    let regex = /^[a-zA-Z\s]+$/;
+    return regex.test(xoa_dau(str));
+}
 export default class SignUpScreen extends Component {
   constructor(props) {
     super(props);
@@ -40,6 +61,7 @@ export default class SignUpScreen extends Component {
       re_pwd:'',
       err_repwd:'',
       errMsg:'',
+      disable:false,
     }
     this.getLang();
   }
@@ -52,13 +74,31 @@ export default class SignUpScreen extends Component {
     });
   }
   handlePhone = (phone) => {
-    if (/^\d+$/.test(phone)) {
+    if (/^\d+$/.test(phone) || phone==='') {
       this.setState({ phone });
     }
   }
+  loginFB(){
+    var _this=this;
+    FBLoginManager.setLoginBehavior(LoginBehavior[Platform.OS]); // defaults to Native
+    FBLoginManager.loginWithPermissions(["email","user_friends"], function(error, data){
+      if(error) return;
+      const profile = JSON.parse(data.profile);
+      //console.log(profile.picture.data.url);
+      faceApi(`${global.url}${'login-facebook'}`,profile).then(e =>{
+        if(e.code===200){
+          _this.props.navigation.navigate('MainScr');
+        }else{
+          _this.setState({errMsg:e.message})
+        }
+      })
+    })
+
+  }
   signUp(){
+    //console.log('singup');
     let err=false;
-    const {errMsg,err_fullname, full_name, phone, email, pwd,re_pwd, lang } = this.state;
+    const {errMsg,err_fullname, full_name, phone, email, pwd,re_pwd, lang,disable } = this.state;
 
     if(full_name===''){
       this.setState({err_fullname:lang.err_fullname});
@@ -68,7 +108,13 @@ export default class SignUpScreen extends Component {
         this.setState({err_fullname:lang.err_format});
         err=true;
       }else {
-        this.setState({err_fullname:''});
+        if(!onlyLetters(full_name)){
+          this.setState({err_fullname:lang.err_fullname_es});
+          err=true;
+        }else {
+          this.setState({err_fullname:''});
+        }
+
       }
     }
 
@@ -87,7 +133,12 @@ export default class SignUpScreen extends Component {
       this.setState({err_phone:lang.err_phone});
       err=true;
     }else {
-      this.setState({err_phone:''});
+      if(phone.length<9) {
+        this.setState({err_phone:lang.err_phone_min});
+        err=true;
+      }else {
+        this.setState({err_phone:''});
+      }
     }
     if(pwd.length<6){
       this.setState({err_pwd:lang.err_pwd_length});
@@ -97,9 +148,10 @@ export default class SignUpScreen extends Component {
     }
     if(pwd!==re_pwd) {this.setState({errMsg:lang.err_pwd_repwd});err=true;}
     if(err){
+      console.log('1',disable);
+      this.setState({disable:false});
       return false;
     }else{
-
       var arr = new FormData();
       arr.append('full_name',full_name);
       arr.append('phone',phone);
@@ -108,11 +160,14 @@ export default class SignUpScreen extends Component {
 
       postApi(`${global.url}${'register?lang='}${this.state.lang.lang}`,arr).then(e=>{
         if(e.code===200){
-          Alert.alert(lang.notify,`${lang.active_acc}`)
+          Alert.alert(lang.notify,`${lang.active_acc}`,[
+            {text: 'OK', onPress: () => this.props.navigation.navigate('MainScr')},
+          ],
+         { cancelable: false } )
         }else{
+          this.setState({disable:false});
           Alert.alert(lang.notify,`${e.message}`)
         }
-
       });
     }
   }
@@ -186,15 +241,24 @@ export default class SignUpScreen extends Component {
               <Text style={txtErr}>{errMsg}</Text>
               </View>
               <View style={{height:30}}></View>
-              <TouchableOpacity style={[mrgTop]} onPress={()=>this.signUp()}>
+              <TouchableOpacity disabled={this.state.disable} style={[mrgTop]} onPress={()=>{
+                this.setState({disable:true},()=>{
+                  this.signUp();
+                });
+              }}>
               <Text style={[btn,colorPress]}>{`${lang.register}`.toUpperCase()}</Text>
               </TouchableOpacity>
 
 
         </View>
               <View style={[btnWrapSoci,mrgTop]}>
-                  <Image style={imgSoci} source={FacebookColor} />
-                  <Image style={imgSoci} source={GoogleColor} />
+                <TouchableOpacity onPress={()=>this.loginFB()}>
+                <Image style={imgSoci} source={FacebookColor} />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={()=>{}}>
+                <Image style={imgSoci} source={GoogleColor} />
+                </TouchableOpacity>
+
               </View>
               <View style={[btnWrap]}>
                   <Text>{`${lang.ask_acc_login}`}  </Text><TouchableOpacity onPress={()=>navigate('LoginScr',{backScr:''})}>

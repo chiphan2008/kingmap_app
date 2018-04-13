@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import {
   Platform, StyleSheet, View, AsyncStorage, Image
 } from 'react-native';
-import { StackNavigator,TabNavigator,Animated, } from 'react-navigation';
+import { StackNavigator,TabNavigator,Animated,NavigationActions } from 'react-navigation';
 //import util from 'util';
 //import icon tabBarIcon
 import getLanguage from './component/api/getLanguage';
@@ -47,9 +47,10 @@ import Transfer from './component/make_money/Transfer';
 import History from './component/make_money/History';
 import RequestTransfer from './component/make_money/RequestTransfer';
 
+import OtherCat from './component/main/home/OtherCat';
 import LocationTab from './component/main/home/LocationTab';
 import ListLocation from './component/main/home/ListLocation';
-import DistributeTab from './component/main/home/DistributeTab';
+//import DistributeTab from './component/main/home/DistributeTab';
 import NotifyTab from './component/main/notify/NotifyTab';
 import PersonalTab from './component/main/personal/PersonalTab';
 
@@ -60,7 +61,6 @@ import SignUpScreen from './component/page_user/SignUpScreen';
 import ForgotPasswordScreen from './component/page_user/ForgotPasswordScreen';
 import VerifyAccountScreen from './component/page_user/VerifyAccountScreen';
 import checkLocation from './component/api/checkLocation';
-
 
 
 export default class App extends Component {
@@ -98,8 +98,9 @@ export default class App extends Component {
     });
 
     const HomeScreen = StackNavigator({
-      HomeTabs: { screen: HomeTab },
-      OtherCatScr: { screen: LocationTab },
+      //HomeTabs: { screen: HomeTab },
+      HomeTabs: { screen:LocationTab},
+      OtherCatScr: { screen: OtherCat },
       ListLocScr: { screen: ListLocation },
       SearchScr: { screen: SearchScreen },
       MakeMoneyScr: { screen: MakeMoney },
@@ -116,7 +117,7 @@ export default class App extends Component {
       RequestTransferScr: { screen: RequestTransfer },
       //CatScr: { screen: CategoryScreen },
       //ListCatScr: { screen: ListCategory },
-      //OtherCatScr: { screen: DistributeTab },
+      //DistributeTabScr: { screen: DistributeTab },
     },{
       headerMode: 'none',
     });
@@ -177,7 +178,7 @@ export default class App extends Component {
         showLabel:true,
         showIcon:true,
         labelStyle: {
-          fontSize: 10.5,
+          fontSize: 10.2,
         },
         activeTintColor: '#fff',
         inactiveTintColor: '#B8BBC0',

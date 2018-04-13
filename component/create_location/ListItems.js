@@ -34,7 +34,7 @@ export default class ListItems extends Component {
           ['image']:imgProd,
         });
       }
-    });
+    }).catch(e=>console.log('e'));
   }
   render(){
     const {listCreate,colorWhite,imgInfo} = styles;

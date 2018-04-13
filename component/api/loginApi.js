@@ -23,7 +23,7 @@ const loginApi = async (url,param) => {
     let responseJson = await response.json();
     if(responseJson.code===200){
       encodeApi(`${global.url_node}${'person'}`,'POST',responseJson.data[0]);
-      AsyncStorage.setItem('@MyAccount:key', JSON.stringify(Object.assign(responseJson.data[0],{'pwd':param.password.toString()})));
+      AsyncStorage.setItem('@MyAccount:key', JSON.stringify(Object.assign(responseJson.data[0],{'pwd':param.password.toString(),remember_me:param.isCheck})));
     }
     return responseJson;
   } catch (error) {

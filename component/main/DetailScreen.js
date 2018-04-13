@@ -1,7 +1,7 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import {Platform, ScrollView, FlatList, View, Text, StyleSheet, Dimensions, Image, TextInput, TouchableOpacity} from 'react-native';
+import {Platform, ScrollView, View, Text, StyleSheet, Dimensions, Image, TextInput, TouchableOpacity} from 'react-native';
 const {height, width} = Dimensions.get('window');
 
 import global from '../global';
@@ -9,6 +9,7 @@ import getApi from '../api/getApi';
 import loginServer from '../api/loginServer';
 import checkLogin from '../api/checkLogin';
 
+import Collection from './detail/Collection';
 import Header from './detail/Header';
 import Content from './detail/Content';
 import MapContent from './detail/MapContent';
@@ -17,6 +18,8 @@ import Suggest from './detail/Suggest';
 import SpaceContent from './detail/SpaceContent';
 import Services from './detail/Services';
 import OtherBranch from './detail/OtherBranch';
+import lang_vn from '../lang/vn/language';
+import lang_en from '../lang/en/language';
 
 import checkinIC from '../../src/icon/ic-white/ic-check-in.png';
 
@@ -27,6 +30,7 @@ export default class DetailScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      lang: this.props.navigation.state.params.lang==='vn' ? lang_vn : lang_en,
       region:{
         latitude:10.7818513,
         longitude: 106.6769368,
@@ -34,7 +38,7 @@ export default class DetailScreen extends Component {
         longitudeDelta: 0.011121,
         latlng: '10.7818513,106.6769368',
       },
-      curLoc:this.props.navigation.state.params.curLoc,
+      curLoc:this.props.navigation.state.params.curLoc ,
       listData:{
         image_space:[],
         image_menu:[],
@@ -61,48 +65,35 @@ export default class DetailScreen extends Component {
       savelike:false,
       collection:false,
       notifyInfo:'',
+      isLogin:false,
     }
-    checkLogin().then(e=>{
-      if(e.id!==undefined){
-        this.setState({user_id:e.id,ema:e.email,pwd:e.pwd});
-        loginServer(e);
-      }
-    });
+    this.refresh();
   }
 
-  requestLogin(){
-    checkLogin().then(e=>{
-      if(e.id===undefined){
-        this.props.navigation.navigate('LoginScr',{backScr:'DetailScr'});
-      }else{
-        this.setState({user_id:e.id});
-      }
-    });
-  }
 
   getContent(idContent){
     let latlng = this.props.navigation.state.params.curLoc.latlng;
-    if(latlng===undefined) latlng='10.7818513,106.6769368';
+    //if(latlng===undefined) latlng='10.7818513,106.6769368';
     const url = `${global.url}${'content/'}${idContent}${'?location='}${latlng}`;
     //console.log('url',url);
     getApi(url)
     .then(arrData => {
+      //console.log('vote',arrData.data.content.vote);
         this.setState({
           listData: arrData.data,
           liked: arrData.data.content.like,
           vote: arrData.data.content.vote,
           hasLiked: arrData.data.content.has_like,
           region:{
-            latitude: parseFloat(arrData.data.content.lat),
-            longitude: parseFloat(arrData.data.content.lng),
+            latitude: Number(arrData.data.content.lat),
+            longitude: Number(arrData.data.content.lng),
             altitude: 7,
             latitudeDelta:  0.004422,
             longitudeDelta: 0.001121,
             latlng:`${this.props.navigation.state.params.lat}${','}${this.props.navigation.state.params.lng}`,
           },
         });
-    })
-    .catch(err => console.log(err));
+    }).catch(err => {});
   }
 
   componentWillMount(){
@@ -113,33 +104,70 @@ export default class DetailScreen extends Component {
     this.setState({ region });
   }
   callCollect(){
-    this.setState({collection:true,scroll:false});
+    const {isLogin} = this.state;
+    if(isLogin===false){ this.requestLogin();}else {
+      this.setState({collection:true,scroll:false});
+    }
+  }
+  requestLogin(){
+    const {idContent,lang,curLoc,lat,lng} = this.props.navigation.state.params;
+    var _this = this;
+    if(_this.state.isLogin===false){
+      _this.props.navigation.navigate('LoginScr',{backScr:'DetailScr',param:{idContent,lang,curLoc,lat,lng}});
+    }
+  }
+  refresh(){
+    checkLogin().then(e=>{
+      if(e.id!==undefined){
+        this.setState({user_id:e.id,ema:e.email,pwd:e.pwd,isLogin:true});
+        loginServer(e);
+      }
+    });
   }
   saveLike(routing){
-    this.requestLogin();
-    getApi(`${global.url}${routing}${'?content='}${this.props.navigation.state.params.idContent}${'&user='}${this.state.user_id}`).then(e=>
+    const {isLogin,user_id} = this.state;
+    if(isLogin===false){ this.requestLogin();return;}
+    getApi(`${global.url}${routing}${'?content='}${this.props.navigation.state.params.idContent}${'&user='}${user_id}`).then(e=>
       {this.setState({savelike:true,scroll:false});
         switch (routing) {
           case 'like':
               this.setState({liked:e.data.like,hasLiked:e.data.is_like});
               if(e.data.is_like===1){
                 this.setState({notifyInfo:'Đã thích'});
+                setTimeout(()=>{
+                  this.setState({savelike:false,scroll:true})
+                },1500)
               }else{
                 this.setState({notifyInfo:'Đã bỏ thích'});
+                setTimeout(()=>{
+                  this.setState({savelike:false,scroll:true})
+                },1500)
               }
             break;
           case 'save-like':
               if(e.data.is_like===1){
                 this.setState({notifyInfo:'Đã lưu vào yêu thích'});
+                setTimeout(()=>{
+                  this.setState({savelike:false,scroll:true})
+                },1500)
               }else{
                 this.setState({notifyInfo:'Đã bỏ yêu thích'});
+                setTimeout(()=>{
+                  this.setState({savelike:false,scroll:true})
+                },1500)
               }
             break;
           case 'checkin':
               if(e.data.is_like===1){
                 this.setState({notifyInfo:'Checkin thành công'});
+                setTimeout(()=>{
+                  this.setState({savelike:false,scroll:true})
+                },1500)
               }else{
                 this.setState({notifyInfo:'Đã bỏ checkin'});
+                setTimeout(()=>{
+                  this.setState({savelike:false,scroll:true})
+                },1500)
               }
             break;
         }
@@ -149,8 +177,12 @@ export default class DetailScreen extends Component {
   }
 
   render() {
+    //console.log('this.props.navigation',this.props.navigation.state.params);
+
     const {navigate} = this.props.navigation;
-    const { idContent,lang } = this.props.navigation.state.params;
+    const {lang,user_id,isLogin,scroll} = this.state;
+    //console.log('scroll',scroll);
+    const { idContent,curLoc } = this.props.navigation.state.params;
     //console.log('lang',lang);
     const {
       container, bgImg,colorWhite,likeIC,shareIC,imgIC,voteIC,
@@ -164,19 +196,20 @@ export default class DetailScreen extends Component {
     } = styles;
 
     return (
-      <ScrollView scrollEnabled={this.state.scroll} style={container}>
+      <ScrollView  scrollEnabled={scroll} style={container}>
         <Header
         lang={lang}
         navigation={this.props.navigation}
         idContent={idContent}
-        userId={this.state.user_id}
+        userId={user_id}
         requestLogin={this.requestLogin.bind(this)}
         saveLike={this.saveLike.bind(this)}
         callCollect={this.callCollect.bind(this)}
         />
         <Content
         listContent={this.state.listData.content}
-        userId={this.state.user_id}
+        userId={user_id}
+        isLogin={isLogin}
         requestLogin={this.requestLogin.bind(this)}
         saveLike={this.saveLike.bind(this)}
         liked={this.state.liked}
@@ -197,6 +230,7 @@ export default class DetailScreen extends Component {
         />
 
         <MapContent
+        distance={Number.parseFloat(this.state.listData.content.line).toFixed(0)}
         curLoc={this.state.curLoc}
         region={this.state.region}
         />
@@ -210,7 +244,7 @@ export default class DetailScreen extends Component {
           <Comments
           lang={lang}
           idContent={idContent}
-          userId={this.state.user_id}
+          userId={user_id}
           requestLogin={this.requestLogin.bind(this)}
           listComment={this.state.listData.content._comments}
           />
@@ -219,6 +253,8 @@ export default class DetailScreen extends Component {
               <Text style={[colorNumPP,sizeTitle]}>CHI NHÁNH KHÁC</Text>
           </View>
           <OtherBranch
+          lang={lang}
+          curLoc={this.state.curLoc}
           listGroup={this.state.listData.list_group}
           navigation={this.props.navigation}
           />
@@ -241,16 +277,12 @@ export default class DetailScreen extends Component {
           <Text style={{color:'#fff',fontSize:18}}>{this.state.notifyInfo}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-        onPress={()=>this.setState({collection:false,scroll:true})}
-        style={[saveContentStyle, this.state.collection ? show : hide]}>
-          <View style={{width:width-100,borderRadius:3,backgroundColor:'#fff',padding:15,marginBottom:7}}>
-            <Text style={{color:'#6587A8',fontSize:18}}>{`${'Tạo mới'}`.toUpperCase()}</Text>
-            <View style={{flexDirection:'row',marginBottom:7}}>
-              <TextInput underlineColorAndroid={'transparent'} style={{borderColor:'#E1E7EC',borderWidth:1,borderRadius:1,width:width-180}} />
-            </View>
-          </View>
-        </TouchableOpacity>
+        <Collection
+        idContent={idContent}
+        userId={user_id}
+        visible={this.state.collection}
+        closeModal={()=>this.setState({collection:false,scroll:true})}
+         />
 
       </ScrollView>
     );

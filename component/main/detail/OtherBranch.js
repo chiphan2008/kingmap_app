@@ -25,8 +25,8 @@ export default class OtherBranch extends Component {
       widthHafl,marRight,
       imgSpace,colorText,txtAddrOver,
     } = styles;
-    const {listGroup} = this.props;
-    const {navigate} = this.props.navigation;
+    const { listGroup,lang,curLoc } = this.props;
+    const { navigate } = this.props.navigation;
 
     return (
       <View>
@@ -42,14 +42,14 @@ export default class OtherBranch extends Component {
                 key={item.id}>
                 <TouchableOpacity
                 onPress={()=> {navigate('DetailScr',{
-                  idContent:item.id,lat:item.lat,lng:item.lng
+                  idContent:item.id,lat:item.lat,lng:item.lng,lang,curLoc
                 })}}
                 style={[widthHafl,marRight]}>
                     <Image source={{uri :`${global.url_media}${item.avatar}`}} style={imgSpace}/>
                 </TouchableOpacity>
                 <TouchableOpacity
                 onPress={()=> {navigate('DetailScr',{
-                  idContent:item.id,lat:item.lat,lng:item.lng
+                  idContent:item.id,lat:item.lat,lng:item.lng,lang,curLoc
                 })} }
                 style={[widthHafl,marRight]}>
                     <Text style={colorText} numberOfLines={2}>{item.name}</Text>
@@ -58,7 +58,7 @@ export default class OtherBranch extends Component {
                 </View>
           )}
           sliderWidth={width}
-          itemWidth={(width-50)/2}
+          itemWidth={width}
           onSnapToItem={(index) => this.setState({ activeSlide: index }) }
           />
 

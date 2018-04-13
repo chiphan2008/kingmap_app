@@ -1,16 +1,18 @@
 /* @flow */
 
 import React, { Component } from 'react';
+//import {NavigationActions} from 'react-navigation';
 import {
   Platform, View, Text, Image, Button,TouchableOpacity,StyleSheet,
   Dimensions, TextInput, ScrollView,Alert } from 'react-native';
 //import { CheckBox } from 'react-native-elements';
 //import RoundCheckbox from 'rn-round-checkbox';
-import {GoogleSignin, GoogleSigninButton}  from 'react-native-google-signin';
+import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
 
 import loginApi from '../api/loginApi';
 import gooApi from '../api/gooApi';
 import getLanguage from '../api/getLanguage';
+import checkLogin from '../api/checkLogin';
 import lang_en from '../lang/en/user/language';
 import lang_vn from '../lang/vn/user/language';
 import global from '../global';
@@ -24,17 +26,26 @@ import checkIC from '../../src/icon/ic-check.png';
 import uncheckIC from '../../src/icon/ic-uncheck.png';
 const {height, width} = Dimensions.get('window');
 
+import faceApi from '../api/faceApi';
+import {FBLogin, FBLoginManager} from 'react-native-facebook-login';
+var LoginBehavior = {
+  'ios': FBLoginManager.LoginBehaviors.Browser,
+  'android': FBLoginManager.LoginBehaviors.WebView
+}
+
 function isEmail(text){
   let email = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/ ;
   return email.test(text);
 }
-
+function hasNumber(text) {
+  return /\d/.test(text);
+}
 export default class LoginScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
       isSelected: true,
-      isCheck:true,
+      isCheck:false,
       disable:false,
       txtUsername:'',
       txtPassword:'',
@@ -42,7 +53,9 @@ export default class LoginScreen extends Component {
       lang: lang_vn,
     }
     this.getLang();
-
+    checkLogin().then(e=>{
+      this.setState({isCheck:e.remember_me,txtUsername:e.email,txtPassword:e.pwd})
+    });
   }
 
   getLang(){
@@ -62,51 +75,92 @@ export default class LoginScreen extends Component {
     })
   }
   loginGooIOS(){
-    // const user = GoogleSignin.currentUser();
-    // this.setState({txtUsername:user.id})
-    //Alert.alert('Thong bao','loginGooIOS')
-    this.getGoogleID().then((user) => {
-      //Alert.alert('user',user.id)
-      //this.setState({txtUsername:user.id})
-      gooApi(`${global.url}${'login-google'}`,user).then(e =>{
+
+      this.getGoogleID().then((user) => {
+        console.log(user);
+        //Alert.alert('user',user.id)
+        //this.setState({txtUsername:user.id})
+        gooApi(`${global.url}${'login-google'}`,user).then(e =>{
+          if(e.code===200){
+            this.props.navigation.navigate('MainScr');
+          }else{
+            this.setState({errMsg:e.message})
+          }
+        })
+    })
+  }
+
+  loginFB(){
+    var _this=this;
+    FBLoginManager.setLoginBehavior(LoginBehavior[Platform.OS]); // defaults to Native
+    FBLoginManager.loginWithPermissions(["email","user_friends"], function(error, data){
+      if(error) return;
+      const profile = JSON.parse(data.profile);
+      //console.log(profile.picture.data.url);
+      faceApi(`${global.url}${'login-facebook'}`,profile).then(e =>{
         if(e.code===200){
-          this.props.navigation.navigate('MainScr');
+          _this.props.navigation.navigate('MainScr');
         }else{
-          this.setState({errMsg:e.message})
+          _this.setState({errMsg:e.message})
         }
       })
-  })
-}
+    })
+
+  }
+
+
   callLogin(backScr){
-    const {txtUsername, txtPassword, lang} = this.state;
+    const {txtUsername, txtPassword, lang,isCheck} = this.state;
     if(txtUsername==='') return this.setState({errMsg:lang.err_email});
+    if(!hasNumber(txtUsername) && !isEmail(txtUsername)) return this.setState({errMsg:lang.err_email_format});
     if(txtPassword==='') return this.setState({errMsg:lang.err_pwd});
     this.setState({disable:true});
-    const param = {username:txtUsername,password:txtPassword};
+    const param = {username:txtUsername,password:txtPassword,isCheck};
     loginApi(`${global.url}${'login'}`,param).then(e=>{
       if(e.code!==200){
         this.setState({errMsg:this.state.lang.wrong_pwd,disable:false})
       }else{
-        // if(backScr!=='')
-        // this.props.navigation.goBack();
-        // else
-        this.props.navigation.navigate('MainScr');
+        if(backScr!==''){
+          //console.log('this.props.navigation',this.props.navigation);
+          // this.props.navigation.state.params;
+          // this.props
+          //      .navigation
+          //      .dispatch(NavigationActions.reset(
+          //        {
+          //           index: 0,
+          //           actions: [
+          //             NavigationActions.navigate({ routeName: backScr })
+          //           ]
+          //         }));
+          const {param} =this.props.navigation.state.params;
+          // //console.log('aaaa',backScr);
+          this.props.navigation.navigate(backScr,param);
+          //this.props.navigation.setParams({ refresh})
+          // DeviceEventEmitter.addListener('onGoBack', {refresh:'ok'})
+          // this.props.navigation.goBack(null);
+        }else
+          this.props.navigation.navigate('MainScr');
       }
     })
   }
-  componentWillMount(){
 
+  componentWillMount(){
+    // const {onGoBack} = this.props.navigation.state.params;
+    // onGoBack(e=>console.log('aaa'));
     GoogleSignin.configure({
       iosClientId: '1004951541310-3ns8ppuvvallfta76rchcarcq1acbttl.apps.googleusercontent.com', // only for iOS
+      // webClientId: '972786239931-ca9skanuemmet91712knn6l4m6igm8g9.apps.googleusercontent.com',
+      // offlineAccess: true
     })
   }
   render() {
+    var _this = this;
     const {
       container, imgLogo, title, imgSoci,btnWrapSoci,txtInput,mrgTop,pullR, pullL,
       btn, colorPress,  btnWrap, contentWrap,wrapAdv, rememberClass, forgotpwd,
       bgImg,imgCheck,txtErr,show,hide,
     } = styles;
-    //console.log('this.props.navigation',this.props.navigation);
+    //console.log('this.props.navigation',this.props.navigation.state.params);
     const {lang,disable} = this.state;
     const {navigate, goBack} = this.props.navigation;
     const {backScr} = this.props.navigation.state.params;
@@ -115,7 +169,7 @@ export default class LoginScreen extends Component {
         <Image source={bgMap} style={bgImg} />
         <ScrollView>
         <TouchableOpacity style={{position:'absolute',top:15,right:15,zIndex:9}}
-        onPress={()=>navigate('MainScr')}>
+        onPress={()=>goBack()}>
         <Image source={closeIC} style={{width:20,height:20}} />
         </TouchableOpacity>
         <View style={contentWrap}>
@@ -130,7 +184,7 @@ export default class LoginScreen extends Component {
               onChangeText={(txtUsername) => this.setState({txtUsername})}
                />
               <TextInput underlineColorAndroid='transparent' style={txtInput} selectionColor='#5b89ab' placeholderTextColor="#ddd" secureTextEntry
-              placeholder={lang.pwd} ref='pwd'
+              placeholder={lang.pwd} ref='pwd' value={this.state.txtPassword}
               onChangeText={(txtPassword) => this.setState({txtPassword})}
               />
               </View>
@@ -153,7 +207,10 @@ export default class LoginScreen extends Component {
               <Text style={[btn,colorPress]}>{`${lang.login}`.toUpperCase()}</Text>
               </TouchableOpacity>
               <View style={[btnWrapSoci,mrgTop]}>
+                  <TouchableOpacity onPress={()=>this.loginFB()}>
                   <Image style={imgSoci} source={FacebookColor} />
+                  </TouchableOpacity>
+
                   <TouchableOpacity onPress={()=>this.loginGooIOS()}>
                   <Image style={imgSoci} source={GoogleColor} />
                   </TouchableOpacity>

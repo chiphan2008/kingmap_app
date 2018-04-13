@@ -81,6 +81,7 @@ module.exports = {
   confirm_loc_col_del:'Xác nhận xoá địa điểm này khỏi bộ sưu tập',
   confirm_loc_del:'Xác nhận xoá địa điểm này',
   cancel:'Huỷ',
+  confirm:'Xác nhận',
   delete:'Xoá',
   edit:'Chỉnh sửa',
   pause:'Tạm dừng',

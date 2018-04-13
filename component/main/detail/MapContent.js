@@ -19,22 +19,23 @@ export default class MapContent extends Component {
     }
   }
   getDirection(){
+      //console.log('this.props.curLoc.latlng',this.props.curLoc.latlng);
       const mode = 'driving'; // 'walking';
       const origin = this.props.curLoc.latlng;
       const destination = this.props.region.latlng;
+      const {distance} = this.props;
       //const APIKEY = 'AIzaSyCUNFe8ZC0csUZzlTHRQFPp7PjiAtQ6Z0M';
       const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${destination}&mode=${mode}`;
+
       getApi(url).then(e=> {
         if(e.routes[0].overview_polyline!==undefined){
           this.setState({
                   coords: this.decode(e.routes[0].overview_polyline.points) // definition below
-              });
-        }else{
-          this.setState({
-                  coords:[{latitude:10.8142,longitude:106.6438}]
-              });
+            });
         }
-      }).catch();
+      }).catch(e=>{});
+
+
   }
   decode(t,e){
     for(var n,o,u=0,l=0,r=0,d= [],h=0,i=0,a=null,c=Math.pow(10,e||5);u<t.length;){
@@ -42,30 +43,31 @@ export default class MapContent extends Component {
       while(a>=32);o=1&i?~(i>>1):i>>1,l+=n,r+=o,d.push([l/c,r/c])}return d=d.map(function(t){return{latitude:t[0],longitude:t[1]}})
   }
   render() {
-
+    const { curLoc,region,distance } = this.props;
     return (
-    <View onLayout={()=>this.getDirection()} style={{width,height:height/2}}>
+    <View onLayout={()=>{
+      if(curLoc.latlng!==undefined && distance<100000){
+        this.getDirection()
+      }
+    }} style={{width,height:height/2}}>
       <MapView
           style={{flex:1,height:height/2,zIndex:10,alignSelf:'stretch'}}
-          region={this.props.region}
+          region={region}
           customMapStyle={global.style_map_ios}
           showsPointsOfInterest={false}
         >
+        {curLoc.latlng!==undefined ?
+          <View>
+            <MapView.Marker coordinate={{latitude: Number(curLoc.latitude),longitude: Number(curLoc.longitude)}} />
+            <MapView.Polyline coordinates={this.state.coords} strokeWidth={4} strokeColor='#BE2827' />
+          </View>
+          :
+        <View></View> }
+
         <MapView.Marker
           coordinate={{
-            latitude: Number(this.props.curLoc.latitude),
-            longitude: Number(this.props.curLoc.longitude),
-          }}
-          />
-        <MapView.Polyline
-          coordinates={this.state.coords}
-          strokeWidth={4}
-          strokeColor='#BE2827'
-          />
-        <MapView.Marker
-          coordinate={{
-            latitude: Number(this.props.region.latitude),
-            longitude: Number(this.props.region.longitude),
+            latitude: Number(region.latitude),
+            longitude: Number(region.longitude),
           }}
           >
           <Image source={logoMap} style={{width:57,height:50}} />

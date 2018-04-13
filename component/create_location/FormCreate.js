@@ -1,8 +1,9 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import {Platform, View, Text, StyleSheet, Dimensions, Image,
+import {Platform, View, Text, StyleSheet, Dimensions, Image,Alert,
   TextInput, TouchableOpacity,ScrollView,Modal,FlatList,AsyncStorage,
+  BackHandler,
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 const {height, width} = Dimensions.get('window');
@@ -44,6 +45,7 @@ import keywordsIC from '../../src/icon/ic-create/ic-keywords.png';
 import codeIC from '../../src/icon/ic-create/ic-code.png';
 
 
+
 export default class FormCreate extends Component {
   constructor(props) {
     super(props);
@@ -83,7 +85,7 @@ export default class FormCreate extends Component {
       errMsg:'',
       idCountry:'',idCity:'',idDist:'',
     };
-
+    //BackHandler.addEventListener('hardwareBackPress', ()=>this.setState({showSubCat:false}));
   }
   postData(){
     if(this.state.idCountry==='' || this.state.idCity==='' || this.state.idDist===''){
@@ -252,7 +254,7 @@ export default class FormCreate extends Component {
       cropping: false
     }).then(image =>{
       this.setState({imgAvatar:image});
-    });
+    }).catch(e=>console.log('e'));
   }
   getLatLng(addr){
     let url = `${'https://maps.googleapis.com/maps/api/geocode/json?&address='}${addr}`;
@@ -600,7 +602,7 @@ export default class FormCreate extends Component {
             </TouchableOpacity>
             </View>
             <FlatList
-                extraData={this.state}
+               extraData={this.state}
                data={sub_cat}
                renderItem={({item}) =>(
                  <TouchableOpacity onPress={()=>{

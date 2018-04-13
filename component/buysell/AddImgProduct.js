@@ -25,7 +25,7 @@ export default class AddImgProduct extends Component {
     }).then(imgList => {
       //console.log(imgList);
       this.setState({imgList})
-    });
+    }).catch(e=>console.log('e'));
   }
 
 

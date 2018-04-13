@@ -41,6 +41,7 @@ export default class PersonalTab extends Component {
     this.state = {
       lang : lang_vn,
       isLogin : false,
+
       curLoc:{},
       countEntry:{},
       user_profile:{},
@@ -80,8 +81,13 @@ export default class PersonalTab extends Component {
     .catch(err => console.log(err));
   }
   logoutUser(){
+    const {user_profile} = this.state;
     getApi(`${global.url}${'logout'}`);
     AsyncStorage.removeItem('@MyAccount:key');
+    AsyncStorage.setItem('@MyAccount:key', JSON.stringify({
+      remember_me:user_profile.remember_me,
+      email:user_profile.remember_me ? user_profile.email : '',
+      pwd:user_profile.remember_me ? user_profile.pwd : ''}))
     this.props.navigation.navigate('MainScr');
   }
 
@@ -239,7 +245,7 @@ export default class PersonalTab extends Component {
           <View style={borderItemInfoPer}></View>
         </View>
 
-        
+
         <View style={[rowItem]}>
           <Image source={plusWhiteIC} style={imgIconPerInfo} />
           <TouchableOpacity style={padPerInfo}>
@@ -278,7 +284,7 @@ export default class PersonalTab extends Component {
               <View style={[rowItem]}>
                 <Image source={locationIC} style={imgIconPerInfo} />
                 <TouchableOpacity style={padPerInfo} onPress={()=>this.setState({showCheckin:true})}>
-                <Text style={titlePer}>{`${'Check in'}(${countEntry.count_checkin})`}</Text>
+                <Text style={titlePer}>{`${'Check in'} (${countEntry.count_checkin})`}</Text>
                 </TouchableOpacity>
               </View>
               <View style={borderItemInfoPer}></View>
@@ -288,7 +294,7 @@ export default class PersonalTab extends Component {
               navigation={this.props.navigation}
               labelTitle={'Check in'}
               visible={showCheckin}
-              closeModal={()=>this.setState({showCheckin:false})}
+              closeModal={()=>{this.setState({showCheckin:false});this.reqLogin();}}
               />
             </View>
 
@@ -296,7 +302,7 @@ export default class PersonalTab extends Component {
               <View style={[rowItem]}>
                 <Image source={starIC} style={imgIconPerInfo} />
                 <TouchableOpacity style={padPerInfo} onPress={()=>this.setState({showLikeLoc:true})}>
-                <Text style={titlePer}>{`${lang.like_location}(${countEntry.count_like})`}</Text>
+                <Text style={titlePer}>{`${lang.like_location} (${countEntry.count_like})`}</Text>
                 </TouchableOpacity>
               </View>
               <View style={borderItemInfoPer}></View>
@@ -314,19 +320,10 @@ export default class PersonalTab extends Component {
               <View style={[rowItem]}>
                 <Image source={collectionIC} style={imgIconPerInfo} />
                 <TouchableOpacity style={padPerInfo} onPress={()=>this.setState({showCollection:true})}>
-                <Text style={titlePer}>{`${lang.collection}(${countEntry.count_collection})`}</Text>
+                <Text style={titlePer}>{`${lang.collection} (${countEntry.count_collection})`}</Text>
                 </TouchableOpacity>
               </View>
               <View style={borderItemInfoPer}></View>
-
-              <Collection
-              lang={lang}
-              curLoc={curLoc}
-              navigation={this.props.navigation}
-              labelTitle={lang.collection}
-              visible={showCollection}
-              closeModal={()=>this.setState({showCollection:false})}
-              />
 
             </View>
 
@@ -335,7 +332,7 @@ export default class PersonalTab extends Component {
                 <Image source={menuIC} style={imgIconPerInfo} />
                 <TouchableOpacity style={padPerInfo}
                 onPress={()=>this.setState({showListLoc:true})}>
-                <Text style={titlePer}>{`${lang.list_location}(${countEntry.count_location})`}</Text>
+                <Text style={titlePer}>{`${lang.list_location} (${countEntry.count_location})`}</Text>
                 </TouchableOpacity>
               </View>
               <View style={borderItemInfoPer}></View>
@@ -378,7 +375,14 @@ export default class PersonalTab extends Component {
           </View>
 
         </ScrollView>
-
+        <Collection
+        lang={lang}
+        curLoc={curLoc}
+        navigation={this.props.navigation}
+        labelTitle={lang.collection}
+        visible={showCollection}
+        closeModal={()=>this.setState({showCollection:false})}
+        />
         <Setting
         navigation={this.props.navigation}
         userId={user_profile.id}

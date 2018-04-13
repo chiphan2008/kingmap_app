@@ -32,6 +32,7 @@ import onlineDD from '../../../src/icon/ic-gray/ic-online.png';
 import checkDD from '../../../src/icon/ic-gray/ic-check-gray.png';
 import likeDD from '../../../src/icon/ic-gray/ic-like.png';
 import socialDD from '../../../src/icon/ic-gray/ic-social.png';
+import userDD from '../../../src/icon/ic-gray/ic-user.png';
 
 import {Select, Option} from "react-native-chooser";
 
@@ -183,10 +184,11 @@ export default class HomeTab extends Component {
     //console.log('this.props',this.props);
     const {height, width} = Dimensions.get('window');
     const {navigate} = this.props.navigation;
+    const {listStatus} = this.state;
     //console.log("this.props.Hometab=",util.inspect(this.state.listCategory,false,null));
     const {
       container, bgImg,colorlbl,flexRow,
-      headStyle, headContent,imgLogoTop,imgSocial, imgWidthGoogle, imgShare,wrapIcRight,FlatList,
+      headStyle, headContent,imgLogoTop,imgSocial, imgWidthGoogle, imgShare,wrapIcRight,
       selectBox,optionListStyle,OptionItem,inputSearch,show,hide,colorTextPP,colorWhite,marRight,itemCreate,
       wrapContent,imgContent,square,wrapCircle,logoCenter,circle1,circle2,circle3,circle4,circle5,circle6,circle7,circle8,labelCat,labelNum,
       plusStyle,imgPlusStyle,popover,overLayout,listOver,popoverShare,popoverCreate,overLayoutShare,listOverShare,imgMargin,imgUpHome,imgUpInfo,imgUpShare
@@ -382,7 +384,9 @@ export default class HomeTab extends Component {
         onRequestClose={() => null}
         transparent
         visible={this.state.showCreate}>
-        <View style={popoverCreate}>
+        <TouchableOpacity
+        onPress={()=>this.setState({showCreate:!this.state.showCreate})}
+         style={popoverCreate}>
             <TouchableOpacity
             onPress={()=>{
               this.setState({showCreate:false});
@@ -396,29 +400,33 @@ export default class HomeTab extends Component {
         >
             <Image source={this.state.showCreate===false ? plusIC : closeIC} style={imgPlusStyle} />
         </TouchableOpacity>
-        </View>
+        </TouchableOpacity>
         </Modal>
 
         <View style={flexRow}>
           <View style={flexRow}>
               <Image style={[imgShare,imgMargin]} source={locationDD} />
-              <Text style={colorTextPP}><Text style={colorWhite}>{this.state.listStatus.countContent}k</Text></Text>
+              <Text style={colorTextPP}><Text style={colorWhite}>{listStatus.countContent}k</Text></Text>
           </View>
           <View style={flexRow}>
               <Image style={[imgShare,imgMargin]} source={onlineDD} />
-              <Text style={colorTextPP}><Text style={colorWhite}>{this.state.listStatus.countOnline}</Text></Text>
+              <Text style={colorTextPP}><Text style={colorWhite}>{listStatus.countOnline}</Text></Text>
           </View>
           <View style={flexRow}>
               <Image style={[imgShare,imgMargin]} source={checkDD} />
-              <Text style={colorTextPP}><Text style={colorWhite}>{this.state.listStatus.newContent}k</Text></Text>
+              <Text style={colorTextPP}><Text style={colorWhite}>{listStatus.newContent}k</Text></Text>
           </View>
           <View style={flexRow}>
               <Image style={[imgShare,imgMargin]} source={likeDD} />
-              <Text style={colorTextPP}><Text style={colorWhite}>{this.state.listStatus.countLike}k</Text></Text>
+              <Text style={colorTextPP}><Text style={colorWhite}>{listStatus.countLike}k</Text></Text>
           </View>
           <View style={flexRow}>
               <Image style={[imgShare,imgMargin]} source={socialDD} />
-              <Text style={colorTextPP}><Text style={colorWhite}>{this.state.listStatus.countShare}k</Text></Text>
+              <Text style={colorTextPP}><Text style={colorWhite}>{listStatus.countShare}k</Text></Text>
+          </View>
+          <View style={flexRow}>
+              <Image style={[imgShare,imgMargin]} source={userDD} />
+              <Text style={colorTextPP}><Text style={colorWhite}>{listStatus.countUser}</Text></Text>
           </View>
           </View>
 

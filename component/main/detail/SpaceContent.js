@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import {
   View,Text,StyleSheet,Image,TextInput,
   Platform,Dimensions,TouchableOpacity,
-  WebView,Modal,
+  WebView,Modal,FlatList,
 } from 'react-native';
 import ImageViewer from 'react-native-image-zoom-viewer';
 //
@@ -19,7 +19,7 @@ export default class SpaceContent extends Component {
   constructor(props){
     super(props);
     this.state = {
-      ind:0,
+      index:0,
       showImageMenu:false,
       showImgSpace:false,
     }
@@ -33,7 +33,7 @@ export default class SpaceContent extends Component {
     } = styles;
     const {listImgSpace,listImgMenu,listImgVideo,idContent} = this.props;
     const {navigate} = this.props.navigation;
-    const {showImgSpace,showImageMenu,ind} = this.state;
+    const {showImgSpace,showImageMenu,index} = this.state;
 
     return (
       <View style={spaceContent}>
@@ -47,28 +47,30 @@ export default class SpaceContent extends Component {
               <Text>Xem tất cả >></Text>
               </TouchableOpacity>
           </View>
+          <FlatList
+             horizontal
+             showsHorizontalScrollIndicator={false}
+             keyExtractor={(item,index) => index}
+             extraData={this.state}
+             data={listImgSpace}
+             renderItem={({item,index}) => (
+               <View style={rowFlexImg}>
+                 <TouchableOpacity onPress={()=> this.setState({index,showImgSpace:true})} >
+                     <Image source={{uri :`${item.url}`}} style={imgSpace}/>
+                 </TouchableOpacity>
+               </View>
+          )} />
 
-          {listImgSpace.length>0 ?
-            <View style={rowFlexImg}>
-            {listImgSpace.map((e,i)=>{
-              return (
-                i<2 &&
-                <TouchableOpacity key={i} onPress={()=>this.setState({ind:i,showImgSpace:true})} >
-                  <Image source={{uri :`${e.url}`}} style={imgSpace}/>
-                </TouchableOpacity>
-              )
-            })}
-
-            </View>
-            :
-            <View></View>
-          }
           <Modal onRequestClose={() => null} visible={showImgSpace} transparent>
             <TouchableOpacity onPress={()=>this.setState({showImgSpace:false})}
             style={{position:'absolute',padding:10,alignSelf:'flex-end',zIndex:9999}}>
               <Image source={closeIC} style={{width:18,height:18}} />
             </TouchableOpacity>
-            <ImageViewer imageUrls={listImgSpace} index={ind}/>
+            <ImageViewer
+            imageUrls={listImgSpace}
+            index={index} enableImageZoom saveToLocalByLongPress={false}
+            onChange={(index) => console.log(index)}
+            enableSwipeDown />
           </Modal>
 
           <View style={titleSpace}>
@@ -82,62 +84,58 @@ export default class SpaceContent extends Component {
               </TouchableOpacity>
           </View>
 
-          {listImgMenu.length>0 ?
-            <View style={rowFlexImg}>
-            {listImgMenu.map((e,i)=>{
-              return (
-                i<2 &&
-                <TouchableOpacity key={i} onPress={()=>this.setState({ind:i,showImageMenu:true})} >
-                  <Image source={{uri :`${e.url}`}} style={imgSpace}/>
-                </TouchableOpacity>
-              )
-            })}
+          <FlatList
+             horizontal
+             showsHorizontalScrollIndicator={false}
+             keyExtractor={(item,index) => index}
+             extraData={this.state}
+             data={listImgMenu}
+             renderItem={({item,index}) => (
+               <View style={rowFlexImg}>
+                 <TouchableOpacity onPress={()=> this.setState({index,showImageMenu:true})} >
+                     <Image source={{uri :`${item.url}`}} style={imgSpace}/>
+                 </TouchableOpacity>
+               </View>
+          )} />
 
             <Modal onRequestClose={() => null} visible={showImageMenu} transparent>
               <TouchableOpacity onPress={()=>this.setState({showImageMenu:false})}
               style={{position:'absolute',padding:10,alignSelf:'flex-end',zIndex:9999}}>
                 <Image source={closeIC} style={{width:18,height:18}} />
               </TouchableOpacity>
-              <ImageViewer imageUrls={listImgMenu} index={ind}/>
+              <ImageViewer imageUrls={listImgMenu} index={index}
+              onChange={(index) => this.setState({ index })}
+              enableImageZoom saveToLocalByLongPress={false}/>
             </Modal>
-            </View>
-          :
-          <View></View>
-          }
-
 
 
           <View style={titleSpace}>
-              <Text style={[colorNumPP,sizeTitle]}>VIDEO</Text>
+              <Text style={[colorNumPP,sizeTitle]}>VIDEO ({listImgVideo.length})</Text>
               <TouchableOpacity
               onPress={()=>navigate('ListIMGScr',{
-                idContent,
-                spaceTab:'',menuTab:'',videoTab:'active'})}
+                idContent, spaceTab:'',menuTab:'',videoTab:'active'})}
               >
               <Text>Xem tất cả >></Text>
               </TouchableOpacity>
           </View>
-          {listImgVideo.length>0 ?
-            <View style={rowFlexImg}>
 
-            <WebView
-              source={{uri: `${listImgVideo[0]}`}}
-              style={imgSpace}
-              javaScriptEnabled
-            />
-            { listImgVideo.length===2 ?
-              <WebView
-                source={{uri: `${listImgVideo[1]}`}}
-                style={imgSpace}
-                javaScriptEnabled
-              />
-              :
-              <View></View>
-            }
-            </View>
-            :
-            <View></View>
-          }
+          <FlatList
+             horizontal
+             showsHorizontalScrollIndicator={false}
+             keyExtractor={(item,index) => index}
+             extraData={this.state}
+             data={listImgVideo}
+             renderItem={({item,index}) => (
+               <View style={rowFlexImg}>
+                 <WebView
+                  startInLoadingState
+                   source={{uri: item}}
+                   style={imgSpace}
+                   javaScriptEnabled
+                 />
+               </View>
+          )} />
+
 
       </View>
     );

@@ -18,6 +18,9 @@ import ImageIcon from '../../../src/icon/ic-Image.png';
 import sendEmailIcon from '../../../src/icon/ic-send-email.png';
 
 const {width,height} = Dimensions.get('window');
+function checkUrl(url){
+  return url.indexOf('http')!=-1;
+}
 export default class Comments extends Component {
   constructor(props){
     super(props);
@@ -37,12 +40,13 @@ export default class Comments extends Component {
     ImagePicker.openPicker({
       multiple: true
     }).then(img => {
+      console.log('img',img);
       if(id===0){
         this.setState({arrImage:this.state.arrImage.concat(img)});
       }else {
         this.setState({arrImageChild:this.state.arrImageChild.concat(img)});
       }
-    });
+    }).catch(e=>console.log('e'));
   }
   postComment(comment_id){
     if(this.state.inputChildComment!=='' || this.state.inputComment!==''){
@@ -135,7 +139,8 @@ export default class Comments extends Component {
                 _has_liked: Object.assign(this.state._has_liked,{[e.id]:e._has_liked.length}) }); }}
               key={e.id} style={{borderBottomWidth:1,borderBottomColor:'#E1E7EC',paddingBottom:10}}>
               <View style={rowFlex}>
-                <Image source={{uri:`${global.url_media}/${e._comment_by.avatar}`}} style={{width:66,height:66,borderRadius:33}} />
+
+                <Image source={{uri:checkUrl(`${e._comment_by.avatar}`) ? `${e._comment_by.avatar}` : `${global.url_media}/${e._comment_by.avatar}`}} style={{width:66,height:66,borderRadius:33}} />
                 <View>
 
                     <View style={{paddingLeft:10}}>
@@ -211,7 +216,7 @@ export default class Comments extends Component {
                     _has_liked: Object.assign(this.state._has_liked,{[r.id]:r._has_liked.length}), })}
                     style={{width:width-70,marginLeft:70,marginTop:10,borderTopWidth:1,borderTopColor:'#E1E7EC'}} key={r.id}>
                     <View style={rowFlex}>
-                      <Image source={{uri:`${r._comment_by.avatar}`}} style={{width:66,height:66,borderRadius:33}} />
+                      <Image source={{uri:checkUrl(`${r._comment_by.avatar}`) ? `${r._comment_by.avatar}` : `${global.url_media}/${r._comment_by.avatar}`}} style={{width:66,height:66,borderRadius:33}} />
                       <View>
                           <View style={{paddingLeft:10}}>
                             <Text style={colorText}>{r._comment_by.full_name}</Text>

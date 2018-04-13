@@ -2,7 +2,7 @@ import { AsyncStorage } from 'react-native';
 import encodeApi from './encodeApi';
 import global from '../global';
 
-const googApi = async (url,param) => {
+const gooApi = async (url,param) => {
   try {
 
     const auth_key = await AsyncStorage.getItem('@AuthKey:key');
@@ -38,4 +38,4 @@ const googApi = async (url,param) => {
 
 };
 
-export default googApi;
+export default gooApi;

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">kingmap_app</string>
+    <string name="fb_app_id">1989720184605994</string>
+    <string name="fb_login_protocol_scheme">fb1989720184605994</string>
 </resources>

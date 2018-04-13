@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import { Platform, View, Text, Image, Alert,
-  StyleSheet, Dimensions, TextInput,
+  StyleSheet, Dimensions, TextInput,Keyboard,ScrollView,
   TouchableOpacity, } from 'react-native';
 //import { CheckBox } from 'react-native-elements';
 import bgMap from '../../src/icon/bg-map.png';
@@ -30,6 +30,7 @@ export default class ForgotPasswordScreen extends Component {
       lang : lang_vn,
       email:'',
       errMsg:'',
+      disable:false,
     }
     this.getLang();
   }
@@ -42,6 +43,7 @@ export default class ForgotPasswordScreen extends Component {
   }
 
   forgotPwd(){
+
     const {errMsg, lang, email } = this.state;
     if(isEmail(email)===false){
       return this.setState({errMsg:`${lang.format_email}`});
@@ -52,9 +54,11 @@ export default class ForgotPasswordScreen extends Component {
     this.setState({email:''});
 
     postApi(`${global.url}${'forgot-password?lang='}${lang.lang}`,arr).then(e=>{
+      //console.log(e);
       if(e.code===200){
         Alert.alert(lang.notify,lang.send_email)
       }else{
+        this.setState({disable:false})
         Alert.alert(lang.notify,`${e.message}`)
       }
 
@@ -72,6 +76,7 @@ export default class ForgotPasswordScreen extends Component {
     return (
       <View style={container}>
       <Image source={bgMap} style={bgImg} />
+      <ScrollView>
         <View style={contentWrap}>
               <TouchableOpacity style={{position:'absolute',top:15,right:15,zIndex:9}}
               onPress={()=>goBack()}>
@@ -81,21 +86,28 @@ export default class ForgotPasswordScreen extends Component {
               <Image style={imgLogo} source={LogoHome} />
               <Text style={title}>{lang.forgot_pwd.toUpperCase()}</Text>
               <View style={mrgTop}>
-              <TextInput style={txtInput} underlineColorAndroid='transparent' selectionColor='#5b89ab' placeholder="Email" placeholderTextColor="#ddd"
-              keyboardType={'email-address'}
-              onChangeText={(email)=>this.setState({email})}
-              value={this.state.email} />
+
+
+              <TextInput underlineColorAndroid='transparent' style={txtInput} selectionColor='#5b89ab' placeholder="Email" placeholderTextColor="#ddd"
+              onSubmitEditing={(event)=> Keyboard.dismiss()}
+              value={this.state.email} keyboardType={'email-address'}
+              onChangeText={(email)=>this.setState({email})}/>
+
               </View>
               <View style={errMsg!=='' ? show : hide}>
               <Text style={{color:'#D0021B'}}>* {errMsg}</Text>
               </View>
               <Text style={[mrgTop,txtAlign]}>{lang.info_pwd}</Text>
-              <TouchableOpacity
-              onPress={()=>{this.forgotPwd()}}>
+              <TouchableOpacity disabled={this.state.disable}
+              onPress={()=>{
+                this.setState({disable:true},()=>{
+                  this.forgotPwd()
+                });}}>
               <Text style={[btn,colorPress]}>{lang.send.toUpperCase()}</Text>
               </TouchableOpacity>
 
         </View>
+        </ScrollView>
       </View>
     );
   }
@@ -103,12 +115,12 @@ export default class ForgotPasswordScreen extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    width,height,
     justifyContent: 'space-between',
   },
   mrgTop:{ marginTop : 15},
   txtAlign:{ textAlign : 'center'},
-  contentWrap : { flex : 1,alignItems: 'center',justifyContent: 'center',},
+  contentWrap : { width,height:Platform.OS==='ios' ? height-50 : height-65,alignItems: 'center',justifyContent: 'center',},
   imgLogo : {
     width : 60,
     height : 60,
@@ -120,11 +132,11 @@ const styles = StyleSheet.create({
   },
   txtInput:{
     borderColor : "#e0e8ed",
-    padding:15,
+    padding:10,
     borderRadius : 5,
     width: width - 50,
     borderWidth: 1,
-    marginTop: Platform.OS === 'ios' ? 10 : 0,
+    marginTop: Platform.OS === 'ios' ? 10 : 15,
     backgroundColor:'#fff',
   },
   btn : {

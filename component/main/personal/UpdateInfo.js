@@ -87,7 +87,7 @@ export default class UpdateInfo extends Component {
     }).then(image =>{
       //console.log(image);
       this.setState({imgAvatar:image,avatar:image.path});
-    });
+    }).catch(e=>console.log('e'));
   }
   updateUser(){
     let errMsg;

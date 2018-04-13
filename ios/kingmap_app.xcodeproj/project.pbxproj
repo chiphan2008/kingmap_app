@@ -5,6 +5,7 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -12,6 +13,7 @@
 		00C302E91ABCBA2D00DB3ED1 /* libRCTNetwork.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302DC1ABCB9D200DB3ED1 /* libRCTNetwork.a */; };
 		00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302E41ABCB9EE00DB3ED1 /* libRCTVibration.a */; };
 		00E356F31AD99517003FC87E /* kingmap_appTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* kingmap_appTests.m */; };
+		01C3F609925B476BAC9A98D6 /* SafariServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12A06F0A79FA483BB00155D5 /* SafariServices.framework */; };
 		133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C398B91ACF4ADC00677621 /* libRCTLinking.a */; };
 		139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139105C11AF99BAD00B5F7CC /* libRCTSettings.a */; };
 		139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139FDEF41B06529B00C62182 /* libRCTWebSocket.a */; };
@@ -33,6 +35,9 @@
 		2D02E4C81E0B4AEC006451C7 /* libRCTWebSocket-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3E991DF850E9000B6D8A /* libRCTWebSocket-tvOS.a */; };
 		2D16E6881FA4F8E400B85C8A /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D16E6891FA4F8E400B85C8A /* libReact.a */; };
 		2DCD954D1E0B4F2C00145EB5 /* kingmap_appTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* kingmap_appTests.m */; };
+		3CCFAE434ECD489CB2737AEF /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D949D6ECBEB0458AB31B709C /* AddressBook.framework */; };
+		465AAF75FF0546A893F22517 /* libRCTFBLogin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3951C27EB2E41CEBFED28BC /* libRCTFBLogin.a */; };
+		4C000A4970CE45889701170F /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 25BEBA22A19A42B7B654F0ED /* SystemConfiguration.framework */; };
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		761127E62018C7EF009DC538 /* RSKImageCropper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 761127E52018C7EF009DC538 /* RSKImageCropper.framework */; };
 		761127E72018C7EF009DC538 /* RSKImageCropper.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 761127E52018C7EF009DC538 /* RSKImageCropper.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -41,6 +46,9 @@
 		7620E67E2067DE8800207637 /* GoogleSignIn.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7620E67B2067DE8600207637 /* GoogleSignIn.framework */; };
 		7620E6802067DE8800207637 /* GoogleSignIn.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 7620E67D2067DE8800207637 /* GoogleSignIn.bundle */; };
 		7620E6822067DEE000207637 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7620E6812067DEE000207637 /* GoogleService-Info.plist */; };
+		7679006E2076088A00471E5E /* FBSDKShareKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7679006B2076088800471E5E /* FBSDKShareKit.framework */; };
+		7679006F2076088A00471E5E /* FBSDKCoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7679006C2076088900471E5E /* FBSDKCoreKit.framework */; };
+		767900702076088A00471E5E /* FBSDKLoginKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7679006D2076088A00471E5E /* FBSDKLoginKit.framework */; };
 		76E07328201195680081F946 /* AIRGoogleMapUrlTile.m in Sources */ = {isa = PBXBuildFile; fileRef = 76E07303201195680081F946 /* AIRGoogleMapUrlTile.m */; };
 		76E07329201195680081F946 /* AIRGoogleMapPolygonManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 76E07306201195680081F946 /* AIRGoogleMapPolygonManager.m */; };
 		76E0732A201195680081F946 /* AIRGoogleMapMarker.m in Sources */ = {isa = PBXBuildFile; fileRef = 76E07309201195680081F946 /* AIRGoogleMapMarker.m */; };
@@ -63,6 +71,8 @@
 		78D024FDB52F4569B0B9FA45 /* libRNSettings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C0A51486BFE441C18BC7DB0B /* libRNSettings.a */; };
 		7D57AC157BBE4985E2A95AB0 /* libPods-kingmap_app.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 33F744B0687F2869FC028245 /* libPods-kingmap_app.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
+		8D282ADA74374CDFA780D246 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AB7345D79D64A09928309D6 /* libz.tbd */; };
+		A3E696E83AB54F918778A88F /* libRNGoogleSignin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7556B301053B438AAB661D50 /* libRNGoogleSignin.a */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
 		FB2FDCBB4AAD40EAA9E399EF /* libimageCropPicker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E47A45BBAB874D4292C725DE /* libimageCropPicker.a */; };
 /* End PBXBuildFile section */
@@ -271,6 +281,20 @@
 			remoteGlobalIDString = 3400A8081CEB54A6008A0BC7;
 			remoteInfo = imageCropPicker;
 		};
+		76790069207606EE00471E5E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D086C99EE4014E38BA6A8342 /* RCTFBLogin.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4F3A6B5B1ACFBCC500CA65F7;
+			remoteInfo = RCTFBLogin;
+		};
+		767900AD20760C4F00471E5E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 896FB288FFB6468AAB2EFEA5 /* RNGoogleSignin.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9FD355121D3E4A2900D06170;
+			remoteInfo = RNGoogleSignin;
+		};
 		76E072EC20118E2B0081F946 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 146833FF1AC3E56700842450 /* React.xcodeproj */;
@@ -382,6 +406,8 @@
 		00E356EE1AD99517003FC87E /* kingmap_appTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = kingmap_appTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* kingmap_appTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = kingmap_appTests.m; sourceTree = "<group>"; };
+		0AB7345D79D64A09928309D6 /* libz.tbd */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		12A06F0A79FA483BB00155D5 /* SafariServices.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = SafariServices.framework; path = System/Library/Frameworks/SafariServices.framework; sourceTree = SDKROOT; };
 		139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSettings.xcodeproj; path = "../node_modules/react-native/Libraries/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; };
 		139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebSocket.xcodeproj; path = "../node_modules/react-native/Libraries/WebSocket/RCTWebSocket.xcodeproj"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* kingmap_app.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = kingmap_app.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -392,18 +418,23 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = kingmap_app/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = kingmap_app/main.m; sourceTree = "<group>"; };
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
+		25BEBA22A19A42B7B654F0ED /* SystemConfiguration.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		2D02E47B1E0B4A5D006451C7 /* kingmap_app-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "kingmap_app-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* kingmap_app-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "kingmap_app-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		33F744B0687F2869FC028245 /* libPods-kingmap_app.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-kingmap_app.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		486295906C7F79A50E681084 /* Pods-kingmap_app.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kingmap_app.release.xcconfig"; path = "Pods/Target Support Files/Pods-kingmap_app/Pods-kingmap_app.release.xcconfig"; sourceTree = "<group>"; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
+		7556B301053B438AAB661D50 /* libRNGoogleSignin.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNGoogleSignin.a; sourceTree = "<group>"; };
 		761127E52018C7EF009DC538 /* RSKImageCropper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSKImageCropper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		761128102018C810009DC538 /* QBImagePicker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = QBImagePicker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7620E67B2067DE8600207637 /* GoogleSignIn.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleSignIn.framework; sourceTree = "<group>"; };
 		7620E67C2067DE8700207637 /* GoogleSignInDependencies.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleSignInDependencies.framework; sourceTree = "<group>"; };
 		7620E67D2067DE8800207637 /* GoogleSignIn.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = GoogleSignIn.bundle; sourceTree = "<group>"; };
 		7620E6812067DEE000207637 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		7679006B2076088800471E5E /* FBSDKShareKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKShareKit.framework; sourceTree = "<group>"; };
+		7679006C2076088900471E5E /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKCoreKit.framework; sourceTree = "<group>"; };
+		7679006D2076088A00471E5E /* FBSDKLoginKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FBSDKLoginKit.framework; sourceTree = "<group>"; };
 		76E07302201195680081F946 /* AIRGoogleMapPolyline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIRGoogleMapPolyline.h; sourceTree = "<group>"; };
 		76E07303201195680081F946 /* AIRGoogleMapUrlTile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AIRGoogleMapUrlTile.m; sourceTree = "<group>"; };
 		76E07304201195680081F946 /* AIRGoogleMapMarkerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIRGoogleMapMarkerManager.h; sourceTree = "<group>"; };
@@ -445,9 +476,13 @@
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		7F3ECB8FA8E04289A7F4DF6C /* imageCropPicker.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = imageCropPicker.xcodeproj; path = "../node_modules/react-native-image-crop-picker/ios/imageCropPicker.xcodeproj"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
+		896FB288FFB6468AAB2EFEA5 /* RNGoogleSignin.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNGoogleSignin.xcodeproj; path = "../node_modules/react-native-google-signin/ios/RNGoogleSignin.xcodeproj"; sourceTree = "<group>"; };
 		A980EBE79AF5E22675406140 /* Pods-kingmap_app.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-kingmap_app.debug.xcconfig"; path = "Pods/Target Support Files/Pods-kingmap_app/Pods-kingmap_app.debug.xcconfig"; sourceTree = "<group>"; };
 		ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTBlob.xcodeproj; path = "../node_modules/react-native/Libraries/Blob/RCTBlob.xcodeproj"; sourceTree = "<group>"; };
+		B3951C27EB2E41CEBFED28BC /* libRCTFBLogin.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTFBLogin.a; sourceTree = "<group>"; };
 		C0A51486BFE441C18BC7DB0B /* libRNSettings.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNSettings.a; sourceTree = "<group>"; };
+		D086C99EE4014E38BA6A8342 /* RCTFBLogin.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTFBLogin.xcodeproj; path = "../node_modules/react-native-facebook-login/RCTFBLogin.xcodeproj"; sourceTree = "<group>"; };
+		D949D6ECBEB0458AB31B709C /* AddressBook.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		E47A45BBAB874D4292C725DE /* libimageCropPicker.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libimageCropPicker.a; sourceTree = "<group>"; };
 		EB81BA4EA2C840BD9C2B2464 /* RNSettings.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNSettings.xcodeproj; path = "../node_modules/react-native-settings/ios/RNSettings.xcodeproj"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -468,7 +503,9 @@
 				ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */,
 				5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */,
 				146834051AC3E58100842450 /* libReact.a in Frameworks */,
+				7679006F2076088A00471E5E /* FBSDKCoreKit.framework in Frameworks */,
 				5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */,
+				767900702076088A00471E5E /* FBSDKLoginKit.framework in Frameworks */,
 				00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */,
 				00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */,
 				00C302E81ABCBA2D00DB3ED1 /* libRCTImage.a in Frameworks */,
@@ -482,8 +519,15 @@
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
 				78D024FDB52F4569B0B9FA45 /* libRNSettings.a in Frameworks */,
 				FB2FDCBB4AAD40EAA9E399EF /* libimageCropPicker.a in Frameworks */,
+				7679006E2076088A00471E5E /* FBSDKShareKit.framework in Frameworks */,
 				761128112018C810009DC538 /* QBImagePicker.framework in Frameworks */,
 				7D57AC157BBE4985E2A95AB0 /* libPods-kingmap_app.a in Frameworks */,
+				465AAF75FF0546A893F22517 /* libRCTFBLogin.a in Frameworks */,
+				A3E696E83AB54F918778A88F /* libRNGoogleSignin.a in Frameworks */,
+				8D282ADA74374CDFA780D246 /* libz.tbd in Frameworks */,
+				01C3F609925B476BAC9A98D6 /* SafariServices.framework in Frameworks */,
+				4C000A4970CE45889701170F /* SystemConfiguration.framework in Frameworks */,
+				3CCFAE434ECD489CB2737AEF /* AddressBook.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -632,11 +676,18 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7679006C2076088900471E5E /* FBSDKCoreKit.framework */,
+				7679006D2076088A00471E5E /* FBSDKLoginKit.framework */,
+				7679006B2076088800471E5E /* FBSDKShareKit.framework */,
 				7620E67D2067DE8800207637 /* GoogleSignIn.bundle */,
 				7620E67B2067DE8600207637 /* GoogleSignIn.framework */,
 				7620E67C2067DE8700207637 /* GoogleSignInDependencies.framework */,
 				2D16E6891FA4F8E400B85C8A /* libReact.a */,
 				33F744B0687F2869FC028245 /* libPods-kingmap_app.a */,
+				0AB7345D79D64A09928309D6 /* libz.tbd */,
+				12A06F0A79FA483BB00155D5 /* SafariServices.framework */,
+				25BEBA22A19A42B7B654F0ED /* SystemConfiguration.framework */,
+				D949D6ECBEB0458AB31B709C /* AddressBook.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -658,12 +709,29 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		76790066207606EE00471E5E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				7679006A207606EE00471E5E /* libRCTFBLogin.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		767900AA20760C4E00471E5E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				767900AE20760C4F00471E5E /* libRNGoogleSignin.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		76E072C620118E280081F946 /* Recovered References */ = {
 			isa = PBXGroup;
 			children = (
 				C0A51486BFE441C18BC7DB0B /* libRNSettings.a */,
 				E47A45BBAB874D4292C725DE /* libimageCropPicker.a */,
-				179D98A98A1D4FE8A7FBD085 /* libRNGoogleSignin.a */,
+				B3951C27EB2E41CEBFED28BC /* libRCTFBLogin.a */,
+				7556B301053B438AAB661D50 /* libRNGoogleSignin.a */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -748,6 +816,8 @@
 				139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */,
 				EB81BA4EA2C840BD9C2B2464 /* RNSettings.xcodeproj */,
 				7F3ECB8FA8E04289A7F4DF6C /* imageCropPicker.xcodeproj */,
+				D086C99EE4014E38BA6A8342 /* RCTFBLogin.xcodeproj */,
+				896FB288FFB6468AAB2EFEA5 /* RNGoogleSignin.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -944,6 +1014,10 @@
 					ProjectRef = ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */;
 				},
 				{
+					ProductGroup = 76790066207606EE00471E5E /* Products */;
+					ProjectRef = D086C99EE4014E38BA6A8342 /* RCTFBLogin.xcodeproj */;
+				},
+				{
 					ProductGroup = 00C302B61ABCB90400DB3ED1 /* Products */;
 					ProjectRef = 00C302B51ABCB90400DB3ED1 /* RCTGeolocation.xcodeproj */;
 				},
@@ -978,6 +1052,10 @@
 				{
 					ProductGroup = 146834001AC3E56700842450 /* Products */;
 					ProjectRef = 146833FF1AC3E56700842450 /* React.xcodeproj */;
+				},
+				{
+					ProductGroup = 767900AA20760C4E00471E5E /* Products */;
+					ProjectRef = 896FB288FFB6468AAB2EFEA5 /* RNGoogleSignin.xcodeproj */;
 				},
 				{
 					ProductGroup = 76E072FC20118E2B0081F946 /* Products */;
@@ -1182,6 +1260,20 @@
 			fileType = archive.ar;
 			path = libimageCropPicker.a;
 			remoteRef = 762D069A201893F2002051A5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		7679006A207606EE00471E5E /* libRCTFBLogin.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRCTFBLogin.a;
+			remoteRef = 76790069207606EE00471E5E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		767900AE20760C4F00471E5E /* libRNGoogleSignin.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNGoogleSignin.a;
+			remoteRef = 767900AD20760C4F00471E5E /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		76E072ED20118E2B0081F946 /* libjsinspector.a */ = {
@@ -1486,12 +1578,16 @@
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-settings/ios",
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-facebook-login/RCTFBLogin/**",
+					"$(SRCROOT)/../node_modules/react-native-google-signin/ios/RNGoogleSignin/**",
 				);
 				INFOPLIST_FILE = kingmap_appTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -1511,12 +1607,16 @@
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-settings/ios",
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-facebook-login/RCTFBLogin/**",
+					"$(SRCROOT)/../node_modules/react-native-google-signin/ios/RNGoogleSignin/**",
 				);
 				INFOPLIST_FILE = kingmap_appTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -1538,12 +1638,15 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(SRCROOT)/../node_modules/react-native-facebook-login/FacebookSDK",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-settings/ios",
 					"$(SRCROOT)/../node_modules/react-native-maps/lib/ios/AirMaps/**",
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-facebook-login/RCTFBLogin/**",
+					"$(SRCROOT)/../node_modules/react-native-google-signin/ios/RNGoogleSignin/**",
 				);
 				INFOPLIST_FILE = kingmap_app/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1578,12 +1681,15 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(SRCROOT)/../node_modules/react-native-facebook-login/FacebookSDK",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-settings/ios",
 					"$(SRCROOT)/../node_modules/react-native-maps/lib/ios/AirMaps/**",
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-facebook-login/RCTFBLogin/**",
+					"$(SRCROOT)/../node_modules/react-native-google-signin/ios/RNGoogleSignin/**",
 				);
 				INFOPLIST_FILE = kingmap_app/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1624,11 +1730,15 @@
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-settings/ios",
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-facebook-login/RCTFBLogin/**",
+					"$(SRCROOT)/../node_modules/react-native-google-signin/ios/RNGoogleSignin/**",
 				);
 				INFOPLIST_FILE = "kingmap_app-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -1658,11 +1768,15 @@
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-settings/ios",
 					"$(SRCROOT)/../node_modules/react-native-image-crop-picker/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-facebook-login/RCTFBLogin/**",
+					"$(SRCROOT)/../node_modules/react-native-google-signin/ios/RNGoogleSignin/**",
 				);
 				INFOPLIST_FILE = "kingmap_app-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -1691,6 +1805,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.kingmap_app-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1715,6 +1831,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.kingmap_app-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";

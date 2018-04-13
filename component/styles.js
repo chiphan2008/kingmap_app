@@ -43,6 +43,8 @@ module.exports = {
     position: 'absolute',
     top: 0,bottom: 0,left: 0,right: 0
   },
+  favIC:{width:22,height:21,marginRight:2},
+  marRight:{marginRight:10},
   line:{borderBottomWidth:1,borderBottomColor:'#E3E4E8',width},
   marTop15:{marginTop:15},
   marTop10:{marginTop:10},
@@ -111,7 +113,7 @@ module.exports = {
     paddingLeft:20,
     paddingBottom:150,
   },
-  txtTitleOverCat:{color:'#2F353F',fontSize:18,marginBottom:7,maxHeight:50,overflow:'hidden'},
+  txtTitleOverCat:{color:'#2F353F',fontSize:18,marginBottom:0,maxHeight:50,overflow:'hidden'},
   txtAddrOverCat:{
     color:'#6587A8',fontSize:14,marginBottom:7,overflow: 'hidden'
   },
@@ -150,7 +152,7 @@ module.exports = {
   },
   flatlistItem:{
     width:(width-20),
-    flexDirection:'row',
+    //flexDirection:'row',
     marginBottom:Platform.OS==='ios' ? 55 : 130,
   },
   imgFlatItem:{
@@ -186,8 +188,9 @@ module.exports = {
   rowItem:{flexDirection: 'row',alignItems:'center'},
   flexRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    backgroundColor:'#2e3c52',
+    justifyContent: 'center',
+    //backgroundColor:'#2e3c52',
+    minWidth:width/6,
     alignItems:'center',
     height:28,
     paddingRight:4,

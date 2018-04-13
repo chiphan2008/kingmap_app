@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image,
-  TextInput, TouchableOpacity,FlatList,
+  TextInput, TouchableOpacity,FlatList
 } from 'react-native';
 const {height, width} = Dimensions.get('window');
 
@@ -13,6 +13,9 @@ import language_vn from '../lang/vn/language';
 import language_en from '../lang/en/language';
 
 import closeIC from '../../src/icon/ic-white/ic-close.png';
+
+
+
 
 export default class ChooseCat extends Component {
   constructor(props) {
@@ -35,6 +38,7 @@ export default class ChooseCat extends Component {
   }
 
   componentWillMount(){
+
     const { lang } = this.props.navigation.state.params;
     this.getCategory(lang);
       this.setState({
@@ -47,6 +51,7 @@ export default class ChooseCat extends Component {
   }
 
   render() {
+    console.log('ChooseCat');
     const {navigate, goBack} = this.props.navigation;
     const { lang } = this.props.navigation.state.params;
     const {

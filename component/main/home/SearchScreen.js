@@ -1,7 +1,9 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import {Keyboard, Platform, View, Text, StyleSheet, Dimensions, Image, TextInput, TouchableOpacity,FlatList,Alert} from 'react-native';
+import {
+  Keyboard, Platform, View, Text, StyleSheet, Dimensions, Image,
+  TextInput, TouchableOpacity,FlatList,Alert, ActivityIndicator} from 'react-native';
 const {height, width} = Dimensions.get('window');
 
 import accessLocation from '../../api/accessLocation';
@@ -24,24 +26,8 @@ export default class SearchScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      curLocation:{
-        latitude:this.props.navigation.state.params.lat,
-        longitude: this.props.navigation.state.params.lng,
-        lat:this.props.navigation.state.params.lat,
-        lng: this.props.navigation.state.params.lng,
-        latitudeDelta:  0.008757,
-        longitudeDelta: 0.010066,
-        latlng: '0,0',
-      },
-      curLoc : {
-        latitude:this.props.navigation.state.params.lat,
-        longitude: this.props.navigation.state.params.lng,
-        lat:this.props.navigation.state.params.lat,
-        lng: this.props.navigation.state.params.lng,
-        latitudeDelta:  0.008757,
-        longitudeDelta: 0.010066,
-        latlng:`${this.props.navigation.state.params.lat},${this.props.navigation.state.params.lng}`,
-      },
+      curLocation:{},
+      curLoc : {},
       markers:[{
         id : 1,
         lat:this.props.navigation.state.params.lat,
@@ -56,7 +42,7 @@ export default class SearchScreen extends Component {
       },],
       keyword:this.props.navigation.state.params.keyword,
     }
-
+    Keyboard.dismiss();
   }
 
   getCategory(keyword,lat,lng){
@@ -81,10 +67,11 @@ export default class SearchScreen extends Component {
   }
 
   getLoc(){
+    const { keyword } = this.props.navigation.state.params;
     navigator.geolocation.getCurrentPosition(
           (position) => {
-            //console.log('position');
             const latlng = `${position.coords.latitude}${','}${position.coords.longitude}`;
+            this.getCategory(keyword,position.coords.latitude,position.coords.longitude);
             this.setState({
               curLocation : {
                 latitude:position.coords.latitude,
@@ -109,6 +96,7 @@ export default class SearchScreen extends Component {
            (error) => {
              //console.log('getLocationByIP');
             getLocationByIP().then((e) => {
+              this.getCategory(keyword,e.latitude,e.longitude);
                 this.setState({
                   curLocation : {
                     latitude:e.latitude,
@@ -131,7 +119,7 @@ export default class SearchScreen extends Component {
                 });
             });
           },
-          {enableHighAccuracy: true, timeout: 3000, maximumAge: 3000}
+          {enableHighAccuracy: true, timeout: 20000, maximumAge: 10000}
     );
   }
 
@@ -145,9 +133,9 @@ export default class SearchScreen extends Component {
   }
 
   render() {
-    const { keyword, curLocation } = this.state;
-    const {navigate,goBack} = this.props.navigation;
-    const { lang } = this.props.navigation.state.params;
+    const { keyword, curLocation,markers } = this.state;
+    const { navigate,goBack } = this.props.navigation;
+    const { lat,lng,lang } = this.props.navigation.state.params;
     const {
       container,imgLogoTop,inputSearch,
       headStyle, headContent,wrapIcRight,plusStyle,imgPlusStyle,serviceList,
@@ -155,7 +143,6 @@ export default class SearchScreen extends Component {
       wrapContent,leftContent,rightContent,middleContent,imgContent,labelCat,
       imgFlatItem,catInfoOver,txtTitleOver,txtAddrOver,wrapInfoOver,serviceOver,
     } = styles;
-
 
     let timeout;
     return (
@@ -193,54 +180,62 @@ export default class SearchScreen extends Component {
           </TouchableOpacity>
 
         </View>
-
-        <MapView
-            provider={PROVIDER_GOOGLE}
-            style={{width,height}}
-            region={this.state.curLocation}
-            onPress={ (event) =>{
-              const {latitude,longitude} = (event.nativeEvent.coordinate || this.state.curLocation);
-              this.getCategory(keyword,latitude,longitude);
-            }}
-            customMapStyle={global.style_map}
-            showsPointsOfInterest={false}
-          >
-          {this.state.markers.map((marker,index) => (
-            <MapView.Marker
-              key={marker.id}
-              coordinate={{
-                latitude: Number(marker.lat),
-                longitude: Number(marker.lng),
+        {curLocation.longitude!==undefined ?
+          <View>
+          <MapView
+              provider={PROVIDER_GOOGLE}
+              style={{width,height}}
+              region={curLocation}
+              onPress={ (event) =>{
+                const {latitude,longitude} = (event.nativeEvent.coordinate || curLocation);
+                this.getCategory(keyword,latitude,longitude);
               }}
+              customMapStyle={global.style_map}
+              showsPointsOfInterest={false}
             >
-            <Image source={{uri:`${global.url_media}${marker._category_type.marker}`}} style={{width:48,height:54,position:'relative'}} />
-            <MapView.Callout onPress={()=>navigate('DetailScr',{idContent:marker.id,lat:marker.lat,lng:marker.lng,curLoc:this.state.curLoc,lang})}
-            >
-              <TouchableOpacity>
-              <View style={{height: 45,width: 300,alignItems:'center',borderRadius:3}}>
-              <Text numberOfLines={1} style={{fontWeight:'bold'}}>{marker.name}</Text>
-              <Text numberOfLines={1}>{`${marker.address}${', '}${marker._district.name}${', '}${marker._city.name}${', '}${marker._country.name}`}</Text>
-              </View>
-              </TouchableOpacity>
-            </MapView.Callout>
+            {markers.map((marker,index) => (
+              <MapView.Marker
+                key={marker.id}
+                coordinate={{
+                  latitude: Number(marker.lat),
+                  longitude: Number(marker.lng),
+                }}
+              >
+              <Image source={{uri:`${global.url_media}${marker._category_type.marker}`}} style={{width:48,height:54,position:'relative'}} />
+              <MapView.Callout onPress={()=>navigate('DetailScr',{idContent:marker.id,lat:marker.lat,lng:marker.lng,curLoc:this.state.curLoc,lang})}
+              >
+                <TouchableOpacity>
+                <View style={{height: 45,width: 300,alignItems:'center',borderRadius:3}}>
+                <Text numberOfLines={1} style={{fontWeight:'bold'}}>{marker.name}</Text>
+                <Text numberOfLines={1}>{`${marker.address}${', '}${marker._district.name}${', '}${marker._city.name}${', '}${marker._country.name}`}</Text>
+                </View>
+                </TouchableOpacity>
+              </MapView.Callout>
+              </MapView.Marker>
+            )
+          )}
+          <MapView.Circle
+            center={curLocation}
+            radius={500}
+            lineCap="butt"
+            strokeWidth={1}
+            fillColor="rgba(0, 0, 0, 0.1))"
+            strokeColor="rgba(0, 0, 0, 0))"/>
+            <MapView.Marker
+              coordinate={{
+                latitude: Number(curLocation.latitude),
+                longitude: Number(curLocation.longitude),
+              }}
+              />
+            </MapView>
+          </View>
+        :
+        <View onLayout={()=>this.getLoc()} style={{width,height:height-300,justifyContent:'center',alignItems:'center'}}>
+          <ActivityIndicator size="large" color="#d0021b" />
+        </View>
+        }
 
-            </MapView.Marker>
-          )
-        )}
-        <MapView.Circle
-          center={this.state.curLocation}
-          radius={500}
-          lineCap="butt"
-          strokeWidth={1}
-          fillColor="rgba(0, 0, 0, 0.1))"
-          strokeColor="rgba(0, 0, 0, 0))"/>
-          <MapView.Marker
-            coordinate={{
-              latitude: Number(this.state.curLocation.latitude),
-              longitude: Number(this.state.curLocation.longitude),
-            }}
-            />
-          </MapView>
+
           <TouchableOpacity style={plusStyle}>
               <Image source={plusIC} style={imgPlusStyle} />
           </TouchableOpacity>

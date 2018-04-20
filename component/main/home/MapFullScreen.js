@@ -55,7 +55,7 @@ export default class MapFullScreen extends Component {
           {Platform.OS==='ios' && <Image source={{uri:`${marker.marker}`}} style={{width:48,height:54,position:'relative'}} />}
           <MapView.Callout onPress={()=>{
             this.props.closeModal();
-            navigation.navigate('DetailScr',{idContent:marker.id,lat:marker.latitude,lng:marker.longitude,curLoc,lang});
+            navigation.navigate('DetailScr',{idContent:marker.id,lat:marker.latitude,lng:marker.longitude,curLoc,lang:lang.lang});
         }}
           >
             <TouchableOpacity>

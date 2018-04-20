@@ -194,11 +194,11 @@ export default class LocationTab extends Component {
     getApi(global.url+'categories?language='+lang+'&limit=100')
     .then(arrCategory => {
       //console.log('arrCategory',arrCategory);
-      setTimeout(() => {
+      if(arrCategory!==undefined){setTimeout(() => {
           this.setState({ listCategory: arrCategory.data },()=>{
             this.getListStatus();
           });
-      }, 500);
+      }, 500);}
     })
     .catch(err => console.log(err));
   }

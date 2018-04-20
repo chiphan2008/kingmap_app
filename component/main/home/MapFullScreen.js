@@ -47,20 +47,20 @@ export default class MapFullScreen extends Component {
           <MapView.Marker
             key={marker.id}
             coordinate={{
-              latitude: Number(marker.lat),
-              longitude: Number(marker.lng),
+              latitude: Number(marker.latitude),
+              longitude: Number(marker.longitude),
             }}
           >
-          <Image source={{uri:`${global.url_media}${marker._category_type.marker}`}} style={{width:48,height:54,position:'relative'}} />
+          <Image source={{uri:`${marker.marker}`}} style={{width:48,height:54,position:'relative'}} />
           <MapView.Callout onPress={()=>{
             this.props.closeModal();
-            navigation.navigate('DetailScr',{idContent:marker.id,lat:marker.lat,lng:marker.lng,curLoc,lang});
+            navigation.navigate('DetailScr',{idContent:marker.id,lat:marker.latitude,lng:marker.longitude,curLoc,lang});
         }}
           >
             <TouchableOpacity>
             <View style={{height: 45,width: 300,alignItems:'center',borderRadius:3}}>
             <Text numberOfLines={1} style={{fontWeight:'bold'}}>{marker.name}</Text>
-            <Text numberOfLines={1}>{`${marker.address}${', '}${marker._district.name}${', '}${marker._city.name}${', '}${marker._country.name}`}</Text>
+            <Text numberOfLines={1}>{`${marker.address}`}</Text>
             </View>
             </TouchableOpacity>
           </MapView.Callout>

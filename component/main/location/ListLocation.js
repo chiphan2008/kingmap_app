@@ -390,7 +390,8 @@ export default class ListLocation extends Component {
                            <TouchableOpacity
                            onPress={()=>{
                              this.setState({pullToRefresh:false},()=>{
-                               navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc:this.state.curLoc,lang:lang.lang})
+                               navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc:this.state.curLoc,lang:lang})
+                               //console.log('lang2',lang);
                              })
                            }}>
                              <Image style={imgFlatItem} source={{uri:`${global.url_media}${item.avatar}`}} />

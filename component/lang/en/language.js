@@ -42,6 +42,7 @@ module.exports = {
   new_location:'New location',
   like : 'Like',
   share : 'Share',
+  check_in : 'Check in',
   name_location:'Name location',
   open_time:'Open time',
   close_time:'Close time',

@@ -36,8 +36,10 @@ import {Select, Option} from "react-native-chooser";
 export default class DetailScreen extends Component {
   constructor(props) {
     super(props);
+    const {curLoc,lang} = this.props.navigation.state.params;
+    //console.log('lang1',lang.lang);
     this.state = {
-      lang:lang_vn,
+      lang:lang==='vn' ? lang_vn : lang_en,
       region:{
         latitude:10.7818513,
         longitude: 106.6769368,
@@ -45,7 +47,7 @@ export default class DetailScreen extends Component {
         longitudeDelta: 0.011121,
         latlng: '10.7818513,106.6769368',
       },
-      curLoc:this.props.navigation.state.params.curLoc || {},
+      curLoc:curLoc || {},
       listData:{
         image_space:[],
         image_menu:[],
@@ -116,9 +118,6 @@ export default class DetailScreen extends Component {
     this.getContent(this.props.navigation.state.params.idContent);
   }
 
-  onRegionChange(region) {
-    this.setState({ region });
-  }
   callCollect(){
     const {isLogin} = this.state;
     if(isLogin===false){ this.requestLogin();}else {
@@ -211,7 +210,7 @@ export default class DetailScreen extends Component {
     const {navigate} = this.props.navigation;
     //console.log('this.props.navigation',this.props.navigation);
     const {lang,user_id,isLogin,scroll,hasCheckin,hasSaveLike,listData,hasCollection} = this.state;
-    //console.log('hasCheckin,hasSaveLike',listData.content.has_checkin);
+    console.log('lang',lang.lang);
     const { idContent,curLoc } = this.props.navigation.state.params;
     //console.log('lang',lang);
     const {
@@ -226,7 +225,7 @@ export default class DetailScreen extends Component {
     } = styles;
 
     return (
-      <ScrollView onLayout={()=>{this.setState({lang: this.props.navigation.state.params.lang ==='vn' ? lang_vn : lang_en})}} scrollEnabled={scroll} style={container}>
+      <ScrollView scrollEnabled={scroll} style={container}>
         <Header
         lang={lang}
         backList={this.backList.bind(this)}

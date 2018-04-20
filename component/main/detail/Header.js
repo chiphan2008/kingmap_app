@@ -57,7 +57,7 @@ export default class Header extends Component {
     const {goBack,state} = this.props.navigation;
     const {showOption} = this.state;
     const {lang,curLoc,hasSaveLike,hasCheckin,hasCollection} = this.props;
-    //console.log('checkItemExists',checkItemExists(hasCollection));
+    //console.log('lang',lang);
     return (
       <View>
       <View style={headStyle}>
@@ -76,20 +76,20 @@ export default class Header extends Component {
             <TouchableOpacity onPress={()=>this.props.saveLike('save-like')}
             style={{alignItems:'center'}}>
                 <Image source={hasSaveLike===0 ? starIC : starYellowIcon} style={voteIC} />
-                <Text style={colorWhite}>Yêu thích</Text>
+                <Text style={colorWhite}>{lang.like}</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={()=>{this.props.saveLike('checkin');}} style={{alignItems:'center'}}>
                 <Image source={hasCheckin===0 ? locationIC : locationYellowIcon} style={imgCheckin} />
-                <Text style={colorWhite}>Check in</Text>
+                <Text style={colorWhite}>{lang.check_in}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={{alignItems:'center'}}
             onPress={()=>this.setState({showOption:true})}>
                 <Image source={socialIC} style={shareIC} />
-                <Text style={colorWhite}>Chia sẻ</Text>
+                <Text style={colorWhite}>{lang.share}</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={()=>{this.props.callCollect()}} style={{alignItems:'center'}}>
                 <Image source={hasCollection.length===0 ? saveIC : collectionYellowIcon} style={imgCheckin} />
-                <Text style={colorWhite}>Sưu tập</Text>
+                <Text style={colorWhite}>{lang.collection}</Text>
             </TouchableOpacity>
         </View>
       </View>

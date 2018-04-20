@@ -42,6 +42,7 @@ module.exports = {
   new_location:'Địa điểm mới',
   like : 'Thích',
   share : 'Chia sẽ',
+  check_in : 'Check in',
   name_location:'Tên địa điểm',
   open_time:'Thời gian mở cửa',
   close_time:'Thời gian đóng cửa',

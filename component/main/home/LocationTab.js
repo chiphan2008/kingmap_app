@@ -219,15 +219,17 @@ export default class LocationTab extends Component {
       ({coords}) => {
         const {latitude, longitude} = coords
         if(latitude!==curLoc.latitude && curLoc.longitude!==longitude){
-          this.setState({
-            curLoc: {
-              latitude,longitude,
-              lat:latitude,lng:longitude,
-              latlng:`${latitude},${longitude}`,
-              latitudeDelta: 0.005,
-              longitudeDelta: 0.001,
-            }
-          })
+          setTimeout(()=>{
+            this.setState({
+              curLoc: {
+                latitude,longitude,
+                lat:latitude,lng:longitude,
+                latlng:`${latitude},${longitude}`,
+                latitudeDelta: 0.005,
+                longitudeDelta: 0.001,
+              }
+            });
+          },1200)
         }
       },
       (error) => {/*alert('Error: Are location services on?')*/},

@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import {
   View,Text,Modal,StyleSheet,Image,
-  TouchableOpacity,Dimensions
+  TouchableOpacity,Dimensions,Platform
 } from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import global from '../../global';
@@ -50,6 +50,7 @@ export default class MapFullScreen extends Component {
               latitude: Number(marker.latitude),
               longitude: Number(marker.longitude),
             }}
+            image={Platform.OS!=='ios' ? {uri: marker.marker} : null}
           >
           <Image source={{uri:`${marker.marker}`}} style={{width:48,height:54,position:'relative'}} />
           <MapView.Callout onPress={()=>{

@@ -338,7 +338,7 @@ export default class SearchScreen extends Component {
               onPanDrag={()=>{Keyboard.dismiss();}}
               ref={(ref) => { this.mapRef = ref }}
               //this.mapRef.fitToCoordinates(markers, { edgePadding: { top: 50, right: 50, bottom: 50, left: 50 }, animated: false })
-              style={{width,height:height-190,zIndex:-1}}
+              style={{width,height:Platform.OS==='ios' ? height-150: height-190,zIndex:-1}}
               region={curLocation}
               onPress={ (event) =>{
                 const {latitude,longitude} = (event.nativeEvent.coordinate || curLocation);
@@ -374,7 +374,7 @@ export default class SearchScreen extends Component {
                   latitude: Number(marker.latitude),
                   longitude: Number(marker.longitude),
                 }}
-                image={{uri: Platform.OS==='android' ? marker.marker : null}}
+                image={Platform.OS!=='ios' ? {uri: marker.marker} : null}
               >
               {Platform.OS==='ios' &&
               <Image

@@ -52,7 +52,7 @@ export default class MapFullScreen extends Component {
             }}
             image={Platform.OS!=='ios' ? {uri: marker.marker} : null}
           >
-          <Image source={{uri:`${marker.marker}`}} style={{width:48,height:54,position:'relative'}} />
+          {Platform.OS==='ios' && <Image source={{uri:`${marker.marker}`}} style={{width:48,height:54,position:'relative'}} />}
           <MapView.Callout onPress={()=>{
             this.props.closeModal();
             navigation.navigate('DetailScr',{idContent:marker.id,lat:marker.latitude,lng:marker.longitude,curLoc,lang});

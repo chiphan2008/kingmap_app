@@ -1,10 +1,11 @@
 /* @flow */
 
 import React, { Component } from 'react';
-//import {NavigationActions} from 'react-navigation';
 import {
   Platform, View, Text, Image, Button,TouchableOpacity,StyleSheet,
-  Dimensions, TextInput, ScrollView,Alert } from 'react-native';
+  Dimensions, TextInput, ScrollView,Alert,
+  DeviceEventEmitter
+ } from 'react-native';
 //import { CheckBox } from 'react-native-elements';
 //import RoundCheckbox from 'rn-round-checkbox';
 import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
@@ -32,14 +33,8 @@ var LoginBehavior = {
   'ios': FBLoginManager.LoginBehaviors.Browser,
   'android': FBLoginManager.LoginBehaviors.WebView
 }
+import {hasNumber,isEmail} from '../libs';
 
-function isEmail(text){
-  let email = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/ ;
-  return email.test(text);
-}
-function hasNumber(text) {
-  return /\d/.test(text);
-}
 export default class LoginScreen extends Component {
   constructor(props) {
     super(props);
@@ -109,37 +104,25 @@ export default class LoginScreen extends Component {
   }
 
 
-  callLogin(backScr){
+  callLogin(){
     const {txtUsername, txtPassword, lang,isCheck} = this.state;
     if(txtUsername==='') return this.setState({errMsg:lang.err_email});
     if(!hasNumber(txtUsername) && !isEmail(txtUsername)) return this.setState({errMsg:lang.err_email_format});
     if(txtPassword==='') return this.setState({errMsg:lang.err_pwd});
     this.setState({disable:true});
     const param = {username:txtUsername,password:txtPassword,isCheck};
+    const { state,goBack,navigate } = this.props.navigation;
+    const params = state.params || {};
     loginApi(`${global.url}${'login'}`,param).then(e=>{
       if(e.code!==200){
         this.setState({errMsg:this.state.lang.wrong_pwd,disable:false})
       }else{
-        if(backScr!==''){
-          //console.log('this.props.navigation',this.props.navigation);
-          // this.props.navigation.state.params;
-          // this.props
-          //      .navigation
-          //      .dispatch(NavigationActions.reset(
-          //        {
-          //           index: 0,
-          //           actions: [
-          //             NavigationActions.navigate({ routeName: backScr })
-          //           ]
-          //         }));
-          const {param} =this.props.navigation.state.params;
-          // //console.log('aaaa',backScr);
-          this.props.navigation.navigate(backScr,param);
-          //this.props.navigation.setParams({ refresh})
-          // DeviceEventEmitter.addListener('onGoBack', {refresh:'ok'})
-          // this.props.navigation.goBack(null);
-        }else
-          this.props.navigation.navigate('MainScr');
+        if(params.backScr!==undefined) navigate('MainScr');
+        else {
+          DeviceEventEmitter.emit('goback',  {isLogin:true})
+          goBack();
+        }
+        
       }
     })
   }
@@ -162,8 +145,9 @@ export default class LoginScreen extends Component {
     } = styles;
     //console.log('this.props.navigation',this.props.navigation.state.params);
     const {lang,disable} = this.state;
-    const {navigate, goBack} = this.props.navigation;
-    const {backScr} = this.props.navigation.state.params;
+    const {navigate, goBack, state} = this.props.navigation;
+    //console.log('state.params',state.params);
+    //const {backScr} = this.props.navigation.state.params;
     return (
       <View style={container}>
         <Image source={bgMap} style={bgImg} />
@@ -203,7 +187,7 @@ export default class LoginScreen extends Component {
                     <Text style={[rememberClass,forgotpwd]}>{lang.forgot_pwd}</Text>
                     </TouchableOpacity>
               </View>
-              <TouchableOpacity disabled={disable} onPress={()=>{this.callLogin(backScr)}}>
+              <TouchableOpacity disabled={disable} onPress={()=>{this.callLogin()}}>
               <Text style={[btn,colorPress]}>{`${lang.login}`.toUpperCase()}</Text>
               </TouchableOpacity>
               <View style={[btnWrapSoci,mrgTop]}>

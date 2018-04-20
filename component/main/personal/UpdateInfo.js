@@ -23,10 +23,8 @@ import locationIC from '../../../src/icon/ic-create/ic-location.png';
 import descriptionIC from '../../../src/icon/ic-create/ic-description.png';
 import sortDownIC from '../../../src/icon/ic-sort-down.png';
 const {width,height} = Dimensions.get('window');
+import {hasNumber} from '../../libs';
 
-function hasNumber(myString) {
-  return /\d/.test(myString);
-}
 
 export default class UpdateInfo extends Component {
   constructor(props){
@@ -180,7 +178,7 @@ export default class UpdateInfo extends Component {
           <View style={headCatStyle}>
               <View style={headContent}>
                   <TouchableOpacity onPress={()=>this.props.closeModal()}>
-                  <Image source={arrowLeft} style={{width:16, height:16,marginTop:5}} />
+                  <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                   </TouchableOpacity>
                     <Text style={titleCreate}>{labelTitle.toUpperCase()} </Text>
                   <TouchableOpacity onPress={()=>this.updateUser()}>

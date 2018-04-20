@@ -21,12 +21,6 @@ import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
 import sortDownIC from '../../src/icon/ic-sort-down.png';
 import upDD from '../../src/icon/ic-white/ic-dropdown_up.png';
 
-//import logoTop from '../../src/icon/ic-white/Logo-ngang.png';
-
-// function remove(array, element) {
-//     const index = array.indexOf(element);
-//     array.splice(index, 1);
-// }
 export default class ListProductBS extends Component {
   constructor(props) {
     super(props);
@@ -126,7 +120,7 @@ export default class ListProductBS extends Component {
       <View style={headCatStyle}>
           <View style={headContent}>
               <TouchableOpacity onPress={()=>goBack()}>
-              <Image source={arrowLeft} style={{width:16, height:16,marginTop:5}} />
+              <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
               </TouchableOpacity>
                 <Text style={titleCreate}> {`${cat_name}`.toUpperCase()} </Text>
               <View></View>

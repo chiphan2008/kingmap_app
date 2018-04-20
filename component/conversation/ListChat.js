@@ -11,10 +11,8 @@ import connectIC from '../../src/icon/ic-connect.png';
 import arrowNextIC from '../../src/icon/ic-arrow-next.png';
 import closeIC from '../../src/icon/ic-close.png';
 import arrowPreviewIC from '../../src/icon/ic-arrow-preview.png';
+import {checkUrl} from '../libs';
 
-function checkUrl(url){
-  return url.indexOf('http')!=-1;
-}
 export default class ListChat extends Component {
   constructor(props) {
     super(props);

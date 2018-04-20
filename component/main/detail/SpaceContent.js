@@ -31,20 +31,20 @@ export default class SpaceContent extends Component {
       rowFlex,titleSpace,rowFlexImg,
       colorNumPP,sizeTitle,spaceContent,imgSpace,
     } = styles;
-    const {listImgSpace,listImgMenu,listImgVideo,idContent} = this.props;
+    const {listImgSpace,listImgMenu,listImgVideo,idContent,lang} = this.props;
     const {navigate} = this.props.navigation;
     const {showImgSpace,showImageMenu,index} = this.state;
 
     return (
       <View style={spaceContent}>
           <View style={titleSpace}>
-              <Text style={[colorNumPP,sizeTitle]}>KHÔNG GIAN ({listImgSpace.length})</Text>
+              <Text style={[colorNumPP,sizeTitle]}>{lang.space.toUpperCase()} ({listImgSpace.length})</Text>
               <TouchableOpacity
               onPress={()=>navigate('ListIMGScr',{
                 idContent,
                 spaceTab:'active',menuTab:'',videoTab:''})}
               >
-              <Text>Xem tất cả >></Text>
+              <Text>{lang.view_all} >></Text>
               </TouchableOpacity>
           </View>
           <FlatList
@@ -74,13 +74,13 @@ export default class SpaceContent extends Component {
           </Modal>
 
           <View style={titleSpace}>
-              <Text style={[colorNumPP,sizeTitle]}>MENU ({listImgMenu.length})</Text>
+              <Text style={[colorNumPP,sizeTitle]}>{lang.image.toUpperCase()} ({listImgMenu.length})</Text>
               <TouchableOpacity
               onPress={()=>navigate('ListIMGScr',{
                 idContent,
                 spaceTab:'',menuTab:'active',videoTab:''})}
               >
-              <Text>Xem tất cả >></Text>
+              <Text>{lang.view_all} >></Text>
               </TouchableOpacity>
           </View>
 
@@ -115,7 +115,7 @@ export default class SpaceContent extends Component {
               onPress={()=>navigate('ListIMGScr',{
                 idContent, spaceTab:'',menuTab:'',videoTab:'active'})}
               >
-              <Text>Xem tất cả >></Text>
+              <Text>{lang.view_all} >></Text>
               </TouchableOpacity>
           </View>
 
@@ -128,10 +128,17 @@ export default class SpaceContent extends Component {
              renderItem={({item,index}) => (
                <View style={rowFlexImg}>
                  <WebView
-                  startInLoadingState
-                   source={{uri: item}}
-                   style={imgSpace}
-                   javaScriptEnabled
+
+                    source={{uri: `${item}`}}
+                    style={imgSpace}
+                    javaScriptEnabled
+                    domStorageEnabled
+                    automaticallyAdjustContentInsets={false}
+                    decelerationRate="normal"
+                    //onNavigationStateChange={this.onNavigationStateChange}
+                    //onShouldStartLoadWithRequest={this.onShouldStartLoadWithRequest}
+                    startInLoadingState={true}
+                    scalesPageToFit={true}
                  />
                </View>
           )} />

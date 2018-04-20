@@ -17,11 +17,7 @@ import LogoHome from '../../src/icon/ic-home/Logo-home.png';
 import FacebookColor from '../../src/icon/Facebook_color.png';
 import GoogleColor from '../../src/icon/Google_color.png';
 const {height, width} = Dimensions.get('window');
-
-function isEmail(text){
-  let email = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/ ;
-  return email.test(text);
-}
+import {isEmail} from '../libs';
 
 export default class ForgotPasswordScreen extends Component {
   constructor(props) {

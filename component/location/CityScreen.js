@@ -29,12 +29,37 @@ export default class CityScreen extends Component {
         name: "Chọn tỉnh thành phố",
         id:-1,
       },
+      latitude:'',longitude:'',
+      position:{}
     };
     checkLocation().then(e=>{
       if(e.idCountry===undefined){
         this.getCountry();
+        this.getLoc();
       }
     });
+
+  }
+
+  getLoc(){
+    try{
+        navigator.geolocation.getCurrentPosition(
+            ({coords}) => {
+              const {latitude,longitude} = coords
+              getApi(`${global.url}${'get-position?location='}${latitude},${longitude}`)
+              .then(arr => {
+                setTimeout(()=>{
+                  //console.log(latitude,longitude,arr);
+                  com.setState({ latitude,longitude,position: arr.data });
+                },3000)
+              }).catch(err => console.log(err));
+            },
+            (error) => {},
+            {enableHighAccuracy: true}
+          );
+    } catch (error) {
+      //console.log(error);
+    }
   }
 
   onSelectCountry(value, label) {
@@ -54,26 +79,38 @@ export default class CityScreen extends Component {
       }
     });
   }
-  saveLocation(){
-    //console.log('this.state.slCountry.id',this.state.slCountry.id,this.state.slCity.id)
-    if(this.state.slCountry.id !==-1 && this.state.slCity.id !==-1){
-      AsyncStorage.setItem('@LocationKey:key', JSON.stringify({
-                idCountry:this.state.slCountry.id,
-                nameCountry:this.state.slCountry.name,
-                idCity:this.state.slCity.id,
-                nameCity:this.state.slCity.name,
-            }));
-      if(this.state.slCountry.id==1){
-        AsyncStorage.setItem('@MyLanguage:key',JSON.stringify({
-          valueLang:'vn',labelLang :'VIE'
-        }));
-      }else{
-        AsyncStorage.setItem('@MyLanguage:key',JSON.stringify({
-          valueLang:'en',labelLang :'ENG'
-        }));
-      }
 
-      this.props.navigation.navigate('MainScr');
+  saveLocation(){
+    if(this.state.slCountry.id !==-1 && this.state.slCity.id !==-1){
+      const {slCountry,slCity,latitude,longitude,position} = com.state;
+      AsyncStorage.setItem('@LocationKey:key', JSON.stringify({
+                idCountry: slCountry.id,
+                nameCountry: slCountry.name,
+                idCity: slCity.id,
+                nameCity: slCity.name,
+                latitude,longitude,position
+            })).then(()=>{
+              if(this.state.slCountry.id==1){
+                AsyncStorage.setItem('@MyLanguage:key',JSON.stringify({
+                  valueLang:'vn',labelLang :'VIE'
+                })).then(()=>{
+                  setTimeout(()=>{
+                    this.props.screenProps();
+                  },1000)
+                });
+              }else{
+                AsyncStorage.setItem('@MyLanguage:key',JSON.stringify({
+                  valueLang:'en',labelLang :'ENG'
+                })).then(()=>{
+                  setTimeout(()=>{
+                    this.props.screenProps();
+                  },1000)
+                });
+              }
+
+          });
+
+
     }
   }
   getCountry(){

@@ -37,7 +37,8 @@ export default class FadeView extends Component {
   render() {
     //console.log("this.props.fadeview=",util.inspect(this.props.navigation,true,null));
     let { fadeAnimOut, fadeAnimIn } = this.state;
-    const {navigation} = this.props;
+    const {navigation,screenProps,} = this.props;
+    //console.log('FV',this.props);
     return (
       <View>
       <Animated.View                 // Special animatable View
@@ -65,7 +66,7 @@ export default class FadeView extends Component {
             }}
           >
 
-            <CityScreen navigation={navigation}/>
+            <CityScreen screenProps={screenProps}  navigation={navigation}/>
           </Animated.View>
 
       </View>

@@ -27,20 +27,9 @@ import likeFullIcon from '../../../src/icon/ic-like-full.png';
 import checkIC from '../../../src/icon/ic-green/ic-check.png';
 import arrowLeft from '../../../src/icon/ic-white/arrow-left.png';
 import logoTop from '../../../src/icon/ic-white/Logo-ngang.png';
+import topIC from '../../../src/icon/ic-top.png';
+import {remove,removeText} from '../../libs';
 
-function remove(array, element) {
-    const index = array.indexOf(element);
-    array.splice(index, 1);
-    array.toString()
-}//.toString()
-function removeText(str,element){
-  var array = str.split(',');
-  remove(array, element);
-  //remove(array,'Dịch vụ');
-  array.toString();
-  //console.log(array);
-  return array.toString();
-}
 var timeout;
 export default class ListLocation extends Component {
   constructor(props) {
@@ -81,6 +70,7 @@ export default class ListLocation extends Component {
       user_id:0,
       isLogin:false,
       isLoad:true,
+      scrollToTop:false,
     }
     this.refresh();
 
@@ -144,7 +134,7 @@ export default class ListLocation extends Component {
     if(id_sub!==null) url += `${'&subcategory='}${id_sub}`;
     id_serv = id_serv.replace('-1,','');
     if(id_serv!=='' && id_serv!=='-1'){
-      this.setState({id_serv});
+
       url += `${'&service='}${id_serv}`;
     }
     console.log('-----url-----',url);
@@ -179,17 +169,17 @@ export default class ListLocation extends Component {
     navigator.geolocation.getCurrentPosition((position) => {
       //console.log('position');
             latlng = `${position.coords.latitude}${','}${position.coords.longitude}`;
-            _this.getCategory(id,latlng);
             _this.setState({
               curLocation : {
                 latlng:latlng,
               },
-
               curLoc:{
                 latlng:latlng,
                 latitude:`${position.coords.latitude}`,
                 longitude:`${position.coords.longitude}`,
               }
+            },()=>{
+              _this.getCategory(id,latlng);
             });
            },
            (error) => {
@@ -202,8 +192,10 @@ export default class ListLocation extends Component {
                    latitude:`${e.latitude}`,
                    longitude:`${e.longitude}`,
                  },
+               },()=>{
+                 _this.getCategory(id,latlng);
                });
-               _this.getCategory(id,latlng);
+
              });
              //console.log('ip',ip.latitude);
           },
@@ -245,13 +237,14 @@ export default class ListLocation extends Component {
   }
 
   render() {
-    console.log('pullToRefresh',this.state.pullToRefresh);
-    const { keyword,lang,idDist,id_sub,id_serv,isRefresh,listData } = this.state;
-    const { goBack,navigate } = this.props.navigation;
+    //console.log('pullToRefresh',this.state.pullToRefresh);
+    const { keyword,lang,idDist,id_sub,id_serv,isRefresh,listData,scrollToTop } = this.state;
+    const { goBack,navigate,state } = this.props.navigation;
     const {idCat,sub_cat,serv_items} = this.props.navigation.state.params;
     //console.log('lang',lang);
+    //console.log('state.key-ListLoc',state.key);
     const {
-      container,
+      container,btnScrollTop,
       headStyle, filterFrame,wrapFilter,headContent,imgLogoTop,
       inputSearch,show,hide,colorTextPP,colorNumPP,
       selectBoxBuySell,widthLoc,optionListLoc,OptionItemLoc,
@@ -261,16 +254,22 @@ export default class ListLocation extends Component {
       padCreate,overLayout,imgInfo,overLayoutLoc,shadown,overLayoutSer,listCatOver,listOverService,colorText,
       favIC,marRight,
     } = styles;
-    //console.log('lang',this.props.lang);
+    //console.log('this.props.navigation',this.props.navigation);
     return (
       <View style={container}>
-
+      <TouchableOpacity style={[btnScrollTop,scrollToTop ? show : hide ]}
+      onPress={()=>{
+        this.refs.listPro.scrollToOffset({x: 0, y: 0, animated: true});
+        this.setState({scrollToTop:false});
+      }}>
+      <Image source={topIC} style={{width:40,height:40}} />
+      </TouchableOpacity>
       <View style={headStyle}>
           <View style={headContent}>
           <TouchableOpacity
           onPress={()=>goBack()}
           >
-          <Image source={arrowLeft} style={{width:16, height:16,marginTop:5}} />
+          <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
           </TouchableOpacity>
               <Image source={logoTop} style={imgLogoTop} />
               <View></View>
@@ -326,6 +325,15 @@ export default class ListLocation extends Component {
 
         <View style={[wrapListLoc,padLoc]}>
               <FlatList
+                     ref="listPro"
+                     onScroll={(e) => {
+                       if(e.nativeEvent.velocity.y < 0 ){
+                         this.setState({scrollToTop: false});
+                       }else {
+                         this.setState({scrollToTop: true});
+                       }
+                       //
+                     }}
                      style={{marginBottom:Platform.OS==='ios' ? 130 : 150}}
                      ListEmptyComponent={<Text>Loading ...</Text>}
                      refreshing={isRefresh}
@@ -336,7 +344,7 @@ export default class ListLocation extends Component {
                      renderItem={({item}) => (
                        <View style={flatlistItemCat}>
                            <TouchableOpacity
-                           onPress={()=>navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc:this.state.curLoc,lang:lang.lang})}
+                           onPress={()=>navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc:this.state.curLoc,lang:lang.lang,state_key:state.key})}
                            >
                              <Image style={imgFlatItem} source={{uri:`${global.url_media}${item.avatar}`}} />
                            </TouchableOpacity>
@@ -450,45 +458,45 @@ export default class ListLocation extends Component {
               <View  style={listOverService}>
               <TouchableOpacity
                  onPress={()=>{
-                  let idServ;
+                  let idServ = this.state.id_serv;
                   let lblArr = this.state.labelSer;
                   if(lblArr==='Dịch vụ'){ lblArr =`${item.name}`;}else {
                     lblArr =`${this.state.labelSer}`;
                   }
-                  //clearTimeout(timeout);
-                  console.log('lblArr1',lblArr);
-                  const arr = JSON.parse(`[${this.state.id_serv}]`);
-                  if(this.state.id_serv==='-1'){ idServ=`-1,${item.id}`; }else{
+                  clearTimeout(timeout);
+                  //console.log('lblArr1',lblArr);
+                  const arr = JSON.parse(`[${idServ}]`);
+                  if(idServ==='-1'){ idServ=`-1,${item.id}`; }else{
                     if(arr.includes(item.id)){
                       remove(arr, item.id);idServ = arr.toString();
 
                       if(this.state.showServie[`${item.id}`]===item.id) lblArr = removeText(lblArr,item.name);
                       if(idServ==='') {idServ='-1,';}
-                      console.log('lblArr2',lblArr);
                       }else {
                       idServ = `${this.state.id_serv},${item.id}`;
                       lblArr =`${this.state.labelSer},${item.name}`;
-                      console.log(this.state.showServie);
-                      console.log(idServ);
-                      console.log('lblArr3',lblArr);
+                      //console.log('lblArr3',lblArr);
                     }
-                    //lblArr =`${this.state.labelSer},${item.name}`;
 
                   }
                   if(lblArr==='') lblArr='Dịch vụ';
-                  console.log('lblArr4',lblArr);
-
-                  this.getContentByDist(this.state.idDist,this.state.id_sub,idServ);
-
-
+                  //console.log('lblArr4',lblArr);
                   if(this.state.showServie[`${item.id}`]!==item.id)
                     this.setState({
-                      showServie: Object.assign(this.state.showServie,{[item.id]:item.id}),labelSer:lblArr
+                      showServie: Object.assign(this.state.showServie,{[item.id]:item.id}),labelSer:lblArr,id_serv:idServ
+                    },()=>{
+                      timeout = setTimeout(()=>{
+                        this.getContentByDist(this.state.idDist,this.state.id_sub,idServ);
+                      },2000)
                     });
                     //if(`${this.state.labelSer}`.includes(labelServ)) this.setState({labelSer:labelServ});
                   else
                     this.setState({
-                      showServie: Object.assign(this.state.showServie,{[item.id]:!item.id}),labelSer:lblArr
+                      showServie: Object.assign(this.state.showServie,{[item.id]:!item.id}),labelSer:lblArr,id_serv:idServ
+                    },()=>{
+                      timeout = setTimeout(()=>{
+                        this.getContentByDist(this.state.idDist,this.state.id_sub,idServ);
+                      },2000)
                     });
                   }}
                   style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',padding:15}}

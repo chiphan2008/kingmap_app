@@ -2,8 +2,8 @@
 
 import React, { Component } from 'react';
 import {
-  View,Text,Modal,TouchableOpacity,Image,
-  Dimensions,ScrollView,
+  View,Text,TouchableOpacity,Image,
+  Dimensions,ScrollView,Alert,
 } from 'react-native';
 
 import getApi from '../../api/getApi';
@@ -47,7 +47,14 @@ export default class ListCheckin extends Component {
     })
     .catch(err => console.log(err));
   }
-
+  confirmDel(id){
+    const {lang} = this.props;
+    Alert.alert(lang.notify,lang.confirm_loc_del,[
+      {text: lang.cancel, style: 'cancel'},
+      {text: lang.confirm, onPress: () => this.delCheckin(id)},
+    ],
+   { cancelable: false } );
+  }
   delCheckin(id){
     const url = `${global.url}${'user/delete-checkin/'}${id}`;
     getApi(url)
@@ -60,23 +67,17 @@ export default class ListCheckin extends Component {
     const { navigation,lang,curLoc } = this.props;
     //console.log('curLoc',curLoc);
     const {
-      container,headCatStyle,headContent,titleCreate,
+      wrapSetting,headCatStyle,headContent,titleCreate,
       titleTab,titleActive,listCreate,widthLblCre,show,hide,
       imgInfo,wrapInputCreImg,marTop,colorTitle,txt,txtTitleOverCat
     } = styles;
     return (
-      <Modal
-      onRequestClose={() => null}
-      transparent
-      animationType={'slide'}
-      visible={this.props.visible}
-      >
 
-        <ScrollView style={[container, this.props.visible ? show : hide]}>
+        <ScrollView style={[wrapSetting, this.props.visible ? show : hide]}>
           <View style={headCatStyle}>
               <View style={headContent}>
                   <TouchableOpacity onPress={()=>{this.props.closeModal();}}>
-                  <Image source={arrowLeft} style={{width:16, height:16,marginTop:5}} />
+                  <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                   </TouchableOpacity>
                     <Text style={titleCreate}>{this.props.labelTitle.toUpperCase()} </Text>
                   <View></View>
@@ -87,11 +88,11 @@ export default class ListCheckin extends Component {
               <View key={e.id}>
                 <View style={{backgroundColor:'#fff'}}>
                   <TouchableOpacity onPress={()=>{
-                      this.props.closeModal()
+                      //this.props.closeModal()
                       navigation.navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang})
                   }}>
                     <TouchableOpacity style={{position:'absolute',top:5,right:5,zIndex:99}}
-                    onPress={()=>this.delCheckin(e.id)}>
+                    onPress={()=>this.confirmDel(e.id)}>
                     <Image source={closeIC} style={{width:20,height:20}} />
                     </TouchableOpacity>
                     <Image source={{uri:`${global.url_media}${e.avatar}`}} style={{width:width,minHeight:200,marginBottom:10}} />
@@ -99,7 +100,7 @@ export default class ListCheckin extends Component {
                     <View style={listCreate}>
                       <View style={{width:width-80}}>
                           <TouchableOpacity onPress={()=>{
-                              this.props.closeModal()
+                              //this.props.closeModal()
                               navigation.navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang})
                           }}>
                             <Text numberOfLines={1} style={txtTitleOverCat}>{e.name}</Text>
@@ -117,7 +118,7 @@ export default class ListCheckin extends Component {
           }
 
       </ScrollView>
-    </Modal>
+
     );
   }
 }

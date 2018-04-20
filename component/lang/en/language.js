@@ -17,6 +17,7 @@ module.exports = {
   classify_location: 'Classify location',
   search:'Search products, services, location ...',
   your_comment:'Your comments ...',
+  notify_comment:'Your comment is awaiting moderation',
   choose_loc:'Select your location',
   choose_create:'Select a kind of place where you want to create',
   choose_area:'Choose area',
@@ -89,6 +90,13 @@ module.exports = {
   opening:'Opening',
   closing:'Closing',
   reopen:'Reopen',
+  space:'Space',
+  image:'Image',
+  comment:'Comment',
+  other_branch:'Other branch',
+  kingmap_suggest:'Kingmap suggest',
+  view_all:'View all',
+  not_found:'Not found ...',
 
   lang:'en',
 };

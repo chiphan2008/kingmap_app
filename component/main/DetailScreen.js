@@ -1,8 +1,13 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import {Platform, ScrollView, View, Text, StyleSheet, Dimensions, Image, TextInput, TouchableOpacity} from 'react-native';
+import {
+  Platform, ScrollView, View, Text, StyleSheet,
+  Dimensions, Image, TextInput, TouchableOpacity,
+  DeviceEventEmitter
+} from 'react-native';
 const {height, width} = Dimensions.get('window');
+
 
 import global from '../global';
 import getApi from '../api/getApi';
@@ -26,11 +31,13 @@ import checkinIC from '../../src/icon/ic-white/ic-check-in.png';
 
 import {Select, Option} from "react-native-chooser";
 
+
+
 export default class DetailScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      lang: this.props.navigation.state.params.lang==='vn' ? lang_vn : lang_en,
+      lang:lang_vn,
       region:{
         latitude:10.7818513,
         longitude: 106.6769368,
@@ -38,7 +45,7 @@ export default class DetailScreen extends Component {
         longitudeDelta: 0.011121,
         latlng: '10.7818513,106.6769368',
       },
-      curLoc:this.props.navigation.state.params.curLoc ,
+      curLoc:this.props.navigation.state.params.curLoc || {},
       listData:{
         image_space:[],
         image_menu:[],
@@ -61,6 +68,9 @@ export default class DetailScreen extends Component {
       liked:0,
       vote:0,
       hasLiked:0,
+      hasSaveLike:0,
+      hasCheckin:0,
+      hasCollection:[],
       scroll:true,
       savelike:false,
       collection:false,
@@ -72,9 +82,9 @@ export default class DetailScreen extends Component {
 
 
   getContent(idContent){
-    let latlng = this.props.navigation.state.params.curLoc.latlng;
+    const {latitude,longitude} = this.props.navigation.state.params.curLoc;
     //if(latlng===undefined) latlng='10.7818513,106.6769368';
-    const url = `${global.url}${'content/'}${idContent}${'?location='}${latlng}`;
+    const url = `${global.url}${'content/'}${idContent}${'?location='}${latitude},${longitude}`;
     //console.log('url',url);
     getApi(url)
     .then(arrData => {
@@ -84,6 +94,9 @@ export default class DetailScreen extends Component {
           liked: arrData.data.content.like,
           vote: arrData.data.content.vote,
           hasLiked: arrData.data.content.has_like,
+          hasSaveLike: arrData.data.content.has_save_like,
+          hasCheckin: arrData.data.content.has_checkin,
+          hasCollection: arrData.data.content.has_collection,
           region:{
             latitude: Number(arrData.data.content.lat),
             longitude: Number(arrData.data.content.lng),
@@ -97,6 +110,9 @@ export default class DetailScreen extends Component {
   }
 
   componentWillMount(){
+    DeviceEventEmitter.addListener('goback', (e)=>{
+      if(e.isLogin) this.refresh();
+    })
     this.getContent(this.props.navigation.state.params.idContent);
   }
 
@@ -110,10 +126,11 @@ export default class DetailScreen extends Component {
     }
   }
   requestLogin(){
+    const {state,navigate} = this.props.navigation;
     const {idContent,lang,curLoc,lat,lng} = this.props.navigation.state.params;
-    var _this = this;
-    if(_this.state.isLogin===false){
-      _this.props.navigation.navigate('LoginScr',{backScr:'DetailScr',param:{idContent,lang,curLoc,lat,lng}});
+    //console.log('state.key-Detail',state.key);
+    if(this.state.isLogin===false){
+      navigate('LoginScr');
     }
   }
   refresh(){
@@ -131,6 +148,8 @@ export default class DetailScreen extends Component {
       {this.setState({savelike:true,scroll:false});
         switch (routing) {
           case 'like':
+          //console.log('e.data.is_like',e.data.is_like);
+
               this.setState({liked:e.data.like,hasLiked:e.data.is_like});
               if(e.data.is_like===1){
                 this.setState({notifyInfo:'Đã thích'});
@@ -145,26 +164,30 @@ export default class DetailScreen extends Component {
               }
             break;
           case 'save-like':
+              //hasCheckin
+              //console.log('e.data.is_like',e.data.is_like);
               if(e.data.is_like===1){
-                this.setState({notifyInfo:'Đã lưu vào yêu thích'});
+                this.setState({notifyInfo:'Đã lưu vào yêu thích',hasSaveLike:1});
                 setTimeout(()=>{
                   this.setState({savelike:false,scroll:true})
                 },1500)
               }else{
-                this.setState({notifyInfo:'Đã bỏ yêu thích'});
+                this.setState({notifyInfo:'Đã bỏ yêu thích',hasSaveLike:0});
                 setTimeout(()=>{
                   this.setState({savelike:false,scroll:true})
                 },1500)
               }
             break;
           case 'checkin':
+          //console.log('e.data.is_like',e.data.is_like);
+
               if(e.data.is_like===1){
-                this.setState({notifyInfo:'Checkin thành công'});
+                this.setState({notifyInfo:'Checkin thành công',hasCheckin:1});
                 setTimeout(()=>{
                   this.setState({savelike:false,scroll:true})
                 },1500)
               }else{
-                this.setState({notifyInfo:'Đã bỏ checkin'});
+                this.setState({notifyInfo:'Đã bỏ checkin',hasCheckin:0});
                 setTimeout(()=>{
                   this.setState({savelike:false,scroll:true})
                 },1500)
@@ -175,13 +198,20 @@ export default class DetailScreen extends Component {
       }
     );
   }
+  backList(){
+    setTimeout(()=>{
+      DeviceEventEmitter.emit('detailBack');
+    },1500)
 
+    this.props.navigation.goBack();
+  }
   render() {
-    //console.log('this.props.navigation',this.props.navigation.state.params);
+    //console.log('this.props.navigation',this.props.navigation.state.params.curLoc);
 
     const {navigate} = this.props.navigation;
-    const {lang,user_id,isLogin,scroll} = this.state;
-    //console.log('scroll',scroll);
+    //console.log('this.props.navigation',this.props.navigation);
+    const {lang,user_id,isLogin,scroll,hasCheckin,hasSaveLike,listData,hasCollection} = this.state;
+    //console.log('hasCheckin,hasSaveLike',listData.content.has_checkin);
     const { idContent,curLoc } = this.props.navigation.state.params;
     //console.log('lang',lang);
     const {
@@ -196,9 +226,13 @@ export default class DetailScreen extends Component {
     } = styles;
 
     return (
-      <ScrollView  scrollEnabled={scroll} style={container}>
+      <ScrollView onLayout={()=>{this.setState({lang: this.props.navigation.state.params.lang ==='vn' ? lang_vn : lang_en})}} scrollEnabled={scroll} style={container}>
         <Header
         lang={lang}
+        backList={this.backList.bind(this)}
+        hasCheckin={hasCheckin}
+        hasSaveLike={hasSaveLike}
+        hasCollection={hasCollection}
         navigation={this.props.navigation}
         idContent={idContent}
         userId={user_id}
@@ -207,7 +241,7 @@ export default class DetailScreen extends Component {
         callCollect={this.callCollect.bind(this)}
         />
         <Content
-        listContent={this.state.listData.content}
+        listContent={listData.content}
         userId={user_id}
         isLogin={isLogin}
         requestLogin={this.requestLogin.bind(this)}
@@ -217,20 +251,21 @@ export default class DetailScreen extends Component {
         hasLiked={this.state.hasLiked}
         />
         <SpaceContent
+        lang={lang}
         navigation={this.props.navigation}
         idContent={idContent}
-        listImgSpace={this.state.listData.image_space}
-        listImgMenu={this.state.listData.image_menu}
-        listImgVideo={this.state.listData.link_video}
+        listImgSpace={listData.image_space}
+        listImgMenu={listData.image_menu}
+        listImgVideo={listData.link_video}
         />
 
         <Services
-        listServices={this.state.listData.list_service}
-        serviceContent={this.state.listData.service_content}
+        listServices={listData.list_service}
+        serviceContent={listData.service_content}
         />
 
         <MapContent
-        distance={Number.parseFloat(this.state.listData.content.line).toFixed(0)}
+        distance={Number.parseFloat(listData.content.line).toFixed(0)}
         curLoc={this.state.curLoc}
         region={this.state.region}
         />
@@ -238,7 +273,7 @@ export default class DetailScreen extends Component {
 
         <View style={wrapContentDetail}>
           <View style={titleSpace}>
-              <Text style={[colorNumPP,sizeTitle]}>BÌNH LUẬN ({this.state.listData.content._comments.length})</Text>
+              <Text style={[colorNumPP,sizeTitle]}>{lang.comment.toUpperCase()} ({listData.content._comments.length})</Text>
           </View>
 
           <Comments
@@ -246,16 +281,16 @@ export default class DetailScreen extends Component {
           idContent={idContent}
           userId={user_id}
           requestLogin={this.requestLogin.bind(this)}
-          listComment={this.state.listData.content._comments}
+          listComment={listData.content._comments}
           />
 
           <View style={titleSpace}>
-              <Text style={[colorNumPP,sizeTitle]}>CHI NHÁNH KHÁC</Text>
+              <Text style={[colorNumPP,sizeTitle]}>{lang.other_branch.toUpperCase()}</Text>
           </View>
           <OtherBranch
           lang={lang}
           curLoc={this.state.curLoc}
-          listGroup={this.state.listData.list_group}
+          listGroup={listData.list_group}
           navigation={this.props.navigation}
           />
 
@@ -265,7 +300,7 @@ export default class DetailScreen extends Component {
         <Suggest
         lang={lang}
         curLoc={this.state.curLoc}
-        listSuggest={this.state.listData.list_suggest}
+        listSuggest={listData.list_suggest}
         navigation={this.props.navigation}
         />
 
@@ -278,10 +313,13 @@ export default class DetailScreen extends Component {
         </TouchableOpacity>
 
         <Collection
+        hasCollection={(hasCollection)=>this.setState({hasCollection})}
         idContent={idContent}
         userId={user_id}
         visible={this.state.collection}
-        closeModal={()=>this.setState({collection:false,scroll:true})}
+        closeModal={(has_collection)=>this.setState({collection:false,scroll:true,hasCollection: has_collection ? [1] : []},()=>{
+          //console.log('has_collection',has_collection);
+        })}
          />
 
       </ScrollView>

@@ -138,7 +138,7 @@ export default class Collection extends Component {
           <View style={headCatStyle}>
               <View style={headContent}>
                   <TouchableOpacity onPress={()=>{this.props.closeModal();}}>
-                  <Image source={arrowLeft} style={{width:16, height:16,marginTop:5}} />
+                  <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                   </TouchableOpacity>
                     <Text style={titleCreate}>{this.props.labelTitle.toUpperCase()} </Text>
                   <View></View>
@@ -154,12 +154,12 @@ export default class Collection extends Component {
                            <View style={isFocus && showInput[e.id] ? show : hide}>
                              <TextInput underlineColorAndroid='transparent' autoFocus={isFocus}
                                onSubmitEditing={(event) => {}}
-                               style={{padding:5,fontSize:18,maxWidth:width-(width/3)}} value={name_coll.toUpperCase()}
+                               style={{padding:5,fontSize:18,maxWidth:width-(width/3)}} value={name_coll}
                                onChangeText={(name_coll) => this.setState({name_coll})}
                               />
                            </View>
                            <View style={showInput[e.id] ? hide : show}>
-                           <Text numberOfLines={1} style={txtTitleOverCat}>{e.name.toUpperCase()} ({e._contents.length})</Text>
+                           <Text numberOfLines={1} style={txtTitleOverCat}>{e.name} ({e._contents.length})</Text>
                            </View>
                           <TouchableOpacity style={{padding:5}}
                           onPress={()=>{

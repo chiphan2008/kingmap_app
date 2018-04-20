@@ -7,6 +7,7 @@ import RNSettings from 'react-native-settings';
 const {height, width} = Dimensions.get('window');
 
 import getApi from '../../api/getApi';
+//import reqLatLng from '../../api/reqLatLng';
 import getLanguage from '../../api/getLanguage';
 import accessLocation from '../../api/accessLocation';
 import getLocationByIP from '../../api/getLocationByIP';
@@ -14,6 +15,7 @@ import getLocationByIP from '../../api/getLocationByIP';
 import global from '../../global';
 import loginServer from '../../api/loginServer';
 import checkLogin from '../../api/checkLogin';
+import checkLocation from '../../api/checkLocation';
 import lang_vn from '../../lang/vn/language';
 import lang_en from '../../lang/en/language';
 import styles from '../../styles.js';
@@ -33,12 +35,9 @@ import checkDD from '../../../src/icon/ic-gray/ic-check-gray.png';
 import likeDD from '../../../src/icon/ic-gray/ic-like.png';
 import socialDD from '../../../src/icon/ic-gray/ic-social.png';
 import userDD from '../../../src/icon/ic-gray/ic-user.png';
-
 import {Select, Option} from "react-native-chooser";
+import {format_number} from '../../libs';
 
-function format_number(number){
-  return new Intl.NumberFormat('en-IN', { maximumSignificantDigits: 3 }).format(number);
-}
 export default class LocationTab extends Component {
   constructor(props) {
     super(props);
@@ -66,6 +65,8 @@ export default class LocationTab extends Component {
       curLoc:{},
       valSearch:'',
     };
+
+    accessLocation();
     checkLogin().then(e=>{
       //console.log(e);
       if(e.id===undefined){
@@ -75,48 +76,80 @@ export default class LocationTab extends Component {
         this.setState({user_id:e.id,avatar:e.avatar,code_user:e.phone,isLogin:true});
       }
     })
-    this.getLoc();
-    accessLocation();
+
+    //this.getLoc();
     Keyboard.dismiss();
     arrLang = [{name:'VIE',v:'vn'},{name:'ENG',v:'en'}];
   }
-
   getLoc(){
-    navigator.geolocation.getCurrentPosition(
-          (position) => {
-            //console.log('position',position);
-            const latlng = `${position.coords.latitude}${','}${position.coords.longitude}`;
+    checkLocation().then(e=>{
+      if(e.latitude!==undefined){
+        const {latitude,longitude} = e;
+        this.setState({
+          curLoc: {
+            lat:latitude,
+            lng:longitude,
+            latlng:`${latitude},${longitude}`,
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.001,
+            latitude, longitude,
+          }})
+      }else {
+        navigator.geolocation.getCurrentPosition(
+          ({coords}) => {
+            const {latitude, longitude} = coords
             this.setState({
-              curLoc : {
-                latitude:position.coords.latitude,
-                longitude: position.coords.longitude,
-                lat:position.coords.latitude,
-                lng: position.coords.longitude,
-                latitudeDelta:  0.008757,
-                longitudeDelta: 0.010066,
-                latlng:latlng,
+              curLoc: {
+                latitude,longitude,
+                lat:latitude,lng:longitude,
+                latlng:`${latitude},${longitude}`,
+                latitudeDelta: 0.005,
+                longitudeDelta: 0.001,
               }
-            });
-           },
-           (error) => {
-            getLocationByIP().then((e) => {
-              //console.log('e',e);
-                this.setState({
-                  curLoc : {
-                    latitude:e.latitude,
-                    longitude: e.longitude,
-                    lat:e.latitude,
-                    lng: e.longitude,
-                    latitudeDelta:  0.008757,
-                    longitudeDelta: 0.010066,
-                    latlng:`${e.latitude}${','}${e.longitude}`,
-                  }
-                });
-            });
+            })
           },
-          {enableHighAccuracy: true, timeout: 20000, maximumAge: 10000}
-    );
+          (error) => {/*alert('Error: Are location services on?')*/},
+          {enableHighAccuracy: true}
+        );
+      }
+    })
   }
+  // getLoc(){
+  //   navigator.geolocation.getCurrentPosition(
+  //         (position) => {
+  //           //console.log('position',position);
+  //           const latlng = `${position.coords.latitude}${','}${position.coords.longitude}`;
+  //           this.setState({
+  //             curLoc : {
+  //               latitude:position.coords.latitude,
+  //               longitude: position.coords.longitude,
+  //               lat:position.coords.latitude,
+  //               lng: position.coords.longitude,
+  //               latitudeDelta:  0.008757,
+  //               longitudeDelta: 0.010066,
+  //               latlng:latlng,
+  //             }
+  //           });
+  //          },
+  //          (error) => {
+  //           getLocationByIP().then((e) => {
+  //             //console.log('e',e);
+  //               this.setState({
+  //                 curLoc : {
+  //                   latitude:e.latitude,
+  //                   longitude: e.longitude,
+  //                   lat:e.latitude,
+  //                   lng: e.longitude,
+  //                   latitudeDelta:  0.008757,
+  //                   longitudeDelta: 0.010066,
+  //                   latlng:`${e.latitude}${','}${e.longitude}`,
+  //                 }
+  //               });
+  //           });
+  //         },
+  //         {enableHighAccuracy: true, timeout: 20000, maximumAge: 10000}
+  //   );
+  // }
 
   requestLogin(){
     if(this.state.isLogin===false){
@@ -126,6 +159,7 @@ export default class LocationTab extends Component {
 
   getLang(){
     getLanguage().then((e) =>{
+      //console.log('lang.Location',e);
       if(e!==null){
           this.setState({
             selectLang:{
@@ -134,7 +168,7 @@ export default class LocationTab extends Component {
             }
           });
           e.valueLang==='vn' ?  this.setState({lang : lang_vn}) : this.setState({lang : lang_en});
-          this.getCategory(this.state.selectLang.valueLang);
+          this.getCategory(e.valueLang);
      }
     });
   }
@@ -153,32 +187,53 @@ export default class LocationTab extends Component {
     });
 
     setTimeout(() => {
-        this.props.screenProps(value);
-    }, 2000);
+        this.props.screenProps();
+    }, 1000);
   }
   getCategory(lang){
     getApi(global.url+'categories?language='+lang+'&limit=100')
     .then(arrCategory => {
       //console.log('arrCategory',arrCategory);
-        this.setState({ listCategory: arrCategory.data });
+      setTimeout(() => {
+          this.setState({ listCategory: arrCategory.data },()=>{
+            this.getListStatus();
+          });
+      }, 500);
     })
     .catch(err => console.log(err));
   }
   getListStatus(){
     getApi(global.url+'get-static')
     .then(arrData => {
+      setTimeout(()=>{
         this.setState({ listStatus: arrData.data });
-    })
-    .catch(err => console.log(err));
+      },500)
+    }).catch(err => console.log(err));
   }
   componentWillMount() {
-    //console.log('Location');
-
-      this.getLang();
-      this.getListStatus();
-      //this.getCategory(this.state.selectLang.valueLang);
+    this.getLang();
   }
-
+  componentDidMount(){
+    const {curLoc} = this.state;
+    navigator.geolocation.getCurrentPosition(
+      ({coords}) => {
+        const {latitude, longitude} = coords
+        if(latitude!==curLoc.latitude && curLoc.longitude!==longitude){
+          this.setState({
+            curLoc: {
+              latitude,longitude,
+              lat:latitude,lng:longitude,
+              latlng:`${latitude},${longitude}`,
+              latitudeDelta: 0.005,
+              longitudeDelta: 0.001,
+            }
+          })
+        }
+      },
+      (error) => {/*alert('Error: Are location services on?')*/},
+      {enableHighAccuracy: true}
+    );
+  }
   findNewPoint(x, y, angle, distance) {
       let result = {};
       result.x = Math.round(Math.cos(angle * Math.PI / 180) * distance + x);
@@ -186,10 +241,11 @@ export default class LocationTab extends Component {
       return result;
   }
   render() {
-    console.log('Location');
+    //console.log('Location');
     const {height, width} = Dimensions.get('window');
-    const {navigate} = this.props.navigation;
-    const {listStatus,listCategory} = this.state;
+    const {navigate,state} = this.props.navigation;
+    //console.log('this.props.navigation',this.props.navigation);
+    const {listStatus,listCategory,curLoc} = this.state;
     //console.log("this.props.Hometab=",util.inspect(this.state.listCategory,false,null));
     const {
       container, bgImg,colorlbl,flexRow,
@@ -229,14 +285,14 @@ export default class LocationTab extends Component {
           </View>
           <TextInput underlineColorAndroid='transparent'
           placeholder={this.state.lang.search} style={inputSearch}
-          onSubmitEditing={() => { if (this.state.valSearch!==''){navigate('SearchScr',{keyword:this.state.valSearch,lat:this.state.curLoc.lat,lng:this.state.curLoc.lng,lang:this.state.lang})} }}
+          onSubmitEditing={() => { if (this.state.valSearch.trim()!==''){navigate('SearchScr',{keyword:this.state.valSearch,idCat:'',lat:this.state.curLoc.lat,lng:this.state.curLoc.lng,lang:this.state.lang.lang})} }}
           onChangeText={(valSearch) => this.setState({valSearch})}
           value={this.state.valSearch} />
 
           <TouchableOpacity style={{top:Platform.OS==='ios' ? 75 : 65,left:(width-50),position:'absolute'}}
           onPress={()=>{
-            if (this.state.valSearch!=='') {
-              navigate('SearchScr',{keyword:this.state.valSearch,lat:this.state.curLoc.lat,lng:this.state.curLoc.lng,lang:this.state.lang});
+            if (this.state.valSearch.trim()!=='') {
+              navigate('SearchScr',{keyword:this.state.valSearch,lat:this.state.curLoc.lat,lng:this.state.curLoc.lng,idCat:'',lang:this.state.lang});
             }
           }}>
             <Image style={{width:16,height:16,}} source={searchIC} />
@@ -262,7 +318,7 @@ export default class LocationTab extends Component {
                     return (<TouchableOpacity
                         key={e.id}
                         style={{position:'absolute',flex:1,alignItems:'center',top:pos.y,left :pos.x,}}
-                        onPress={()=>navigate('ListLocScr',{idCat:e.id,sub_cat:e.sub_category,serv_items:e.service_items,lang:this.state.lang.lang})}
+                        onPress={()=>navigate('SearchScr',{idCat:e.id, keyword:this.state.valSearch,lat:this.state.curLoc.lat,lng:this.state.curLoc.lng,lang:this.state.lang.lang}) }
                         >
                       <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                       <Text style={labelCat}>{e.name}</Text>
@@ -274,7 +330,7 @@ export default class LocationTab extends Component {
               })
             }
             <TouchableOpacity style={[wrapCircle,logoCenter]}
-              onPress={() => navigate('OtherCatScr',{name_module:'AAA',lang:this.state.lang}) }>
+              onPress={() => navigate('OtherCatScr',{name_module:'AAA',lang:this.state.lang,curLoc}) }>
             <Image style={imgContent} source={logoHome} />
             <Text style={labelCat}>{this.state.lang.other}</Text>
             </TouchableOpacity>
@@ -325,23 +381,23 @@ export default class LocationTab extends Component {
         </View>
         <View style={flexRow}>
             <Image style={[imgShare,imgMargin]} source={onlineDD} />
-            <Text style={colorTextPP}><Text style={colorWhite}>{listStatus.countOnline}</Text></Text>
+            <Text style={colorTextPP}><Text style={colorWhite}>{format_number(listStatus.countOnline)}</Text></Text>
         </View>
         <View style={flexRow}>
             <Image style={[imgShare,imgMargin]} source={checkDD} />
-            <Text style={colorTextPP}><Text style={colorWhite}>{listStatus.newContent}k</Text></Text>
+            <Text style={colorTextPP}><Text style={colorWhite}>{format_number(listStatus.newContent)}k</Text></Text>
         </View>
         <View style={flexRow}>
             <Image style={[imgShare,imgMargin]} source={likeDD} />
-            <Text style={colorTextPP}><Text style={colorWhite}>{listStatus.countLike}k</Text></Text>
+            <Text style={colorTextPP}><Text style={colorWhite}>{format_number(listStatus.countLike)}k</Text></Text>
         </View>
         <View style={flexRow}>
             <Image style={[imgShare,imgMargin]} source={socialDD} />
-            <Text style={colorTextPP}><Text style={colorWhite}>{listStatus.countShare}k</Text></Text>
+            <Text style={colorTextPP}><Text style={colorWhite}>{format_number(listStatus.countShare)}k</Text></Text>
         </View>
         <View style={flexRow}>
             <Image style={[imgShare,imgMargin]} source={userDD} />
-            <Text style={colorTextPP}><Text style={colorWhite}>{listStatus.countUser}</Text></Text>
+            <Text style={colorTextPP}><Text style={colorWhite}>{format_number(listStatus.countUser)}</Text></Text>
         </View>
 
        </ScrollView>

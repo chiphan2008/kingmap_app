@@ -1,7 +1,10 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import {ScrollView,Platform, View, Text, StyleSheet, Dimensions, Image, TextInput, TouchableOpacity,AsyncStorage} from 'react-native';
+import {
+  ScrollView,Platform, View, Text,
+  Dimensions, Image, TextInput, TouchableOpacity,
+  AsyncStorage,DeviceEventEmitter} from 'react-native';
 const {height, width} = Dimensions.get('window');
 
 import UpdateInfo from './UpdateInfo';
@@ -31,10 +34,8 @@ import collectionIC from '../../../src/icon/ic-white/ic-collection.png';
 import menuIC from '../../../src/icon/ic-white/ic-menu.png';
 import settingIC from '../../../src/icon/ic-white/ic-setting.png';
 import logoutIC from '../../../src/icon/ic-white/ic-logout.png';
+import {checkUrl} from '../../libs';
 
-function checkUrl(url){
-  return url.indexOf('http')!=-1;
-}
 export default class PersonalTab extends Component {
   constructor(props) {
     super(props);
@@ -59,16 +60,17 @@ export default class PersonalTab extends Component {
           e.valueLang==='vn' ?  this.setState({lang : lang_vn}) : this.setState({lang : lang_en});
         }
     });
-    this.reqLogin();
+    this.refresh();
   }
-  reqLogin(){
+  refresh(){
     checkLogin().then(e=>{
       //console.log('checkLogin',e);
       if(e.id===undefined){
         this.setState({isLogin:false})
       }else {
-        this.setState({user_profile:e,isLogin:true});
-        this.getUser(e.id);
+        this.setState({user_profile:e,isLogin:true},()=>{
+          this.getUser(e.id);
+        });
       }
     });
   }
@@ -76,7 +78,9 @@ export default class PersonalTab extends Component {
     getApi(`${global.url}${'user/get-static/'}${id}`)
     .then(arrData => {
         //console.log(arrData);
-        this.setState({ countEntry: arrData.data });
+        setTimeout(()=>{
+          this.setState({ countEntry: arrData.data });
+        },2000)
     })
     .catch(err => console.log(err));
   }
@@ -125,7 +129,11 @@ export default class PersonalTab extends Component {
           {enableHighAccuracy: true, timeout: 20000, maximumAge: 10000}
     );
   }
-
+  componentWillMount(){
+    DeviceEventEmitter.addListener('goback', (e)=>{
+      if(e.isLogin) this.refresh();
+    })
+  }
 
   render() {
     const {lang, valSearch, curLoc, isLogin, user_profile,
@@ -153,13 +161,13 @@ export default class PersonalTab extends Component {
           <View style={{height:11}}></View>
           <TextInput underlineColorAndroid='transparent'
           placeholder={lang.search} style={inputSearch}
-          onSubmitEditing={() => { if (valSearch!==''){navigate('SearchScr',{keyword:valSearch,lat:curLoc.lat,lng:curLoc.lng,lang})} }}
+          onSubmitEditing={() => { if (valSearch.trim()!==''){navigate('SearchScr',{keyword:valSearch,lat:curLoc.lat,lng:curLoc.lng,lang})} }}
           onChangeText={(valSearch) => this.setState({valSearch})}
           value={valSearch} />
 
           <TouchableOpacity style={{top:Platform.OS==='ios' ? 75 : 65,left:(width-50),position:'absolute'}}
           onPress={()=>{
-            if (valSearch!=='') {
+            if (valSearch.trim()!=='') {
               navigate('SearchScr',{keyword:valSearch,lat:curLoc.lat,lng:curLoc.lng,lang});
             }
           }}>
@@ -288,14 +296,7 @@ export default class PersonalTab extends Component {
                 </TouchableOpacity>
               </View>
               <View style={borderItemInfoPer}></View>
-              <ListCheckin
-              lang={lang}
-              curLoc={curLoc}
-              navigation={this.props.navigation}
-              labelTitle={'Check in'}
-              visible={showCheckin}
-              closeModal={()=>{this.setState({showCheckin:false});this.reqLogin();}}
-              />
+
             </View>
 
             <View>
@@ -306,14 +307,7 @@ export default class PersonalTab extends Component {
                 </TouchableOpacity>
               </View>
               <View style={borderItemInfoPer}></View>
-              <LikeLocation
-              lang={lang}
-              curLoc={curLoc}
-              navigation={this.props.navigation}
-              labelTitle={lang.like_location}
-              visible={showLikeLoc}
-              closeModal={()=>this.setState({showLikeLoc:false})}
-              />
+
             </View>
 
             <View>
@@ -336,14 +330,7 @@ export default class PersonalTab extends Component {
                 </TouchableOpacity>
               </View>
               <View style={borderItemInfoPer}></View>
-              <ListLocation
-              lang={lang}
-              curLoc={curLoc}
-              navigation={this.props.navigation}
-              labelTitle={lang.list_location}
-              visible={showListLoc}
-              closeModal={()=>this.setState({showListLoc:false})}
-              />
+
             </View>
 
               <View style={[rowItem,marTop]}>
@@ -375,6 +362,31 @@ export default class PersonalTab extends Component {
           </View>
 
         </ScrollView>
+
+        <ListLocation
+        lang={lang}
+        curLoc={curLoc}
+        navigation={this.props.navigation}
+        labelTitle={lang.list_location}
+        visible={showListLoc}
+        closeModal={()=>this.setState({showListLoc:false})}
+        />
+        <LikeLocation
+        lang={lang}
+        curLoc={curLoc}
+        navigation={this.props.navigation}
+        labelTitle={lang.like_location}
+        visible={showLikeLoc}
+        closeModal={()=>this.setState({showLikeLoc:false})}
+        />
+        <ListCheckin
+        lang={lang}
+        curLoc={curLoc}
+        navigation={this.props.navigation}
+        labelTitle={'Check in'}
+        visible={showCheckin}
+        closeModal={()=>{this.setState({showCheckin:false});this.reqLogin();}}
+        />
         <Collection
         lang={lang}
         curLoc={curLoc}

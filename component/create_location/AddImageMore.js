@@ -93,7 +93,7 @@ export default class AddImageMore extends Component {
                     this.props.submitImage(this.state.imgSpace,this.state.imgMenu,this.state.listVideo);
                     this.props.closeModal();
                   }}>
-                  <Image source={arrowLeft} style={{width:16, height:16,marginTop:5}} />
+                  <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                   </TouchableOpacity>
                     <Text style={titleCreate}> THÊM HÌNH ẢNH </Text>
                   <View></View>

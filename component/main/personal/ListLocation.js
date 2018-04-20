@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import {
-  View,Text,Modal,TouchableOpacity,Image,
+  View,Text,TouchableOpacity,Image,
   Dimensions,ScrollView,Alert,
 } from 'react-native';
 
@@ -33,8 +33,10 @@ export default class ListLocation extends Component {
       id_content:'',
       moderation:'',
     }
+    this.refresh();
+  }
+  refresh(){
     checkLogin().then(e=>{
-      //console.log('checkLogin',e);
       if(e.id===undefined){
         this.setState({isLogin:false})
       }else {
@@ -43,13 +45,14 @@ export default class ListLocation extends Component {
       }
     });
   }
-
   getData(id){
     const url = `${global.url}${'user/list-location/'}${id}`;
     getApi(url)
     .then(arrData => {
       //console.log('arrData',arrData);
+      setTimeout(()=>{
         this.setState({ listData: arrData.data });
+      },2000)
     })
     .catch(err => console.log(err));
   }
@@ -90,59 +93,55 @@ export default class ListLocation extends Component {
     const { showOption,id_content,moderation } = this.state;
     //console.log('lang',lang);
     const {
-      container,headCatStyle,headContent,titleCreate,
+      wrapSetting,headCatStyle,headContent,titleCreate,
       listCreate,show,hide,txt,txtTitleOverCat,marTop10,marTop15,
       actionSheetWrap,actionSheetContent,actionSheetRadius,line,pad15,
       colorTxt
     } = styles;
     return (
-      <Modal
-      onRequestClose={() => null}
-      transparent
-      animationType={'slide'}
-      visible={visible}
-      >
-      <View style={[actionSheetWrap,showOption ? show : hide]} >
-        <View style={[actionSheetContent,actionSheetRadius]}>
-          <TouchableOpacity style={pad15}>
-          <Text style={colorTxt}>{lang.edit}</Text>
-          </TouchableOpacity>
-          {moderation==='publish' ?
-            <View>
-            <View style={line}></View>
-            <TouchableOpacity onPress={()=>this.callPause(id_content)} style={pad15}>
-            <Text style={colorTxt}>{lang.pause}</Text>
+        <ScrollView style={[wrapSetting, this.props.visible ? show : hide]}>
+
+        <View style={[actionSheetWrap,showOption ? show : hide]} >
+          <View style={[actionSheetContent,actionSheetRadius]}>
+            <TouchableOpacity style={pad15}>
+            <Text style={colorTxt}>{lang.edit}</Text>
             </TouchableOpacity>
-            </View>
-            :
-            <View></View>
-          }
-          {moderation==='un_publish' ?
-            <View>
+            {moderation==='publish' ?
+              <View>
+              <View style={line}></View>
+              <TouchableOpacity onPress={()=>this.callPause(id_content)} style={pad15}>
+              <Text style={colorTxt}>{lang.pause}</Text>
+              </TouchableOpacity>
+              </View>
+              :
+              <View></View>
+            }
+            {moderation==='un_publish' ?
+              <View>
+              <View style={line}></View>
+              <TouchableOpacity onPress={()=>this.reOpen(id_content)} style={pad15}>
+              <Text style={colorTxt}>{lang.reopen}</Text>
+              </TouchableOpacity>
+              </View>
+              :
+              <View></View>
+            }
             <View style={line}></View>
-            <TouchableOpacity onPress={()=>this.reOpen(id_content)} style={pad15}>
-            <Text style={colorTxt}>{lang.reopen}</Text>
+            <TouchableOpacity onPress={()=>this.confirmDel(id_content)} style={pad15}>
+            <Text style={colorTxt}>{lang.delete}</Text>
             </TouchableOpacity>
-            </View>
-            :
-            <View></View>
-          }
-          <View style={line}></View>
-          <TouchableOpacity onPress={()=>this.confirmDel(id_content)} style={pad15}>
-          <Text style={colorTxt}>{lang.delete}</Text>
-          </TouchableOpacity>
+          </View>
+          <View style={[actionSheetContent,actionSheetRadius,marTop10]}>
+            <TouchableOpacity onPress={()=>this.setState({showOption:false})} style={pad15}>
+            <Text style={colorTxt}>{lang.cancel}</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        <View style={[actionSheetContent,actionSheetRadius,marTop10]}>
-          <TouchableOpacity onPress={()=>this.setState({showOption:false})} style={pad15}>
-          <Text style={colorTxt}>{lang.cancel}</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-        <ScrollView style={[container, this.props.visible ? show : hide]}>
+
           <View style={headCatStyle}>
               <View style={headContent}>
                   <TouchableOpacity onPress={()=>{this.props.closeModal();}}>
-                  <Image source={arrowLeft} style={{width:16, height:16,marginTop:5}} />
+                  <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                   </TouchableOpacity>
                     <Text style={titleCreate}>{this.props.labelTitle.toUpperCase()} </Text>
                   <View></View>
@@ -153,7 +152,7 @@ export default class ListLocation extends Component {
               <View key={e.id}>
                 <View style={{backgroundColor:'#fff'}}>
                   <TouchableOpacity onPress={()=>{
-                    this.props.closeModal()
+                    //this.props.closeModal()
                     navigation.navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang})
                   }}>
                     <Image source={{uri:`${global.url_media}${e.avatar}`}} style={{width:width,minHeight:200,marginBottom:10}} />
@@ -163,7 +162,7 @@ export default class ListLocation extends Component {
                     <View style={listCreate}>
                       <View style={{width:width-80}}>
                         <TouchableOpacity onPress={()=>{
-                          this.props.closeModal()
+                          //this.props.closeModal()
                           navigation.navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang})
                         }}>
                           <Text numberOfLines={1} style={txtTitleOverCat}>{e.name}</Text>
@@ -216,8 +215,6 @@ export default class ListLocation extends Component {
 
       </ScrollView>
 
-
-    </Modal>
     );
   }
 }

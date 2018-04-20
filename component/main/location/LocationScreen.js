@@ -16,8 +16,7 @@ import searchIC from '../../../src/icon/ic-gray/ic-search.png';
 import infoIC from '../../../src/icon/ic-white/ic-analysis.png';
 import socialIC from '../../../src/icon/ic-white/ic-social.png';
 
-
-export default class Hometab extends Component {
+export default class LocationScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -39,11 +38,13 @@ export default class Hometab extends Component {
   }
 
   componentWillMount(){
-    getLanguage().then((e) => {this.getCategory(e.valueLang);
+    getLanguage().then((e) => {
       this.setState({selectLang: {
         valueLang : e.valueLang,
         labelLang : e.labelLang,
-      },})
+      },},()=>{
+        this.getCategory(e.valueLang);
+      })
     });
   }
 
@@ -61,9 +62,7 @@ export default class Hometab extends Component {
 
       <View style={headCatStyle}>
           <View style={headContent}>
-              <TouchableOpacity onPress={()=>goBack()}>
-              <Image source={closeIC} style={{width:20, height:20,marginTop:5}} />
-              </TouchableOpacity>
+              <View></View>
               <TouchableOpacity
                   style={{alignItems:'center'}}
                   onPress={()=>this.setState({showCat :!this.state.showCat})}
@@ -73,25 +72,26 @@ export default class Hometab extends Component {
               <View></View>
           </View>
       </View>
-<View style={wrapFilter}>
-    <View style={[wrapDistribute,shadown]}>
-    <View style={flatlistItem}>
-        <FlatList
-           numColumns={3}
-           data={this.state.listCategory}
-           renderItem={({item}) =>(
-             <TouchableOpacity
-              onPress={()=>navigate('ListLocScr',{idCat:item.id,sub_cat:item.sub_category,serv_items:item.service_items,lang:this.state.selectLang})}
-              style={flatItem}>
-                 <Image style={imgFlatItemLoc} source={{uri:`${global.url_media}${item.image}`}} />
-                 <Text>{item.name}</Text>
-             </TouchableOpacity>
-           )}
-           keyExtractor={item => item.id}
-         />
-         </View>
-    </View>
-  </View>
+
+        <View style={wrapFilter}>
+            <View style={[wrapDistribute,shadown]}>
+            <View style={flatlistItem}>
+                <FlatList
+                   numColumns={3}
+                   data={this.state.listCategory}
+                   renderItem={({item}) =>(
+                     <TouchableOpacity
+                      onPress={()=>navigate('ListLocScr',{idCat:item.id,sub_cat:item.sub_category,serv_items:item.service_items,lang:this.state.selectLang.valueLang})}
+                      style={flatItem}>
+                         <Image style={imgFlatItemLoc} source={{uri:`${global.url_media}${item.image}`}} />
+                         <Text>{item.name}</Text>
+                     </TouchableOpacity>
+                   )}
+                   keyExtractor={item => item.id}
+                 />
+                 </View>
+            </View>
+          </View>
 
       </View>
     );

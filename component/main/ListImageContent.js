@@ -82,7 +82,7 @@ export default class ListImageContent extends Component {
             <View style={headContent}>
 
                 <TouchableOpacity onPress={()=> goBack()}>
-                <Image source={arrowLeft} style={{width:16, height:16,marginTop:5}} />
+                <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                 </TouchableOpacity>
                 <Text style={{color:'white',fontSize:16}}>Hình ảnh</Text>
                 <View></View>
@@ -158,8 +158,9 @@ export default class ListImageContent extends Component {
             <View key={index}>
               <WebView
                 source={{uri: `${e}`}}
-                style={imgTab}
+                style={{width,height:width/2,marginBottom:10}}
                 javaScriptEnabled
+                domStorageEnabled
               />
             </View>
           ))}

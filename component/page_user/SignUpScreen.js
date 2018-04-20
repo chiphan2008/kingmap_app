@@ -15,6 +15,7 @@ import LogoHome from '../../src/icon/ic-home/Logo-home.png';
 import FacebookColor from '../../src/icon/Facebook_color.png';
 import GoogleColor from '../../src/icon/Google_color.png';
 const {height, width} = Dimensions.get('window');
+import {hasNumber,isEmail,xoa_dau,onlyLetters} from '../libs';
 
 import faceApi from '../api/faceApi';
 import {FBLogin, FBLoginManager} from 'react-native-facebook-login';
@@ -23,28 +24,6 @@ var LoginBehavior = {
   'android': FBLoginManager.LoginBehaviors.WebView
 }
 
-function hasNumber(text) {
-  return /\d/.test(text);
-}
-function isEmail(text){
-  let email = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/ ;
-  return email.test(text);
-}
-function xoa_dau(str) {
-  str = str.toLowerCase();
-	str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
-	str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
-	str = str.replace(/ì|í|ị|ỉ|ĩ/g, "i");
-	str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, "o");
-	str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u");
-	str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y");
-	str = str.replace(/đ/g, "d");
-	return str;
-}
-function onlyLetters(str) {
-    let regex = /^[a-zA-Z\s]+$/;
-    return regex.test(xoa_dau(str));
-}
 export default class SignUpScreen extends Component {
   constructor(props) {
     super(props);

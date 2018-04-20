@@ -11,11 +11,9 @@ import getApi from '../api/getApi';
 import global from '../global';
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
 import sendEmailIC from '../../src/icon/ic-send-email.png';
+import {checkUrl,formatDate,formatHour} from '../libs';
 
 var element;
-function checkUrl(url){
-  return url.indexOf('http')!=-1;
-}
 export default class Messenger extends Component {
   constructor(props) {
     super(props);
@@ -133,7 +131,7 @@ export default class Messenger extends Component {
                 <TouchableOpacity onPress={()=>{
                   navigation.goBack();
                 }}>
-                <Image source={arrowLeft} style={{width:16, height:16,marginTop:5}} />
+                <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                 </TouchableOpacity>
                   <Text style={titleCreate}> {`${name}`.toUpperCase()} </Text>
                 <View></View>
@@ -194,12 +192,7 @@ export default class Messenger extends Component {
     );
   }
 }
-function formatDate(d){
-  return Moment(d).format('DD/MM/YY');
-}
-function formatHour(h){
-  return Moment(h).format('HH:mm');
-}
+
 export class ListMsg extends Component {
   constructor(props) {
     super(props);

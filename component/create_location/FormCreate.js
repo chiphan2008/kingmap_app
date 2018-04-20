@@ -297,7 +297,7 @@ export default class FormCreate extends Component {
       <View style={headCatStyle}>
           <View style={headContent}>
               <TouchableOpacity onPress={()=>goBack()}>
-              <Image source={arrowLeft} style={{width:16, height:16,marginTop:5}} />
+              <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
               </TouchableOpacity>
               <Text style={titleCreate}> {this.state.lang.create_location} </Text>
               <TouchableOpacity onPress={()=>this.postData()}>
@@ -587,7 +587,7 @@ export default class FormCreate extends Component {
             <View style={headCatStyle}>
                 <View style={headContent}>
                     <TouchableOpacity onPress={()=>this.setState({showSubCat:!this.state.showSubCat})}>
-                    <Image source={arrowLeft} style={{width:16, height:16,marginTop:5}} />
+                    <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                     </TouchableOpacity>
                     <Text style={titleCreate}> {this.state.lang.classify} </Text>
                     <View></View>
@@ -634,7 +634,7 @@ export default class FormCreate extends Component {
               <View style={headCatStyle}>
                   <View style={headContent}>
                       <TouchableOpacity onPress={()=>this.setState({showService:!this.state.showService})}>
-                      <Image source={arrowLeft} style={{width:16, height:16,marginTop:5}} />
+                      <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                       </TouchableOpacity>
                       <Text style={titleCreate}> {this.state.lang.utilities} </Text>
                       <View></View>
@@ -682,7 +682,7 @@ export default class FormCreate extends Component {
                 <View style={headCatStyle}>
                     <View style={headContent}>
                         <TouchableOpacity onPress={()=>this.setState({showProduct:!this.state.showProduct})}>
-                        <Image source={arrowLeft} style={{width:16, height:16,marginTop:5}} />
+                        <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                         </TouchableOpacity>
                         <Text style={titleCreate}> {this.state.lang.add_product_more} </Text>
                         <View></View>

@@ -18,6 +18,7 @@ import phoneIC from '../../../src/icon/ic-blue/ic-phone.png';
 import priceIC from '../../../src/icon/ic-blue/ic-price.png';
 import timeIC from '../../../src/icon/ic-blue/ic-time.png';
 const {width,height} = Dimensions.get('window');
+import {format_number,strtoarray} from '../../libs';
 
 export default class Content extends Component {
   constructor(props){
@@ -50,7 +51,7 @@ export default class Content extends Component {
     } = styles;
     const {listContent,vote} = this.props;
     const { vote_avg } = this.state;
-    //console.log('listContent.vote1',vote);
+    //console.log('listContent.line',listContent.line);
     return (
       <View style={wrapContentDetail}>
         <View style={rowFlex}>
@@ -59,7 +60,7 @@ export default class Content extends Component {
             <Image source={onlineIC} style={imgOnline} />
             <Text style={{fontSize:17,color:'#9FD56A'}}>Online</Text>
             </View>
-            <View style={{paddingRight:5,width:width-105,}}>
+            <View style={{width:width-135}}>
             <Text numberOfLines={3} style={{fontSize:26,color:'#1C263D'}}>{listContent.name}</Text>
             </View>
         </View>
@@ -67,15 +68,19 @@ export default class Content extends Component {
           <Image style={[imgICLocation,marRight]} source={locationDarkIC} />
           <Text numberOfLines={2} style={[colorContent,width30]}>{`${listContent.address}${', '}${listContent._district.name}${', '}${listContent._city.name}`}</Text>
         </View>
-
+        {/*listContent.open_time*/}
         <View style={rowFlex}>
           <Image style={[imgContentIC,marRight]} source={timeIC} />
-          <Text style={colorContent}>{`${listContent.open_time}`}</Text>
+          <View>
+          {strtoarray(listContent.open_time).map((e)=>(
+            <Text key={e} style={colorContent}>{`${e}`.trim()}</Text>
+          ))}
+          </View>
         </View>
 
         <View style={rowFlex}>
           <Image style={[imgContentIC,marRight]} source={priceIC} />
-          <Text style={colorContent}>{`${listContent.price_from}${' - '}${listContent.price_to} ${listContent.currency}`}</Text>
+          <Text style={colorContent}>{`${format_number(listContent.price_from)}${' - '}${format_number(listContent.price_to)} ${listContent.currency}`}</Text>
         </View>
 
 
@@ -107,7 +112,7 @@ export default class Content extends Component {
             <Text>({vote_avg===-1 ? vote : vote_avg })</Text>
 
             </View>
-            <Text>{Number.parseFloat(listContent.line).toFixed(0)} (m)</Text>
+            <Text>{format_number(Number.parseFloat(listContent.line).toFixed(0))} (m)</Text>
 
         </View>
 

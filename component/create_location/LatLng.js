@@ -77,7 +77,7 @@ export default class LatLng extends Component {
         <View style={headCatStyle}>
             <View style={headContent}>
                 <TouchableOpacity onPress={()=>this.props.closeModal()}>
-                <Image source={arrowLeft} style={{width:16, height:16,marginTop:5}} />
+                <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                 </TouchableOpacity>
                 <Text style={titleCreate}> CHỌN VỊ TRÍ </Text>
                 <View></View>

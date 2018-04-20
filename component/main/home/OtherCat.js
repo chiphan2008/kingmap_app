@@ -49,8 +49,10 @@ export default class OtherCat extends Component {
   }
 
   render() {
-    //console.log('LocationTab');
+    console.log('OtherCat');
     const {navigate, goBack} = this.props.navigation;
+    const { curLoc } = this.props.navigation.state.params;
+    //console.log(curLoc);
     const {
       container,
       headCatStyle,headContent, wrapDistribute,shadown,wrapFilter,
@@ -66,10 +68,7 @@ export default class OtherCat extends Component {
               <TouchableOpacity onPress={()=>goBack()}>
               <Image source={closeIC} style={{width:20, height:20,marginTop:5}} />
               </TouchableOpacity>
-              <TouchableOpacity
-                  style={{alignItems:'center'}}
-                  onPress={()=>this.setState({showCat :!this.state.showCat})}
-                  >
+              <TouchableOpacity style={{alignItems:'center'}}>
                     <Text style={{color:'white',fontSize:18,paddingTop:5}}> Phân loại </Text>
               </TouchableOpacity>
               <View></View>
@@ -83,7 +82,7 @@ export default class OtherCat extends Component {
            data={this.state.listCategory}
            renderItem={({item}) =>(
              <TouchableOpacity
-              onPress={()=>navigate('ListLocScr',{idCat:item.id,sub_cat:item.sub_category,serv_items:item.service_items,lang:this.state.selectLang.valueLang})}
+              onPress={()=>navigate('SearchScr',{keyword:'',idCat:item.id,lat:curLoc.latitude,lng:curLoc.longitude,lang:this.state.selectLang.valueLang,curLoc})}
               style={flatItem}>
                  <Image style={imgFlatItemLoc} source={{uri:`${global.url_media}${item.image}`}} />
                  <Text style={{textAlign:'center'}} numberOfLines={2}>{item.name}</Text>

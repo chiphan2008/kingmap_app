@@ -3,9 +3,10 @@
 import React, { Component } from 'react';
 import {
   View,Text,StyleSheet,Image,TextInput,
-  Platform,Dimensions,TouchableOpacity,
+  Platform,Dimensions,TouchableOpacity,Modal,
+  FlatList,
 } from 'react-native';
-
+import ImageViewer from 'react-native-image-zoom-viewer';
 import Moment from 'moment';
 import ImagePicker from 'react-native-image-crop-picker';
 import postApi from '../../api/postApi';
@@ -16,11 +17,11 @@ import likeFullIcon from '../../../src/icon/ic-like-full.png';
 import commentsIcon from '../../../src/icon/ic-comments.png';
 import ImageIcon from '../../../src/icon/ic-Image.png';
 import sendEmailIcon from '../../../src/icon/ic-send-email.png';
-
+import closeIC from '../../../src/icon/ic-white/ic-close.png';
+import closeIcon from '../../../src/icon/ic-create/ic-close.png'
+import {checkUrl,removeItem} from '../../libs';
 const {width,height} = Dimensions.get('window');
-function checkUrl(url){
-  return url.indexOf('http')!=-1;
-}
+
 export default class Comments extends Component {
   constructor(props){
     super(props);
@@ -32,6 +33,13 @@ export default class Comments extends Component {
       _has_liked:{},
       arrImage:[],
       arrImageChild:[],
+      showNotify:false,
+      showNotifyChild:false,
+      showImgComment:false,
+      showImgCommentChild:false,
+      arrImgModal:[],
+      index:0,
+
     }
   }
 
@@ -40,7 +48,7 @@ export default class Comments extends Component {
     ImagePicker.openPicker({
       multiple: true
     }).then(img => {
-      console.log('img',img);
+      //console.log('img',img);
       if(id===0){
         this.setState({arrImage:this.state.arrImage.concat(img)});
       }else {
@@ -49,7 +57,7 @@ export default class Comments extends Component {
     }).catch(e=>console.log('e'));
   }
   postComment(comment_id){
-    if(this.state.inputChildComment!=='' || this.state.inputComment!==''){
+    if(this.state.inputChildComment.trim()!=='' || this.state.inputComment.trim()!==''){
       const arr = new FormData();
       arr.append('user_id',this.props.userId);
       arr.append('content_id',this.props.idContent);
@@ -74,9 +82,15 @@ export default class Comments extends Component {
       }
       postApi(`${global.url}${'content-create-comment'}`,arr);
       if(comment_id===0){
-        this.setState({inputComment:'',arrImage:[]});
+        this.setState({inputComment:'',arrImage:[],showNotify:true});
+        setTimeout(()=>{
+          this.setState({showNotify:false})
+        },4000)
       }else{
-        this.setState({inputChildComment:'',arrImageChild:[]});
+        this.setState({inputChildComment:'',arrImageChild:[],showNotifyChild:true});
+        setTimeout(()=>{
+          this.setState({showNotifyChild:false})
+        },4000)
       }
     }
   }
@@ -100,8 +114,13 @@ export default class Comments extends Component {
     } = styles;
     //console.log("this.props.navigation=",util.inspect(this.props.navigation,false,null));
     const {idContent,listComment,lang} = this.props;
+    //console.log(idContent);
+    const {
+      showImgComment,arrImage,showImgCommentChild,arrImageChild,index,
+      showNotify,showNotifyChild,arrImgModal,
+    } = this.state;
     //console.log('this.state.idContent====',lang.your_comment)
-
+    var _this = this;
     return (
       <View>
           <View>
@@ -121,26 +140,43 @@ export default class Comments extends Component {
             <Image source={sendEmailIcon} style={{width:20,height:20,}} />
             </TouchableOpacity>
 
-            {this.state.arrImage.length > 0 ?
-              <View style={{flexDirection:'row', flexWrap:'wrap'}}>
-              {this.state.arrImage.map((e,index)=>(
-                <Image key={index} style={{width:90,height:90,marginTop:10,marginRight:10}} source={{isStatic:true,uri:`${e.path}`}} />
-              ))}
-              </View>
-              :
-              <View></View>
-            }
+            <View style={showNotify ? show :hide }>
+            <Text style={{color:'#5b89ab',padding:5}}>{lang.notify_comment}</Text>
+            </View>
+
+            <View style={{flexDirection:'row', flexWrap:'wrap'}}>
+
+            <FlatList
+               horizontal
+               showsHorizontalScrollIndicator={false}
+               extraData={this.state}
+               keyExtractor={(item,index) => index}
+               data={arrImage}
+               renderItem={({item,index}) => (
+                 <View>
+                 <Image key={index} style={{width:90,height:90,marginTop:10,marginRight:10}}
+                 source={{isStatic:true,uri:`${item.path}`}} />
+                 <TouchableOpacity onPress={()=>{this.setState({arrImage:removeItem(arrImage,index)})}}
+                 style={{position:'absolute',top:5,right:5}}>
+                 <Image source={closeIcon} style={{width:16,height:18}} />
+                 </TouchableOpacity>
+                 </View>
+               )}
+            />
+            </View>
+
 
 
           </View>
           {listComment.length>0 ?
             listComment.map((e)=>(
+              e._comment_by!==null &&
               <View onLayout={()=>{this.setState({arrIdComment:Object.assign(this.state.arrIdComment,{[e.id]:e.like_comment}),
                 _has_liked: Object.assign(this.state._has_liked,{[e.id]:e._has_liked.length}) }); }}
               key={e.id} style={{borderBottomWidth:1,borderBottomColor:'#E1E7EC',paddingBottom:10}}>
               <View style={rowFlex}>
 
-                <Image source={{uri:checkUrl(`${e._comment_by.avatar}`) ? `${e._comment_by.avatar}` : `${global.url_media}/${e._comment_by.avatar}`}} style={{width:66,height:66,borderRadius:33}} />
+                  <Image source={{uri:checkUrl(`${e._comment_by.avatar}`) ? `${e._comment_by.avatar}` : `${global.url_media}/${e._comment_by.avatar}`}} style={{width:66,height:66,borderRadius:33}} />
                 <View>
 
                     <View style={{paddingLeft:10}}>
@@ -155,14 +191,32 @@ export default class Comments extends Component {
               <View style={mrgTop}>
                   <Text>{e.content}</Text>
                   <View style={{flexDirection:'row',marginRight:5,marginTop:5}}>
-                    {e._images.length>0 ?
-                      e._images.map(img =>(
-                        <Image key={img.id} source={{uri:`${global.url_media}${img.thumb}`}} style={{width:65,height:65,marginRight:7}} />
-                      ))
-                      :
-                      <View></View>
-                    }
+                    <FlatList
+                       horizontal
+                       extraData={this.state}
+                       showsHorizontalScrollIndicator={false}
+                       data={e._images} extraData={this.state}
+                       keyExtractor={(item,index) => index}
+                       renderItem={({item,index}) => (
+                         <TouchableOpacity onPress={()=>this.setState({showImgComment:true,index,arrImgModal:e._images})}>
+                         <Image source={{uri:checkUrl(item.url) ? `${item.url}` : `${global.url_media}${item.url}`}} style={{width:90,height:90,marginRight:7}} />
+                         </TouchableOpacity>
+                       )}
+                    />
                   </View>
+
+                  <Modal onRequestClose={() => null} visible={showImgComment} transparent>
+
+                    <TouchableOpacity onPress={()=>this.setState({showImgComment:false})}
+                    style={{position:'absolute',padding:10,alignSelf:'flex-end',zIndex:9999}}>
+                      <Image source={closeIC} style={{width:18,height:18}} />
+                    </TouchableOpacity>
+                  
+                    {arrImgModal.length>0 &&
+                    <ImageViewer imageUrls={arrImgModal} index={index}
+                    onChange={(index) => this.setState({ index })}
+                    enableImageZoom saveToLocalByLongPress={false} />}
+                  </Modal>
               </View>
 
               <View style={{padding:15,paddingLeft:0,flexDirection:'row'}}>
@@ -198,15 +252,28 @@ export default class Comments extends Component {
                 <Image source={sendEmailIcon} style={{width:20,height:20,}} />
                 </TouchableOpacity>
 
-                {this.state.arrImageChild.length > 0 ?
-                  <View style={{flexDirection:'row', flexWrap:'wrap'}}>
-                  {this.state.arrImageChild.map((e,index)=>(
-                    <Image key={index} style={{width:90,height:90,marginTop:10,marginRight:10}} source={{isStatic:true,uri:`${e.path}`}} />
-                  ))}
-                  </View>
-                  :
-                  <View></View>
-                }
+                <View style={showNotifyChild ? show :hide }>
+                <Text style={{color:'#5b89ab',padding:5}}>{lang.notify_comment}</Text>
+                </View>
+
+                <View style={{flexDirection:'row', flexWrap:'wrap'}}>
+                <FlatList
+                   horizontal showsHorizontalScrollIndicator={false}
+                   data={arrImageChild} extraData={this.state}
+                   keyExtractor={(item,index) => index}
+                   renderItem={({item,index}) => (
+                     <View>
+                         <Image key={index} style={{width:90,height:90,marginTop:10,marginRight:10}}
+                         source={{isStatic:true,uri:`${item.path}`}} />
+                         <TouchableOpacity onPress={()=>{this.setState({arrImageChild:removeItem(arrImageChild,index)})}}
+                         style={{position:'absolute',top:5,right:5}}>
+                         <Image source={closeIcon} style={{width:16,height:18}} />
+                         </TouchableOpacity>
+                     </View>
+                   )}
+                />
+                </View>
+
               </View>
               </View>
 
@@ -230,13 +297,14 @@ export default class Comments extends Component {
                     <View style={mrgTop}>
                         <Text>{r.content}</Text>
                         <View style={{flexDirection:'row',marginRight:5,marginTop:5}}>
-                          {r._images.length>0 ?
-                            r._images.map(img =>(
-                              <Image key={img.id} source={{uri:`${global.url_media}${img.thumb}`}} style={{width:65,height:65,marginRight:7}} />
-                            ))
-                            :
-                            <View></View>
-                          }
+                          <FlatList
+                             horizontal showsHorizontalScrollIndicator={false}
+                             extraData={this.state} data={r._images}
+                             keyExtractor={(item,index) => index}
+                             renderItem={({item,index}) => (
+                               <Image source={{uri: checkUrl(item.url) ? `${item.url}` : `${global.url_media}${item.url}` }} style={{width:90,height:90,marginRight:7}} />
+                             )}
+                          />
                         </View>
                     </View>
 
@@ -262,7 +330,19 @@ export default class Comments extends Component {
             :
             <View></View>
           }
+          {/*
 
+          <Modal onRequestClose={() => null} visible={showImgCommentChild} transparent>
+            <TouchableOpacity onPress={()=>this.setState({showImgCommentChild:false})}
+            style={{position:'absolute',padding:10,alignSelf:'flex-end',zIndex:9999}}>
+              <Image source={closeIC} style={{width:18,height:18}} />
+            </TouchableOpacity>
+            <ImageViewer
+            imageUrls={arrImageChild}
+            index={index} enableImageZoom saveToLocalByLongPress={false}
+            onChange={(index) => console.log(index)}
+            enableSwipeDown />
+          </Modal>*/}
 
       </View>
     );

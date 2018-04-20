@@ -26,6 +26,7 @@ export default class Collection extends Component {
     super(props);
     this.state = {
       name:'',
+      has_collection:false,
       listColl:[],
       checkList:{},
     }
@@ -34,8 +35,11 @@ export default class Collection extends Component {
   getData(){
     const {userId} = this.props;
     const url =`${global.url}${'collection/get/user/'}${userId}`;
-    //console.log(url);
-    getApi(url).then(e=>this.setState({listColl:e.data}));
+    //console.log(url);this.props.hasCollection(checkList);
+    getApi(url).then(e=>{
+      //console.log(e.data.length);
+      this.setState({listColl:e.data})
+    });
   }
   createColl(){
     const {userId} = this.props;
@@ -65,17 +69,21 @@ export default class Collection extends Component {
       }
     });
   }
+  componentWillMount(){
+    this.getData();
+    //console.log('aaa');
+  }
   render() {
     const {
       saveContentStyle, show, hide,
       txtInput,marBot,colorTitle,colorBlack,btnAdd,
       wrapItem,
      } = styles;
-    const { name,listColl,checkList } = this.state;
+    const { name,listColl,checkList,has_collection } = this.state;
     const { visible,userId,idContent } = this.props;
     return (
       <Modal onRequestClose={() => null} transparent visible={visible}>
-      <TouchableOpacity onLayout={()=>this.getData()} onPress={()=>this.props.closeModal()}
+      <TouchableOpacity onLayout={()=>this.getData()} onPress={()=>this.props.closeModal(has_collection)}
       style={[saveContentStyle, visible ? show : hide]}>
         <View style={{width:width-100,borderRadius:3,backgroundColor:'#fff',padding:15,marginBottom:7}}>
           <Text style={[colorTitle,marBot]}>{`${'Tạo mới'}`.toUpperCase()}</Text>
@@ -96,12 +104,12 @@ export default class Collection extends Component {
               <TouchableOpacity style={[wrapItem,marBot]} key={index}
               onLayout={()=>{
                 checkContent(idContent,e._contents).then(el=>{
-                  this.setState({checkList: Object.assign(checkList,{[e.id]:el}) })
+                  this.setState({checkList: Object.assign(checkList,{[e.id]:el}),has_collection:el });
                 });
               }}
               onPress={()=>{
                 checkContent(idContent,e._contents).then(el=>{
-                  this.setState({checkList: Object.assign(checkList,{[e.id]:!el}) });
+                  this.setState({checkList: Object.assign(checkList,{[e.id]:!el}),has_collection:!el });
                   if(el){
                     this.addRemoveColl('remove',e.id)
                   }else {

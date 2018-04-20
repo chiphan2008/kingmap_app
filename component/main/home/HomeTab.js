@@ -224,13 +224,13 @@ export default class HomeTab extends Component {
           </View>
           <TextInput underlineColorAndroid='transparent'
           placeholder={this.state.lang.search} style={inputSearch}
-          onSubmitEditing={() => { if (this.state.valSearch!==''){navigate('SearchScr',{keyword:this.state.valSearch,lat:this.state.curLoc.lat,lng:this.state.curLoc.lng,lang:this.state.lang})} }}
+          onSubmitEditing={() => { if (this.state.valSearch.trim()!==''){navigate('SearchScr',{keyword:this.state.valSearch,lat:this.state.curLoc.lat,lng:this.state.curLoc.lng,lang:this.state.lang})} }}
           onChangeText={(valSearch) => this.setState({valSearch})}
           value={this.state.valSearch} />
 
           <TouchableOpacity style={{top:Platform.OS==='ios' ? 75 : 65,left:(width-50),position:'absolute'}}
           onPress={()=>{
-            if (this.state.valSearch!=='') {
+            if (this.state.valSearch.trim()!=='') {
               navigate('SearchScr',{keyword:this.state.valSearch,lat:this.state.curLoc.lat,lng:this.state.curLoc.lng,lang:this.state.lang});
             }
           }}>

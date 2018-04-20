@@ -6,6 +6,8 @@ import {
   Platform,Dimensions,TouchableOpacity,
   Modal,Share,
 } from 'react-native';
+import { NavigationActions } from 'react-navigation';
+
 //
 import global from '../../global';
 
@@ -17,7 +19,10 @@ import socialIC from '../../../src/icon/ic-white/ic-social.png';
 import saveIC from '../../../src/icon/ic-white/ic-save.png';
 import locationIC from '../../../src/icon/ic-white/ic-location.png';
 import starIC from '../../../src/icon/ic-white/ic-star.png';
-
+import starYellowIcon from '../../../src/icon/ic-yellow/ic-star.png';
+import locationYellowIcon from '../../../src/icon/ic-yellow/ic-checkin.png';
+import collectionYellowIcon from '../../../src/icon/ic-yellow/ic-save.png';
+import {checkItemExists} from '../../libs';
 const {width,height} = Dimensions.get('window');
 export default class Header extends Component {
   constructor(props){
@@ -39,6 +44,7 @@ export default class Header extends Component {
         ]
       })
   }
+
   render() {
     const {
       headStyle,headContent,imgLogoTop,voteIC,
@@ -48,16 +54,16 @@ export default class Header extends Component {
       pad15,colorTxt,line,marTop10
     } = styles;
     //console.log("this.props.navigation=",util.inspect(this.props.navigation,false,null));
-    const {goBack} = this.props.navigation;
+    const {goBack,state} = this.props.navigation;
     const {showOption} = this.state;
-    const {lang,curLoc} = this.props;
-    //console.log('navigation.this.props',goBack);
+    const {lang,curLoc,hasSaveLike,hasCheckin,hasCollection} = this.props;
+    //console.log('checkItemExists',checkItemExists(hasCollection));
     return (
       <View>
       <View style={headStyle}>
           <View style={headContent}>
-          <TouchableOpacity onPress={()=>goBack(null)}>
-          <Image source={arrowLeft} style={{width:16, height:16,marginTop:5}} />
+          <TouchableOpacity onPress={()=>{this.props.backList()}}>
+          <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
           </TouchableOpacity>
               <Image source={logoTop} style={imgLogoTop} />
               <View></View>
@@ -69,11 +75,11 @@ export default class Header extends Component {
         <View style={[headContent]}>
             <TouchableOpacity onPress={()=>this.props.saveLike('save-like')}
             style={{alignItems:'center'}}>
-                <Image source={starIC} style={voteIC} />
+                <Image source={hasSaveLike===0 ? starIC : starYellowIcon} style={voteIC} />
                 <Text style={colorWhite}>Yêu thích</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={()=>{this.props.saveLike('checkin');}} style={{alignItems:'center'}}>
-                <Image source={locationIC} style={imgCheckin} />
+                <Image source={hasCheckin===0 ? locationIC : locationYellowIcon} style={imgCheckin} />
                 <Text style={colorWhite}>Check in</Text>
             </TouchableOpacity>
             <TouchableOpacity style={{alignItems:'center'}}
@@ -82,7 +88,7 @@ export default class Header extends Component {
                 <Text style={colorWhite}>Chia sẻ</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={()=>{this.props.callCollect()}} style={{alignItems:'center'}}>
-                <Image source={saveIC} style={imgCheckin} />
+                <Image source={hasCollection.length===0 ? saveIC : collectionYellowIcon} style={imgCheckin} />
                 <Text style={colorWhite}>Sưu tập</Text>
             </TouchableOpacity>
         </View>
@@ -95,7 +101,7 @@ export default class Header extends Component {
           <View style={[actionSheetContent,actionSheetRadius]}>
 
             <TouchableOpacity onPress={()=>{this.socialShare()}} style={pad15}>
-            <Text style={colorTxt}>Google +</Text>
+            <Text style={colorTxt}>Email</Text>
             </TouchableOpacity>
 
             <View style={line}></View>

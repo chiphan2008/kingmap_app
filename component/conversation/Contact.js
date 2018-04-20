@@ -10,10 +10,8 @@ import postEncodeApi from '../api/postEncodeApi';
 import global from '../global';
 import ListChat from './ListChat';
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
+import {checkUrl} from '../libs';
 
-function checkUrl(url){
-  return url.indexOf('http')!=-1;
-}
 export default class Contact extends Component {
   constructor(props) {
     super(props);
@@ -58,7 +56,7 @@ export default class Contact extends Component {
       <View style={headCatStyle}>
           <View style={headContent}>
               <TouchableOpacity onPress={()=>navigation.goBack()}>
-              <Image source={arrowLeft} style={{width:16, height:16,marginTop:5}} />
+              <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
               </TouchableOpacity>
                 <Text style={titleCreate}> {`${name_module}`.toUpperCase()} </Text>
               <View></View>

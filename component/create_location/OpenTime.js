@@ -90,7 +90,7 @@ export default class OpenTime extends Component {
           <View style={headContent}>
               <TouchableOpacity onPress={()=>{
                 this.props.closeModal(`${waketime.h}:${padMinutes(waketime.m)}`,`${bedtime.h}:${padMinutes(bedtime.m)}`)}}>
-              <Image source={arrowLeft} style={{width:16, height:16,marginTop:5}} />
+              <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
               </TouchableOpacity>
                 <Text style={titleCreate}> {lang.choose_time} </Text>
               <View></View>

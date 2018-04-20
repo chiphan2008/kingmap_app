@@ -17,6 +17,7 @@ module.exports = {
   classify_location: 'Phân loại địa điểm',
   search:'Tìm kiếm sản phẩm, dịch vụ, địa chỉ ...',
   your_comment:'Bình luận của bạn ...',
+  notify_comment:'Bình luận của bạn sẽ hiển thị sau khi được kiểm duyệt',
   choose_loc:'Chọn địa điểm của bạn',
   choose_create:'Chọn loại địa điểm mà bạn muốn tạo',
   create_location:'Tạo địa điểm',
@@ -89,6 +90,13 @@ module.exports = {
   opening:'Đang hoạt động',
   closing:'Đang ngưng hoạt động',
   reopen:'Mở lại',
+  space:'Không gian',
+  image:'Hình ảnh',
+  comment:'Bình luận',
+  other_branch:'Chi nhánh khác',
+  kingmap_suggest:'Kingmap gợi ý',
+  view_all:'Xem tất cả',
+  not_found:'Không tìm thấy ...',
 
   lang:'vn'
 };

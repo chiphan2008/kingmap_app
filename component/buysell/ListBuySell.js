@@ -76,7 +76,7 @@ export default class ListBuySell extends Component {
       <View style={headCatStyle}>
           <View style={headContent}>
               <TouchableOpacity onPress={()=>navigation.goBack()}>
-              <Image source={arrowLeft} style={{width:16, height:16,marginTop:5}} />
+              <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
               </TouchableOpacity>
                 <Text style={titleCreate}> {`${name_module}`.toUpperCase()} </Text>
               <View></View>

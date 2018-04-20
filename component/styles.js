@@ -11,6 +11,7 @@ module.exports = {
   bgImg : {
     width,height,position: 'absolute',justifyContent: 'center',alignItems: 'center',alignSelf: 'stretch',resizeMode: 'stretch',
   },
+  btnScrollTop:{position:'absolute',zIndex:999,bottom:10,right:10},
   clockTime : {
     width,height,backgroundColor: '#F1F2F5',justifyContent: 'center',alignSelf: 'center'
   },
@@ -74,9 +75,15 @@ module.exports = {
   inputSearch : {
     marginTop: 3,width:width-40,backgroundColor:'#fff',borderRadius:5,padding:10,paddingRight:70,
   },
-
+  btnMapLoc:{bottom:92,},
+  btnMapZoom:{bottom:40,},
+  btnMapFull:{bottom:10,},
+  btnZoom:{padding:3},
+  btnList:{top:10},
+  btnMap:{position:'absolute',right:10,backgroundColor:'rgba(250,250,250,0.8)',padding:1,justifyContent:'center',alignItems:'center'},
   widthSubType:{width:(width-60),},
   widthLoc:{width:(width-60)/3,},
+  //widthSearch:{width:(width-60)/3},
   widthBuySell:{width:(width-60)/2,},
   selectBoxBuySell:{
     backgroundColor:'#fff',
@@ -153,7 +160,7 @@ module.exports = {
   flatlistItem:{
     width:(width-20),
     //flexDirection:'row',
-    marginBottom:Platform.OS==='ios' ? 55 : 130,
+    marginBottom:Platform.OS==='ios' ? 55 : 125,
   },
   imgFlatItem:{
     marginRight:10,

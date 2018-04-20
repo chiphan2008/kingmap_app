@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import {
-  View,Text,Modal,TouchableOpacity,Image,
+  View,Text,TouchableOpacity,Image,
   Dimensions,ScrollView,Alert,
 } from 'react-native';
 
@@ -64,23 +64,17 @@ export default class LikeLocation extends Component {
     const { lang,navigation,curLoc } = this.props;
     //console.log('lang',lang);
     const {
-      container,headCatStyle,headContent,titleCreate,
+      wrapSetting,headCatStyle,headContent,titleCreate,
       titleTab,titleActive,listCreate,widthLblCre,show,hide,
       imgInfo,wrapInputCreImg,marTop,colorTitle,txt,txtTitleOverCat
     } = styles;
     return (
-      <Modal
-      onRequestClose={() => null}
-      transparent
-      animationType={'slide'}
-      visible={this.props.visible}
-      >
 
-        <ScrollView style={[container, this.props.visible ? show : hide]}>
+        <ScrollView style={[wrapSetting, this.props.visible ? show : hide]}>
           <View style={headCatStyle}>
               <View style={headContent}>
                   <TouchableOpacity onPress={()=>{this.props.closeModal();}}>
-                  <Image source={arrowLeft} style={{width:16, height:16,marginTop:5}} />
+                  <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                   </TouchableOpacity>
                     <Text style={titleCreate}>{this.props.labelTitle.toUpperCase()} </Text>
                   <View></View>
@@ -91,7 +85,7 @@ export default class LikeLocation extends Component {
               <View key={e.id}>
                 <View style={{backgroundColor:'#fff'}}>
                   <TouchableOpacity onPress={()=>{
-                    this.props.closeModal()
+                    //this.props.closeModal()
                     navigation.navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang})
                   }}>
                     <Image source={{uri:`${global.url_media}${e.avatar}`}} style={{width:width,minHeight:200,marginBottom:10}} />
@@ -104,7 +98,7 @@ export default class LikeLocation extends Component {
                     <View style={listCreate}>
                       <View style={{width:width-80}}>
                         <TouchableOpacity onPress={()=>{
-                          this.props.closeModal()
+                          //this.props.closeModal()
                           navigation.navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang})
                         }}>
                           <Text numberOfLines={1} style={txtTitleOverCat}>{e.name}</Text>
@@ -121,11 +115,8 @@ export default class LikeLocation extends Component {
             <View></View>
           }
 
-
-
-
       </ScrollView>
-    </Modal>
+
     );
   }
 }

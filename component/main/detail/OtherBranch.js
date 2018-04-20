@@ -3,9 +3,9 @@
 import React, { Component } from 'react';
 import {
   View,Text,StyleSheet,Image,TextInput,
-  Platform,Dimensions,TouchableOpacity,
+  Platform,Dimensions,TouchableOpacity,FlatList,
 } from 'react-native';
-import Carousel, { Pagination } from 'react-native-snap-carousel';
+//import Carousel, { Pagination } from 'react-native-snap-carousel';
 import global from '../../global';
 
 const {width,height} = Dimensions.get('window');
@@ -30,42 +30,32 @@ export default class OtherBranch extends Component {
 
     return (
       <View>
-      {listGroup.length>0 ?
-        <View>
-        <Carousel
-          activeSlideAlignment={'start'}
-          inactiveSlideScale={1}
-          inactiveSlideOpacity={1}
-          data={listGroup}
-          renderItem={({item}) =>(
-            <View style={[widthHafl,marRight]}
-                key={item.id}>
-                <TouchableOpacity
-                onPress={()=> {navigate('DetailScr',{
-                  idContent:item.id,lat:item.lat,lng:item.lng,lang,curLoc
-                })}}
-                style={[widthHafl,marRight]}>
-                    <Image source={{uri :`${global.url_media}${item.avatar}`}} style={imgSpace}/>
-                </TouchableOpacity>
-                <TouchableOpacity
-                onPress={()=> {navigate('DetailScr',{
-                  idContent:item.id,lat:item.lat,lng:item.lng,lang,curLoc
-                })} }
-                style={[widthHafl,marRight]}>
-                    <Text style={colorText} numberOfLines={2}>{item.name}</Text>
-                </TouchableOpacity>
-                    <Text style={txtAddrOver} numberOfLines={1}>{`${item.address}${', '}${item._district.name}${', '}${item._city.name}`}</Text>
-                </View>
-          )}
-          sliderWidth={width}
-          itemWidth={width}
-          onSnapToItem={(index) => this.setState({ activeSlide: index }) }
-          />
+      <FlatList
+         horizontal extraData={this.state}
+         showsHorizontalScrollIndicator={false}
+         data={listGroup}  keyExtractor={(item,index) => index}
+         renderItem={({item,index}) => (
+           <View style={[widthHafl,marRight]}
+               key={item.id}>
+               <TouchableOpacity
+               onPress={()=> {navigate('DetailScr',{
+                 idContent:item.id,lat:item.lat,lng:item.lng,lang,curLoc
+               })}}
+               style={[widthHafl,marRight]}>
+                   <Image source={{uri :`${global.url_media}${item.avatar}`}} style={imgSpace}/>
+               </TouchableOpacity>
+               <TouchableOpacity
+               onPress={()=> {navigate('DetailScr',{
+                 idContent:item.id,lat:item.lat,lng:item.lng,lang,curLoc
+               })} }
+               style={[widthHafl,marRight]}>
+                   <Text style={colorText} numberOfLines={2}>{item.name}</Text>
+               </TouchableOpacity>
+               <Text style={txtAddrOver} numberOfLines={1}>{`${item.address}${', '}${item._district.name}${', '}${item._city.name}`}</Text>
+           </View>
+         )}
+      />
 
-        </View>
-          :
-        <View></View>
-      }
       </View>
     );
   }

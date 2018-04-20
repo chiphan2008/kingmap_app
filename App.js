@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react';
 import {
-  Platform, StyleSheet, View, AsyncStorage, Image
+  Platform, StyleSheet, View, AsyncStorage, Image, Dimensions,
 } from 'react-native';
 import { StackNavigator,TabNavigator,Animated,NavigationActions } from 'react-navigation';
 //import util from 'util';
@@ -49,19 +49,21 @@ import RequestTransfer from './component/make_money/RequestTransfer';
 
 import OtherCat from './component/main/home/OtherCat';
 import LocationTab from './component/main/home/LocationTab';
-import ListLocation from './component/main/home/ListLocation';
+
 //import DistributeTab from './component/main/home/DistributeTab';
 import NotifyTab from './component/main/notify/NotifyTab';
 import PersonalTab from './component/main/personal/PersonalTab';
-
+// import location
 import SelectLocation from './component/main/location/SelectLocation';
+import LocationScreen from './component/main/location/LocationScreen';
+import ListLocation from './component/main/location/ListLocation';
 
 import LoginScreen from './component/page_user/LoginScreen';
 import SignUpScreen from './component/page_user/SignUpScreen';
 import ForgotPasswordScreen from './component/page_user/ForgotPasswordScreen';
 import VerifyAccountScreen from './component/page_user/VerifyAccountScreen';
 import checkLocation from './component/api/checkLocation';
-
+const {width,height} = Dimensions.get('window');
 
 export default class App extends Component {
   constructor(props) {
@@ -71,11 +73,17 @@ export default class App extends Component {
       initRoute : 'HomeT',
       isLogin : false,
       lang : lang_vn,
+      setVal:false,
     }
+    this.getLang();
+  }
+
+  getLang(){
     getLanguage().then((e) =>{
+      //console.log('App',e);
       if(e!==null){
           e.valueLang==='vn' ?  this.setState({lang : lang_vn}) : this.setState({lang : lang_en});
-     }
+        }
     });
   }
   componentWillMount(){
@@ -101,8 +109,9 @@ export default class App extends Component {
       //HomeTabs: { screen: HomeTab },
       HomeTabs: { screen:LocationTab},
       OtherCatScr: { screen: OtherCat },
-      ListLocScr: { screen: ListLocation },
+
       SearchScr: { screen: SearchScreen },
+      //ListCatScr: { screen: ListCategory },
       MakeMoneyScr: { screen: MakeMoney },
       WalletScr: { screen: Wallet },
       WalletGuideScr: { screen: WalletGuide },
@@ -115,6 +124,16 @@ export default class App extends Component {
       AdsScr: { screen: Ads },
       DesignAdsScr: { screen: DesignAds },
       RequestTransferScr: { screen: RequestTransfer },
+      //CatScr: { screen: CategoryScreen },
+
+      //DistributeTabScr: { screen: DistributeTab },
+    },{
+      headerMode: 'none',
+    });
+
+    const LocScreen = StackNavigator({
+      LocTabScr: { screen : LocationScreen },
+      ListLocScr: { screen: ListLocation },
       //CatScr: { screen: CategoryScreen },
       //ListCatScr: { screen: ListCategory },
       //DistributeTabScr: { screen: DistributeTab },
@@ -131,6 +150,18 @@ export default class App extends Component {
           tabBarIcon: ({ tintColor }) => (
             <Image source={homeIC} style={[styles.icon, {tintColor}]} />
           ),
+        },
+      },
+      LocationT: {
+        screen: LocScreen,
+        navigationOptions: {
+          tabBarLabel: `${this.state.lang.location}`,
+          tabBarIcon: ({ tintColor }) => (
+            <Image source={locationIC} style={[styles.icon, {tintColor}]} />
+          ),
+          style : {
+            borderBottomWidth:0,
+          },
         },
       },
       NotifyT: {
@@ -154,18 +185,7 @@ export default class App extends Component {
           },
         },
       },
-      InfoT: {
-        screen: PersonalTab,
-        navigationOptions: {
-          tabBarLabel: `${this.state.lang.other}`,
-          tabBarIcon: ({ tintColor }) => (
-            <Image source={moreIC} style={[styles.icon, {tintColor}]} />
-          ),
-          style : {
-            borderBottomWidth:0,
-          },
-        },
-      },
+
 
 
     }, {
@@ -178,7 +198,8 @@ export default class App extends Component {
         showLabel:true,
         showIcon:true,
         labelStyle: {
-          fontSize: 10.2,
+          fontSize: 9.6,
+          width:(width-40)/4,
         },
         activeTintColor: '#fff',
         inactiveTintColor: '#B8BBC0',
@@ -206,7 +227,6 @@ export default class App extends Component {
       MainScr: {
         screen: RootTabs,
       },
-
       DetailScr: {
         screen: DetailScreen,
       },
@@ -240,7 +260,7 @@ export default class App extends Component {
       headerMode: 'none',
       initialRouteName: this.state.initApp ? 'MainScr' : 'IntroSrc',
     });
-
-    return (<RootNav screenProps={(value)=>{value==='vn' ?  this.setState({lang : lang_vn}) : this.setState({lang : lang_en});}} />);
+    //const {setVal} = this.state;
+    return (<RootNav screenProps={()=>{this.setState({initApp:true},()=>this.getLang())}} />);
   }
 } ;

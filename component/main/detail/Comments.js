@@ -44,7 +44,13 @@ export default class Comments extends Component {
   }
 
   uploadImage(id){
-    this.props.requestLogin();
+    const {userId} = this.props;
+    //console.log('userId',userId);
+    if(userId===0){
+      this.props.requestLogin();
+      return;
+    }
+
     ImagePicker.openPicker({
       multiple: true
     }).then(img => {
@@ -54,10 +60,10 @@ export default class Comments extends Component {
       }else {
         this.setState({arrImageChild:this.state.arrImageChild.concat(img)});
       }
-    }).catch(e=>console.log('e'));
+    }).catch(e=>{});
   }
   postComment(comment_id){
-    if(this.state.inputChildComment.trim()!=='' || this.state.inputComment.trim()!==''){
+    if(this.state.inputChildComment.trim()!=='' || this.state.inputComment.trim()!=='' || this.state.arrImage.length>0){
       const arr = new FormData();
       arr.append('user_id',this.props.userId);
       arr.append('content_id',this.props.idContent);
@@ -113,8 +119,8 @@ export default class Comments extends Component {
       txtComments,padLeft,colorText,mrgTop,show,hide,rowFlex
     } = styles;
     //console.log("this.props.navigation=",util.inspect(this.props.navigation,false,null));
-    const {idContent,listComment,lang} = this.props;
-    //console.log(idContent);
+    const {idContent,listComment,lang,userId} = this.props;
+
     const {
       showImgComment,arrImage,showImgCommentChild,arrImageChild,index,
       showNotify,showNotifyChild,arrImgModal,
@@ -211,7 +217,7 @@ export default class Comments extends Component {
                     style={{position:'absolute',padding:10,alignSelf:'flex-end',zIndex:9999}}>
                       <Image source={closeIC} style={{width:18,height:18}} />
                     </TouchableOpacity>
-                  
+
                     {arrImgModal.length>0 &&
                     <ImageViewer imageUrls={arrImgModal} index={index}
                     onChange={(index) => this.setState({ index })}

@@ -374,13 +374,12 @@ export default class SearchScreen extends Component {
                   latitude: Number(marker.latitude),
                   longitude: Number(marker.longitude),
                 }}
-                image={Platform.OS!=='ios' ? {uri: marker.marker} : null}
+                //image={ Platform.OS==='android' ? {uri:marker.marker} : null}
               >
-              {Platform.OS==='ios' &&
               <Image
+              //resizeMode="trengh"
               source={{uri:`${marker.marker}`}}
               style={{width:48,height:54}} />
-              }
                 <MapView.Callout onPress={()=>{navigate('DetailScr',{idContent:marker.id,lat:marker.latitude,lng:marker.longitude,curLoc,lang:lang.lang});}}
                 >
                   <TouchableOpacity>

@@ -127,9 +127,10 @@ export default class DetailScreen extends Component {
   requestLogin(){
     const {state,navigate} = this.props.navigation;
     const {idContent,lang,curLoc,lat,lng} = this.props.navigation.state.params;
-    //console.log('state.key-Detail',state.key);
     if(this.state.isLogin===false){
+      //console.log('this.state.isLogin',this.state.isLogin);
       navigate('LoginScr');
+      //return false;
     }
   }
   refresh(){

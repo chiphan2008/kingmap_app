@@ -49,11 +49,11 @@ export default class Suggest extends Component {
              <View style={{flexDirection:'row',justifyContent:'space-between',marginBottom:10}}>
                  <View style={[widthHafl,marRight]}>
                    <TouchableOpacity
-                   onPress={()=>navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc,lang})}
+                   onPress={()=>navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc,lang:lang.lang})}
                    >
                    <Image source={{uri :`${global.url_media}${item.avatar}`}} style={imgSpace}/>
                    </TouchableOpacity>
-                   <TouchableOpacity onPress={()=>navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc,lang})}
+                   <TouchableOpacity onPress={()=>navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc,lang:lang.lang})}
                    >
                    <Text style={colorText} numberOfLines={2}>{item.name}</Text>
                    </TouchableOpacity>

@@ -39,14 +39,14 @@ export default class OtherBranch extends Component {
                key={item.id}>
                <TouchableOpacity
                onPress={()=> {navigate('DetailScr',{
-                 idContent:item.id,lat:item.lat,lng:item.lng,lang,curLoc
+                 idContent:item.id,lat:item.lat,lng:item.lng,lang:lang.lang,curLoc
                })}}
                style={[widthHafl,marRight]}>
                    <Image source={{uri :`${global.url_media}${item.avatar}`}} style={imgSpace}/>
                </TouchableOpacity>
                <TouchableOpacity
                onPress={()=> {navigate('DetailScr',{
-                 idContent:item.id,lat:item.lat,lng:item.lng,lang,curLoc
+                 idContent:item.id,lat:item.lat,lng:item.lng,lang:lang.lang,curLoc
                })} }
                style={[widthHafl,marRight]}>
                    <Text style={colorText} numberOfLines={2}>{item.name}</Text>

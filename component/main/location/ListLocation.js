@@ -224,7 +224,7 @@ export default class ListLocation extends Component {
      this.setState({pullToRefresh:true});
    }
    componentWillUnmount() {
-     navigator.geolocation.clearWatch(this.watchID);
+     //navigator.geolocation.clearWatch(this.watchID);
    }
    refresh(){
      checkLogin().then(e=>{
@@ -240,7 +240,7 @@ export default class ListLocation extends Component {
          if(e.isLogin) this.refresh();
        })
        DeviceEventEmitter.addListener('detailBack', ()=>{
-         console.log('detailBack');
+         //console.log('detailBack');
          this.setState({pullToRefresh:true});
        })
      },1500)

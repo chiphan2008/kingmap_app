@@ -218,24 +218,37 @@ export default class LocationTab extends Component {
     navigator.geolocation.getCurrentPosition(
       ({coords}) => {
         const {latitude, longitude} = coords
-        if(latitude!==curLoc.latitude && curLoc.longitude!==longitude){
-          setTimeout(()=>{
-            this.setState({
-              curLoc: {
-                latitude,longitude,
-                lat:latitude,lng:longitude,
-                latlng:`${latitude},${longitude}`,
-                latitudeDelta: 0.005,
-                longitudeDelta: 0.001,
-              }
-            });
-          },1200)
-        }
+        setTimeout(()=>{
+          this.setState({
+            curLoc: {
+              latitude,longitude,
+              lat:latitude,lng:longitude,
+              latlng:`${latitude},${longitude}`,
+              latitudeDelta: 0.005,
+              longitudeDelta: 0.001,
+            }
+          });
+        },1200)
       },
       (error) => {/*alert('Error: Are location services on?')*/},
       {enableHighAccuracy: true}
     );
+    this.watchID = navigator.geolocation.watchPosition(
+      ({coords}) => {
+        const {lat, long} = coords
+        this.setState({
+          curLoc: {
+            lat,
+            long
+          }
+        })
+    });
   }
+
+  componentWillUnmount() {
+    navigator.geolocation.clearWatch(this.watchID);
+  }
+
   findNewPoint(x, y, angle, distance) {
       let result = {};
       result.x = Math.round(Math.cos(angle * Math.PI / 180) * distance + x);

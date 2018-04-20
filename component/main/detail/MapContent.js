@@ -68,9 +68,9 @@ export default class MapContent extends Component {
             latitude: Number(region.latitude),
             longitude: Number(region.longitude),
           }}
-          //image={ Platform.OS==='android' ? logoMap : null}
+          image={ Platform.OS==='android' ? logoMap : null}
           >
-          <Image source={logoMap} resizeMode="contain" style={{width:57,height:50}} />
+          {Platform.OS==='ios' && <Image source={logoMap} style={{width:57,height:50}} />}
         </MapView.Marker>
         </MapView>
       </View>

@@ -18,6 +18,7 @@ import lang_en from '../../lang/en/language';
 import SelectLocation from '../../main/location/SelectLocation';
 import checkLocation from '../../api/checkLocation';
 import checkLogin from '../../api/checkLogin';
+import accessLocation from '../../api/accessLocation';
 
 import upDD from '../../../src/icon/ic-white/ic-dropdown_up.png';
 import sortDownIC from '../../../src/icon/ic-sort-down.png';
@@ -74,7 +75,7 @@ export default class ListLocation extends Component {
       scrollToTop:false,
     }
     this.refresh();
-
+    accessLocation();
   }
 
   getCategory(idcat,loc){
@@ -224,7 +225,7 @@ export default class ListLocation extends Component {
      this.setState({pullToRefresh:true});
    }
    componentWillUnmount() {
-     //navigator.geolocation.clearWatch(this.watchID);
+     navigator.geolocation.clearWatch(this.watchID);
    }
    refresh(){
      checkLogin().then(e=>{
@@ -390,7 +391,7 @@ export default class ListLocation extends Component {
                            <TouchableOpacity
                            onPress={()=>{
                              this.setState({pullToRefresh:false},()=>{
-                               navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc:this.state.curLoc,lang:lang})
+                               navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc:this.state.curLoc,lang:lang.lang})
                                //console.log('lang2',lang);
                              })
                            }}>

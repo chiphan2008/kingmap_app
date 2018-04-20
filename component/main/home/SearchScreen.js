@@ -54,6 +54,7 @@ export default class SearchScreen extends Component {
       lang:this.props.navigation.state.params.lang==='vn' ? lang_vn: lang_en,
     }
     Keyboard.dismiss();
+    accessLocation();
   }
 
   getCategory(lat,lng){

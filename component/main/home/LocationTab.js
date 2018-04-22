@@ -5,6 +5,9 @@ import {Platform, View, Text, StyleSheet, Dimensions, Image, TextInput,ScrollVie
   TouchableOpacity,PermissionsAndroid, AsyncStorage, Modal,Keyboard } from 'react-native';
 import RNSettings from 'react-native-settings';
 const {height, width} = Dimensions.get('window');
+//import Geolocation from '../../api/Geolocation';
+//import hasLocationPermission from '../../api/hasLocationPermission';
+
 
 import getApi from '../../api/getApi';
 //import reqLatLng from '../../api/reqLatLng';
@@ -77,79 +80,35 @@ export default class LocationTab extends Component {
       }
     })
 
-    //this.getLoc();
+    this.getLocation();
     Keyboard.dismiss();
     arrLang = [{name:'VIE',v:'vn'},{name:'ENG',v:'en'}];
   }
-  getLoc(){
-    checkLocation().then(e=>{
-      if(e.latitude!==undefined){
-        const {latitude,longitude} = e;
-        this.setState({
-          curLoc: {
-            lat:latitude,
-            lng:longitude,
-            latlng:`${latitude},${longitude}`,
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.001,
-            latitude, longitude,
-          }})
-      }else {
-        navigator.geolocation.getCurrentPosition(
-          ({coords}) => {
-            const {latitude, longitude} = coords
+  getLocation = async () => {
+    navigator.geolocation.getCurrentPosition(
+          (position) => {
+            //console.log('position',position.coords);
+            const latlng = `${position.coords.latitude}${','}${position.coords.longitude}`;
             this.setState({
-              curLoc: {
-                latitude,longitude,
-                lat:latitude,lng:longitude,
-                latlng:`${latitude},${longitude}`,
-                latitudeDelta: 0.005,
-                longitudeDelta: 0.001,
+              curLoc : {
+                latitude:position.coords.latitude,
+                longitude: position.coords.longitude,
+                lat:position.coords.latitude,
+                lng: position.coords.longitude,
+                latitudeDelta:  0.008757,
+                longitudeDelta: 0.010066,
+                latlng:latlng,
               }
-            })
+            });
+
+           },
+           (error) => {
+            //getLocationByIP().then();
           },
-          (error) => {/*alert('Error: Are location services on?')*/},
-          {enableHighAccuracy: true}
-        );
-      }
-    })
+          {enableHighAccuracy: true, timeout: 20000}
+    );
   }
-  // getLoc(){
-  //   navigator.geolocation.getCurrentPosition(
-  //         (position) => {
-  //           //console.log('position',position);
-  //           const latlng = `${position.coords.latitude}${','}${position.coords.longitude}`;
-  //           this.setState({
-  //             curLoc : {
-  //               latitude:position.coords.latitude,
-  //               longitude: position.coords.longitude,
-  //               lat:position.coords.latitude,
-  //               lng: position.coords.longitude,
-  //               latitudeDelta:  0.008757,
-  //               longitudeDelta: 0.010066,
-  //               latlng:latlng,
-  //             }
-  //           });
-  //          },
-  //          (error) => {
-  //           getLocationByIP().then((e) => {
-  //             //console.log('e',e);
-  //               this.setState({
-  //                 curLoc : {
-  //                   latitude:e.latitude,
-  //                   longitude: e.longitude,
-  //                   lat:e.latitude,
-  //                   lng: e.longitude,
-  //                   latitudeDelta:  0.008757,
-  //                   longitudeDelta: 0.010066,
-  //                   latlng:`${e.latitude}${','}${e.longitude}`,
-  //                 }
-  //               });
-  //           });
-  //         },
-  //         {enableHighAccuracy: true, timeout: 20000, maximumAge: 10000}
-  //   );
-  // }
+
 
   requestLogin(){
     if(this.state.isLogin===false){
@@ -213,41 +172,41 @@ export default class LocationTab extends Component {
   componentWillMount() {
     this.getLang();
   }
-  componentDidMount(){
-    const {curLoc} = this.state;
-    navigator.geolocation.getCurrentPosition(
-      ({coords}) => {
-        const {latitude, longitude} = coords
-        setTimeout(()=>{
-          this.setState({
-            curLoc: {
-              latitude,longitude,
-              lat:latitude,lng:longitude,
-              latlng:`${latitude},${longitude}`,
-              latitudeDelta: 0.005,
-              longitudeDelta: 0.001,
-            }
-          });
-        },1200)
-      },
-      (error) => {/*alert('Error: Are location services on?')*/},
-      {enableHighAccuracy: true}
-    );
-    this.watchID = navigator.geolocation.watchPosition(
-      ({coords}) => {
-        const {lat, long} = coords
-        this.setState({
-          curLoc: {
-            lat,
-            long
-          }
-        })
-    });
-  }
-
-  componentWillUnmount() {
-    navigator.geolocation.clearWatch(this.watchID);
-  }
+  // componentDidMount(){
+  //   const {curLoc} = this.state;
+  //   navigator.geolocation.getCurrentPosition(
+  //     ({coords}) => {
+  //       const {latitude, longitude} = coords
+  //       setTimeout(()=>{
+  //         this.setState({
+  //           curLoc: {
+  //             latitude,longitude,
+  //             lat:latitude,lng:longitude,
+  //             latlng:`${latitude},${longitude}`,
+  //             latitudeDelta: 0.005,
+  //             longitudeDelta: 0.001,
+  //           }
+  //         });
+  //       },1200)
+  //     },
+  //     (error) => {/*alert('Error: Are location services on?')*/},
+  //     {enableHighAccuracy: true}
+  //   );
+  //   this.watchID = navigator.geolocation.watchPosition(
+  //     ({coords}) => {
+  //       const {lat, long} = coords
+  //       this.setState({
+  //         curLoc: {
+  //           lat,
+  //           long
+  //         }
+  //       })
+  //   });
+  // }
+  //
+  // componentWillUnmount() {
+  //   navigator.geolocation.clearWatch(this.watchID);
+  // }
 
   findNewPoint(x, y, angle, distance) {
       let result = {};

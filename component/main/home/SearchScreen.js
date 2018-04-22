@@ -110,55 +110,26 @@ export default class SearchScreen extends Component {
     //const { keyword } = this.props.navigation.state.params;
     navigator.geolocation.getCurrentPosition(
           (position) => {
-            const latlng = `${position.coords.latitude}${','}${position.coords.longitude}`;
+            //console.log('position',position);
+            const {latitude,longitude} = position.coords;
             this.setState({
-              curLocation : {
-                latitude:position.coords.latitude,
-                longitude: position.coords.longitude,
-                lat:position.coords.latitude,
-                lng: position.coords.longitude,
-                latitudeDelta:  0.008757,
-                longitudeDelta: 0.010066,
-                latlng,
-              },
               curLoc : {
-                latitude:position.coords.latitude,
-                longitude: position.coords.longitude,
-                lat:position.coords.latitude,
-                lng: position.coords.longitude,
+                latitude,longitude,
+                lat:latitude,
+                lng:longitude,
                 latitudeDelta:  0.008757,
                 longitudeDelta: 0.010066,
-                latlng:latlng,
-              },
+                latlng:`${latitude},${longitude}`,
+              }
+            },()=>{
+              this.getCategory(latitude,longitude);
             });
+
            },
            (error) => {
-             //console.log('getLocationByIP');
-            getLocationByIP().then((e) => {
-
-                this.setState({
-                  curLocation : {
-                    latitude:e.latitude,
-                    longitude: e.longitude,
-                    lat:e.latitude,
-                    lng: e.longitude,
-                    latitudeDelta:  0.008757,
-                    longitudeDelta: 0.010066,
-                    latlng:`${e.latitude}${','}${e.longitude}`,
-                  },
-                  curLoc : {
-                    latitude:e.latitude,
-                    longitude: e.longitude,
-                    lat:e.latitude,
-                    lng: e.longitude,
-                    latitudeDelta:  0.008757,
-                    longitudeDelta: 0.010066,
-                    latlng:`${e.latitude}${','}${e.longitude}`,
-                  }
-                });
-            });
+            //getLocationByIP().then();
           },
-          {enableHighAccuracy: true, timeout: 20000, maximumAge: 10000}
+          {enableHighAccuracy: true, timeout: 20000}
     );
   }
 
@@ -204,31 +175,6 @@ export default class SearchScreen extends Component {
 
   componentWillMount() {
     //console.log('componentDidMount');
-     navigator.geolocation.getCurrentPosition(
-       ({coords}) => {
-         let {latitude, longitude, altitude} = coords
-         //latitude = Number(latitude).toFixed(6);
-         //longitude = Number(latitude).toFixed(6);
-         //console.log('coords',Number(latitude).toFixed(6), Number(longitude).toFixed(6));
-         this.setState({
-           curLoc: {
-             latitude,
-             longitude,
-           },
-           curLocation: {
-             latitude,
-             longitude,
-             altitude,
-             latitudeDelta: 0.005,
-             longitudeDelta: 0.001,
-           }
-         },()=>{
-           this.getCategory(latitude,longitude,);
-         })
-       },
-       (error) => {/*alert('Error: Are location services on?')*/},
-       {enableHighAccuracy: true}
-     );
      this.watchID = navigator.geolocation.watchPosition(
        ({coords}) => {
          const {lat, long} = coords
@@ -410,10 +356,9 @@ export default class SearchScreen extends Component {
               />
             </MapView>
 
-
           </View>
         :
-        <View style={{width,height:height-300,justifyContent:'center',alignItems:'center'}}>
+        <View onLayout={()=>this.getLoc()} style={{width,height:height-300,justifyContent:'center',alignItems:'center'}}>
           <ActivityIndicator size="large" color="#d0021b" />
         </View>
         }

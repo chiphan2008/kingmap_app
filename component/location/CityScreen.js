@@ -35,7 +35,7 @@ export default class CityScreen extends Component {
     checkLocation().then(e=>{
       if(e.idCountry===undefined){
         this.getCountry();
-        this.getLoc();
+        //this.getLoc();
       }
     });
 
@@ -88,7 +88,7 @@ export default class CityScreen extends Component {
                 nameCountry: slCountry.name,
                 idCity: slCity.id,
                 nameCity: slCity.name,
-                latitude,longitude,position
+                //latitude,longitude,position
             })).then(()=>{
               if(this.state.slCountry.id==1){
                 AsyncStorage.setItem('@MyLanguage:key',JSON.stringify({

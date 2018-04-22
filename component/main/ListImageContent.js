@@ -65,7 +65,7 @@ export default class ListImageContent extends Component {
   render() {
 
     const {navigate,goBack} = this.props.navigation;
-    const { idContent, spaceTab, menuTab, videoTab } = this.props.navigation.state.params;
+    const { idContent, spaceTab, menuTab, videoTab,lang } = this.props.navigation.state.params;
 
     const {
       container,
@@ -84,18 +84,18 @@ export default class ListImageContent extends Component {
                 <TouchableOpacity onPress={()=> goBack()}>
                 <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                 </TouchableOpacity>
-                <Text style={{color:'white',fontSize:16}}>Hình ảnh</Text>
+                <Text style={{color:'white',fontSize:16}}>{lang.image.toUpperCase()}</Text>
                 <View></View>
             </View>
         </View>
         <View style={{alignItems:'center'}}>
           <View style={{flexDirection:'row',width:width-40,paddingTop:10,paddingBottom:10,}}>
             <TouchableOpacity onPress={()=> this.setState({showSpace:'active',showMenu:'',showVideo:''})} >
-            <Text style={[marRight,this.state.showSpace==='active' ? titleTabActive : titleTab]}>{'Không gian'.toUpperCase()}</Text>
+            <Text style={[marRight,this.state.showSpace==='active' ? titleTabActive : titleTab]}>{lang.space.toUpperCase()}</Text>
             </TouchableOpacity>
             <Text style={[marRight,titleTab]}> | </Text>
             <TouchableOpacity onPress={()=> this.setState({showSpace:'',showMenu:'active',showVideo:''})} >
-            <Text style={[marRight,this.state.showMenu==='active' ? titleTabActive : titleTab]}>{'Menu'.toUpperCase()}</Text>
+            <Text style={[marRight,this.state.showMenu==='active' ? titleTabActive : titleTab]}>{lang.image.toUpperCase()}</Text>
             </TouchableOpacity>
             <Text style={[marRight,titleTab]}> | </Text>
             <TouchableOpacity onPress={()=> this.setState({showSpace:'',showMenu:'',showVideo:'active'})} >
@@ -108,7 +108,9 @@ export default class ListImageContent extends Component {
 
         <View style={[wrapListImage,this.state.showSpace==='active' ? show : hide]}>
 
-        {this.state.listSpace.map((e,index) => (
+        {this.state.listSpace.length>0 ?
+
+          this.state.listSpace.map((e,index) => (
           <TouchableOpacity key={index} onPress={() => {this.openModalSpace(index)}}>
            <Image
              //resizeMode="cover"
@@ -116,7 +118,10 @@ export default class ListImageContent extends Component {
              source={{ uri: `${e.url}` }}
            />
          </TouchableOpacity>
-        ))}
+        ))
+        :
+        <Text style={{paddingLeft:20}}>{lang.updating}</Text>
+        }
 
        <Modal onRequestClose={() => null} visible={this.state.isModalSpaceOpened} transparent={true}>
        <TouchableOpacity
@@ -131,7 +136,8 @@ export default class ListImageContent extends Component {
         </View>
 
         <View style={[wrapListImage,this.state.showMenu==='active' ? show : hide]}>
-          {this.state.listMenu.map((e,index) => (
+          {this.state.listMenu.length > 0 ?
+            this.state.listMenu.map((e,index) => (
             <TouchableOpacity key={index} onPress={() => {this.openModalMenu(index)}}>
              <Image
                resizeMode="cover"
@@ -140,7 +146,10 @@ export default class ListImageContent extends Component {
              />
            </TouchableOpacity>
 
-          ))}
+          ))
+          :
+          <Text style={{paddingLeft:20}}>{lang.updating}</Text>
+          }
           <Modal onRequestClose={() => null} visible={this.state.isModalMenuOpened} transparent={true}>
           <TouchableOpacity
           onPress={()=>this.setState({isModalMenuOpened:false,currentImageIndex:0})}
@@ -154,7 +163,8 @@ export default class ListImageContent extends Component {
         </View>
 
         <View style={[wrapListImage,this.state.showVideo==='active' ? show : hide]}>
-          {this.state.listVideo.map((e,index) => (
+          {this.state.listVideo.length>0 ?
+            this.state.listVideo.map((e,index) => (
             <View key={index}>
               <WebView
                 source={{uri: `${e}`}}
@@ -163,7 +173,10 @@ export default class ListImageContent extends Component {
                 domStorageEnabled
               />
             </View>
-          ))}
+          ))
+          :
+          <Text style={{paddingLeft:20}}>{lang.updating}</Text>
+          }
 
         </View>
         </ScrollView>

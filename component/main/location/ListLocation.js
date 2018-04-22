@@ -197,16 +197,8 @@ export default class ListLocation extends Component {
     const id = this.props.navigation.state.params.idCat;
      navigator.geolocation.getCurrentPosition(
        ({coords}) => {
-         const {latitude, longitude} = coords
-         this.setState({
-           curLoc: {
-             latitude,
-             longitude,
-             latlng:`${latitude},${longitude}`,
-           }
-         },()=>{
-           this.getCategory(id,`${latitude},${longitude}`);
-         })
+         const {latitude, longitude} = coords;
+         this.getCategory(id,`${latitude},${longitude}`);
 
        },
        (error) => {},
@@ -214,11 +206,12 @@ export default class ListLocation extends Component {
      );
      this.watchID = navigator.geolocation.watchPosition(
        ({coords}) => {
-         const {lat, long} = coords
+         const {latitude, longitude} = coords;
          this.setState({
            curLoc: {
-             lat,
-             long
+             latitude,
+             longitude,
+             latlng:`${latitude},${longitude}`,
            }
          })
      });

@@ -283,7 +283,7 @@ export default class PersonalTab extends Component {
                   userId={user_profile.id}
                   labelTitle={`${lang.info_per}`}
                   visible={showUpdateInfo}
-                  closeModal={()=>{this.setState({showUpdateInfo:false});this.reqLogin()}} />
+                  closeModal={()=>{this.setState({showUpdateInfo:false});this.refresh()}} />
                 </View>
               <View style={borderItemInfoPer}></View>
             </View>
@@ -385,7 +385,7 @@ export default class PersonalTab extends Component {
         navigation={this.props.navigation}
         labelTitle={'Check in'}
         visible={showCheckin}
-        closeModal={()=>{this.setState({showCheckin:false});this.reqLogin();}}
+        closeModal={()=>{this.setState({showCheckin:false});this.refresh();}}
         />
         <Collection
         lang={lang}
@@ -400,7 +400,7 @@ export default class PersonalTab extends Component {
         userId={user_profile.id}
         labelTitle={`${lang.setting_account}`}
         visible={showSetting}
-        closeModal={()=>{this.setState({showSetting:false});this.reqLogin()}} />
+        closeModal={()=>{this.setState({showSetting:false});this.refresh();}} />
       </View>
     );
   }

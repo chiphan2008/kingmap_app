@@ -98,6 +98,7 @@ module.exports = {
   kingmap_suggest:'Kingmap suggest',
   view_all:'View all',
   not_found:'Not found ...',
+  updating: 'Updating ...',
 
   lang:'en',
 };

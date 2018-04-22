@@ -28,7 +28,7 @@ export default class SpaceContent extends Component {
   render() {
     //console.log('this.props.listContent.vote',this.props.listContent.has_vote);
     const {
-      rowFlex,titleSpace,rowFlexImg,
+      rowFlex,titleSpace,rowFlexImg,show,hide,
       colorNumPP,sizeTitle,spaceContent,imgSpace,
     } = styles;
     const {listImgSpace,listImgMenu,listImgVideo,idContent,lang} = this.props;
@@ -40,15 +40,17 @@ export default class SpaceContent extends Component {
           <View style={titleSpace}>
               <Text style={[colorNumPP,sizeTitle]}>{lang.space.toUpperCase()} ({listImgSpace.length})</Text>
               <TouchableOpacity
+              style={listImgSpace.length>0 ? show : hide}
               onPress={()=>navigate('ListIMGScr',{
                 idContent,
-                spaceTab:'active',menuTab:'',videoTab:''})}
+                spaceTab:'active',menuTab:'',videoTab:'',lang})}
               >
               <Text>{lang.view_all} >></Text>
               </TouchableOpacity>
           </View>
           <FlatList
              horizontal
+             ListEmptyComponent={<Text>{lang.updating}</Text>}
              showsHorizontalScrollIndicator={false}
              keyExtractor={(item,index) => index}
              extraData={this.state}
@@ -76,9 +78,10 @@ export default class SpaceContent extends Component {
           <View style={titleSpace}>
               <Text style={[colorNumPP,sizeTitle]}>{lang.image.toUpperCase()} ({listImgMenu.length})</Text>
               <TouchableOpacity
+              style={listImgMenu.length>0 ? show : hide}
               onPress={()=>navigate('ListIMGScr',{
                 idContent,
-                spaceTab:'',menuTab:'active',videoTab:''})}
+                spaceTab:'',menuTab:'active',videoTab:'',lang})}
               >
               <Text>{lang.view_all} >></Text>
               </TouchableOpacity>
@@ -86,6 +89,7 @@ export default class SpaceContent extends Component {
 
           <FlatList
              horizontal
+             ListEmptyComponent={<Text>{lang.updating}</Text>}
              showsHorizontalScrollIndicator={false}
              keyExtractor={(item,index) => index}
              extraData={this.state}
@@ -112,8 +116,9 @@ export default class SpaceContent extends Component {
           <View style={titleSpace}>
               <Text style={[colorNumPP,sizeTitle]}>VIDEO ({listImgVideo.length})</Text>
               <TouchableOpacity
+              style={listImgVideo.length>0 ? show : hide}
               onPress={()=>navigate('ListIMGScr',{
-                idContent, spaceTab:'',menuTab:'',videoTab:'active'})}
+                idContent, spaceTab:'',menuTab:'',videoTab:'active',lang})}
               >
               <Text>{lang.view_all} >></Text>
               </TouchableOpacity>
@@ -121,6 +126,7 @@ export default class SpaceContent extends Component {
 
           <FlatList
              horizontal
+             ListEmptyComponent={<Text>{lang.updating}</Text>}
              showsHorizontalScrollIndicator={false}
              keyExtractor={(item,index) => index}
              extraData={this.state}
@@ -142,7 +148,7 @@ export default class SpaceContent extends Component {
                  />
                </View>
           )} />
-
+          <View style={{height:30}}></View>
 
       </View>
     );
@@ -166,4 +172,6 @@ const styles = StyleSheet.create({
   spaceContent : {
       width: width - 20,paddingLeft:20
   },
+  show : { display: 'flex'},
+  hide : { display: 'none'},
 });

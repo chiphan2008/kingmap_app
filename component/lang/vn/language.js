@@ -98,6 +98,7 @@ module.exports = {
   kingmap_suggest:'Kingmap gợi ý',
   view_all:'Xem tất cả',
   not_found:'Không tìm thấy ...',
+  updating:'Đang cập nhật ...',
 
   lang:'vn'
 };

@@ -223,8 +223,10 @@ export default class ListLocation extends Component {
    refresh(){
      checkLogin().then(e=>{
        if(e.id!==undefined){
-         this.setState({user_id:e.id,isLogin:true});
-         loginServer(e);
+         setTimeout(()=>{
+           this.setState({user_id:e.id,isLogin:true});
+           loginServer(e);
+         },1200)
        }
      });
    }

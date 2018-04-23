@@ -6,11 +6,10 @@ import {
   Platform,Dimensions,TouchableOpacity,
   WebView,Modal,FlatList,
 } from 'react-native';
-import ImageViewer from 'react-native-image-zoom-viewer';
+import ImageViewer from './ImageViewer';
 //
 //import FacebookPlayer from 'react-facebook-player';
 import global from '../../global';
-import closeIC from '../../../src/icon/ic-white/ic-close.png';
 
 const {width,height} = Dimensions.get('window');
 
@@ -63,17 +62,13 @@ export default class SpaceContent extends Component {
                </View>
           )} />
 
-          <Modal onRequestClose={() => null} visible={showImgSpace} transparent>
-            <TouchableOpacity onPress={()=>this.setState({showImgSpace:false})}
-            style={{position:'absolute',padding:10,alignSelf:'flex-end',zIndex:9999}}>
-              <Image source={closeIC} style={{width:18,height:18}} />
-            </TouchableOpacity>
-            <ImageViewer
-            imageUrls={listImgSpace}
-            index={index} enableImageZoom saveToLocalByLongPress={false}
-            onChange={(index) => console.log(index)}
-            enableSwipeDown />
-          </Modal>
+
+          <ImageViewer
+          visible={showImgSpace}
+          data={listImgSpace}
+          index={index}
+          closeModal={()=>this.setState({showImgSpace:false,index:0})}
+          />
 
           <View style={titleSpace}>
               <Text style={[colorNumPP,sizeTitle]}>{lang.image.toUpperCase()} ({listImgMenu.length})</Text>
@@ -102,15 +97,14 @@ export default class SpaceContent extends Component {
                </View>
           )} />
 
-            <Modal onRequestClose={() => null} visible={showImageMenu} transparent>
-              <TouchableOpacity onPress={()=>this.setState({showImageMenu:false})}
-              style={{position:'absolute',padding:10,alignSelf:'flex-end',zIndex:9999}}>
-                <Image source={closeIC} style={{width:18,height:18}} />
-              </TouchableOpacity>
-              <ImageViewer imageUrls={listImgMenu} index={index}
-              onChange={(index) => this.setState({ index })}
-              enableImageZoom saveToLocalByLongPress={false}/>
-            </Modal>
+          <ImageViewer
+          visible={showImageMenu}
+          data={listImgMenu}
+          index={index}
+          closeModal={()=>this.setState({showImageMenu:false,index:0})}
+          />
+
+
 
 
           <View style={titleSpace}>
@@ -134,7 +128,7 @@ export default class SpaceContent extends Component {
              renderItem={({item,index}) => (
                <View style={rowFlexImg}>
                  <WebView
-
+                    allowsInlineMediaPlayback
                     source={{uri: `${item}`}}
                     style={imgSpace}
                     javaScriptEnabled

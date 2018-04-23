@@ -13,6 +13,12 @@ export function format_number(value){
 export function hasNumber(text) {
   return /\d/.test(text);
 }
+export function getIdYoutube(link){
+  var p = /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+  if(link.match(p)){
+    return link.match(/^.*(youtu.be\/|v\/|e\/|u\/\w+\/|embed\/|v=)([^#\&\?]*).*/).pop();
+  }
+}
 export function isEmail(text){
   let email = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/ ;
   return email.test(text);

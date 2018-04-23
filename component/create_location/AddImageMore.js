@@ -11,6 +11,7 @@ import closeLargeIC from '../../src/icon/ic-create/ic-close-large.png';
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
 const {width,height} = Dimensions.get('window');
 import ImagePicker from 'react-native-image-crop-picker';
+import {getIdYoutube} from '../libs';
 
 export default class AddImageMore extends Component {
   constructor(props){
@@ -45,10 +46,7 @@ export default class AddImageMore extends Component {
   }
   uploadVideo(link){
     if(link!==''){
-      var p = /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
-      if(link.match(p)){
-        var youtube_video_id = link.match(/^.*(youtu.be\/|v\/|e\/|u\/\w+\/|embed\/|v=)([^#\&\?]*).*/).pop();
-      }
+      var youtube_video_id = getIdYoutube(link);
       if(this.state.imgVideo.includes(youtube_video_id)){
         return this.setState({
           txtErr:'* Link đã tồn tại!',

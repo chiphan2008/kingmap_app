@@ -10,7 +10,7 @@ import ImageViewer from './ImageViewer';
 //
 //import FacebookPlayer from 'react-facebook-player';
 import global from '../../global';
-
+import {getIdYoutube} from '../../libs';
 const {width,height} = Dimensions.get('window');
 
 
@@ -132,7 +132,10 @@ export default class SpaceContent extends Component {
              data={listImgVideo}
              renderItem={({item,index}) => (
                <View style={rowFlexImg}>
-                 <WebView
+               
+               <Image style={{width:(width-50)/2,height:width/3,marginRight:10,resizeMode: 'cover'}}
+               source={{uri:`https://img.youtube.com/vi/${getIdYoutube(item)}/0.jpg`}} />
+                 {/*<WebView
                     allowsInlineMediaPlayback
                     source={{uri: `${item}`}}
                     style={imgSpace}
@@ -144,9 +147,12 @@ export default class SpaceContent extends Component {
                     //onShouldStartLoadWithRequest={this.onShouldStartLoadWithRequest}
                     startInLoadingState={true}
                     scalesPageToFit={true}
-                 />
+                 />*/}
                </View>
           )} />
+
+
+
           <View style={{height:30}}></View>
 
       </View>

@@ -42,8 +42,9 @@ export default class ImageViewer extends Component {
 
         <FlatList
            horizontal
+           pagingEnabled
            removeClippedSubviews={false}
-           initialScrollIndex={index}
+           initialScrollIndex={0}
            initialNumToRender={data.length}
            //maxToRenderPerBatch={data.length}
            onScrollToIndexFailed={(info)=>console.log(info)}

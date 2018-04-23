@@ -200,7 +200,7 @@ export default class SearchScreen extends Component {
       keyword, curLocation,markers,curLoc,lang,showFullScreen,
       labelLoc,labelSer,labelCat,fitCoord,id_cat
      } = this.state;
-    //console.log(lang);
+    console.log(lang.lang);
     const { navigate,goBack } = this.props.navigation;
     const { lat,lng } = this.props.navigation.state.params;
     const {
@@ -251,7 +251,7 @@ export default class SearchScreen extends Component {
         {curLocation.longitude!==undefined ?
           <View>
 
-          {/*<View style={{left:0,top:7,position:'absolute',alignItems:'center',width}}>
+          {<View style={{left:0,top:7,position:'absolute',alignItems:'center',width}}>
                   <View style={{width:width-40,flexDirection:'row',justifyContent:'space-between'}}>
                   <TouchableOpacity
                     onPress={()=>this.setState({ showLoc:!this.state.showLoc,listSubCat:{showList:false},listSerItem:{showList:false}, })}
@@ -274,7 +274,7 @@ export default class SearchScreen extends Component {
                       <Image source={sortDownIC} style={{width:12,height:13,top:13,right:5,position:'absolute'}} />
                   </TouchableOpacity>
                 </View>
-          </View>*/}
+          </View>}
 
           {/*<TouchableOpacity onPress={()=>navigate('ListCatScr',{keyword:this.state.valSearch,idCat:'',lat:curLoc.lat,lng:curLoc.lng,lang:lang.lang})} style={[btnMap,btnList]}>
             <Image source={listmapIC} style={{width:25,height:25}} />
@@ -298,18 +298,6 @@ export default class SearchScreen extends Component {
               // onRegionChange={(region)=>{
               //   console.log('region',region);
               // }}
-              onRegionChangeComplete={(region)=>{
-                //console.log('region');
-
-
-                // const {latitude,longitude,longitudeDelta,latitudeDelta} = region;
-                // this.setState({
-                //   curLocation: {
-                //     lat:latitude,lng:longitude,latlng:`${latitude},${longitude}`,
-                //     latitude,longitude,longitudeDelta,latitudeDelta
-                //   }
-                // });
-              }}
               customMapStyle={global.style_map}
               showsPointsOfInterest={false}
 
@@ -354,21 +342,19 @@ export default class SearchScreen extends Component {
             fillColor="rgba(0, 0, 0, 0.1))"
             strokeColor="rgba(0, 0, 0, 0))"/>
             <MapView.Marker
-
               coordinate={{
                 latitude: Number(curLocation.latitude),
                 longitude: Number(curLocation.longitude),
               }}
               />
             </MapView>
-            
+
             </View>
         :
         <View onLayout={()=>this.getLoc()} style={{width,height:height-300,justifyContent:'center',alignItems:'center'}}>
           <ActivityIndicator size="large" color="#d0021b" />
         </View>
         }
-
 
           {/*<TouchableOpacity style={plusStyle}>
               <Image source={plusIC} style={imgPlusStyle} />

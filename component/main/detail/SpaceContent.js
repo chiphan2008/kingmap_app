@@ -49,6 +49,7 @@ export default class SpaceContent extends Component {
           </View>
           <FlatList
              horizontal
+             pagingEnabled
              ListEmptyComponent={<Text>{lang.updating}</Text>}
              showsHorizontalScrollIndicator={false}
              keyExtractor={(item,index) => index}
@@ -85,6 +86,7 @@ export default class SpaceContent extends Component {
 
           <FlatList
              horizontal
+             pagingEnabled
              ListEmptyComponent={<Text>{lang.updating}</Text>}
              showsHorizontalScrollIndicator={false}
              keyExtractor={(item,index) => index}
@@ -122,6 +124,7 @@ export default class SpaceContent extends Component {
 
           <FlatList
              horizontal
+             pagingEnabled
              ListEmptyComponent={<Text>{lang.updating}</Text>}
              showsHorizontalScrollIndicator={false}
              keyExtractor={(item,index) => index}

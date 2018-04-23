@@ -14,20 +14,26 @@ export default class ImageViewer extends Component {
     //   index:0,
     // }
   }
-  componentDidMount() {
-    const {index} = this.props;
-    console.log('index',index);
-    setTimeout(()=>{
-      this.refs.flatlist.scrollToIndex({index:1, animated: true});
-    },1000)
+  gotoItem(index,data) {
+    //const {index} = this.props;
+    setTimeout(() => {
+      this.flatlist.scrollToIndex({index,animated:false})
+    }, 100);
+
   }
+
+  getItemLayout = (data, index) => (
+    { length: 0, offset: (width/2)*index, index }
+  );
+
   render() {
     const {visible,data,index} = this.props;
-    console.log('index',index);
+    console.log('data',data.length,index,data[index]);
     //const {index} = this.state;
     return (
-      <Modal onRequestClose={() => null} visible={visible} transparent>
-      <View style={{backgroundColor:'#000',flex:1}}>
+      data.length>0 &&
+      <Modal onRequestClose={() => null} visible={visible} transparent={false}>
+      <View style={{height,width,backgroundColor:'#000'}}>
 
         <TouchableOpacity onPress={()=>this.props.closeModal()}
         style={{position:'absolute',padding:10,alignSelf:'flex-end',zIndex:9999, }}>
@@ -35,17 +41,24 @@ export default class ImageViewer extends Component {
         </TouchableOpacity>
 
         <FlatList
-           horizontal ref='flatlist'
+           horizontal
+           removeClippedSubviews={false}
+           initialScrollIndex={index}
+           initialNumToRender={data.length}
+           //maxToRenderPerBatch={data.length}
+           onScrollToIndexFailed={(info)=>console.log(info)}
+           ref={(ref) => { this.flatlist = ref; }}
            showsHorizontalScrollIndicator={false}
            keyExtractor={(item,index) => index}
+           //getItemLayout={this.getItemLayout}
            extraData={this.state}
            data={data}
            renderItem={({item,index}) => (
-             <TouchableOpacity onPress={()=> {}} disabled >
-                 <Image source={{uri :`${item.url}`}} resizeMode = 'contain' style={{width,height:'100%'}}/>
-             </TouchableOpacity>
+             <Image source={{uri :`${item.url}`}} resizeMode = 'contain' style={{flex:1,width,height:'100%'}}/>
         )} />
+        <View onLayout={()=>{this.gotoItem(index,data)}}></View>
         </View>
+
       </Modal>
     );
   }

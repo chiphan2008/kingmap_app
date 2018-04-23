@@ -63,12 +63,13 @@ export default class SpaceContent extends Component {
           )} />
 
 
-          <ImageViewer
+          {showImgSpace &&
+            <ImageViewer
           visible={showImgSpace}
           data={listImgSpace}
           index={index}
           closeModal={()=>this.setState({showImgSpace:false,index:0})}
-          />
+          />}
 
           <View style={titleSpace}>
               <Text style={[colorNumPP,sizeTitle]}>{lang.image.toUpperCase()} ({listImgMenu.length})</Text>
@@ -97,12 +98,13 @@ export default class SpaceContent extends Component {
                </View>
           )} />
 
-          <ImageViewer
+          {showImageMenu &&
+            <ImageViewer
           visible={showImageMenu}
           data={listImgMenu}
           index={index}
           closeModal={()=>this.setState({showImageMenu:false,index:0})}
-          />
+          />}
 
 
 

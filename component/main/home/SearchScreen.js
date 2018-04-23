@@ -79,7 +79,9 @@ export default class SearchScreen extends Component {
     getApi(url)
       .then(arrData => {
         let data = [];
+        let line = 0;
         arrData.data.forEach(e=>{
+          line = e.line;
           let obj = {
             id: e.id,
             name: e.name,
@@ -97,8 +99,8 @@ export default class SearchScreen extends Component {
               longitude: lng,
               lat:lat,
               lng: lng,
-              latitudeDelta:  0.008757,
-              longitudeDelta: 0.010066,
+              latitudeDelta:  line*0.008757/500,
+              longitudeDelta: line*0.010066/500,
               latlng:`${lat},${lng}`,
             },
            });
@@ -284,6 +286,7 @@ export default class SearchScreen extends Component {
               zoomEnabled
               onPanDrag={()=>{Keyboard.dismiss();}}
               ref={(ref) => { this.mapRef = ref }}
+
               //this.mapRef.fitToCoordinates(markers, { edgePadding: { top: 50, right: 50, bottom: 50, left: 50 }, animated: false })
               style={{width,height:Platform.OS==='ios' ? height-150: height-190,zIndex:-1}}
               region={curLocation}
@@ -296,7 +299,9 @@ export default class SearchScreen extends Component {
               //   console.log('region',region);
               // }}
               onRegionChangeComplete={(region)=>{
-                //console.log('region',markers);
+                //console.log('region');
+
+
                 // const {latitude,longitude,longitudeDelta,latitudeDelta} = region;
                 // this.setState({
                 //   curLocation: {
@@ -313,7 +318,7 @@ export default class SearchScreen extends Component {
               markers.map((marker,index) => (
               <MapView.Marker
                 onLayout={()=>{
-                  //console.log('marker.marker',marker.marker);
+                  console.log('Marker');
                   //if(index===markers.length-1) console.log('markers',markers);
                 }}
                 key={marker.id}
@@ -349,14 +354,15 @@ export default class SearchScreen extends Component {
             fillColor="rgba(0, 0, 0, 0.1))"
             strokeColor="rgba(0, 0, 0, 0))"/>
             <MapView.Marker
+
               coordinate={{
                 latitude: Number(curLocation.latitude),
                 longitude: Number(curLocation.longitude),
               }}
               />
             </MapView>
-
-          </View>
+            
+            </View>
         :
         <View onLayout={()=>this.getLoc()} style={{width,height:height-300,justifyContent:'center',alignItems:'center'}}>
           <ActivityIndicator size="large" color="#d0021b" />

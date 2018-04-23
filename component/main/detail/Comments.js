@@ -6,7 +6,7 @@ import {
   Platform,Dimensions,TouchableOpacity,Modal,
   FlatList,
 } from 'react-native';
-import ImageViewer from 'react-native-image-zoom-viewer';
+import ImageViewer from './ImageViewer';
 import Moment from 'moment';
 import ImagePicker from 'react-native-image-crop-picker';
 import postApi from '../../api/postApi';
@@ -211,18 +211,12 @@ export default class Comments extends Component {
                     />
                   </View>
 
-                  <Modal onRequestClose={() => null} visible={showImgComment} transparent>
-
-                    <TouchableOpacity onPress={()=>this.setState({showImgComment:false})}
-                    style={{position:'absolute',padding:10,alignSelf:'flex-end',zIndex:9999}}>
-                      <Image source={closeIC} style={{width:18,height:18}} />
-                    </TouchableOpacity>
-
-                    {arrImgModal.length>0 &&
-                    <ImageViewer imageUrls={arrImgModal} index={index}
-                    onChange={(index) => this.setState({ index })}
-                    enableImageZoom saveToLocalByLongPress={false} />}
-                  </Modal>
+                  {this.state.showImgComment &&
+                  <ImageViewer
+                  visible={this.state.showImgComment}
+                  data={arrImgModal}
+                  index={index}
+                  closeModal={()=>this.setState({showImgComment:false})} />}
               </View>
 
               <View style={{padding:15,paddingLeft:0,flexDirection:'row'}}>
@@ -305,10 +299,13 @@ export default class Comments extends Component {
                         <View style={{flexDirection:'row',marginRight:5,marginTop:5}}>
                           <FlatList
                              horizontal showsHorizontalScrollIndicator={false}
-                             extraData={this.state} data={r._images}
+                             extraData={this.state}
+                             data={r._images}
                              keyExtractor={(item,index) => index}
                              renderItem={({item,index}) => (
-                               <Image source={{uri: checkUrl(item.url) ? `${item.url}` : `${global.url_media}${item.url}` }} style={{width:90,height:90,marginRight:7}} />
+                               <TouchableOpacity onPress={()=>this.setState({arrImgModal:r._images})}>
+                                <Image source={{uri: checkUrl(item.url) ? `${item.url}` : `${global.url_media}${item.url}` }} style={{width:90,height:90,marginRight:7}} />
+                               </TouchableOpacity>
                              )}
                           />
                         </View>
@@ -329,7 +326,12 @@ export default class Comments extends Component {
                   :
                   <View></View>
                 }
-
+                {this.state.showImgCommentChild &&
+                <ImageViewer
+                visible={this.state.showImgCommentChild}
+                data={arrImgModal}
+                index={index}
+                closeModal={()=>this.setState({showImgCommentChild:false})} />}
               </View>
             ))
 

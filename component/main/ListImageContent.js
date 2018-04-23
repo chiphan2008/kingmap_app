@@ -1,11 +1,14 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import {Platform, View, WebView, Text, StyleSheet, Dimensions, Image, TextInput, TouchableOpacity,ScrollView,Modal} from 'react-native';
+import {
+  Platform, View, WebView, Text, StyleSheet,
+  Dimensions, Image, TextInput, TouchableOpacity,
+  Modal,FlatList} from 'react-native';
 const {height, width} = Dimensions.get('window');
 
 //import ImageCarousel from 'react-native-image-carousel';
-import ImageViewer from 'react-native-image-zoom-viewer';
+import ImageViewer from './detail/ImageViewer';
 import global from '../global';
 import getApi from '../api/getApi';
 import styles from '../styles';
@@ -27,9 +30,10 @@ export default class ListImageContent extends Component {
       listSpace:[],
       listMenu:[],
       listVideo:[],
+      arrImgModal:[],
       isModalSpaceOpened: false,
       isModalMenuOpened: false,
-      currentImageIndex: 0 ,
+      index: 0 ,
     }
   }
 
@@ -46,12 +50,7 @@ export default class ListImageContent extends Component {
     })
     .catch(err => console.log(err));
   }
-  openModalSpace(index) {
-     this.setState({isModalSpaceOpened: true, currentImageIndex: index });
-  }
-  openModalMenu(index) {
-     this.setState({isModalMenuOpened: true, currentImageIndex: index });
-  }
+
   componentDidMount(){
     const { idContent, spaceTab, menuTab, videoTab } = this.props.navigation.state.params;
     this.getContent(idContent);
@@ -66,7 +65,7 @@ export default class ListImageContent extends Component {
 
     const {navigate,goBack} = this.props.navigation;
     const { idContent, spaceTab, menuTab, videoTab,lang } = this.props.navigation.state.params;
-
+    const { arrImgModal } = this.state;
     const {
       container,
       headCatStyle, headContent,plusStyle,imgPlusStyle,
@@ -104,82 +103,85 @@ export default class ListImageContent extends Component {
           </View>
         </View>
 
-        <ScrollView>
-
-        <View style={[wrapListImage,this.state.showSpace==='active' ? show : hide]}>
-
-        {this.state.listSpace.length>0 ?
-
-          this.state.listSpace.map((e,index) => (
-          <TouchableOpacity key={index} onPress={() => {this.openModalSpace(index)}}>
-           <Image
-             //resizeMode="cover"
-             style={imgTab}
-             source={{ uri: `${e.url}` }}
-           />
-         </TouchableOpacity>
-        ))
-        :
-        <Text style={{paddingLeft:20}}>{lang.updating}</Text>
+        {this.state.showSpace==='active' &&
+        <View style={[wrapListImage]}>
+        <FlatList
+           //horizontal
+           numColumns={3}
+           ListEmptyComponent={<Text style={{paddingLeft:20}}>{lang.updating}</Text>}
+           showsHorizontalScrollIndicator={false}
+           keyExtractor={(item,index) => index}
+           extraData={this.state}
+           data={this.state.listSpace}
+           renderItem={({item,index}) => (
+             <TouchableOpacity key={index} onPress={() => {this.setState({
+               isModalSpaceOpened:true,index})}}>
+              <Image style={imgTab} source={{ uri: `${item.url}` }} />
+             </TouchableOpacity>
+        )} />
+        {this.state.isModalSpaceOpened &&
+          <ImageViewer
+          visible={this.state.isModalSpaceOpened}
+          data={this.state.listSpace}
+          index={this.state.index}
+          closeModal={()=>this.setState({isModalSpaceOpened:false,index:0})}
+          />
         }
+        </View>}
 
-       <Modal onRequestClose={() => null} visible={this.state.isModalSpaceOpened} transparent={true}>
-       <TouchableOpacity
-       onPress={()=>this.setState({isModalSpaceOpened:false,currentImageIndex:0})}
-       style={{position:'absolute',padding:10,alignSelf:'flex-end',zIndex:9999}}>
-       <Image source={closeIC} style={{width:18,height:18}} />
-       </TouchableOpacity>
-        <ImageViewer imageUrls={this.state.listSpace} index={this.state.currentImageIndex}
-        onChange={(currentImageIndex)=>this.setState({currentImageIndex})}
-        enableImageZoom saveToLocalByLongPress={false}/>
-        </Modal>
-        </View>
+        {this.state.showMenu==='active' &&
+          <View style={[wrapListImage]}>
+        <FlatList
+           //horizontal
+           numColumns={3}
+           ListEmptyComponent={<Text style={{paddingLeft:20}}>{lang.updating}</Text>}
+           showsHorizontalScrollIndicator={false}
+           keyExtractor={(item,index) => index}
+           extraData={this.state}
+           data={this.state.listMenu}
+           renderItem={({item,index}) => (
+             <TouchableOpacity key={index} onPress={() => {this.setState({isModalMenuOpened:true,index})}}>
+              <Image style={imgTab} source={{ uri: `${item.url}` }} />
+             </TouchableOpacity>
+        )} />
 
-        <View style={[wrapListImage,this.state.showMenu==='active' ? show : hide]}>
-          {this.state.listMenu.length > 0 ?
-            this.state.listMenu.map((e,index) => (
-            <TouchableOpacity key={index} onPress={() => {this.openModalMenu(index)}}>
-             <Image
-               resizeMode="cover"
-               style={imgTab}
-               source={{ uri: `${e.url}` }}
-             />
-           </TouchableOpacity>
+           {this.state.isModalMenuOpened &&
+             <ImageViewer
+               visible={this.state.isModalMenuOpened}
+               data={this.state.listMenu}
+               index={this.state.index}
+               closeModal={()=>this.setState({isModalMenuOpened:false,index:0,arrImgModal:[]})}
+               />
+            }
 
-          ))
-          :
-          <Text style={{paddingLeft:20}}>{lang.updating}</Text>
-          }
-          <Modal onRequestClose={() => null} visible={this.state.isModalMenuOpened} transparent={true}>
-          <TouchableOpacity
-          onPress={()=>this.setState({isModalMenuOpened:false,currentImageIndex:0})}
-          style={{position:'absolute',padding:10,alignSelf:'flex-end',zIndex:9999}}>
-          <Image source={closeIC} style={{width:18,height:18}} />
-          </TouchableOpacity>
-           <ImageViewer imageUrls={this.state.listMenu} index={this.state.currentImageIndex}
-           enableImageZoom saveToLocalByLongPress={false}
-           />
-           </Modal>
-        </View>
+        </View>}
 
         <View style={[wrapListImage,this.state.showVideo==='active' ? show : hide]}>
-          {this.state.listVideo.length>0 ?
-            this.state.listVideo.map((e,index) => (
-            <View key={index}>
-              <WebView
-                source={{uri: `${e}`}}
-                style={{width,height:width/2,marginBottom:10}}
-                javaScriptEnabled
-                domStorageEnabled
-              />
-            </View>
-          ))
-          :
-          <Text style={{paddingLeft:20}}>{lang.updating}</Text>
-          }
+
+        <FlatList
+           //horizontal
+           //numColumns={3}
+           ListEmptyComponent={<Text style={{paddingLeft:20}}>{lang.updating}</Text>}
+           showsHorizontalScrollIndicator={false}
+           keyExtractor={(item,index) => index}
+           extraData={this.state}
+           data={this.state.listVideo}
+           renderItem={({item,index}) => (
+             <View key={index}>
+               <WebView
+                 source={{uri: `${item}`}}
+                 style={{width,height:width/2,marginBottom:10}}
+                 javaScriptEnabled
+                 domStorageEnabled
+               />
+             </View>
+        )} />
 
         </View>
-        </ScrollView>
+
+
+
+
       </View>
     );
   }

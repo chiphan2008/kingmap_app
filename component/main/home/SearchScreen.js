@@ -78,6 +78,9 @@ export default class SearchScreen extends Component {
     console.log('url',url);
     getApi(url)
       .then(arrData => {
+        if(arrData.data.length===0){
+          this.setState({ markers: arrData.data})
+          return;}
         let data = [];
         let line = 0;
         arrData.data.forEach(e=>{
@@ -288,7 +291,7 @@ export default class SearchScreen extends Component {
               ref={(ref) => { this.mapRef = ref }}
 
               //this.mapRef.fitToCoordinates(markers, { edgePadding: { top: 50, right: 50, bottom: 50, left: 50 }, animated: false })
-              style={{width,height:Platform.OS==='ios' ? height-150: height-190,zIndex:-1}}
+              style={{width,height,zIndex:-1}}
               region={curLocation}
               onPress={ (event) =>{
                 const {latitude,longitude} = (event.nativeEvent.coordinate || curLocation);
@@ -304,6 +307,8 @@ export default class SearchScreen extends Component {
             >
             {markers.length>0 &&
               markers.map((marker,index) => (
+                <View key={marker.id}>
+
               <MapView.Marker
                 onLayout={()=>{
                   console.log('Marker');
@@ -314,13 +319,17 @@ export default class SearchScreen extends Component {
                   latitude: Number(marker.latitude),
                   longitude: Number(marker.longitude),
                 }}
-                image={ Platform.OS==='android' ? {uri:marker.marker} : null}
+                centerOffset={{
+                  x: Number(marker.latitude),
+                  y: Number(marker.longitude),
+                }}
+                //image={ Platform.OS==='ios' ? {uri:marker.marker} : null}
               >
-              {Platform.OS==='ios' &&
-                <Image
-              //resizeMode="trengh"
-              source={{uri:`${marker.marker}`}}
-              style={{width:48,height:54}} />}
+              <Image
+                resizeMode='cover'
+                source={{uri:`${marker.marker}`}}
+                style={{width:48,height:54,resizeMode:"cover"}} />
+
                 <MapView.Callout onPress={()=>{navigate('DetailScr',{idContent:marker.id,lat:marker.latitude,lng:marker.longitude,curLoc,lang:lang.lang});}}
                 >
                   <TouchableOpacity>
@@ -330,7 +339,10 @@ export default class SearchScreen extends Component {
                   </View>
                   </TouchableOpacity>
                 </MapView.Callout>
+
+
               </MapView.Marker>
+              </View>
             )
           )}
           <MapView.Circle

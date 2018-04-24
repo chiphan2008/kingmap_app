@@ -49,7 +49,7 @@ export default class OtherCat extends Component {
   }
 
   render() {
-    console.log('OtherCat');
+    //console.log('OtherCat');
     const {navigate, goBack} = this.props.navigation;
     const { curLoc } = this.props.navigation.state.params;
     //console.log(curLoc);
@@ -88,6 +88,7 @@ export default class OtherCat extends Component {
                  <Text style={{textAlign:'center'}} numberOfLines={2}>{item.name}</Text>
              </TouchableOpacity>
            )}
+           style={{marginBottom:110}}
            keyExtractor={item => item.id}
          />
          </View>

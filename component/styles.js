@@ -70,7 +70,10 @@ module.exports = {
       position:'relative',zIndex:5,
   },
 
-  wrapFilter:{alignItems:'center',marginTop:15,marginBottom:15,},
+  wrapFilter:{
+    alignItems:'center',marginTop:15,
+    marginBottom:15,
+  },
   filterFrame:{width:width-40,justifyContent:'space-between',alignItems:'center',flexDirection:'row'},
   inputSearch : {
     marginTop: 3,width:width-40,backgroundColor:'#fff',borderRadius:5,padding:10,paddingRight:70,
@@ -140,7 +143,7 @@ module.exports = {
   wrapDistribute:{
     width:width-20,borderRadius:5,backgroundColor:'#fff',minHeight:height,
     flexDirection:'row',
-    paddingBottom: Platform.OS==='ios' ? 80 : 40,
+    //paddingBottom: Platform.OS==='ios' ? 80 : 40,
   },
   shadown:{
     shadowOffset:{  width: 1,  height: 1,  },
@@ -160,7 +163,7 @@ module.exports = {
   flatlistItem:{
     width:(width-20),
     //flexDirection:'row',
-    marginBottom:Platform.OS==='ios' ? 55 : 125,
+    //marginBottom:Platform.OS==='ios' ? 55 : 125,
   },
   imgFlatItem:{
     marginRight:10,

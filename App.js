@@ -108,9 +108,7 @@ export default class App extends Component {
     const HomeScreen = StackNavigator({
       //HomeTabs: { screen: HomeTab },
       HomeTabs: { screen:LocationTab},
-      OtherCatScr: { screen: OtherCat },
 
-      SearchScr: { screen: SearchScreen },
       //ListCatScr: { screen: ListCategory },
       MakeMoneyScr: { screen: MakeMoney },
       WalletScr: { screen: Wallet },
@@ -133,7 +131,7 @@ export default class App extends Component {
 
     const LocScreen = StackNavigator({
       LocTabScr: { screen : LocationScreen },
-      ListLocScr: { screen: ListLocation },
+
       //CatScr: { screen: CategoryScreen },
       //ListCatScr: { screen: ListCategory },
       //DistributeTabScr: { screen: DistributeTab },
@@ -227,6 +225,9 @@ export default class App extends Component {
       MainScr: {
         screen: RootTabs,
       },
+      SearchScr: { screen: SearchScreen },
+      ListLocScr: { screen: ListLocation },
+      OtherCatScr: { screen: OtherCat },
       DetailScr: {
         screen: DetailScreen,
       },

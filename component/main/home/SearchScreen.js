@@ -150,6 +150,9 @@ export default class SearchScreen extends Component {
           (position) => {
             //console.log('position',position);
             const {latitude,longitude} = position.coords;
+            AsyncStorage.setItem('@currentLocation:key',JSON.stringify({
+              latitude,longitude
+            }))
             this.setState({
               curLoc : {
                 latitude,longitude,

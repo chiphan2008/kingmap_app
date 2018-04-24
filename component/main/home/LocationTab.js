@@ -5,7 +5,7 @@ import {Platform, View, Text, StyleSheet, Dimensions, Image, TextInput,ScrollVie
   TouchableOpacity,PermissionsAndroid, AsyncStorage, Modal,Keyboard } from 'react-native';
 import RNSettings from 'react-native-settings';
 const {height, width} = Dimensions.get('window');
-//import Geolocation from '../../api/Geolocation';
+import Geolocation from '../../api/Geolocation';
 //import hasLocationPermission from '../../api/hasLocationPermission';
 
 
@@ -89,14 +89,26 @@ export default class LocationTab extends Component {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const {latitude,longitude} = position.coords;
+        AsyncStorage.setItem('@currentLocation:key',JSON.stringify({
+          latitude,longitude
+        }))
         this.setState({curLoc:{
           latitude,longitude
         }},()=>{
           this.getCategory(`${latitude},${longitude}`);
         })
       },
-      (error) => {},
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
+      (error) => {
+        Geolocation().then(e=>{
+          const {latitude,longitude} = e;
+          this.setState({curLoc:{
+            latitude,longitude
+          }},()=>{
+            this.getCategory(`${latitude},${longitude}`);
+          })
+        })
+      },
+      { enableHighAccuracy: true },
     );
    }
 

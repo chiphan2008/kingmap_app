@@ -167,7 +167,7 @@ module.exports = {
   },
   imgFlatItem:{
     marginRight:10,
-    width:90,height:90,
+    width:110,height:90,
   },
   imgFlatItemLoc:{
     //borderRadius:40,

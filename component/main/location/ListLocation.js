@@ -390,7 +390,7 @@ export default class ListLocation extends Component {
                                //console.log('lang2',lang);
                              })
                            }}>
-                             <Image style={imgFlatItem} source={{uri:`${global.url_media}${item.avatar}`}} />
+                             <Image style={imgFlatItem} source={{uri:`${global.url_media}${item.thumb}`}} />
                            </TouchableOpacity>
                            <View style={wrapInfoOver}>
                              <View>

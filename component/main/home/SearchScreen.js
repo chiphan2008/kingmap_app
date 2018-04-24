@@ -311,7 +311,7 @@ export default class SearchScreen extends Component {
 
               <MapView.Marker
                 onLayout={()=>{
-                  console.log('Marker');
+                  //console.log('Marker');
                   //if(index===markers.length-1) console.log('markers',markers);
                 }}
                 key={marker.id}

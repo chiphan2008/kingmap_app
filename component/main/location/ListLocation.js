@@ -10,6 +10,7 @@ const {height, width} = Dimensions.get('window');
 import Rating from '../detail/Rating'
 import styles from '../../styles';
 import loginServer from '../../api/loginServer';
+import Geolocation from '../../api/Geolocation';
 import getApi from '../../api/getApi';
 import getLocationByIP from '../../api/getLocationByIP';
 import global from '../../global';
@@ -74,11 +75,13 @@ export default class ListLocation extends Component {
       isLoad:true,
       scrollToTop:false,
     }
+    this.findLoc();
     this.refresh();
     accessLocation();
   }
 
-  getCategory(idcat,loc){
+  getCategory(loc){
+    const idcat = this.props.navigation.state.params.idCat;
     const url = global.url+'content-by-category?category='+idcat+'&location='+loc;
     //console.log('url',url);
     if(this.state.isLoad){
@@ -130,7 +133,7 @@ export default class ListLocation extends Component {
       if(skip===0){
         //console.log('-----skip===0-----');
 
-        this.setState({ listData: arrData.data, isRefresh:false, noData: arrData.data.length===0 ? this.state.lang.not_found : '' });
+        this.setState({ listData: this.state.listData.concat(arrData.data), isRefresh:false, noData: arrData.data.length===0 ? this.state.lang.not_found : '' });
       }else {
         //console.log('-----skip!==-----');
         if(arrData.data.length===0) this.setState({ pullToRefresh:false });
@@ -191,35 +194,6 @@ export default class ListLocation extends Component {
   //   _this.setState({pullToRefresh:true});
   // }
 
-
-
-  componentDidMount() {
-    const id = this.props.navigation.state.params.idCat;
-     navigator.geolocation.getCurrentPosition(
-       ({coords}) => {
-         const {latitude, longitude} = coords;
-         this.getCategory(id,`${latitude},${longitude}`);
-
-       },
-       (error) => {},
-       {enableHighAccuracy: true}
-     );
-     this.watchID = navigator.geolocation.watchPosition(
-       ({coords}) => {
-         const {latitude, longitude} = coords;
-         this.setState({
-           curLoc: {
-             latitude,
-             longitude,
-             latlng:`${latitude},${longitude}`,
-           }
-         })
-     });
-     this.setState({pullToRefresh:true});
-   }
-   componentWillUnmount() {
-     navigator.geolocation.clearWatch(this.watchID);
-   }
    refresh(){
      checkLogin().then(e=>{
        if(e.id!==undefined){
@@ -229,6 +203,20 @@ export default class ListLocation extends Component {
          },1200)
        }
      });
+   }
+  findLoc(){
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const {latitude,longitude} = position.coords;
+        this.setState({curLoc:{
+          latitude,longitude
+        }},()=>{
+          this.getCategory(`${latitude},${longitude}`);
+        })
+      },
+      (error) => {},
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
+    );
    }
    componentWillMount(){
      setTimeout(()=>{
@@ -240,6 +228,10 @@ export default class ListLocation extends Component {
          this.setState({pullToRefresh:true});
        })
      },1500)
+   }
+
+   componentDidMount(){
+     this.setState({pullToRefresh:true});
    }
   requestLogin(){
     const {navigate} = this.props.navigation;
@@ -280,7 +272,7 @@ export default class ListLocation extends Component {
     const { goBack,navigate,state } = this.props.navigation;
     //console.log('this.props.navigation',this.props);
     const {idCat,sub_cat,serv_items} = this.props.navigation.state.params;
-    //console.log('lang',lang);
+    //console.log('lang');
     //console.log('state.key-ListLoc',state.key);
     const {
       container,btnScrollTop,

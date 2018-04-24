@@ -29,7 +29,7 @@ export default class LocationScreen extends Component {
   }
 
   getCategory(lang){
-    getApi(global.url+'categories?language='+lang)
+    getApi(global.url+'categories?language='+lang+'&limit=100')
     .then(arrCategory => {
       //console.log('arrCategory',arrCategory.data);
         this.setState({ listCategory: arrCategory.data });

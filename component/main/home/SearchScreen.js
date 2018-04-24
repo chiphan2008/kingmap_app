@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import {
   Keyboard, Platform, View, Text, StyleSheet, Dimensions,Image,AsyncStorage,
-  TextInput, TouchableOpacity,FlatList,Alert, ActivityIndicator} from 'react-native';
+  TextInput, TouchableOpacity,FlatList,Alert, ActivityIndicator,Modal} from 'react-native';
 const {height, width} = Dimensions.get('window');
 
 import accessLocation from '../../api/accessLocation';
@@ -43,6 +43,7 @@ export default class SearchScreen extends Component {
       region:{},
       showFullScreen:false,
       curLocation:{},
+      circleLoc:{},
       curLoc : {
         lat:this.props.navigation.state.params.lat || '',
         lng: this.props.navigation.state.params.lng || '',
@@ -52,6 +53,8 @@ export default class SearchScreen extends Component {
       markers:[],
       keyword:this.props.navigation.state.params.keyword || '',
       lang:this.props.navigation.state.params.lang==='vn' ? lang_vn: lang_en,
+      initLoad:false,
+      showNotFound:false,
     }
     Keyboard.dismiss();
     accessLocation();
@@ -78,9 +81,30 @@ export default class SearchScreen extends Component {
     console.log('url',url);
     getApi(url)
       .then(arrData => {
-        if(arrData.data.length===0){
-          this.setState({ markers: arrData.data})
-          return;}
+        if(arrData.data.length===0 ){
+          if(this.state.initLoad===false){
+            this.setState({
+              markers: arrData.data,initLoad:true,showNotFound:true,
+              curLocation : {
+                latitude:lat,
+                longitude: lng,
+                lat,lng,
+                latitudeDelta:  0.008757,
+                longitudeDelta: 0.010066,
+                latlng:`${lat},${lng}`,
+              },
+              circleLoc: {
+                latitude:lat,
+                longitude: lng,
+              },
+            });
+            return;
+          }
+          this.setState({
+            markers: arrData.data,initLoad:true,showNotFound:true,
+          });
+          return;
+        }
         let data = [];
         let line = 0;
         arrData.data.forEach(e=>{
@@ -96,7 +120,7 @@ export default class SearchScreen extends Component {
           data.push(obj);
         })
         //console.log('getApi');
-          this.setState({ markers: data,onchange:true,showInfoOver:true,
+          this.setState({ markers: data,onchange:true,showInfoOver:true,initLoad:true,
             curLocation : {
               latitude:lat,
               longitude: lng,
@@ -106,6 +130,15 @@ export default class SearchScreen extends Component {
               longitudeDelta: line*0.010066/500,
               latlng:`${lat},${lng}`,
             },
+            circleLoc: {
+              latitude:lat,
+              longitude: lng,
+              lat,lng,
+              latitudeDelta:  line*0.008757/500,
+              longitudeDelta: line*0.010066/500,
+              latlng:`${lat},${lng}`,
+            },
+
            });
       })
       .catch(err => console.log(err));
@@ -142,20 +175,8 @@ export default class SearchScreen extends Component {
     navigator.geolocation.getCurrentPosition(
      ({coords}) => {
        const {latitude, longitude} = coords
-       this.setState({
-         curLoc: {
-           latitude,
-           longitude,
-         },
-         curLocation: {
-           latitude,
-           longitude,
-           latitudeDelta:  0.008757,
-           longitudeDelta: 0.010066,
-         }
-       },()=>{
-         this.getCategory(latitude,longitude);
-       })
+       //console.log(latitude, longitude);
+       this.getCategory(latitude,longitude);
      },
      (error) => {/*alert(JSON.stringify(error))*/},
      {enableHighAccuracy: true}
@@ -163,14 +184,16 @@ export default class SearchScreen extends Component {
   }
   onPressZoom(zoom) {
       const {latitude,longitude,lat,lng,latlng,latitudeDelta,longitudeDelta} = this.state.curLocation;
-      this.setState({
-        curLocation : {
-          latitude,longitude,
-          lat,lng,latlng,
-          latitudeDelta: zoom==='zoom_in' ? latitudeDelta*1.1 : latitudeDelta/1.1,
-          longitudeDelta: zoom==='zoom_in' ?  longitudeDelta*1.1 : longitudeDelta/1.1,
-        }
-      })
+      setTimeout(()=>{
+        this.setState({
+          curLocation : {
+            latitude,longitude,
+            lat,lng,latlng,
+            latitudeDelta: zoom==='zoom_in' ? latitudeDelta*1.2 : latitudeDelta/1.2,
+            longitudeDelta: zoom==='zoom_in' ?  longitudeDelta*1.2 : longitudeDelta/1.2,
+          }
+        })
+      },500)
   }
   // componentWillMount(){
   //   const { lat,lng } = this.props.navigation.state.params;
@@ -178,32 +201,15 @@ export default class SearchScreen extends Component {
   // }
 
 
-  componentWillMount() {
-    //console.log('componentDidMount');
-     this.watchID = navigator.geolocation.watchPosition(
-       ({coords}) => {
-         const {lat, long} = coords
 
-         this.setState({
-           curLoc: {
-             lat,
-             long
-           }
-         })
-     });
-
-   }
-   componentWillUnmount() {
-     //console.log('componentWillUnmount');
-     navigator.geolocation.clearWatch(this.watchID);
-   }
 
   render() {
     const {
       keyword, curLocation,markers,curLoc,lang,showFullScreen,
-      labelLoc,labelSer,labelCat,fitCoord,id_cat
+      labelLoc,labelSer,labelCat,fitCoord,id_cat, circleLoc,
+      showNotFound
      } = this.state;
-    console.log(lang.lang);
+    //console.log(';showNotFound',showNotFound);
     const { navigate,goBack } = this.props.navigation;
     const { lat,lng } = this.props.navigation.state.params;
     const {
@@ -298,9 +304,11 @@ export default class SearchScreen extends Component {
                 this.getCategory(latitude,longitude);
                 Keyboard.dismiss();
               }}
-              // onRegionChange={(region)=>{
-              //   console.log('region',region);
-              // }}
+              onRegionChangeComplete={(region)=>{
+                const {latitudeDelta,longitudeDelta} = region;
+                const {lat,lng,latlng,latitude,longitude} = this.state.curLocation;
+                this.setState({curLocation:region});
+              }}
               customMapStyle={global.style_map}
               showsPointsOfInterest={false}
 
@@ -323,10 +331,11 @@ export default class SearchScreen extends Component {
                   x: Number(marker.latitude),
                   y: Number(marker.longitude),
                 }}
-                image={ Platform.OS==='android' ? {uri:marker.marker} : null}
+                image={ Platform.OS==='android' ? {uri:`${marker.marker}${'?width=48&height=50'}`} : null}
               >
-              {Platform.OS==='ios' && <Image
-                resizeMode='cover'
+              {Platform.OS==='android' &&
+              <Image
+                resizeMode="contain"
                 source={{uri:`${marker.marker}`}}
                 style={{width:48,height:54,resizeMode:"cover"}} />}
 
@@ -345,18 +354,19 @@ export default class SearchScreen extends Component {
               </View>
             )
           )}
-          <MapView.Circle
+          {circleLoc.latitude!==undefined &&
+            <MapView.Circle
           //onLayout={()=>this.setState({fitCoord:true})}
-            center={curLocation}
+            center={circleLoc}
             radius={500}
             lineCap="butt"
             strokeWidth={1}
             fillColor="rgba(0, 0, 0, 0.1))"
-            strokeColor="rgba(0, 0, 0, 0))"/>
+            strokeColor="rgba(0, 0, 0, 0))"/>}
             <MapView.Marker
               coordinate={{
-                latitude: Number(curLocation.latitude),
-                longitude: Number(curLocation.longitude),
+                latitude: Number(circleLoc.latitude),
+                longitude: Number(circleLoc.longitude),
               }}
               />
             </MapView>
@@ -374,24 +384,24 @@ export default class SearchScreen extends Component {
 
           <TouchableOpacity style={[btnMap,btnMapLoc,curLocation.longitude!==undefined ? show :hide]}
           onPress={()=>{this.findCurrentLoc()}}>
-          <Image source={currentLocIC} style={{width:22,height:22}} />
+          <Image source={currentLocIC} style={{width:30,height:30}} />
           </TouchableOpacity>
 
           <View style={[btnMap,btnMapZoom,curLocation.longitude!==undefined ? show :hide]}>
             <TouchableOpacity style={btnZoom}
             onPress={()=>this.onPressZoom('zoom_out')}>
-            <Image source={addIC} style={{width:16,height:16}} />
+            <Image source={addIC} style={{width:24,height:24}} />
             </TouchableOpacity>
             {/*<View style={{width:12,borderColor:'#999',borderBottomWidth:1}}></View>*/}
             <TouchableOpacity style={btnZoom}
             onPress={()=>this.onPressZoom('zoom_in')}>
-            <Image source={minIC} style={{width:16,height:16}} />
+            <Image source={minIC} style={{width:24,height:24}} />
             </TouchableOpacity>
           </View>
 
           <TouchableOpacity style={[btnMap,btnMapFull,curLocation.longitude!==undefined ? show :hide]}
           onPress={()=>{this.setState({showFullScreen:true})}}>
-          <Image source={fullScreenIC} style={{width:22,height:22}} />
+          <Image source={fullScreenIC} style={{width:30,height:30}} />
           </TouchableOpacity>
 
           <MapFullScreen
@@ -406,6 +416,21 @@ export default class SearchScreen extends Component {
           data={markers}
           getCategory={(latitude,longitude)=>this.getCategory(latitude,longitude)}
           />
+
+          <Modal transparent onRequestClose={() => null}
+          visible={showNotFound}
+          >
+          <View onLayout={()=>{
+            setTimeout(()=>{
+              this.setState({showNotFound:false})
+            },2000)
+          }} style={{flex:1,justifyContent:'center',alignItems:'center',backgroundColor:'rgba(0,0,0,0.3)'}}>
+              <View style={{borderRadius:5, backgroundColor:'#FFF',padding:20}}>
+                <Text style={{fontSize:18,color:'#333'}}>{lang.not_found}</Text>
+              </View>
+          </View>
+          </Modal>
+
 
       </View>
     );

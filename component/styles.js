@@ -78,8 +78,8 @@ module.exports = {
   inputSearch : {
     marginTop: 3,width:width-40,backgroundColor:'#fff',borderRadius:5,padding:10,paddingRight:70,
   },
-  btnMapLoc:{bottom:92,},
-  btnMapZoom:{bottom:40,},
+  btnMapLoc:{bottom:122,},
+  btnMapZoom:{bottom:50,},
   btnMapFull:{bottom:10,},
   btnZoom:{padding:3},
   btnList:{top:10},

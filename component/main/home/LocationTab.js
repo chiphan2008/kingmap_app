@@ -80,34 +80,25 @@ export default class LocationTab extends Component {
       }
     })
 
-    this.getLocation();
+    this.findLoc();
+    this.getLang();
     Keyboard.dismiss();
     arrLang = [{name:'VIE',v:'vn'},{name:'ENG',v:'en'}];
   }
-  getLocation = async () => {
+  findLoc(){
     navigator.geolocation.getCurrentPosition(
-          (position) => {
-            //console.log('position',position.coords);
-            const latlng = `${position.coords.latitude}${','}${position.coords.longitude}`;
-            this.setState({
-              curLoc : {
-                latitude:position.coords.latitude,
-                longitude: position.coords.longitude,
-                lat:position.coords.latitude,
-                lng: position.coords.longitude,
-                latitudeDelta:  0.008757,
-                longitudeDelta: 0.010066,
-                latlng:latlng,
-              }
-            });
-
-           },
-           (error) => {
-            //getLocationByIP().then();
-          },
-          {enableHighAccuracy: true, timeout: 20000}
+      (position) => {
+        const {latitude,longitude} = position.coords;
+        this.setState({curLoc:{
+          latitude,longitude
+        }},()=>{
+          this.getCategory(`${latitude},${longitude}`);
+        })
+      },
+      (error) => {},
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
     );
-  }
+   }
 
 
   requestLogin(){
@@ -124,10 +115,11 @@ export default class LocationTab extends Component {
             selectLang:{
               valueLang:e.valueLang,
               labelLang:e.labelLang,
-            }
+            },
+            lang : e.valueLang==='vn' ? lang_vn : lang_en,
+          },()=>{
+            this.getCategory(e.valueLang);
           });
-          e.valueLang==='vn' ?  this.setState({lang : lang_vn}) : this.setState({lang : lang_en});
-          this.getCategory(e.valueLang);
      }
     });
   }
@@ -169,9 +161,7 @@ export default class LocationTab extends Component {
       },500)
     }).catch(err => console.log(err));
   }
-  componentWillMount() {
-    this.getLang();
-  }
+
   // componentDidMount(){
   //   const {curLoc} = this.state;
   //   navigator.geolocation.getCurrentPosition(
@@ -259,14 +249,18 @@ export default class LocationTab extends Component {
           </View>
           <TextInput underlineColorAndroid='transparent'
           placeholder={this.state.lang.search} style={inputSearch}
-          onSubmitEditing={() => { if (this.state.valSearch.trim()!==''){navigate('SearchScr',{keyword:this.state.valSearch,idCat:'',lat:this.state.curLoc.lat,lng:this.state.curLoc.lng,lang:this.state.lang.lang})} }}
+          onSubmitEditing={() => { if (this.state.valSearch.trim()!==''){
+            navigate('SearchScr',{keyword:this.state.valSearch,idCat:'',lat:curLoc.latitude,lng:curLoc.longitude,lang:this.state.lang.lang})}
+            this.setState({valSearch:''})
+          }}
           onChangeText={(valSearch) => this.setState({valSearch})}
           value={this.state.valSearch} />
 
           <TouchableOpacity style={{top:Platform.OS==='ios' ? 75 : 65,left:(width-50),position:'absolute'}}
           onPress={()=>{
             if (this.state.valSearch.trim()!=='') {
-              navigate('SearchScr',{keyword:this.state.valSearch,lat:this.state.curLoc.lat,lng:this.state.curLoc.lng,idCat:'',lang:this.state.lang});
+              navigate('SearchScr',{keyword:this.state.valSearch,lat:curLoc.latitude,lng:curLoc.longitude,idCat:'',lang:this.state.lang});
+              this.setState({valSearch:''})
             }
           }}>
             <Image style={{width:16,height:16,}} source={searchIC} />
@@ -292,7 +286,7 @@ export default class LocationTab extends Component {
                     return (<TouchableOpacity
                         key={e.id}
                         style={{position:'absolute',flex:1,alignItems:'center',top:pos.y,left :pos.x,}}
-                        onPress={()=>navigate('SearchScr',{idCat:e.id, keyword:this.state.valSearch,lat:this.state.curLoc.lat,lng:this.state.curLoc.lng,lang:this.state.lang.lang}) }
+                        onPress={()=>navigate('SearchScr',{idCat:e.id, keyword:this.state.valSearch,lat:curLoc.latitude,lng:curLoc.longitude,lang:this.state.lang.lang}) }
                         >
                       <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                       <Text style={labelCat}>{e.name}</Text>

@@ -90,24 +90,24 @@ export default class MapFullScreen extends Component {
 
         <TouchableOpacity style={[btn,btnMapLoc,curLocation.latitude!==undefined ? show : hide]}
         onPress={()=>{this.props.findCurrentLoc()}}>
-        <Image source={currentLocIC} style={{width:22,height:22}} />
+        <Image source={currentLocIC} style={{width:30,height:30}} />
         </TouchableOpacity>
 
         <View style={[btn,btnMapZoom,curLocation.longitude!==undefined ? show :hide]}>
           <TouchableOpacity style={btnZoom}
           onPress={()=>this.props.onPressZoom('zoom_out')}>
-          <Image source={addIC} style={{width:16,height:16}} />
+          <Image source={addIC} style={{width:24,height:24}} />
           </TouchableOpacity>
           {/*<View style={{width:12,borderColor:'#999',borderBottomWidth:1}}></View>*/}
           <TouchableOpacity style={btnZoom}
           onPress={()=>this.props.onPressZoom('zoom_in')}>
-          <Image source={minIC} style={{width:16,height:16}} />
+          <Image source={minIC} style={{width:24,height:24}} />
           </TouchableOpacity>
         </View>
 
         <TouchableOpacity style={[btn,btnMapFull,curLocation.latitude!==undefined ? show : hide]}
         onPress={()=>{this.props.closeModal()}}>
-        <Image source={normalScreenIC} style={{width:22,height:22}} />
+        <Image source={normalScreenIC} style={{width:30,height:30}} />
         </TouchableOpacity>
 
       </Modal>
@@ -120,8 +120,8 @@ const styles = StyleSheet.create({
     position:'absolute',zIndex:7,right:10,
     backgroundColor:'rgba(250,250,250,0.8)',
     padding:1},
-  btnMapLoc:{bottom:92,},
-  btnMapZoom:{bottom:40,},
+  btnMapLoc:{bottom:122,},
+  btnMapZoom:{bottom:50,},
   btnMapFull:{bottom:10,},
   btnZoom:{padding:3},
   show : { display: 'flex'},

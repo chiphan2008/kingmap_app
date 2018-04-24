@@ -85,6 +85,7 @@ export default class DetailScreen extends Component {
 
   getContent(idContent){
     const {latitude,longitude} = this.props.navigation.state.params.curLoc;
+    //console.log(latitude,longitude);
     //if(latlng===undefined) latlng='10.7818513,106.6769368';
     const url = `${global.url}${'content/'}${idContent}${'?location='}${latitude},${longitude}`;
     //console.log('url',url);

@@ -229,6 +229,7 @@ export default class DetailScreen extends Component {
       <ScrollView scrollEnabled={scroll} style={container}>
         <Header
         lang={lang}
+        title={listData.content.name}
         backList={this.backList.bind(this)}
         hasCheckin={hasCheckin}
         hasSaveLike={hasSaveLike}

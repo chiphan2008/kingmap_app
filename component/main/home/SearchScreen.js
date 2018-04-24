@@ -323,12 +323,12 @@ export default class SearchScreen extends Component {
                   x: Number(marker.latitude),
                   y: Number(marker.longitude),
                 }}
-                //image={ Platform.OS==='ios' ? {uri:marker.marker} : null}
+                image={ Platform.OS==='android' ? {uri:marker.marker} : null}
               >
-              <Image
+              {Platform.OS==='ios' && <Image
                 resizeMode='cover'
                 source={{uri:`${marker.marker}`}}
-                style={{width:48,height:54,resizeMode:"cover"}} />
+                style={{width:48,height:54,resizeMode:"cover"}} />}
 
                 <MapView.Callout onPress={()=>{navigate('DetailScr',{idContent:marker.id,lat:marker.latitude,lng:marker.longitude,curLoc,lang:lang.lang});}}
                 >

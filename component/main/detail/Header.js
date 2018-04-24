@@ -56,7 +56,7 @@ export default class Header extends Component {
     //console.log("this.props.navigation=",util.inspect(this.props.navigation,false,null));
     const {goBack,state} = this.props.navigation;
     const {showOption} = this.state;
-    const {lang,curLoc,hasSaveLike,hasCheckin,hasCollection} = this.props;
+    const {lang,curLoc,hasSaveLike,hasCheckin,hasCollection,title} = this.props;
     //console.log('lang',lang);
     return (
       <View>
@@ -65,7 +65,10 @@ export default class Header extends Component {
           <TouchableOpacity onPress={()=>{this.props.backList()}}>
           <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
           </TouchableOpacity>
-              <Image source={logoTop} style={imgLogoTop} />
+              {/*<Image source={logoTop} style={imgLogoTop} />*/}
+              <View style={{width:width-80,marginTop:3}}>
+              <Text numberOfLines={1} style={{fontSize:16,color:'#fff'}}>{title}</Text>
+              </View>
               <View></View>
           </View>
       </View>

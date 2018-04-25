@@ -137,7 +137,7 @@ export default class ListLocation extends Component {
 
       url += `${'&service='}${id_serv}`;
     }
-    console.log('-----url-----',url);
+    console.log('-----url-----2',url);
     getApi(url)
     .then(arrData => {
       //console.log('count',arrData.data.length);

@@ -8,14 +8,16 @@ const {height, width} = Dimensions.get('window');
 
 import accessLocation from '../../api/accessLocation';
 import getApi from '../../api/getApi';
+import checkLocation from '../../api/checkLocation';
 import lang_vn from '../../lang/vn/language';
 import lang_en from '../../lang/en/language';
 import getLocationByIP from '../../api/getLocationByIP';
 import global from '../../global';
 import arrTest from '../../arrTest';
 import styles from '../../styles';
-import MapView, { PROVIDER_GOOGLE,ANIMATED_FIT } from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import MapFullScreen from './MapFullScreen';
+import SelectLocation from '../../main/location/SelectLocation';
 
 import sortDown from '../../../src/icon/ic-white/sort-down.png';
 import arrowLeft from '../../../src/icon/ic-white/arrow-left.png';
@@ -30,6 +32,8 @@ import logoTop from '../../../src/icon/ic-white/Logo-ngang.png';
 import searchIC from '../../../src/icon/ic-gray/ic-search.png';
 import plusIC from '../../../src/icon/ic-home/ic-plus.png';
 import sortDownIC from '../../../src/icon/ic-sort-down.png';
+import upDD from '../../../src/icon/ic-white/ic-dropdown_up.png';
+
 
 export default class SearchScreen extends Component {
   constructor(props) {
@@ -42,6 +46,7 @@ export default class SearchScreen extends Component {
       fitCoord:false,
       region:{},
       showFullScreen:false,
+      showLoc:false,
       curLocation:{},
       circleLoc:{},
       curLoc : {
@@ -50,6 +55,8 @@ export default class SearchScreen extends Component {
       },
       id_district:'',
       id_cat:this.props.navigation.state.params.idCat || '',
+      id_sub:'',
+      id_serv:'',
       markers:[],
       keyword:this.props.navigation.state.params.keyword || '',
       lang:this.props.navigation.state.params.lang==='vn' ? lang_vn: lang_en,
@@ -60,17 +67,17 @@ export default class SearchScreen extends Component {
     accessLocation();
   }
 
-  getCategory(lat,lng){
+  getCategory(lat=null,lng=null){
 
-    const {id_district,id_cat,keyword} = this.state;
+    const {id_district,id_cat,keyword,curLoc} = this.state;
     let url = `${global.url}${'search-content?'}${'distance=500'}`;
     //console.log('id_cat',id_cat);
     if(id_cat!==undefined || id_cat!=='')  url += `${'&category='}${id_cat}`;
-    if(lat!=='' && lng!=='')
-                            url += `${'&location='}${lat},${lng}`;
+    if(lat===null || lng===null) {lat = curLoc.latitude; lng = curLoc.longitude;}
+    url += `${'&location='}${lat},${lng}`;
     if(keyword!==undefined || keyword.trim()!=='')
                             url += `${'&keyword='}${keyword}`;
-    if(id_district!=='')       url += `${'&district='}${id_district}`;
+    if(id_district!==null)  url += `${'&district='}${id_district}`;
 
 
     // if(id_sub!==null) url += `${'&subcategory='}${id_sub}`;
@@ -84,7 +91,7 @@ export default class SearchScreen extends Component {
         if(arrData.data.length===0 ){
           if(this.state.initLoad===false){
             this.setState({
-              markers: arrData.data,initLoad:true,showNotFound:true,
+              markers: [],initLoad:true,showNotFound:true,
               curLocation : {
                 latitude:lat,
                 longitude: lng,
@@ -107,6 +114,10 @@ export default class SearchScreen extends Component {
         }
         let data = [];
         let line = 0;
+        if(id_district!==null){
+          lat=arrData.data[0].latitude;
+          lng=arrData.data[0].longitude;
+        }
         arrData.data.forEach(e=>{
           line = e.line;
           let obj = {
@@ -144,7 +155,19 @@ export default class SearchScreen extends Component {
       .catch(err => console.log(err));
   }
 
+  saveLocation(){
+    //console.log('saveLocation');
+    //this.setState({keyword:''})
+    checkLocation().then((e)=>{
+      //console.log('saveLocation',e);
+      this.setState({showLoc:false,id_district:e.idDist,labelLoc:e.nameDist},()=>{
+        this.getCategory();
+      });
+    });
+  }
+
   getLoc(){
+    //console.log('getLoc');
     //const { keyword } = this.props.navigation.state.params;
     navigator.geolocation.getCurrentPosition(
           (position) => {
@@ -210,7 +233,7 @@ export default class SearchScreen extends Component {
     const {
       keyword, curLocation,markers,curLoc,lang,showFullScreen,
       labelLoc,labelSer,labelCat,fitCoord,id_cat, circleLoc,
-      showNotFound
+      showNotFound,showLoc
      } = this.state;
     //console.log(';showNotFound',showNotFound);
     const { navigate,goBack } = this.props.navigation;
@@ -221,7 +244,8 @@ export default class SearchScreen extends Component {
       popover,show,hide,overLayoutCat,shadown,colorText,listCatAll,listCatBG,listCatW,
       wrapContent,leftContent,rightContent,middleContent,imgContent,
       filterFrame,selectBoxBuySell,widthLoc,btnMap,btnMapLoc,
-      btnMapFull,btnMapZoom,btnZoom,btnList
+      btnMapFull,btnMapZoom,btnZoom,btnList,
+      imgUpCreate,imgUpLoc,overLayout,popoverLoc,padCreate,
     } = styles;
 
     let timeout;
@@ -266,7 +290,7 @@ export default class SearchScreen extends Component {
           {<View style={{left:0,top:7,position:'absolute',alignItems:'center',width}}>
                   <View style={{width:width-40,flexDirection:'row',justifyContent:'space-between'}}>
                   <TouchableOpacity
-                    onPress={()=>this.setState({ showLoc:!this.state.showLoc,listSubCat:{showList:false},listSerItem:{showList:false}, })}
+                    onPress={()=>this.setState({ showLoc:true })}
                     style={[selectBoxBuySell,widthLoc]}>
                       <Text  numberOfLines={1} style={{color:'#303B50'}}>{labelLoc}</Text>
                       <Image source={sortDownIC} style={{width:12,height:13,top:13,right:5,position:'absolute'}} />
@@ -423,15 +447,26 @@ export default class SearchScreen extends Component {
           <Modal transparent onRequestClose={() => null}
           visible={showNotFound}
           >
-          <View onLayout={()=>{
-            setTimeout(()=>{
-              this.setState({showNotFound:false})
-            },2000)
-          }} style={{flex:1,justifyContent:'center',alignItems:'center',backgroundColor:'rgba(0,0,0,0.3)'}}>
-              <View style={{borderRadius:5, backgroundColor:'#FFF',padding:20}}>
-                <Text style={{fontSize:18,color:'#333'}}>{lang.not_found}</Text>
-              </View>
-          </View>
+            <View onLayout={()=>{
+              setTimeout(()=>{
+                this.setState({showNotFound:false})
+              },2000)
+            }} style={{flex:1,justifyContent:'center',alignItems:'center',backgroundColor:'rgba(0,0,0,0.3)'}}>
+                <View style={{borderRadius:5, backgroundColor:'#FFF',padding:20}}>
+                  <Text style={{fontSize:18,color:'#333'}}>{lang.not_found}</Text>
+                </View>
+            </View>
+          </Modal>
+
+          <Modal onRequestClose={() => null} transparent visible={showLoc}>
+          <TouchableOpacity
+          onPress={()=>this.setState({showLoc:!this.state.showLoc})}
+          style={[popoverLoc,padCreate]}>
+            <Image style={[imgUpCreate,imgUpLoc]} source={upDD} />
+            <View style={[overLayout,shadown]}>
+                <SelectLocation saveLocation={this.saveLocation.bind(this)} />
+            </View>
+            </TouchableOpacity>
           </Modal>
 
 

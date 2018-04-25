@@ -83,7 +83,7 @@ export default class ListLocation extends Component {
   getCategory(loc){
     const idcat = this.props.navigation.state.params.idCat;
     const url = global.url+'content-by-category?category='+idcat+'&location='+loc;
-    //console.log('url',url);
+    console.log('url',url);
     if(this.state.isLoad){
       getApi(url)
       .then(arrData => {
@@ -115,7 +115,7 @@ export default class ListLocation extends Component {
     const id_cat = this.props.navigation.state.params.idCat;
     const { keyword,curLoc } = this.state;
     var url = `${global.url}${'search-content?category='}${id_cat}&skip=${skip}&limit=20`;
-    url += `${'&location='}${curLoc.latlng}`;
+    url += `${'&location='}${curLoc.latitude},${curLoc.longitude}`;
     if(keyword.trim()!=='') url += `${'&keyword='}${keyword}`;
     if(id_district!==null) url += `${'&district='}${id_district}`;
 
@@ -126,14 +126,14 @@ export default class ListLocation extends Component {
     if(id_serv!=='' && id_serv!=='-1'){
       url += `${'&service='}${id_serv}`;
     }
-    console.log('-----url-----',url);
+    console.log('-----url-----1',url);
     getApi(url)
     .then(arrData => {
-      //console.log('count',arrData.data.length);
+      console.log('count',arrData.data.length);
       if(skip===0){
-        //console.log('-----skip===0-----');
+        console.log('-----skip===0-----');
 
-        this.setState({ listData: this.state.listData.concat(arrData.data), isRefresh:false, noData: arrData.data.length===0 ? this.state.lang.not_found : '' });
+        this.setState({ listData: arrData.data, isRefresh:false, noData: arrData.data.length===0 ? this.state.lang.not_found : '' });
       }else {
         //console.log('-----skip!==-----');
         if(arrData.data.length===0) this.setState({ pullToRefresh:false });
@@ -447,7 +447,7 @@ export default class ListLocation extends Component {
               <SelectLocation saveLocation={this.saveLocation.bind(this)} />
           </View>
           </TouchableOpacity>
-          </Modal>
+        </Modal>
 
         <Modal onRequestClose={() => null} transparent visible={this.state.listSubCat.showList}>
         <TouchableOpacity

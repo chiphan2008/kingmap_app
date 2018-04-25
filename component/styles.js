@@ -404,6 +404,7 @@ module.exports = {
   txtTitleOver:{color:'#2F353F',fontSize:20,marginBottom:10,maxHeight:50,overflow:'hidden'},
   txtAddrOver:{color:'#6587A8',fontSize:14,overflow:'hidden',},
   txt:{color:'#6587A8',fontSize:16},
+  txtNextItem:{color:'#6587A8',fontSize:17},
   titleHead:{color:'#fff',fontSize:24,fontWeight:'500'},
   show : { display: 'flex'},
   hide : { display: 'none'},

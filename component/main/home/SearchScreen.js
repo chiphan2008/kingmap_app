@@ -18,6 +18,7 @@ import styles from '../../styles';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import MapFullScreen from './MapFullScreen';
 import SelectLocation from '../../main/location/SelectLocation';
+import SelectCategory from '../../main/location/SelectCategory';
 
 import sortDown from '../../../src/icon/ic-white/sort-down.png';
 import arrowLeft from '../../../src/icon/ic-white/arrow-left.png';
@@ -33,7 +34,7 @@ import searchIC from '../../../src/icon/ic-gray/ic-search.png';
 import plusIC from '../../../src/icon/ic-home/ic-plus.png';
 import sortDownIC from '../../../src/icon/ic-sort-down.png';
 import upDD from '../../../src/icon/ic-white/ic-dropdown_up.png';
-
+import checkIC from '../../../src/icon/ic-green/ic-check.png';
 
 export default class SearchScreen extends Component {
   constructor(props) {
@@ -237,7 +238,7 @@ export default class SearchScreen extends Component {
     const {
       keyword, curLocation,markers,curLoc,lang,showFullScreen,
       labelLoc,labelSer,labelCat,fitCoord,id_cat, circleLoc,
-      showNotFound,showLoc,showService,showSer,
+      showNotFound,showLoc,showCat,showService,showSer,
      } = this.state;
     //console.log(';showNotFound',showNotFound);
     const { navigate,goBack } = this.props.navigation;
@@ -473,6 +474,11 @@ export default class SearchScreen extends Component {
             </TouchableOpacity>
           </Modal>
 
+          <SelectCategory
+          visible={showCat}
+          idCat={id_cat}
+          closeModal={()=>this.setState({showCat:false})}
+          />
 
           <Modal onRequestClose={() => null} transparent visible={showSer}>
           <TouchableOpacity
@@ -480,7 +486,6 @@ export default class SearchScreen extends Component {
           style={[popoverLoc,padCreate]}>
           <Image style={[imgUpCreate,imgUpInfo]} source={upDD} />
               <View style={[overLayout,shadown]}>
-
               <FlatList
                  extraData={this.state}
                  keyExtractor={(item, index) => index}

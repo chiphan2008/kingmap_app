@@ -557,8 +557,6 @@ export default class ListLocation extends Component {
                </View>
             )} />
 
-
-
             </View>
         </TouchableOpacity>
         </Modal>

@@ -455,11 +455,19 @@ export default class ListLocation extends Component {
         style={[popoverLoc,padCreate]}>
         <Image style={[imgUpCreate,imgUpSubCat]} source={upDD} />
             <View style={[overLayoutLoc,shadown]}>
+            <TouchableOpacity
+                onPress={()=>{
+                  this.getContentByDist(this.state.idDist,null,this.state.id_serv);
+                  this.setState({listSubCat:{showList:!this.state.listSubCat.showList},id_sub:null,labelCat:'Danh mục'});
+              }}
+                style={{padding:20}}>
+                  <Text style={colorText}>Tất cả</Text>
+            </TouchableOpacity>
             <FlatList
                keyExtractor={item => item.id}
                data={sub_cat}
                renderItem={({item}) => (
-                 <TouchableOpacity
+              <TouchableOpacity
                  onPress={()=>{
                    this.getContentByDist(this.state.idDist,item.id,this.state.id_serv);
                    this.setState({listSubCat:{showList:!this.state.listSubCat.showList},id_sub:item.id,labelCat:item.name});
@@ -469,14 +477,7 @@ export default class ListLocation extends Component {
                </TouchableOpacity>
             )} />
 
-            <TouchableOpacity
-                onPress={()=>{
-                  this.getContentByDist(this.state.idDist,null,this.state.id_serv);
-                  this.setState({listSubCat:{showList:!this.state.listSubCat.showList},id_sub:null,labelCat:'Danh mục'});
-              }}
-                style={listCatOver}>
-                  <Text style={colorText}>Tất cả</Text>
-          </TouchableOpacity>
+
 
             </View>
         </TouchableOpacity>
@@ -488,7 +489,16 @@ export default class ListLocation extends Component {
         style={[popoverLoc,padCreate]}>
         <Image style={[imgUpCreate,imgUpInfo]} source={upDD} />
             <View style={[overLayout,shadown]}>
-
+            <View style={listOverService}>
+                <TouchableOpacity  style={{padding:15}}
+                   onPress={()=>{
+                    this.getContentByDist(this.state.idDist,this.state.id_sub,'-1,');
+                    this.setState({listSerItem:{showList:!this.state.listSerItem.showList},id_serv:'-1',labelSer:'Dịch vụ',showServie:{} });
+                    }}
+                  >
+                     <Text style={colorText}>Tất cả</Text>
+                 </TouchableOpacity>
+             </View>
             <FlatList
                extraData={this.state}
                keyExtractor={(item, index) => index}
@@ -547,17 +557,7 @@ export default class ListLocation extends Component {
                </View>
             )} />
 
-            <View style={listOverService}>
-                <TouchableOpacity  style={{padding:15}}
-                   onPress={()=>{
 
-                    this.getContentByDist(this.state.idDist,this.state.id_sub,'-1,');
-                    this.setState({listSerItem:{showList:!this.state.listSerItem.showList},id_serv:'-1',labelSer:'Dịch vụ',showServie:{} });
-                    }}
-                  >
-                     <Text style={colorText}>Tất cả</Text>
-                 </TouchableOpacity>
-             </View>
 
             </View>
         </TouchableOpacity>

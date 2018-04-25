@@ -47,6 +47,10 @@ export default class SearchScreen extends Component {
       region:{},
       showFullScreen:false,
       showLoc:false,
+      showSer:false,
+      showService:[],
+      showCat:false,
+
       curLocation:{},
       circleLoc:{},
       curLoc : {
@@ -233,7 +237,7 @@ export default class SearchScreen extends Component {
     const {
       keyword, curLocation,markers,curLoc,lang,showFullScreen,
       labelLoc,labelSer,labelCat,fitCoord,id_cat, circleLoc,
-      showNotFound,showLoc
+      showNotFound,showLoc,showService,showSer,
      } = this.state;
     //console.log(';showNotFound',showNotFound);
     const { navigate,goBack } = this.props.navigation;
@@ -244,8 +248,8 @@ export default class SearchScreen extends Component {
       popover,show,hide,overLayoutCat,shadown,colorText,listCatAll,listCatBG,listCatW,
       wrapContent,leftContent,rightContent,middleContent,imgContent,
       filterFrame,selectBoxBuySell,widthLoc,btnMap,btnMapLoc,
-      btnMapFull,btnMapZoom,btnZoom,btnList,
-      imgUpCreate,imgUpLoc,overLayout,popoverLoc,padCreate,
+      btnMapFull,btnMapZoom,btnZoom,btnList,listOverService,
+      imgUpCreate,imgUpLoc,overLayout,popoverLoc,padCreate,imgUpInfo,
     } = styles;
 
     let timeout;
@@ -290,21 +294,21 @@ export default class SearchScreen extends Component {
           {<View style={{left:0,top:7,position:'absolute',alignItems:'center',width}}>
                   <View style={{width:width-40,flexDirection:'row',justifyContent:'space-between'}}>
                   <TouchableOpacity
-                    onPress={()=>this.setState({ showLoc:true })}
+                    onPress={()=>this.setState({ showLoc:true,showCat:false,showSer:false })}
                     style={[selectBoxBuySell,widthLoc]}>
                       <Text  numberOfLines={1} style={{color:'#303B50'}}>{labelLoc}</Text>
                       <Image source={sortDownIC} style={{width:12,height:13,top:13,right:5,position:'absolute'}} />
                   </TouchableOpacity>
 
                   <TouchableOpacity
-                    onPress={()=>this.setState({ listSubCat:{showList:!listSubCat.showList},listSerItem:{showList:false}, showLoc:false})}
+                    onPress={()=>this.setState({ showLoc:false,showCat:true,showSer:false })}
                     style = {[selectBoxBuySell,widthLoc]}>
                       <Text  numberOfLines={1} style={{color:'#303B50'}}>{labelCat}</Text>
                       <Image source={sortDownIC} style={{width:12,height:13,top:13,right:5,position:'absolute'}} />
                   </TouchableOpacity>
 
                   <TouchableOpacity
-                  onPress={()=>this.setState({ listSubCat:{showList:false},listSerItem:{showList:!listSerItem.showList}, showLoc:false})}
+                  onPress={()=>this.setState({ showLoc:false,showCat:false,showSer:true })}
                   style = {[selectBoxBuySell,widthLoc]}>
                       <Text numberOfLines={1} style={{color:'#303B50'}}>{labelSer}</Text>
                       <Image source={sortDownIC} style={{width:12,height:13,top:13,right:5,position:'absolute'}} />
@@ -469,6 +473,87 @@ export default class SearchScreen extends Component {
             </TouchableOpacity>
           </Modal>
 
+
+          <Modal onRequestClose={() => null} transparent visible={showSer}>
+          <TouchableOpacity
+          onPress={()=>this.setState({showSer:false})}
+          style={[popoverLoc,padCreate]}>
+          <Image style={[imgUpCreate,imgUpInfo]} source={upDD} />
+              <View style={[overLayout,shadown]}>
+
+              <FlatList
+                 extraData={this.state}
+                 keyExtractor={(item, index) => index}
+                 data={showService}
+                 renderItem={({item}) => (
+                <View style={listOverService}>
+                <TouchableOpacity
+                   onPress={()=>{
+                    let idServ = this.state.id_serv;
+                    let lblArr = this.state.labelSer;
+                    if(lblArr==='Dịch vụ'){ lblArr =`${item.name}`;}else {
+                      lblArr =`${this.state.labelSer}`;
+                    }
+                    clearTimeout(timeout);
+                    //console.log('lblArr1',lblArr);
+                    const arr = JSON.parse(`[${idServ}]`);
+                    if(idServ==='-1'){ idServ=`-1,${item.id}`; }else{
+                      if(arr.includes(item.id)){
+                        remove(arr, item.id);idServ = arr.toString();
+
+                        if(this.state.showService[`${item.id}`]===item.id) lblArr = removeText(lblArr,item.name);
+                        if(idServ==='') {idServ='-1,';}
+                        }else {
+                        idServ = `${this.state.id_serv},${item.id}`;
+                        lblArr =`${this.state.labelSer},${item.name}`;
+                        //console.log('lblArr3',lblArr);
+                      }
+
+                    }
+                    if(lblArr==='') lblArr='Dịch vụ';
+                    //console.log('lblArr4',lblArr);
+                    if(this.state.showService[`${item.id}`]!==item.id)
+                      this.setState({
+                        showService: Object.assign(this.state.showService,{[item.id]:item.id}),labelSer:lblArr,id_serv:idServ
+                      },()=>{
+                        timeout = setTimeout(()=>{
+                          this.getContentByDist(this.state.idDist,this.state.id_sub,idServ);
+                        },2000)
+                      });
+                      //if(`${this.state.labelSer}`.includes(labelServ)) this.setState({labelSer:labelServ});
+                    else
+                      this.setState({
+                        showService: Object.assign(this.state.showService,{[item.id]:!item.id}),labelSer:lblArr,id_serv:idServ
+                      },()=>{
+                        timeout = setTimeout(()=>{
+                          this.getContentByDist(this.state.idDist,this.state.id_sub,idServ);
+                        },2000)
+                      });
+                    }}
+                    style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',padding:15}}
+                  >
+                     <Text style={colorText}>{item.name}</Text>
+                     <Image style={[imgInfo, this.state.showService[`${item.id}`]===item.id  ? show : hide]} source={checkIC}/>
+
+                 </TouchableOpacity>
+                 </View>
+              )} />
+
+              <View style={listOverService}>
+                  <TouchableOpacity  style={{padding:15}}
+                     onPress={()=>{
+
+                      this.getContentByDist(this.state.idDist,this.state.id_sub,'-1,');
+                      this.setState({listSerItem:{showList:!this.state.listSerItem.showList},id_serv:'-1',labelSer:'Dịch vụ',showService:{} });
+                      }}
+                    >
+                       <Text style={colorText}>Tất cả</Text>
+                   </TouchableOpacity>
+               </View>
+
+              </View>
+          </TouchableOpacity>
+          </Modal>
 
       </View>
     );

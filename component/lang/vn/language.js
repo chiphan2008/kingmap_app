@@ -25,6 +25,7 @@ module.exports = {
   create_ads:'Tạo quảng cáo',
   choose_area:'Chọn khu vực',
   plz_choose_area:'Vui lòng chọn khu vực (*)',
+  plz_choose_cat:'Vui lòng chọn danh mục',
   info_general:'Thông tin chung',
   info_per:'Thông tin cá nhân',
   like_location:'Địa điểm yêu thích ',

@@ -22,6 +22,7 @@ module.exports = {
   choose_create:'Select a kind of place where you want to create',
   choose_area:'Choose area',
   plz_choose_area:'Please choose area (*)',
+  plz_choose_cat:'Please choose category',
   info_general:'General information',
   info_per:'Personal information ',
   like_location:'Favorite places',

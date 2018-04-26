@@ -298,7 +298,7 @@ export default class LocationTab extends Component {
                     return (<TouchableOpacity
                         key={e.id}
                         style={{position:'absolute',flex:1,alignItems:'center',top:pos.y,left :pos.x,}}
-                        onPress={()=>navigate('SearchScr',{idCat:e.id, keyword:this.state.valSearch,lat:curLoc.latitude,lng:curLoc.longitude,lang:this.state.lang.lang}) }
+                        onPress={()=>navigate('SearchScr',{idCat:e.id,labelCat:e.name,service_items:e.service_items, keyword:this.state.valSearch,lat:curLoc.latitude,lng:curLoc.longitude,lang:this.state.lang.lang}) }
                         >
                       <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                       <Text style={labelCat}>{e.name}</Text>

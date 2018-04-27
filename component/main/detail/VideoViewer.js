@@ -25,8 +25,7 @@ export default class VideoViewer extends Component {
       <View style={{width,height,backgroundColor:'#000'}}>
       <WebView
          allowsInlineMediaPlayback
-         source={{uri: link}}
-
+         source={{uri: `${link}${'?autoplay=1'}`}}
          javaScriptEnabled
          domStorageEnabled
          automaticallyAdjustContentInsets={false}

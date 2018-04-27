@@ -286,16 +286,18 @@ export default class DetailScreen extends Component {
           listComment={listData.content._comments}
           />
 
+          {listData.list_group.length>0 &&
+          <View>
           <View style={titleSpace}>
               <Text style={[colorNumPP,sizeTitle]}>{lang.other_branch.toUpperCase()}</Text>
           </View>
-          {listData.list_group.length>0 &&
-            <OtherBranch
-              lang={lang}
-              curLoc={this.state.curLoc}
-              listGroup={listData.list_group}
-              navigation={this.props.navigation}
-              />
+          <OtherBranch
+            lang={lang}
+            curLoc={this.state.curLoc}
+            listGroup={listData.list_group}
+            navigation={this.props.navigation}
+            />
+          </View>
           }
 
 

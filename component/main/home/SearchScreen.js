@@ -274,7 +274,7 @@ export default class SearchScreen extends Component {
       const url1 = `${global.url}${'district/'}${district}`;
       getApi(url1).then(dist=>{
         //console.log('dist.data.name',dist.data.length);
-          dist.data.length>0 && this.setState({
+          dist.data[0].name!=='' && dist.data[0].name!==undefined && this.setState({
             labelLoc:dist.data[0].name,
             id_district:district,
             id_city:city,

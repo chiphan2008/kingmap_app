@@ -79,7 +79,7 @@ export default class ListLocation extends Component {
 
   getCategory(loc){
     const idcat = this.props.navigation.state.params.idCat;
-    const url = global.url+'content-by-category?category='+idcat+'&location='+loc;
+    const url = global.url+'search-content?category='+idcat+'&location='+loc;
     console.log('url',url);
     if(this.state.isLoad){
       getApi(url)
@@ -191,8 +191,8 @@ export default class ListLocation extends Component {
       const url1 = `${global.url}${'district/'}${district}`;
       //console.log(url1);
       getApi(url1).then(dist=>{
-        //console.log('dist.data.name',dist.data.length);
-          dist.data.length>0 && this.setState({
+        //console.log('dist.data.name',dist.data[0].name);
+          dist.data[0].name!=='' && dist.data[0].name!==undefined && this.setState({
             labelLoc:dist.data[0].name,
           });
       })

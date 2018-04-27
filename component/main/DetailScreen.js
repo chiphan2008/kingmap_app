@@ -289,12 +289,14 @@ export default class DetailScreen extends Component {
           <View style={titleSpace}>
               <Text style={[colorNumPP,sizeTitle]}>{lang.other_branch.toUpperCase()}</Text>
           </View>
-          <OtherBranch
-          lang={lang}
-          curLoc={this.state.curLoc}
-          listGroup={listData.list_group}
-          navigation={this.props.navigation}
-          />
+          {listData.list_group.length>0 &&
+            <OtherBranch
+              lang={lang}
+              curLoc={this.state.curLoc}
+              listGroup={listData.list_group}
+              navigation={this.props.navigation}
+              />
+          }
 
 
         </View>

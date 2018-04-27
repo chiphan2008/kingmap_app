@@ -85,7 +85,7 @@ export default class ListLocation extends Component {
       getApi(url)
       .then(arrData => {
         //console.log('arrData',arrData);
-        this.setState({ listData: arrData.data });
+        this.setState({ listData: arrData.data,noData: arrData.data.length===0 ? this.state.lang.not_found : '' });
       }).catch(err => console.log(err));
     }
 
@@ -147,48 +147,6 @@ export default class ListLocation extends Component {
     });
   }
 
-  // componentDidMount() {
-  //   var _this = this;
-  //   const id = _this.props.navigation.state.params.idCat;
-  //   let latlng;
-  //   navigator.geolocation.getCurrentPosition((position) => {
-  //     //console.log('position');
-  //           latlng = `${position.coords.latitude}${','}${position.coords.longitude}`;
-  //           _this.setState({
-  //             curLocation : {
-  //               latlng:latlng,
-  //             },
-  //             curLoc:{
-  //               latlng:latlng,
-  //               latitude:`${position.coords.latitude}`,
-  //               longitude:`${position.coords.longitude}`,
-  //             }
-  //           },()=>{
-  //             _this.getCategory(id,latlng);
-  //           });
-  //          },
-  //          (error) => {
-  //            //console.log('error',id);
-  //            getLocationByIP().then(e => {
-  //              const latlng = `${e.latitude},${e.longitude}`;
-  //              _this.setState({
-  //                curLoc:{
-  //                  latlng:`${e.latitude},${e.longitude}`,
-  //                  latitude:`${e.latitude}`,
-  //                  longitude:`${e.longitude}`,
-  //                },
-  //              },()=>{
-  //                _this.getCategory(id,latlng);
-  //              });
-  //
-  //            });
-  //            //console.log('ip',ip.latitude);
-  //         },
-  //         {enableHighAccuracy: true, timeout: 20000, maximumAge: 10000}
-  //   );
-  //   _this.setState({pullToRefresh:true});
-  // }
-
    refresh(){
      checkLogin().then(e=>{
        if(e.id!==undefined){
@@ -202,8 +160,9 @@ export default class ListLocation extends Component {
   findLoc(){
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        console.log('position',position);
+        //console.log('position',position);
         const {latitude,longitude} = position.coords;
+        this.getPosition(latitude,longitude);
         this.setState({curLoc:{
           latitude,longitude
         }},()=>{
@@ -211,11 +170,35 @@ export default class ListLocation extends Component {
         })
       },
       (error) => {
-        console.log(error);
+        getLocationByIP().then(e=>{
+          const {latitude,longitude} = e;
+          this.getPosition(latitude,longitude);
+          this.setState({curLoc:{
+            latitude,longitude
+          }},()=>{
+            this.getCategory(`${latitude},${longitude}`);
+          })
+        })
       },
       { timeout: 5000,maximumAge: 60000 },
     );
-   }
+  }
+
+  getPosition(lat,lng){
+    const url = `${global.url}${'get-position?location='}${lat},${lng}`;
+    getApi(url).then(e=>{
+      const { district,city,country } = e.data[0];
+      const url1 = `${global.url}${'district/'}${district}`;
+      //console.log(url1);
+      getApi(url1).then(dist=>{
+        //console.log('dist.data.name',dist.data.length);
+          dist.data.length>0 && this.setState({
+            labelLoc:dist.data[0].name,
+          });
+      })
+    })
+  }
+
    componentWillMount(){
      setTimeout(()=>{
        DeviceEventEmitter.addListener('goback', (e)=>{

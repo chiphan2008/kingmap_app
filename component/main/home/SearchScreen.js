@@ -59,6 +59,8 @@ export default class SearchScreen extends Component {
         lng: this.props.navigation.state.params.lng || '',
       },
       id_district:'',
+      id_city:'',
+      id_country:'',
       id_cat:this.props.navigation.state.params.idCat || '',
       id_sub:'',
       id_serv:'',
@@ -195,32 +197,30 @@ export default class SearchScreen extends Component {
     navigator.geolocation.getCurrentPosition(
           (position) => {
             //console.log('position',position);
-            const {latitude,longitude} = position.coords;
-            // AsyncStorage.setItem('@currentLocation:key',JSON.stringify({
-            //   latitude,longitude
-            // }))
-            this.setState({
-              curLoc : {
-                latitude,longitude,
-              }
-            },()=>{
-              this.getCategory(latitude,longitude);
-            });
+                const {latitude,longitude} = position.coords;
+                // AsyncStorage.setItem('@currentLocation:key',JSON.stringify({
+                //   latitude,longitude
+                // }))
+                this.getPosition(latitude,longitude);
+                this.setState({
+                  curLoc : {
+                    latitude,longitude,
+                  }
+                },()=>{
+                  this.getCategory(latitude,longitude);
+                });
 
            },
            (error) => {
             getLocationByIP().then(e=>{
               const {latitude,longitude} = e;
+              this.getPosition(latitude,longitude);
               this.setState({
-                curLoc : {
-                  latitude,longitude,
-                }
-              },()=>{
-                this.getCategory(latitude,longitude);
-              });
+                curLoc : { latitude,longitude, }
+              },()=>{ this.getCategory(latitude,longitude); });
             });//enableHighAccuracy: true,
           },
-          {  enableHighAccuracy: true,timeout: 5000,maximumAge: 60000 }
+          { timeout: 5000,maximumAge: 60000 }
           //enableHighAccuracy: true,
     );
   }
@@ -260,16 +260,34 @@ export default class SearchScreen extends Component {
             longitudeDelta: zoom==='zoom_in' ?  longitudeDelta*1.4 : longitudeDelta/1.4,
           }
         })
-      },200)
+      },500)
   }
   // componentWillMount(){
   //   const { lat,lng } = this.props.navigation.state.params;
   //   this.getCategory(lat,lng);
   // }
 
+  getPosition(lat,lng){
+    const url = `${global.url}${'get-position?location='}${lat},${lng}`;
+    getApi(url).then(e=>{
+      const { district,city,country } = e.data[0];
+      const url1 = `${global.url}${'district/'}${district}`;
+      getApi(url1).then(dist=>{
+        //console.log('dist.data.name',dist.data.length);
+          dist.data.length>0 && this.setState({
+            labelLoc:dist.data[0].name,
+            id_district:district,
+            id_city:city,
+            id_country:country,
+          });
+      })
+    })
+  }
   componentDidMount(){
     const { labelCat,service_items } = this.props.navigation.state.params || '';
     //console.log('labelCat',labelCat);
+    //console.log('lat,lng',latitude,longitude );
+    //if(lat!=='' || lat!==undefined) this.getPosition(lat,lng);
     if(labelCat!==undefined) this.setState({labelCat});
     if(service_items!==undefined) this.setState({service_items});
   }
@@ -383,8 +401,6 @@ export default class SearchScreen extends Component {
                 Keyboard.dismiss();
               }}
               onRegionChangeComplete={(region)=>{
-                const {latitudeDelta,longitudeDelta} = region;
-                const {lat,lng,latlng,latitude,longitude} = this.state.curLocation;
                 this.setState({curLocation:region});
               }}
               customMapStyle={global.style_map}
@@ -515,7 +531,12 @@ export default class SearchScreen extends Component {
           style={[popoverLoc,padCreate]}>
             <Image style={[imgUpCreate,imgUpLoc]} source={upDD} />
             <View style={[overLayout,shadown]}>
-                <SelectLocation saveLocation={this.saveLocation.bind(this)} />
+                <SelectLocation
+                saveLocation={this.saveLocation.bind(this)}
+                id_country={this.state.id_country}
+                id_city={this.state.id_city}
+                //id_district={this.state.id_district}
+                />
             </View>
             </TouchableOpacity>
           </Modal>

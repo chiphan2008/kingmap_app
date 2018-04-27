@@ -23,8 +23,8 @@ export default class SelectLocation extends Component {
       showCheckCity:'',
       showCheckCountry:'',
       showCheckDistrict:'',
-      idCountry:1,
-      idCity:1,
+      idCountry:this.props.id_country || '',
+      idCity:this.props.id_city || '',
       nameCountry:'',
       nameCity:'',
     };

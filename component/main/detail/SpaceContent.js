@@ -7,10 +7,11 @@ import {
   WebView,Modal,FlatList,
 } from 'react-native';
 import ImageViewer from './ImageViewer';
+import VideoViewer from './VideoViewer';
 //
 //import FacebookPlayer from 'react-facebook-player';
 import global from '../../global';
-import {getIdYoutube} from '../../libs';
+import {getThumbVideo} from '../../libs';
 const {width,height} = Dimensions.get('window');
 
 
@@ -21,6 +22,8 @@ export default class SpaceContent extends Component {
       index:0,
       showImageMenu:false,
       showImgSpace:false,
+      showVideo:false,
+      linkVideo:'',
     }
   }
 
@@ -32,7 +35,7 @@ export default class SpaceContent extends Component {
     } = styles;
     const {listImgSpace,listImgMenu,listImgVideo,idContent,lang} = this.props;
     const {navigate} = this.props.navigation;
-    const {showImgSpace,showImageMenu,index} = this.state;
+    const {showImgSpace,showImageMenu,index,showVideo,linkVideo} = this.state;
 
     return (
       <View style={spaceContent}>
@@ -131,27 +134,20 @@ export default class SpaceContent extends Component {
              extraData={this.state}
              data={listImgVideo}
              renderItem={({item,index}) => (
-               <View style={rowFlexImg}>
-               
+               <TouchableOpacity style={rowFlexImg}
+               onPress={()=>{
+                 this.setState({showVideo:true,linkVideo:item})
+               }}>
                <Image style={{width:(width-50)/2,height:width/3,marginRight:10,resizeMode: 'cover'}}
-               source={{uri:`https://img.youtube.com/vi/${getIdYoutube(item)}/0.jpg`}} />
-                 {/*<WebView
-                    allowsInlineMediaPlayback
-                    source={{uri: `${item}`}}
-                    style={imgSpace}
-                    javaScriptEnabled
-                    domStorageEnabled
-                    automaticallyAdjustContentInsets={false}
-                    decelerationRate="normal"
-                    //onNavigationStateChange={this.onNavigationStateChange}
-                    //onShouldStartLoadWithRequest={this.onShouldStartLoadWithRequest}
-                    startInLoadingState={true}
-                    scalesPageToFit={true}
-                 />*/}
-               </View>
+               source={{uri: getThumbVideo(item) }} />
+               </TouchableOpacity>
           )} />
 
-
+          <VideoViewer
+          visible={showVideo}
+          link={linkVideo}
+          closeModal={()=>this.setState({showVideo:false,linkVideo:''})}
+          />
 
           <View style={{height:30}}></View>
 

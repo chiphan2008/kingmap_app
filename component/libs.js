@@ -13,10 +13,20 @@ export function format_number(value){
 export function hasNumber(text) {
   return /\d/.test(text);
 }
-export function getIdYoutube(link){
-  var p = /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
-  if(link.match(p)){
-    return link.match(/^.*(youtu.be\/|v\/|e\/|u\/\w+\/|embed\/|v=)([^#\&\?]*).*/).pop();
+export function getThumbVideo(link){
+  if(link===null || link==='') return;
+  var youtube = /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+  let id_video;
+  if(link.match(youtube)){
+    id_video = link.match(/^.*(youtu.be\/|v\/|e\/|u\/\w+\/|embed\/|v=)([^#\&\?]*).*/).pop();
+    return `${'https://img.youtube.com/vi/'}${id_video}${'/0.jpg'}`;
+  }
+  //console.log(link);
+  var facebook = /^https:\/\/www\.facebook\.com\/([^\/?].+\/)?video(s|\.php)[\/?].*$/gm;
+  if(link.match(facebook)){
+    id_video = link.match(/(videos\/|vl\.\d+\/)(\d+).*/).pop();
+    //console.log('link',id_video);
+    return `${'https://graph.facebook.com/'}${id_video}${'/picture'}`;
   }
 }
 export function isEmail(text){

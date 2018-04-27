@@ -425,11 +425,11 @@ export default class SearchScreen extends Component {
                   x: Number(marker.latitude),
                   y: Number(marker.longitude),
                 }}
-                image={ Platform.OS==='android' ? {uri:`${marker.marker}${'?width=48&height=50'}`} : null}
+                image={ Platform.OS==='android' ? {uri:`${marker.marker}`} : null}
               >
-              {Platform.OS==='android' &&
+              {Platform.OS==='ios' &&
               <Image
-                resizeMode="contain"
+                //resizeMode="contain"
                 source={{uri:`${marker.marker}`}}
                 style={{width:48,height:54,resizeMode:"cover"}} />}
 

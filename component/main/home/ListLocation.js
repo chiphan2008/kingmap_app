@@ -199,7 +199,7 @@ export default class ListLocation extends Component {
              });
              //console.log('ip',ip.latitude);
           },
-          {enableHighAccuracy: true, timeout: 20000, maximumAge: 10000}
+          { timeout: 5000,maximumAge: 60000 },
     );
     _this.setState({pullToRefresh:true});
   }

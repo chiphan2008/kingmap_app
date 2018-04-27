@@ -111,7 +111,7 @@ export default class HomeTab extends Component {
                 });
             });
           },
-          {enableHighAccuracy: true, timeout: 20000, maximumAge: 10000}
+          { timeout: 5000,maximumAge: 60000 },
     );
   }
 

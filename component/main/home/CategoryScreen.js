@@ -129,7 +129,7 @@ export default class CategoryScreen extends Component {
                 });
             });
           },
-          {enableHighAccuracy: true, timeout: 3000, maximumAge: 3000}
+          { timeout: 5000,maximumAge: 60000 },
     );
   }
 

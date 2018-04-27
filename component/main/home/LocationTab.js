@@ -99,16 +99,16 @@ export default class LocationTab extends Component {
         })
       },
       (error) => {
-        Geolocation().then(e=>{
-          const {latitude,longitude} = e;
-          this.setState({curLoc:{
-            latitude,longitude
-          }},()=>{
-            this.getCategory(`${latitude},${longitude}`);
-          })
-        })
+        // Geolocation().then(e=>{
+        //   const {latitude,longitude} = e;
+        //   this.setState({curLoc:{
+        //     latitude,longitude
+        //   }},()=>{
+        //     this.getCategory(`${latitude},${longitude}`);
+        //   })
+        // })
       },
-      { enableHighAccuracy: true },
+      { timeout: 5000,maximumAge: 60000 },
     );
    }
 

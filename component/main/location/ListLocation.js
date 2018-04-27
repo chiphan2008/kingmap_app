@@ -17,6 +17,7 @@ import global from '../../global';
 import lang_vn from '../../lang/vn/language';
 import lang_en from '../../lang/en/language';
 import SelectLocation from '../../main/location/SelectLocation';
+import SelectService from '../../main/location/SelectService';
 import checkLocation from '../../api/checkLocation';
 import checkLogin from '../../api/checkLogin';
 import accessLocation from '../../api/accessLocation';
@@ -57,15 +58,11 @@ export default class ListLocation extends Component {
         check:'',
         showList:false,
       },
-      listSerItem:{
-        arr:[],
-        check:'',
-        showList:false,
-      },
-      showServie:{},
+
+      showServie:false,
       idDist:null,
       id_sub:null,
-      id_serv:'-1',
+      id_serv:'',
       isRefresh:false,
       page:0,
       pullToRefresh:false,
@@ -115,23 +112,21 @@ export default class ListLocation extends Component {
     const id_cat = this.props.navigation.state.params.idCat;
     const { keyword,curLoc } = this.state;
     var url = `${global.url}${'search-content?category='}${id_cat}&skip=${skip}&limit=20`;
-    url += `${'&location='}${curLoc.latitude},${curLoc.longitude}`;
+    if(curLoc.latitude!==undefined) url += `${'&location='}${curLoc.latitude},${curLoc.longitude}`;
     if(keyword.trim()!=='') url += `${'&keyword='}${keyword}`;
     if(id_district!==null) url += `${'&district='}${id_district}`;
 
     //if(loc!=='') url += `${'&location='}${loc}`;
 
     if(id_sub!==null) url += `${'&subcategory='}${id_sub}`;
-    id_serv = id_serv.replace('-1,','');
-    if(id_serv!=='' && id_serv!=='-1'){
-      url += `${'&service='}${id_serv}`;
-    }
+    //id_serv = id_serv.replace('-1,','');
+    if(id_serv!=='') url += `${'&service='}${id_serv}`;
     console.log('-----url-----1',url);
     getApi(url)
     .then(arrData => {
-      console.log('count',arrData.data.length);
+      //console.log('count',arrData.data.length);
       if(skip===0){
-        console.log('-----skip===0-----');
+        //console.log('-----skip===0-----');
 
         this.setState({ listData: arrData.data, isRefresh:false, noData: arrData.data.length===0 ? this.state.lang.not_found : '' });
       }else {
@@ -207,6 +202,7 @@ export default class ListLocation extends Component {
   findLoc(){
     navigator.geolocation.getCurrentPosition(
       (position) => {
+        console.log('position',position);
         const {latitude,longitude} = position.coords;
         this.setState({curLoc:{
           latitude,longitude
@@ -214,8 +210,10 @@ export default class ListLocation extends Component {
           this.getCategory(`${latitude},${longitude}`);
         })
       },
-      (error) => {},
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
+      (error) => {
+        console.log(error);
+      },
+      { timeout: 5000,maximumAge: 60000 },
     );
    }
    componentWillMount(){
@@ -249,6 +247,31 @@ export default class ListLocation extends Component {
         }
       );
     }
+
+  }
+
+  saveService(arr){
+    clearTimeout(timeout);
+    let labelSer=[],id_serv=[];
+    arr.length>0 && arr.forEach(e=>{
+      if(e[1]){
+        if( !isNaN(parseFloat(e[0])) ){
+          id_serv = id_serv.concat(e[1]);
+        }else {
+          labelSer = labelSer.concat(e[1]);
+        }
+      }
+    });
+
+    this.setState({
+      labelSer:labelSer.length===0 ? 'Dịch vụ' :labelSer.toString(),
+      id_serv: id_serv.length===0 ? '' : id_serv.toString(),
+    },()=>{
+      timeout = setTimeout(()=>{
+        //this.getCategory();
+        this.getContentByDist(this.state.idDist,this.state.id_sub,id_serv);
+      },800)
+    })
 
   }
 
@@ -332,21 +355,21 @@ export default class ListLocation extends Component {
         <View style={wrapFilter}>
                 <View style={filterFrame}>
                 <TouchableOpacity
-                  onPress={()=>this.setState({ showLoc:!this.state.showLoc,listSubCat:{showList:false},listSerItem:{showList:false}, })}
+                  onPress={()=>this.setState({ showLoc:!this.state.showLoc,listSubCat:{showList:false},showServie:false, })}
                   style={[selectBoxBuySell,widthLoc]}>
                     <Text  numberOfLines={1} style={{color:'#303B50'}}>{this.state.labelLoc}</Text>
                     <Image source={sortDownIC} style={{width:12,height:13,top:13,right:5,position:'absolute'}} />
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  onPress={()=>this.setState({ listSubCat:{showList:!this.state.listSubCat.showList},listSerItem:{showList:false}, showLoc:false})}
+                  onPress={()=>this.setState({ listSubCat:{showList:!this.state.listSubCat.showList},showServie:false, showLoc:false})}
                   style = {[selectBoxBuySell,widthLoc]}>
                     <Text  numberOfLines={1} style={{color:'#303B50'}}>{this.state.labelCat}</Text>
                     <Image source={sortDownIC} style={{width:12,height:13,top:13,right:5,position:'absolute'}} />
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                onPress={()=>this.setState({ listSubCat:{showList:false},listSerItem:{showList:!this.state.listSerItem.showList}, showLoc:false})}
+                onPress={()=>this.setState({ listSubCat:{showList:false},showServie:!this.state.showServie, showLoc:false})}
                 style = {[selectBoxBuySell,widthLoc]}>
                     <Text numberOfLines={1} style={{color:'#303B50'}}>{this.state.labelSer}</Text>
                     <Image source={sortDownIC} style={{width:12,height:13,top:13,right:5,position:'absolute'}} />
@@ -481,83 +504,14 @@ export default class ListLocation extends Component {
         </TouchableOpacity>
         </Modal>
 
-        <Modal onRequestClose={() => null} transparent visible={this.state.listSerItem.showList}>
-        <TouchableOpacity
-        onPress={()=>this.setState({listSerItem:{showList:!this.state.listSerItem.showList}})}
-        style={[popoverLoc,padCreate]}>
-        <Image style={[imgUpCreate,imgUpInfo]} source={upDD} />
-            <View style={[overLayout,shadown]}>
-            <View style={listOverService}>
-                <TouchableOpacity  style={{padding:15}}
-                   onPress={()=>{
-                    this.getContentByDist(this.state.idDist,this.state.id_sub,'-1,');
-                    this.setState({listSerItem:{showList:!this.state.listSerItem.showList},id_serv:'-1',labelSer:'Dịch vụ',showServie:{} });
-                    }}
-                  >
-                     <Text style={colorText}>Tất cả</Text>
-                 </TouchableOpacity>
-             </View>
-            <FlatList
-               extraData={this.state}
-               keyExtractor={(item, index) => index}
-               data={serv_items}
-               renderItem={({item}) => (
-              <View  style={listOverService}>
-              <TouchableOpacity
-                 onPress={()=>{
-                  let idServ = this.state.id_serv;
-                  let lblArr = this.state.labelSer;
-                  if(lblArr==='Dịch vụ'){ lblArr =`${item.name}`;}else {
-                    lblArr =`${this.state.labelSer}`;
-                  }
-                  clearTimeout(timeout);
-                  //console.log('lblArr1',lblArr);
-                  const arr = JSON.parse(`[${idServ}]`);
-                  if(idServ==='-1'){ idServ=`-1,${item.id}`; }else{
-                    if(arr.includes(item.id)){
-                      remove(arr, item.id);idServ = arr.toString();
+        <SelectService
+        visible={this.state.showServie}
+        data={serv_items}
+        saveService={this.saveService.bind(this)}
+        closeModal={()=>this.setState({showServie:false})}
+        />
 
-                      if(this.state.showServie[`${item.id}`]===item.id) lblArr = removeText(lblArr,item.name);
-                      if(idServ==='') {idServ='-1,';}
-                      }else {
-                      idServ = `${this.state.id_serv},${item.id}`;
-                      lblArr =`${this.state.labelSer},${item.name}`;
-                      //console.log('lblArr3',lblArr);
-                    }
 
-                  }
-                  if(lblArr==='') lblArr='Dịch vụ';
-                  //console.log('lblArr4',lblArr);
-                  if(this.state.showServie[`${item.id}`]!==item.id)
-                    this.setState({
-                      showServie: Object.assign(this.state.showServie,{[item.id]:item.id}),labelSer:lblArr,id_serv:idServ
-                    },()=>{
-                      timeout = setTimeout(()=>{
-                        this.getContentByDist(this.state.idDist,this.state.id_sub,idServ);
-                      },2000)
-                    });
-                    //if(`${this.state.labelSer}`.includes(labelServ)) this.setState({labelSer:labelServ});
-                  else
-                    this.setState({
-                      showServie: Object.assign(this.state.showServie,{[item.id]:!item.id}),labelSer:lblArr,id_serv:idServ
-                    },()=>{
-                      timeout = setTimeout(()=>{
-                        this.getContentByDist(this.state.idDist,this.state.id_sub,idServ);
-                      },2000)
-                    });
-                  }}
-                  style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',padding:15}}
-                >
-                   <Text style={colorText}>{item.name}</Text>
-                   <Image style={[imgInfo, this.state.showServie[`${item.id}`]===item.id  ? show : hide]} source={checkIC}/>
-
-               </TouchableOpacity>
-               </View>
-            )} />
-
-            </View>
-        </TouchableOpacity>
-        </Modal>
 
       </View>
     );

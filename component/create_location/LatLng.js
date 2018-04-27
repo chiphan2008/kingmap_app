@@ -62,7 +62,7 @@ export default class LatLng extends Component {
                 this.props.getLatLng(e);
             });
           },
-          {enableHighAccuracy: true, timeout: 3000, maximumAge: 3000}
+          { timeout: 5000,maximumAge: 60000 },
     );
   }
   componentWillMount(){

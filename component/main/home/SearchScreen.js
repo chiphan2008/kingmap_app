@@ -101,8 +101,8 @@ export default class SearchScreen extends Component {
                 latlng:`${lat},${lng}`,
               },
               circleLoc: {
-                latitude:lat,
-                longitude: lng,
+                latitude:curLoc.latitude,
+                longitude:curLoc.longitude,
               },
             });
             return;
@@ -114,10 +114,9 @@ export default class SearchScreen extends Component {
         }
         let data = [];
         let line = 0;
-        if(id_district!==null){
-          lat=arrData.data[0].latitude;
-          lng=arrData.data[0].longitude;
-        }
+        lat=arrData.data[0].latitude;
+        lng=arrData.data[0].longitude;
+        let line1 = arrData.data[0].line;
         arrData.data.forEach(e=>{
           line = e.line;
           let obj = {
@@ -130,24 +129,22 @@ export default class SearchScreen extends Component {
           }
           data.push(obj);
         })
-        //console.log('getApi');
+        // console.log('line1',line1);
+        // console.log('line',line);
+        // console.log('line-line1',Number(line)-Number(line1));
           this.setState({ markers: data,onchange:true,showInfoOver:true,initLoad:true,
             curLocation : {
               latitude:lat,
               longitude: lng,
               lat:lat,
               lng: lng,
-              latitudeDelta:  line*0.008757/500,
-              longitudeDelta: line*0.010066/500,
+              latitudeDelta: isNaN(line-line1) || (line-line1)===0 ? 0.008757 : (line-line1)*0.008757/500,
+              longitudeDelta: isNaN(line-line1) || (line-line1)===0 ? 0.010066 : (line-line1)*0.010066/500,
               latlng:`${lat},${lng}`,
             },
             circleLoc: {
-              latitude:lat,
-              longitude: lng,
-              lat,lng,
-              latitudeDelta:  line*0.008757/500,
-              longitudeDelta: line*0.010066/500,
-              latlng:`${lat},${lng}`,
+              latitude:curLoc.latitude,
+              longitude:curLoc.longitude,
             },
 
            });
@@ -187,7 +184,7 @@ export default class SearchScreen extends Component {
     },()=>{
       timeout = setTimeout(()=>{
         this.getCategory();
-      },2000)
+      },800)
     })
 
   }
@@ -199,17 +196,12 @@ export default class SearchScreen extends Component {
           (position) => {
             //console.log('position',position);
             const {latitude,longitude} = position.coords;
-            AsyncStorage.setItem('@currentLocation:key',JSON.stringify({
-              latitude,longitude
-            }))
+            // AsyncStorage.setItem('@currentLocation:key',JSON.stringify({
+            //   latitude,longitude
+            // }))
             this.setState({
               curLoc : {
                 latitude,longitude,
-                lat:latitude,
-                lng:longitude,
-                latitudeDelta:  0.008757,
-                longitudeDelta: 0.010066,
-                latlng:`${latitude},${longitude}`,
               }
             },()=>{
               this.getCategory(latitude,longitude);
@@ -217,9 +209,10 @@ export default class SearchScreen extends Component {
 
            },
            (error) => {
-            //getLocationByIP().then();
+            //getLocationByIP().then();//enableHighAccuracy: true,
           },
-          {enableHighAccuracy: true, timeout: 20000}
+          {  timeout: 5000,maximumAge: 60000 }
+          //enableHighAccuracy: true,
     );
   }
 
@@ -227,11 +220,18 @@ export default class SearchScreen extends Component {
     navigator.geolocation.getCurrentPosition(
      ({coords}) => {
        const {latitude, longitude} = coords
-       //console.log(latitude, longitude);
-       this.getCategory(latitude,longitude);
+       this.setState({
+         curLocation : {
+           latitude,longitude,
+           lat:latitude,lng:longitude,
+           latlng:`${latitude},${longitude}`,
+           latitudeDelta: 0.008757 ,
+           longitudeDelta: 0.010066,
+         }
+       });
      },
      (error) => {/*alert(JSON.stringify(error))*/},
-     {enableHighAccuracy: true}
+     { timeout: 5000,maximumAge: 60000 },
    )
   }
   onPressZoom(zoom) {
@@ -241,11 +241,11 @@ export default class SearchScreen extends Component {
           curLocation : {
             latitude,longitude,
             lat,lng,latlng,
-            latitudeDelta: zoom==='zoom_in' ? latitudeDelta*1.2 : latitudeDelta/1.2,
-            longitudeDelta: zoom==='zoom_in' ?  longitudeDelta*1.2 : longitudeDelta/1.2,
+            latitudeDelta: zoom==='zoom_in' ? latitudeDelta*1.4 : latitudeDelta/1.4,
+            longitudeDelta: zoom==='zoom_in' ?  longitudeDelta*1.4 : longitudeDelta/1.4,
           }
         })
-      },500)
+      },200)
   }
   // componentWillMount(){
   //   const { lat,lng } = this.props.navigation.state.params;

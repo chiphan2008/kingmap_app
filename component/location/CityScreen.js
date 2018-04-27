@@ -55,7 +55,7 @@ export default class CityScreen extends Component {
               }).catch(err => console.log(err));
             },
             (error) => {},
-            {enableHighAccuracy: true}
+            { timeout: 5000,maximumAge: 60000 },
           );
     } catch (error) {
       //console.log(error);

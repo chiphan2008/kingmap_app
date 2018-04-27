@@ -174,42 +174,6 @@ export default class LocationTab extends Component {
     }).catch(err => console.log(err));
   }
 
-  // componentDidMount(){
-  //   const {curLoc} = this.state;
-  //   navigator.geolocation.getCurrentPosition(
-  //     ({coords}) => {
-  //       const {latitude, longitude} = coords
-  //       setTimeout(()=>{
-  //         this.setState({
-  //           curLoc: {
-  //             latitude,longitude,
-  //             lat:latitude,lng:longitude,
-  //             latlng:`${latitude},${longitude}`,
-  //             latitudeDelta: 0.005,
-  //             longitudeDelta: 0.001,
-  //           }
-  //         });
-  //       },1200)
-  //     },
-  //     (error) => {/*alert('Error: Are location services on?')*/},
-  //     {enableHighAccuracy: true}
-  //   );
-  //   this.watchID = navigator.geolocation.watchPosition(
-  //     ({coords}) => {
-  //       const {lat, long} = coords
-  //       this.setState({
-  //         curLoc: {
-  //           lat,
-  //           long
-  //         }
-  //       })
-  //   });
-  // }
-  //
-  // componentWillUnmount() {
-  //   navigator.geolocation.clearWatch(this.watchID);
-  // }
-
   findNewPoint(x, y, angle, distance) {
       let result = {};
       result.x = Math.round(Math.cos(angle * Math.PI / 180) * distance + x);
@@ -271,7 +235,7 @@ export default class LocationTab extends Component {
           <TouchableOpacity style={{top:Platform.OS==='ios' ? 75 : 65,left:(width-50),position:'absolute'}}
           onPress={()=>{
             if (this.state.valSearch.trim()!=='') {
-              navigate('SearchScr',{keyword:this.state.valSearch,lat:curLoc.latitude,lng:curLoc.longitude,idCat:'',lang:this.state.lang});
+              navigate('SearchScr',{keyword:this.state.valSearch,lat:curLoc.latitude,lng:curLoc.longitude,idCat:'',lang:this.state.lang.lang});
               this.setState({valSearch:''})
             }
           }}>

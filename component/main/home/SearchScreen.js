@@ -209,9 +209,18 @@ export default class SearchScreen extends Component {
 
            },
            (error) => {
-            //getLocationByIP().then();//enableHighAccuracy: true,
+            getLocationByIP().then(e=>{
+              const {latitude,longitude} = e;
+              this.setState({
+                curLoc : {
+                  latitude,longitude,
+                }
+              },()=>{
+                this.getCategory(latitude,longitude);
+              });
+            });//enableHighAccuracy: true,
           },
-          {  timeout: 5000,maximumAge: 60000 }
+          {  enableHighAccuracy: true,timeout: 5000,maximumAge: 60000 }
           //enableHighAccuracy: true,
     );
   }
@@ -230,8 +239,14 @@ export default class SearchScreen extends Component {
          }
        });
      },
-     (error) => {/*alert(JSON.stringify(error))*/},
-     { timeout: 5000,maximumAge: 60000 },
+     (error) => {
+       getLocationByIP().then(e=>{
+         const {latitude,longitude} = e;
+         this.setState({
+           curLoc : { latitude,longitude, }
+         });
+       });
+     }, { timeout: 5000,maximumAge: 60000 }
    )
   }
   onPressZoom(zoom) {
@@ -284,9 +299,7 @@ export default class SearchScreen extends Component {
       <View style={container}>
         <View style={headStyle}>
             <View style={headContent}>
-            <TouchableOpacity
-            onPress={()=>goBack()}
-            >
+            <TouchableOpacity onPress={()=>goBack()}>
             <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
             </TouchableOpacity>
                 <Image source={logoTop} style={imgLogoTop} />

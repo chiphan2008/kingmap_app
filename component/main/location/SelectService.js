@@ -29,8 +29,9 @@ export default class SelectService extends Component {
     } = styles;
     const { visible,data } = this.props;
     const { showService } = this.state;
-
+    //console.log('data',data);
     return (
+      data.length>0 &&
       <Modal onRequestClose={() => null} transparent visible={visible}>
       <TouchableOpacity
       onPress={()=>this.props.closeModal()}

@@ -81,7 +81,7 @@ export default class LocationScreen extends Component {
                    data={this.state.listCategory}
                    renderItem={({item}) =>(
                      <TouchableOpacity
-                      onPress={()=>navigate('ListLocScr',{idCat:item.id,sub_cat:item.sub_category,serv_items:item.service_items,lang:this.state.selectLang.valueLang})}
+                      onPress={()=>navigate('ListLocScr',{idCat:item.id,labelCat:item.name,sub_cat:item.sub_category,serv_items:item.service_items,lang:this.state.selectLang.valueLang})}
                       style={flatItem}>
                          <Image style={imgFlatItemLoc} source={{uri:`${global.url_media}${item.image}`}} />
                          <Text>{item.name}</Text>

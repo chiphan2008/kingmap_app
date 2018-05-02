@@ -40,13 +40,7 @@ export default class DetailScreen extends Component {
     //console.log('lang1',lang.lang);
     this.state = {
       lang:lang==='vn' ? lang_vn : lang_en,
-      region:{
-        latitude:10.7818513,
-        longitude: 106.6769368,
-        latitudeDelta:  0.014422,
-        longitudeDelta: 0.011121,
-        latlng: '10.7818513,106.6769368',
-      },
+      region:{},
       curLoc:curLoc || {},
       listData:{
         image_space:[],
@@ -91,7 +85,7 @@ export default class DetailScreen extends Component {
     //console.log('url',url);
     getApi(url)
     .then(arrData => {
-      //console.log('vote',arrData.data.content.vote);
+      //console.log('arrData.data.content.lat',arrData.data.content.lat);
         this.setState({
           listData: arrData.data,
           liked: arrData.data.content.like,
@@ -106,7 +100,7 @@ export default class DetailScreen extends Component {
             altitude: 7,
             latitudeDelta:  0.004422,
             longitudeDelta: 0.001121,
-            latlng:`${this.props.navigation.state.params.lat}${','}${this.props.navigation.state.params.lng}`,
+            latlng:`${arrData.data.content.lat},${arrData.data.content.lng}`,
           },
         });
     }).catch(err => {});
@@ -271,7 +265,7 @@ export default class DetailScreen extends Component {
         curLoc={this.state.curLoc}
         region={this.state.region}
         />
-
+        
 
         <View style={wrapContentDetail}>
           <View style={titleSpace}>

@@ -18,6 +18,7 @@ import lang_vn from '../../lang/vn/language';
 import lang_en from '../../lang/en/language';
 import SelectLocation from '../../main/location/SelectLocation';
 import SelectService from '../../main/location/SelectService';
+import SelectCategory from '../../main/location/SelectCategory';
 import checkLocation from '../../api/checkLocation';
 import checkLogin from '../../api/checkLogin';
 import accessLocation from '../../api/accessLocation';
@@ -37,10 +38,11 @@ var timeout;
 export default class ListLocation extends Component {
   constructor(props) {
     super(props);
+    const {lang,idCat} = this.props.navigation.state.params || '';
     this.state = {
       keyword:'',
       noData:'',
-      lang: this.props.navigation.state.params.lang==='vn' ? lang_vn : lang_en,
+      lang: lang==='vn' ? lang_vn : lang_en,
       labelLoc : "Địa điểm",
       labelCat : "Danh mục",
       labelSer : "Dịch vụ",
@@ -58,7 +60,8 @@ export default class ListLocation extends Component {
         check:'',
         showList:false,
       },
-
+      id_cat:idCat,
+      showCat:false,
       showServie:false,
       idDist:null,
       id_sub:null,
@@ -108,14 +111,14 @@ export default class ListLocation extends Component {
     if(skip===null){
       skip = 0; this.setState({page:0})
     }
-    //console.log('skip',skip);
-    const id_cat = this.props.navigation.state.params.idCat;
-    const { keyword,curLoc } = this.state;
+
+    //const id_cat = this.props.navigation.state.params.idCat;
+    const { keyword,curLoc,id_cat } = this.state;
     var url = `${global.url}${'search-content?category='}${id_cat}&skip=${skip}&limit=20`;
     if(curLoc.latitude!==undefined) url += `${'&location='}${curLoc.latitude},${curLoc.longitude}`;
     if(keyword.trim()!=='') url += `${'&keyword='}${keyword}`;
     if(id_district!==null) url += `${'&district='}${id_district}`;
-
+    console.log('id_district',id_district);
     //if(loc!=='') url += `${'&location='}${loc}`;
 
     if(id_sub!==null) url += `${'&subcategory='}${id_sub}`;
@@ -193,6 +196,7 @@ export default class ListLocation extends Component {
       getApi(url1).then(dist=>{
         //console.log('dist.data.name',dist.data[0].name);
           dist.data[0].name!=='' && dist.data[0].name!==undefined && this.setState({
+            idDist:district,
             labelLoc:dist.data[0].name,
           });
       })
@@ -212,6 +216,10 @@ export default class ListLocation extends Component {
    }
 
    componentDidMount(){
+     const { labelCat } = this.props.navigation.state.params || '';
+     //console.log('labelCat',labelCat);
+     if(labelCat!==undefined) this.setState({labelCat});
+     //if(service_items!==undefined) this.setState({service_items});
      this.setState({pullToRefresh:true});
    }
   requestLogin(){
@@ -231,6 +239,12 @@ export default class ListLocation extends Component {
       );
     }
 
+  }
+  saveSubCate(id_cat,id_sub,labelCat,labelSubCat,service_items){
+    if(labelSubCat!=='') labelCat=labelSubCat;
+    this.setState({id_cat,id_sub,labelCat,service_items},()=>{
+        this.getContentByDist(this.state.idDist,id_sub,this.state.id_serv);
+    })
   }
 
   saveService(arr){
@@ -273,7 +287,7 @@ export default class ListLocation extends Component {
     //console.log('pullToRefresh',this.state.pullToRefresh);
     const {
       keyword,lang,idDist,id_sub,id_serv,isRefresh,
-      listData,scrollToTop,isLogin,noData
+      listData,scrollToTop,isLogin,noData,showCat,id_cat
     } = this.state;
     const { goBack,navigate,state } = this.props.navigation;
     //console.log('this.props.navigation',this.props);
@@ -338,21 +352,21 @@ export default class ListLocation extends Component {
         <View style={wrapFilter}>
                 <View style={filterFrame}>
                 <TouchableOpacity
-                  onPress={()=>this.setState({ showLoc:!this.state.showLoc,listSubCat:{showList:false},showServie:false, })}
+                  onPress={()=>this.setState({ showLoc:!this.state.showLoc,showCat:false,showServie:false, })}
                   style={[selectBoxBuySell,widthLoc]}>
                     <Text  numberOfLines={1} style={{color:'#303B50'}}>{this.state.labelLoc}</Text>
                     <Image source={sortDownIC} style={{width:12,height:13,top:13,right:5,position:'absolute'}} />
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  onPress={()=>this.setState({ listSubCat:{showList:!this.state.listSubCat.showList},showServie:false, showLoc:false})}
+                  onPress={()=>this.setState({ showCat:true,showServie:false, showLoc:false})}
                   style = {[selectBoxBuySell,widthLoc]}>
                     <Text  numberOfLines={1} style={{color:'#303B50'}}>{this.state.labelCat}</Text>
                     <Image source={sortDownIC} style={{width:12,height:13,top:13,right:5,position:'absolute'}} />
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                onPress={()=>this.setState({ listSubCat:{showList:false},showServie:!this.state.showServie, showLoc:false})}
+                onPress={()=>this.setState({ showCat:false,showServie:!this.state.showServie, showLoc:false})}
                 style = {[selectBoxBuySell,widthLoc]}>
                     <Text numberOfLines={1} style={{color:'#303B50'}}>{this.state.labelSer}</Text>
                     <Image source={sortDownIC} style={{width:12,height:13,top:13,right:5,position:'absolute'}} />
@@ -455,37 +469,14 @@ export default class ListLocation extends Component {
           </TouchableOpacity>
         </Modal>
 
-        <Modal onRequestClose={() => null} transparent visible={this.state.listSubCat.showList}>
-        <TouchableOpacity
-        onPress={()=>this.setState({listSubCat:{showList:!this.state.listSubCat.showList}})}
-        style={[popoverLoc,padCreate]}>
-        <Image style={[imgUpCreate,imgUpSubCat]} source={upDD} />
-            <View style={[overLayoutLoc,shadown]}>
-            <TouchableOpacity
-                onPress={()=>{
-                  this.getContentByDist(this.state.idDist,null,this.state.id_serv);
-                  this.setState({listSubCat:{showList:!this.state.listSubCat.showList},id_sub:null,labelCat:'Danh mục'});
-              }}
-                style={{padding:20}}>
-                  <Text style={colorText}>Tất cả</Text>
-            </TouchableOpacity>
-            <FlatList
-               keyExtractor={item => item.id}
-               data={sub_cat}
-               renderItem={({item}) => (
-              <TouchableOpacity
-                 onPress={()=>{
-                   this.getContentByDist(this.state.idDist,item.id,this.state.id_serv);
-                   this.setState({listSubCat:{showList:!this.state.listSubCat.showList},id_sub:item.id,labelCat:item.name});
-               }}
-                 style={listCatOver}>
-                   <Text style={colorText}>{item.name}</Text>
-               </TouchableOpacity>
-            )} />
 
-            </View>
-        </TouchableOpacity>
-        </Modal>
+
+        <SelectCategory
+        visible={showCat}
+        saveSubCate={this.saveSubCate.bind(this)}
+        idCat={id_cat}
+        closeModal={()=>this.setState({showCat:false})}
+        />
 
         <SelectService
         visible={this.state.showServie}

@@ -48,6 +48,7 @@ export default class SearchScreen extends Component {
       labelSer : "Dịch vụ",
       fitCoord:false,
       region:{},
+
       showFullScreen:false,
       showLoc:false,
       showSer:false,
@@ -66,26 +67,34 @@ export default class SearchScreen extends Component {
       id_serv:'',
       markers:[],
       service_items:[],
+      kw:'',
       keyword:this.props.navigation.state.params.keyword || '',
       lang:this.props.navigation.state.params.lang==='vn' ? lang_vn: lang_en,
       initLoad:false,
       showNotFound:false,
+      showCallout:{},
     }
     Keyboard.dismiss();
     accessLocation();
   }
 
   getCategory(lat=null,lng=null){
-    const {id_district,id_cat,id_sub,id_serv,keyword,curLoc} = this.state;
+    const {id_district,id_cat,id_sub,id_serv,keyword,kw,curLoc} = this.state;
     let url = `${global.url}${'search-content?'}${'distance=500'}`;
     if(lat===null || lng===null || lat==='' || lng==='') {lat = curLoc.latitude; lng = curLoc.longitude;}
     url += `${'&location='}${lat},${lng}`;
 
-    if(id_cat!==undefined || id_cat!=='')  url += `${'&category='}${id_cat}`;
-    if(id_sub!=='')  url += `${'&subcategory='}${id_sub}`;
-    if(id_serv!=='') url += `${'&service='}${id_serv}`;
-    if(keyword!==undefined || keyword.trim()!=='')  url += `${'&keyword='}${keyword}`;
-    if(id_district!==null)  url += `${'&district='}${id_district}`;
+    if(keyword!==undefined && keyword.trim()!=='' && keyword.trim()!==kw){
+      url += `${'&keyword='}${keyword}`;
+    }else {
+      if(keyword.trim()===kw) url += `${'&keyword='}${keyword}`;
+      if(id_cat!==undefined || id_cat!=='')  url += `${'&category='}${id_cat}`;
+      if(id_sub!=='')  url += `${'&subcategory='}${id_sub}`;
+      if(id_serv!=='') url += `${'&service='}${id_serv}`;
+      if(id_district!==null)  url += `${'&district='}${id_district}`;
+    }
+
+    this.setState({ kw: keyword });
 
     console.log('url',url);
     getApi(url)
@@ -196,7 +205,7 @@ export default class SearchScreen extends Component {
           (position) => {
             //console.log('position',position);
                 const {latitude,longitude} = position.coords;
-                this.getPosition(latitude,longitude);
+                //this.getPosition(latitude,longitude);
                 this.setState({
                   curLoc : { latitude,longitude, },
                   circleLoc : { latitude,longitude }
@@ -208,7 +217,7 @@ export default class SearchScreen extends Component {
            (error) => {
             getLocationByIP().then(e=>{
               const {latitude,longitude} = e;
-              this.getPosition(latitude,longitude);
+              //this.getPosition(latitude,longitude);
               this.setState({
                 curLoc : { latitude,longitude, },
                 circleLoc : { latitude,longitude, }
@@ -303,7 +312,7 @@ export default class SearchScreen extends Component {
     const {
       keyword, curLocation,markers,curLoc,lang,showFullScreen,
       labelLoc,labelSer,labelCat,fitCoord,id_cat,circleLoc,
-      showNotFound,showLoc,showCat,showSer,service_items
+      showNotFound,showLoc,showCat,showSer,service_items,showCallout
      } = this.state;
     //console.log(';showNotFound',showNotFound);
     const { navigate,goBack } = this.props.navigation;
@@ -412,7 +421,9 @@ export default class SearchScreen extends Component {
                 Keyboard.dismiss();
               }}
               onRegionChangeComplete={(region)=>{
-                this.setState({curLocation:region});
+                this.setState({curLocation:region},()=>{
+                  this.getPosition(region.latitude,region.longitude);
+                });
               }}
               customMapStyle={global.style_map}
               showsPointsOfInterest={false}
@@ -433,22 +444,35 @@ export default class SearchScreen extends Component {
                   y: Number(marker.longitude),
                 }}
                 image={ Platform.OS==='android' ? {uri:`${marker.marker}`} : null}
-              >
+                //calloutOpen={showCallout}
+                ref={ref => { this.markerRef = ref; }}
+                onPress={()=>{
+                  if(showCallout[marker.id]){
+                    this.setState({ showCallout: {[marker.id]:!marker.id} })
+                  }else {
+                    this.setState({ showCallout:{[marker.id]:marker.id} })
+                  }
+                  if(showCallout[marker.id]) this.markerRef.showCallout();
+                }} >
               {Platform.OS==='ios' &&
               <Image
                 //resizeMode="contain"
                 source={{uri:`${marker.marker}`}}
                 style={{width:48,height:54,resizeMode:"cover"}} />}
 
-                <MapView.Callout onPress={()=>{navigate('DetailScr',{idContent:marker.id,lat:marker.latitude,lng:marker.longitude,curLoc,lang:lang.lang});}}
-                >
-                  <TouchableOpacity>
-                  <View style={{height: 45,width: 300,alignItems:'center',borderRadius:3}}>
-                  <Text numberOfLines={1} style={{fontWeight:'bold'}}>{marker.name}</Text>
-                  <Text numberOfLines={1}>{`${marker.address}`}</Text>
-                  </View>
-                  </TouchableOpacity>
-                </MapView.Callout>
+
+                  <MapView.Callout >
+                    <TouchableOpacity
+                    onPress={()=>{navigate('DetailScr',{idContent:marker.id,lat:marker.latitude,lng:marker.longitude,curLoc,lang:lang.lang});}}>
+                    <View style={{height: 45,width: 300,alignItems:'center',borderRadius:3}}>
+                    <Text numberOfLines={1} style={{fontWeight:'bold'}}>{marker.name}</Text>
+                    <Text numberOfLines={1}>{`${marker.address}`}</Text>
+                    </View>
+                    </TouchableOpacity>
+                  </MapView.Callout>
+
+
+
               </MapView.Marker>
               </View>
             )

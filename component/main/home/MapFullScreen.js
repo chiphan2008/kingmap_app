@@ -16,6 +16,9 @@ const {width,height} = Dimensions.get('window');
 export default class MapFullScreen extends Component {
   constructor(props){
     super(props);
+    this.state = {
+      showCallout:{},
+    }
   }
   render() {
     const {
@@ -25,6 +28,7 @@ export default class MapFullScreen extends Component {
       navigation,
       circleLoc,curLoc,lang,
     } = this.props;
+    const {showCallout}=this.state;
     //console.log('curLocation',curLocation);
     const {btn,btnMap,btnMapZoom,btnMapFull,btnZoom,btnMapLoc,show,hide} = styles;
     return (
@@ -55,6 +59,15 @@ export default class MapFullScreen extends Component {
               longitude: Number(marker.longitude),
             }}
             image={Platform.OS!=='ios' ? {uri: marker.marker} : null}
+            ref={ref => { this.markerRef = ref; }}
+            onPress={()=>{
+              if(showCallout[marker.id]){
+                this.setState({ showCallout: {[marker.id]:!marker.id} })
+              }else {
+                this.setState({ showCallout:{[marker.id]:marker.id} })
+              }
+              if(showCallout[marker.id]) this.markerRef.showCallout();
+            }}
           >
           {Platform.OS==='ios' && <Image source={{uri:`${marker.marker}`}} style={{width:48,height:54,position:'relative'}} />}
           <MapView.Callout onPress={()=>{

@@ -37,7 +37,7 @@ import sortDownIC from '../../../src/icon/ic-sort-down.png';
 import upDD from '../../../src/icon/ic-white/ic-dropdown_up.png';
 import checkIC from '../../../src/icon/ic-green/ic-check.png';
 
-var timeout;
+var timeout,timeoutZoom;
 export default class SearchScreen extends Component {
   constructor(props) {
     super(props);
@@ -102,10 +102,10 @@ export default class SearchScreen extends Component {
                 longitudeDelta: 0.010066,
                 latlng:`${lat},${lng}`,
               },
-              circleLoc: {
-                latitude:curLoc.latitude,
-                longitude:curLoc.longitude,
-              },
+              // circleLoc: {
+              //   latitude:curLoc.latitude,
+              //   longitude:curLoc.longitude,
+              // },
             });
             return;
           }
@@ -131,9 +131,7 @@ export default class SearchScreen extends Component {
           }
           data.push(obj);
         })
-        // console.log('line1',line1);
-        // console.log('line',line);
-        // console.log('line-line1',Number(line)-Number(line1));
+
           this.setState({ markers: data,onchange:true,showInfoOver:true,initLoad:true,
             curLocation : {
               latitude:lat,
@@ -144,10 +142,10 @@ export default class SearchScreen extends Component {
               longitudeDelta: isNaN(line-line1) || (line-line1)===0 ? 0.010066 : (line-line1)*0.010066/500,
               latlng:`${lat},${lng}`,
             },
-            circleLoc: {
-              latitude:curLoc.latitude,
-              longitude:curLoc.longitude,
-            },
+            // circleLoc: {
+            //   latitude:curLoc.latitude,
+            //   longitude:curLoc.longitude,
+            // },
 
            });
       })
@@ -198,14 +196,10 @@ export default class SearchScreen extends Component {
           (position) => {
             //console.log('position',position);
                 const {latitude,longitude} = position.coords;
-                // AsyncStorage.setItem('@currentLocation:key',JSON.stringify({
-                //   latitude,longitude
-                // }))
                 this.getPosition(latitude,longitude);
                 this.setState({
-                  curLoc : {
-                    latitude,longitude,
-                  }
+                  curLoc : { latitude,longitude, },
+                  circleLoc : { latitude,longitude }
                 },()=>{
                   this.getCategory(latitude,longitude);
                 });
@@ -216,7 +210,8 @@ export default class SearchScreen extends Component {
               const {latitude,longitude} = e;
               this.getPosition(latitude,longitude);
               this.setState({
-                curLoc : { latitude,longitude, }
+                curLoc : { latitude,longitude, },
+                circleLoc : { latitude,longitude, }
               },()=>{ this.getCategory(latitude,longitude); });
             });//enableHighAccuracy: true,
           },
@@ -236,31 +231,42 @@ export default class SearchScreen extends Component {
            latlng:`${latitude},${longitude}`,
            latitudeDelta: 0.008757 ,
            longitudeDelta: 0.010066,
-         }
-       });
+         },
+         curLoc : { latitude,longitude, },
+         circleLoc : { latitude,longitude, }
+       },()=>{ this.getCategory(latitude,longitude)});
      },
      (error) => {
        getLocationByIP().then(e=>{
          const {latitude,longitude} = e;
          this.setState({
-           curLoc : { latitude,longitude, }
-         });
+           curLocation : {
+             latitude,longitude,
+             lat:latitude,lng:longitude,
+             latlng:`${latitude},${longitude}`,
+             latitudeDelta: 0.008757 ,
+             longitudeDelta: 0.010066,
+           },
+           curLoc : { latitude,longitude, },
+           circleLoc : { latitude,longitude, }
+         },()=>{ this.getCategory(latitude,longitude)});
        });
      }, { timeout: 5000,maximumAge: 60000 }
    )
   }
   onPressZoom(zoom) {
+      clearTimeout(timeoutZoom);
       const {latitude,longitude,lat,lng,latlng,latitudeDelta,longitudeDelta} = this.state.curLocation;
-      setTimeout(()=>{
+      timeoutZoom = setTimeout(()=>{
         this.setState({
           curLocation : {
             latitude,longitude,
             lat,lng,latlng,
-            latitudeDelta: zoom==='zoom_in' ? latitudeDelta*1.4 : latitudeDelta/1.4,
-            longitudeDelta: zoom==='zoom_in' ?  longitudeDelta*1.4 : longitudeDelta/1.4,
+            latitudeDelta: zoom==='zoom_in' ? latitudeDelta*1.8 : latitudeDelta/1.8,
+            longitudeDelta: zoom==='zoom_in' ?  longitudeDelta*1.8 : longitudeDelta/1.8,
           }
         })
-      },500)
+      },300)
   }
   // componentWillMount(){
   //   const { lat,lng } = this.props.navigation.state.params;
@@ -312,7 +318,8 @@ export default class SearchScreen extends Component {
       imgUpCreate,imgUpLoc,overLayout,popoverLoc,padCreate,imgUpInfo,
     } = styles;
 
-    let timeout;
+
+    //let timeoutZoom;
     return (
       <View style={container}>
         <View style={headStyle}>
@@ -348,7 +355,6 @@ export default class SearchScreen extends Component {
         </View>
         {curLocation.longitude!==undefined ?
           <View>
-
           {<View style={{left:0,top:7,position:'absolute',alignItems:'center',width}}>
                   <View style={{width:width-40,flexDirection:'row',justifyContent:'space-between'}}>
                   <TouchableOpacity
@@ -391,13 +397,18 @@ export default class SearchScreen extends Component {
               zoomEnabled
               onPanDrag={()=>{Keyboard.dismiss();}}
               ref={(ref) => { this.mapRef = ref }}
-
               //this.mapRef.fitToCoordinates(markers, { edgePadding: { top: 50, right: 50, bottom: 50, left: 50 }, animated: false })
               style={{width,height,zIndex:-1}}
               region={curLocation}
               onPress={ (event) =>{
                 const {latitude,longitude} = (event.nativeEvent.coordinate || curLocation);
-                this.getCategory(latitude,longitude);
+                this.setState({
+                  circleLoc: {
+                    latitude,longitude,
+                  }
+                },()=>{
+                  this.getCategory(latitude,longitude);
+                })
                 Keyboard.dismiss();
               }}
               onRegionChangeComplete={(region)=>{
@@ -412,10 +423,6 @@ export default class SearchScreen extends Component {
                 <View key={marker.id}>
 
               <MapView.Marker
-                onLayout={()=>{
-                  //console.log('Marker');
-                  //if(index===markers.length-1) console.log('markers',markers);
-                }}
                 key={marker.id}
                 coordinate={{
                   latitude: Number(marker.latitude),
@@ -442,27 +449,25 @@ export default class SearchScreen extends Component {
                   </View>
                   </TouchableOpacity>
                 </MapView.Callout>
-
-
               </MapView.Marker>
               </View>
             )
           )}
           {circleLoc.latitude!==undefined &&
             <MapView.Circle
-          //onLayout={()=>this.setState({fitCoord:true})}
             center={circleLoc}
             radius={500}
             lineCap="butt"
             strokeWidth={1}
             fillColor="rgba(0, 0, 0, 0.1))"
             strokeColor="rgba(0, 0, 0, 0))"/>}
-            <MapView.Marker
+            {circleLoc.latitude!==undefined &&
+              <MapView.Marker
               coordinate={{
                 latitude: Number(circleLoc.latitude),
                 longitude: Number(circleLoc.longitude),
               }}
-              />
+              />}
             </MapView>
 
             </View>
@@ -504,11 +509,21 @@ export default class SearchScreen extends Component {
           onPressZoom={(zoom)=>this.onPressZoom(zoom)}
           showFullScreen={showFullScreen}
           curLocation={curLocation}
+          circleLoc={circleLoc}
           curLoc={curLoc}
+          onRegionChangeComplete={(region)=>{
+            this.setState({curLocation:region});
+          }}
           lang={lang}
           navigation={this.props.navigation}
           data={markers}
-          getCategory={(latitude,longitude)=>this.getCategory(latitude,longitude)}
+          getCategory={(latitude,longitude)=>{
+            this.setState({
+              circleLoc: {
+                latitude,longitude,
+              }
+            },()=>{this.getCategory(latitude,longitude)})
+            }}
           />
 
           <Modal transparent onRequestClose={() => null}

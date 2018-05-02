@@ -23,7 +23,7 @@ export default class MapFullScreen extends Component {
       curLocation,
       data,
       navigation,
-      curLoc,lang,
+      circleLoc,curLoc,lang,
     } = this.props;
     //console.log('curLocation',curLocation);
     const {btn,btnMap,btnMapZoom,btnMapFull,btnZoom,btnMapLoc,show,hide} = styles;
@@ -38,7 +38,11 @@ export default class MapFullScreen extends Component {
           region={curLocation}
           onPress={ (event) =>{
             const {latitude,longitude} = (event.nativeEvent.coordinate || curLocation);
+
             this.props.getCategory(latitude,longitude);
+          }}
+          onRegionChangeComplete={(region)=>{
+            this.props.onRegionChangeComplete(region);
           }}
           customMapStyle={global.style_map}
           showsPointsOfInterest={false}
@@ -69,7 +73,7 @@ export default class MapFullScreen extends Component {
         )
       )}
         <MapView.Circle
-          center={curLocation}
+          center={circleLoc}
           radius={500}
           lineCap="butt"
           strokeWidth={1}
@@ -77,8 +81,8 @@ export default class MapFullScreen extends Component {
           strokeColor="rgba(0, 0, 0, 0))"/>
           <MapView.Marker
             coordinate={{
-              latitude: Number(curLocation.latitude),
-              longitude: Number(curLocation.longitude),
+              latitude: Number(circleLoc.latitude),
+              longitude: Number(circleLoc.longitude),
             }}
             />
         </MapView>

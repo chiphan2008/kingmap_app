@@ -42,7 +42,7 @@ module.exports = {
   online:'Trực tuyến',
   new_location:'Địa điểm mới',
   like : 'Thích',
-  share : 'Chia sẽ',
+  share : 'Chia sẻ',
   check_in : 'Check in',
   name_location:'Tên địa điểm',
   open_time:'Thời gian mở cửa',

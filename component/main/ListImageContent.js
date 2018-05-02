@@ -9,6 +9,7 @@ const {height, width} = Dimensions.get('window');
 
 //import ImageCarousel from 'react-native-image-carousel';
 import ImageViewer from './detail/ImageViewer';
+import VideoViewer from './detail/VideoViewer';
 import global from '../global';
 import getApi from '../api/getApi';
 import styles from '../styles';
@@ -17,7 +18,7 @@ import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
 import logoMap from '../../src/icon/Logo-map.png';
 import plusIC from '../../src/icon/ic-home/ic-plus.png';
 import closeIC from '../../src/icon/ic-white/ic-close.png';
-
+import {getThumbVideo} from '../libs';
 
 export default class ListImageContent extends Component {
 
@@ -34,6 +35,8 @@ export default class ListImageContent extends Component {
       isModalSpaceOpened: false,
       isModalMenuOpened: false,
       index: 0 ,
+      linkVideo:'',
+      showModalVideo:false,
     }
   }
 
@@ -65,7 +68,7 @@ export default class ListImageContent extends Component {
 
     const {navigate,goBack} = this.props.navigation;
     const { idContent, spaceTab, menuTab, videoTab,lang } = this.props.navigation.state.params;
-    const { arrImgModal } = this.state;
+    const { arrImgModal,showModalVideo,linkVideo } = this.state;
     const {
       container,
       headCatStyle, headContent,plusStyle,imgPlusStyle,
@@ -167,16 +170,22 @@ export default class ListImageContent extends Component {
            extraData={this.state}
            data={this.state.listVideo}
            renderItem={({item,index}) => (
-             <View key={index}>
-               <WebView
-                 source={{uri: `${item}`}}
-                 style={{width,height:width/2,marginBottom:10}}
-                 javaScriptEnabled
-                 domStorageEnabled
-               />
-             </View>
+             <TouchableOpacity
+             onPress={()=>{
+               this.setState({showModalVideo:true,linkVideo:item})
+             }}>
+             <Image
+             //style={{width:(width-50)/2,height:width/3,marginRight:10,resizeMode: 'cover'}}
+             style={{width,height:width/2,marginBottom:10}}
+             source={{uri: getThumbVideo(item) }} />
+             </TouchableOpacity>
         )} />
 
+        <VideoViewer
+        visible={showModalVideo}
+        link={linkVideo}
+        closeModal={()=>this.setState({showModalVideo:false})}
+        />
         </View>
 
 

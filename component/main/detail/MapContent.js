@@ -105,7 +105,7 @@ export default class MapContent extends Component {
             showsPointsOfInterest={false}
           >
 
-          {curLoc.latlng!==undefined &&
+          {curLoc.latitude!==undefined &&
             <MapView.Marker coordinate={{latitude: Number(curLoc.latitude),longitude: Number(curLoc.longitude)}} />}
 
           {this.state.coords[0]!==undefined &&

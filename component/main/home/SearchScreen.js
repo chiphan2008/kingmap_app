@@ -72,7 +72,8 @@ export default class SearchScreen extends Component {
       lang:this.props.navigation.state.params.lang==='vn' ? lang_vn: lang_en,
       initLoad:false,
       showNotFound:false,
-      showCallout:{},
+      callout:{},
+      onClick:false,
     }
     Keyboard.dismiss();
     accessLocation();
@@ -210,6 +211,7 @@ export default class SearchScreen extends Component {
                   curLoc : { latitude,longitude, },
                   circleLoc : { latitude,longitude }
                 },()=>{
+                  this.getPosition(latitude,longitude);
                   this.getCategory(latitude,longitude);
                 });
 
@@ -221,7 +223,9 @@ export default class SearchScreen extends Component {
               this.setState({
                 curLoc : { latitude,longitude, },
                 circleLoc : { latitude,longitude, }
-              },()=>{ this.getCategory(latitude,longitude); });
+              },()=>{
+                this.getPosition(latitude,longitude);
+                this.getCategory(latitude,longitude); });
             });//enableHighAccuracy: true,
           },
           { timeout: 5000,maximumAge: 60000 }
@@ -243,7 +247,9 @@ export default class SearchScreen extends Component {
          },
          curLoc : { latitude,longitude, },
          circleLoc : { latitude,longitude, }
-       },()=>{ this.getCategory(latitude,longitude)});
+       },()=>{
+         this.getPosition(latitude,longitude);
+         this.getCategory(latitude,longitude)});
      },
      (error) => {
        getLocationByIP().then(e=>{
@@ -258,7 +264,9 @@ export default class SearchScreen extends Component {
            },
            curLoc : { latitude,longitude, },
            circleLoc : { latitude,longitude, }
-         },()=>{ this.getCategory(latitude,longitude)});
+         },()=>{
+           this.getPosition(latitude,longitude);
+           this.getCategory(latitude,longitude)});
        });
      }, { timeout: 5000,maximumAge: 60000 }
    )
@@ -312,7 +320,7 @@ export default class SearchScreen extends Component {
     const {
       keyword, curLocation,markers,curLoc,lang,showFullScreen,
       labelLoc,labelSer,labelCat,fitCoord,id_cat,circleLoc,
-      showNotFound,showLoc,showCat,showSer,service_items,showCallout
+      showNotFound,showLoc,showCat,showSer,service_items,callout,onClick
      } = this.state;
     //console.log(';showNotFound',showNotFound);
     const { navigate,goBack } = this.props.navigation;
@@ -347,7 +355,10 @@ export default class SearchScreen extends Component {
           onChangeText={(keyword)=>this.setState({keyword})}
           onSubmitEditing={(event)=>{
             if(keyword.trim()!==''){
-              this.getCategory(curLocation.latitude,curLocation.longitude);
+              this.setState({onClick:false},()=>{
+                this.getCategory(curLocation.latitude,curLocation.longitude);
+              })
+
             }
           }}
           value={keyword.toString()}   />
@@ -356,7 +367,9 @@ export default class SearchScreen extends Component {
           onPress={()=>{
             if (keyword.trim()!=='') {
               Keyboard.dismiss();
-              this.getCategory(curLocation.latitude,curLocation.longitude);
+              this.setState({onClick:false},()=>{
+                this.getCategory(curLocation.latitude,curLocation.longitude);
+              })
             }
           }}>
             <Image style={{width:16,height:16,}} source={searchIC} />
@@ -416,14 +429,14 @@ export default class SearchScreen extends Component {
                     latitude,longitude,
                   }
                 },()=>{
+                  this.getPosition(latitude,longitude);
                   this.getCategory(latitude,longitude);
                 })
                 Keyboard.dismiss();
               }}
               onRegionChangeComplete={(region)=>{
-                this.setState({curLocation:region},()=>{
-                  this.getPosition(region.latitude,region.longitude);
-                });
+                this.setState({curLocation:region});
+                if(onClick===false) this.getPosition(region.latitude,region.longitude);
               }}
               customMapStyle={global.style_map}
               showsPointsOfInterest={false}
@@ -444,15 +457,14 @@ export default class SearchScreen extends Component {
                   y: Number(marker.longitude),
                 }}
                 image={ Platform.OS==='android' ? {uri:`${marker.marker}`} : null}
-                //calloutOpen={showCallout}
-                ref={ref => { this.markerRef = ref; }}
+                //calloutOpen={false}
+                //ref={ref => { this.markerRef = ref }}
                 onPress={()=>{
-                  if(showCallout[marker.id]){
-                    this.setState({ showCallout: {[marker.id]:!marker.id} })
+                  if(callout[marker.id] || callout[marker.id]===undefined){
+                    this.setState({ callout: {[marker.id]:false} });
                   }else {
-                    this.setState({ showCallout:{[marker.id]:marker.id} })
+                    this.setState({ callout: {[marker.id]:true} })
                   }
-                  if(showCallout[marker.id]) this.markerRef.showCallout();
                 }} >
               {Platform.OS==='ios' &&
               <Image
@@ -460,18 +472,20 @@ export default class SearchScreen extends Component {
                 source={{uri:`${marker.marker}`}}
                 style={{width:48,height:54,resizeMode:"cover"}} />}
 
-
-                  <MapView.Callout >
-                    <TouchableOpacity
-                    onPress={()=>{navigate('DetailScr',{idContent:marker.id,lat:marker.latitude,lng:marker.longitude,curLoc,lang:lang.lang});}}>
+                <View style={callout[marker.id] || callout[marker.id]===undefined ? show : hide}>
+                  <MapView.Callout tooltip={callout[marker.id] || callout[marker.id]==undefined ? false : true}
+                  onPress={()=>{
+                    if(!callout[marker.id])
+                    navigate('DetailScr',{idContent:marker.id,lat:marker.latitude,lng:marker.longitude,curLoc,lang:lang.lang});
+                  }}>
+                    <TouchableOpacity >
                     <View style={{height: 45,width: 300,alignItems:'center',borderRadius:3}}>
                     <Text numberOfLines={1} style={{fontWeight:'bold'}}>{marker.name}</Text>
                     <Text numberOfLines={1}>{`${marker.address}`}</Text>
                     </View>
                     </TouchableOpacity>
                   </MapView.Callout>
-
-
+                  </View>
 
               </MapView.Marker>
               </View>

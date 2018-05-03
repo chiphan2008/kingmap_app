@@ -17,7 +17,7 @@ export default class MapFullScreen extends Component {
   constructor(props){
     super(props);
     this.state = {
-      showCallout:{},
+      callout:{},
     }
   }
   render() {
@@ -28,7 +28,7 @@ export default class MapFullScreen extends Component {
       navigation,
       circleLoc,curLoc,lang,
     } = this.props;
-    const {showCallout}=this.state;
+    const {callout}=this.state;
     //console.log('curLocation',curLocation);
     const {btn,btnMap,btnMapZoom,btnMapFull,btnZoom,btnMapLoc,show,hide} = styles;
     return (
@@ -59,29 +59,31 @@ export default class MapFullScreen extends Component {
               longitude: Number(marker.longitude),
             }}
             image={Platform.OS!=='ios' ? {uri: marker.marker} : null}
-            ref={ref => { this.markerRef = ref; }}
+            //ref={ref => { this.markerRef = ref; }}
             onPress={()=>{
-              if(showCallout[marker.id]){
-                this.setState({ showCallout: {[marker.id]:!marker.id} })
+              if(callout[marker.id] || callout[marker.id]===undefined){
+                this.setState({ callout: {[marker.id]:false} });
               }else {
-                this.setState({ showCallout:{[marker.id]:marker.id} })
+                this.setState({ callout: {[marker.id]:true} })
               }
-              if(showCallout[marker.id]) this.markerRef.showCallout();
             }}
           >
           {Platform.OS==='ios' && <Image source={{uri:`${marker.marker}`}} style={{width:48,height:54,position:'relative'}} />}
-          <MapView.Callout onPress={()=>{
-            this.props.closeModal();
-            navigation.navigate('DetailScr',{idContent:marker.id,lat:marker.latitude,lng:marker.longitude,curLoc,lang:lang.lang});
-        }}
-          >
-            <TouchableOpacity>
-            <View style={{height: 45,width: 300,alignItems:'center',borderRadius:3}}>
-            <Text numberOfLines={1} style={{fontWeight:'bold'}}>{marker.name}</Text>
-            <Text numberOfLines={1}>{`${marker.address}`}</Text>
+          <View style={callout[marker.id] || callout[marker.id]===undefined ? show : hide}>
+            <MapView.Callout tooltip={callout[marker.id] || callout[marker.id]==undefined ? false : true}
+            onPress={()=>{
+              this.props.closeModal();
+              if(!callout[marker.id])
+              navigation.navigate('DetailScr',{idContent:marker.id,lat:marker.latitude,lng:marker.longitude,curLoc,lang:lang.lang});
+            }}>
+              <TouchableOpacity >
+              <View style={{height: 45,width: 300,alignItems:'center',borderRadius:3}}>
+              <Text numberOfLines={1} style={{fontWeight:'bold'}}>{marker.name}</Text>
+              <Text numberOfLines={1}>{`${marker.address}`}</Text>
+              </View>
+              </TouchableOpacity>
+            </MapView.Callout>
             </View>
-            </TouchableOpacity>
-          </MapView.Callout>
           </MapView.Marker>
         )
       )}

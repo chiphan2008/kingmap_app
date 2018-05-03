@@ -406,7 +406,8 @@ module.exports = {
   txt:{color:'#6587A8',fontSize:16},
   txtNextItem:{color:'#6587A8',fontSize:17},
   titleHead:{color:'#fff',fontSize:24,fontWeight:'500'},
-  show : { display: 'flex'},
-  hide : { display: 'none'},
+  show : { display: 'flex',},
+  hide : { display: 'none',},
+  //hideMarker : { display: 'none',width:0,height:0},
   hidden:{ position:'absolute',right:-width}
 }

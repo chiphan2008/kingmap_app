@@ -193,12 +193,14 @@ export default class ListLocation extends Component {
     const url = `${global.url}${'get-position?location='}${lat},${lng}`;
     getApi(url).then(e=>{
       const { district,city,country } = e.data[0];
+      district!==0 && district!==undefined && this.setState({
+        idDist:district,
+      });
       const url1 = `${global.url}${'district/'}${district}`;
       //console.log(url1);
       getApi(url1).then(dist=>{
         //console.log('dist.data.name',dist.data[0].name);
           dist.data[0].name!=='' && dist.data[0].name!==undefined && this.setState({
-            idDist:district,
             labelLoc:dist.data[0].name,
           });
       })

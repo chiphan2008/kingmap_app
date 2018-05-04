@@ -201,7 +201,7 @@ export default class UpdateInfo extends Component {
              </View>
              <TextInput underlineColorAndroid='transparent'
              returnKeyType = {"next"}
-             onSubmitEditing={(event) => {this.refs.dDay.focus();}}
+             onSubmitEditing={(event) => {this.refs.address.focus();}}
              style={wrapInputCreImg}
              placeholder={lang.full_name}
              onChangeText={(full_name) => this.setState({full_name})}

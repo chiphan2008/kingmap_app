@@ -225,6 +225,7 @@ export default class DetailScreen extends Component {
         <Header
         lang={lang}
         title={listData.content.name}
+        url={`${global.url_media}/${listData.content.alias}`}
         backList={this.backList.bind(this)}
         hasCheckin={hasCheckin}
         hasSaveLike={hasSaveLike}
@@ -265,7 +266,7 @@ export default class DetailScreen extends Component {
         curLoc={this.state.curLoc}
         region={this.state.region}
         />
-        
+
 
         <View style={wrapContentDetail}>
           <View style={titleSpace}>

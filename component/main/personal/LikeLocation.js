@@ -88,7 +88,7 @@ export default class LikeLocation extends Component {
                     //this.props.closeModal()
                     navigation.navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang})
                   }}>
-                    <Image source={{uri:`${global.url_media}${e.avatar}`}} style={{width:width,minHeight:200,marginBottom:10}} />
+                    <Image source={{uri:`${global.url_media}${e.avatar}`}} style={{width:width,minHeight:width/2,marginBottom:10}} />
                   </TouchableOpacity>
                   <TouchableOpacity style={{position:'absolute',top:7,right:7}}
                     onPress={()=>this.confirmDel(e.id)}>

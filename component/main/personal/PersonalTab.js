@@ -126,7 +126,7 @@ export default class PersonalTab extends Component {
                 });
             });
           },
-          {enableHighAccuracy: true, timeout: 20000, maximumAge: 10000}
+          { timeout: 20000, maximumAge: 10000}
     );
   }
   componentWillMount(){

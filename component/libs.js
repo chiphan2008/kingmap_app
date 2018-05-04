@@ -1,7 +1,11 @@
 import Intl from 'intl';
 import 'intl/locale-data/jsonp/en';
 
-export function format_number(value){
+export function format_number(value,dv=null){
+  if(value>1000 && dv !==null) {
+    value = Number.parseFloat(value/1000).toFixed(0);
+  }
+
   const formatter = new Intl.NumberFormat('pt-BR', {
         //style: 'currency',
         //currency: 'BRL',
@@ -13,13 +17,17 @@ export function format_number(value){
 export function hasNumber(text) {
   return /\d/.test(text);
 }
-export function getThumbVideo(link){
+export function getThumbVideo(link,thumb=null){
   if(link===null || link==='') return;
   var youtube = /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
   let id_video;
   if(link.match(youtube)){
     id_video = link.match(/^.*(youtu.be\/|v\/|e\/|u\/\w+\/|embed\/|v=)([^#\&\?]*).*/).pop();
-    return `${'https://img.youtube.com/vi/'}${id_video}${'/0.jpg'}`;
+    // maxresdefault
+    if(thumb!==null) thumb='/hqdefault.jpg';
+    else  thumb='/hqdefault.jpg';
+    console.log('thumb',`${'https://img.youtube.com/vi/'}${id_video}${thumb}`);
+    return `${'https://img.youtube.com/vi/'}${id_video}${thumb}`;
   }
   //console.log(link);
   var facebook = /^https:\/\/www\.facebook\.com\/([^\/?].+\/)?video(s|\.php)[\/?].*$/gm;
@@ -29,7 +37,7 @@ export function getThumbVideo(link){
     return `${'https://graph.facebook.com/'}${id_video}${'/picture'}`;
   }
 }
-export function chanelVideo(link){
+export function chanelVideo(link,height=null){
   if(link===null || link==='') return;
   let id_video;
   var youtube = /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
@@ -39,7 +47,8 @@ export function chanelVideo(link){
     return `https://www.youtube.com/embed/${id_video}?autoplay=1&amp;autohide=1&amp;fs=1&amp;rel=0&amp;hd=1&amp;wmode=transparent&amp;enablejsapi=1&amp;html5=1`;
   }
   if(link.match(facebook)){
-    return `https://www.facebook.com/plugins/video.php?height=232&href=${link}`;
+    if(height===null) height=300;
+    return `https://www.facebook.com/plugins/video.php?height=${height}&href=${link}`;
   }
 }
 

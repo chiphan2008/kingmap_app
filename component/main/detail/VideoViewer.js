@@ -37,7 +37,7 @@ export default class VideoViewer extends Component {
          //resizeMode='cover'
          allowsInlineMediaPlayback
          source={{
-           html:`<iframe  width="${width-15}" height="232" frameborder="0" vspace="0" hspace="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="true" allowtransparency="true" src="${chanelVideo(link)}"  scrolling="no"></iframe>`
+           html:`<iframe  width="${width-15}" height="300" frameborder="0" vspace="0" hspace="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="true" allowtransparency="true" src="${chanelVideo(link)}"  scrolling="no"></iframe>`
            //uri: `${link}`
          }}
          javaScriptEnabled
@@ -47,7 +47,7 @@ export default class VideoViewer extends Component {
          //onNavigationStateChange={this.onNavigationStateChange}
          //onShouldStartLoadWithRequest={this.onShouldStartLoadWithRequest}
          startInLoadingState={true}
-         scalesPageToFit={true}
+         //scalesPageToFit={true}
       />
       </View>
       </Modal>

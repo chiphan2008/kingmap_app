@@ -112,7 +112,7 @@ export default class Content extends Component {
             <Text>({vote_avg===-1 ? vote : vote_avg })</Text>
 
             </View>
-            <Text>{format_number(Number.parseFloat(listContent.line).toFixed(0))} (m)</Text>
+            <Text>{format_number(Number.parseFloat(listContent.line).toFixed(0),'km')} ({listContent.line>1000 ? 'km' : 'm'})</Text>
 
         </View>
 

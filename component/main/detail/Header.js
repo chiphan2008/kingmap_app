@@ -33,9 +33,17 @@ export default class Header extends Component {
     }
   }
   socialShare(){
-    Share.share({
-        url: global.url_media,
-      }, {
+    console.log('this.props.url',this.props.url);
+    const opt = Platform.OS==='ios' ?
+    {
+      message: this.props.title,
+      url: this.props.url,
+    }
+    :
+    {
+      message: this.props.title + '\n' + this.props.url
+    };
+    Share.share( opt , {
         // Android only:
         dialogTitle: 'Share link',
         // iOS only:
@@ -107,7 +115,7 @@ export default class Header extends Component {
             <Text style={colorTxt}>Email</Text>
             </TouchableOpacity>
 
-            <View style={line}></View>
+            {/*<View style={line}></View>
             <TouchableOpacity style={pad15}>
             <Text style={colorTxt}>Facbook</Text>
             </TouchableOpacity>
@@ -115,7 +123,7 @@ export default class Header extends Component {
             <View style={line}></View>
             <TouchableOpacity style={pad15}>
             <Text style={colorTxt}>Twitter</Text>
-            </TouchableOpacity>
+            </TouchableOpacity>*/}
 
 
           </View>

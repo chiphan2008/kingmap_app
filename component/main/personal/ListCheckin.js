@@ -95,7 +95,7 @@ export default class ListCheckin extends Component {
                     onPress={()=>this.confirmDel(e.id)}>
                     <Image source={closeIC} style={{width:20,height:20}} />
                     </TouchableOpacity>
-                    <Image source={{uri:`${global.url_media}${e.avatar}`}} style={{width:width,minHeight:200,marginBottom:10}} />
+                    <Image source={{uri:`${global.url_media}${e.avatar}`}} style={{width:width,minHeight:width/2,marginBottom:10}} />
                     </TouchableOpacity>
                     <View style={listCreate}>
                       <View style={{width:width-80}}>

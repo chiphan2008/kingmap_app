@@ -62,7 +62,7 @@ export default class MapContent extends Component {
     return (
     <View style={{width,height:height/2}}
     onLayout={()=>{
-      if(curLoc.latitude!==undefined && region.latitude!==undefined && distance<100000){
+      if(curLoc.latitude!==undefined && region.latitude!==undefined){
         this.getDirection()
       }
     }}>

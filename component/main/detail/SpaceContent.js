@@ -45,14 +45,14 @@ export default class SpaceContent extends Component {
               style={listImgSpace.length>0 ? show : hide}
               onPress={()=>navigate('ListIMGScr',{
                 idContent,
-                spaceTab:'active',menuTab:'',videoTab:'',lang})}
-              >
+                spaceTab:'active',menuTab:'',videoTab:'',lang})
+              }>
               <Text>{lang.view_all} >></Text>
               </TouchableOpacity>
           </View>
           <FlatList
              horizontal
-             pagingEnabled
+             //pagingEnabled
              ListEmptyComponent={<Text>{lang.updating}</Text>}
              showsHorizontalScrollIndicator={false}
              keyExtractor={(item,index) => index}
@@ -89,7 +89,7 @@ export default class SpaceContent extends Component {
 
           <FlatList
              horizontal
-             pagingEnabled
+             //pagingEnabled
              ListEmptyComponent={<Text>{lang.updating}</Text>}
              showsHorizontalScrollIndicator={false}
              keyExtractor={(item,index) => index}
@@ -127,7 +127,7 @@ export default class SpaceContent extends Component {
 
           <FlatList
              horizontal
-             pagingEnabled
+             //pagingEnabled
              ListEmptyComponent={<Text>{lang.updating}</Text>}
              showsHorizontalScrollIndicator={false}
              keyExtractor={(item,index) => index}

@@ -37,7 +37,7 @@ import sortDownIC from '../../../src/icon/ic-sort-down.png';
 import upDD from '../../../src/icon/ic-white/ic-dropdown_up.png';
 import checkIC from '../../../src/icon/ic-green/ic-check.png';
 
-var timeout,timeoutZoom,timeoutPosition;
+var timeout,timeoutZoom,timeoutPosition,timeoutCurPos;
 export default class SearchScreen extends Component {
   constructor(props) {
     super(props);
@@ -82,8 +82,13 @@ export default class SearchScreen extends Component {
   getCategory(lat=null,lng=null){
     const {id_district,id_cat,id_sub,id_serv,keyword,kw,curLoc} = this.state;
     let url = `${global.url}${'search-content?'}${'distance=500'}`;
-    if(lat===null || lng===null || lat==='' || lng==='') {lat = curLoc.latitude; lng = curLoc.longitude;}
-    url += `${'&location='}${lat},${lng}`;
+    if(lat===null || lng===null) {
+      url += `${'&district='}${id_district}`;
+      lat = curLoc.latitude; lng = curLoc.longitude;
+    }else {
+      url += `${'&location='}${lat},${lng}`;
+    }
+
 
     if(keyword!==undefined && keyword.trim()!=='' && keyword.trim()!==kw){
       url += `${'&keyword='}${keyword}`;
@@ -92,7 +97,6 @@ export default class SearchScreen extends Component {
       if(id_cat!==undefined || id_cat!=='')  url += `${'&category='}${id_cat}`;
       if(id_sub!=='')  url += `${'&subcategory='}${id_sub}`;
       if(id_serv!=='') url += `${'&service='}${id_serv}`;
-      if(id_district!==null)  url += `${'&district='}${id_district}`;
     }
 
     this.setState({ kw: keyword });
@@ -148,8 +152,8 @@ export default class SearchScreen extends Component {
               longitude: lng,
               lat:lat,
               lng: lng,
-              latitudeDelta: isNaN(line-line1) || (line-line1)===0 ? 0.008757 : (line-line1)*0.008757/500,
-              longitudeDelta: isNaN(line-line1) || (line-line1)===0 ? 0.010066 : (line-line1)*0.010066/500,
+              latitudeDelta: isNaN(line-line1) || (line-line1)<500 ? 0.008757 : (line-line1)*0.008757/500,
+              longitudeDelta: isNaN(line-line1) || (line-line1)<500 ? 0.010066 : (line-line1)*0.010066/500,
               latlng:`${lat},${lng}`,
             },
             // circleLoc: {
@@ -236,27 +240,11 @@ export default class SearchScreen extends Component {
   }
 
   findCurrentLoc(){
+    clearTimeout(timeoutCurPos);
     navigator.geolocation.getCurrentPosition(
      ({coords}) => {
        const {latitude, longitude} = coords
-       this.setState({
-         curLocation : {
-           latitude,longitude,
-           lat:latitude,lng:longitude,
-           latlng:`${latitude},${longitude}`,
-           latitudeDelta: 0.008757 ,
-           longitudeDelta: 0.010066,
-         },
-         curLoc : { latitude,longitude, },
-         circleLoc : { latitude,longitude, },
-         onClick:false,
-       },()=>{
-         //this.getPosition(latitude,longitude);
-         this.getCategory(latitude,longitude)});
-     },
-     (error) => {
-       getLocationByIP().then(e=>{
-         const {latitude,longitude} = e;
+       timeoutCurPos = setTimeout(()=>{
          this.setState({
            curLocation : {
              latitude,longitude,
@@ -270,7 +258,31 @@ export default class SearchScreen extends Component {
            onClick:false,
          },()=>{
            //this.getPosition(latitude,longitude);
-           this.getCategory(latitude,longitude)});
+           this.getCategory(latitude,longitude)
+         });
+       },1000)
+
+     },
+     (error) => {
+       getLocationByIP().then(e=>{
+         const {latitude,longitude} = e;
+         timeoutCurPos = setTimeout(()=>{
+           this.setState({
+             curLocation : {
+               latitude,longitude,
+               lat:latitude,lng:longitude,
+               latlng:`${latitude},${longitude}`,
+               latitudeDelta: 0.008757 ,
+               longitudeDelta: 0.010066,
+             },
+             curLoc : { latitude,longitude, },
+             circleLoc : { latitude,longitude, },
+             onClick:false,
+           },()=>{
+             //this.getPosition(latitude,longitude);
+             this.getCategory(latitude,longitude)
+           });
+         },1000)
        });
      }, { timeout: 5000,maximumAge: 60000 }
    )
@@ -278,17 +290,20 @@ export default class SearchScreen extends Component {
   onPressZoom(zoom) {
       clearTimeout(timeoutZoom);
       const {latitude,longitude,lat,lng,latlng,latitudeDelta,longitudeDelta} = this.state.curLocation;
+      let latDelta = zoom==='zoom_in' ? latitudeDelta*1.8 : latitudeDelta/1.8;
+      let lngDelta = zoom==='zoom_in' ?  longitudeDelta*1.8 : longitudeDelta/1.8;
+      //console.log(latDelta,lngDelta);
       timeoutZoom = setTimeout(()=>{
-        this.setState({
+        latDelta > 0.002 && latDelta < 100 && this.setState({
           curLocation : {
             latitude,longitude,
             lat,lng,latlng,
-            latitudeDelta: zoom==='zoom_in' ? latitudeDelta*1.8 : latitudeDelta/1.8,
-            longitudeDelta: zoom==='zoom_in' ?  longitudeDelta*1.8 : longitudeDelta/1.8,
+            latitudeDelta: latDelta,
+            longitudeDelta: lngDelta,
           },
           onClick:true,
         })
-      },300)
+      },500)
   }
   // componentWillMount(){
   //   const { lat,lng } = this.props.navigation.state.params;
@@ -299,17 +314,18 @@ export default class SearchScreen extends Component {
     var _this = this;
     clearTimeout(timeoutPosition);
     const url = `${global.url}${'get-position?location='}${lat},${lng}`;
-    console.log('url',url);
+    //console.log('url',url);
     getApi(url).then(e=>{
       const { district,city,country } = e.data[0];
+      //district!==0 && district!==undefined && _this.setState({id_district:district,},()=>{});
       const url1 = `${global.url}${'district/'}${district}`;
-      console.log('district',district);
+      //console.log('district',district);
       district!==0 && getApi(url1).then(dist=>{
         timeoutPosition = setTimeout(function () {
           dist.data[0].name!=='' && dist.data[0].name!==undefined && _this.setState({
             labelLoc:dist.data[0].name,
-            id_district:district,
             id_city:city,
+            id_district:district,
             id_country:country,
           });
         }, 1200);
@@ -324,7 +340,28 @@ export default class SearchScreen extends Component {
     if(labelCat!==undefined) this.setState({labelCat});
     if(service_items!==undefined) this.setState({service_items});
   }
+  _onRegionChangeComplete = (region) => {
 
+    if(this.state.onClick===false) {
+      this.getPosition(region.latitude,region.longitude);
+      this.setState({
+        curLocation:region,
+        onClick:true});
+    }
+  }
+  _onPressMap = (event) => {
+    const {latitude,longitude} = (event.nativeEvent.coordinate || this.state.curLocation);
+    this.setState({
+      circleLoc: {
+        latitude,longitude,
+      },
+      onClick:true,
+    },()=>{
+      this.getPosition(latitude,longitude);
+      this.getCategory(latitude,longitude);
+    })
+    Keyboard.dismiss();
+  }
 
   render() {
     const {
@@ -432,24 +469,8 @@ export default class SearchScreen extends Component {
               //this.mapRef.fitToCoordinates(markers, { edgePadding: { top: 50, right: 50, bottom: 50, left: 50 }, animated: false })
               style={{width,height,zIndex:-1}}
               region={curLocation}
-              onPress={ (event) =>{
-                const {latitude,longitude} = (event.nativeEvent.coordinate || curLocation);
-                this.setState({
-                  circleLoc: {
-                    latitude,longitude,
-                  },
-                  onClick:true,
-                },()=>{
-                  this.getPosition(latitude,longitude);
-                  this.getCategory(latitude,longitude);
-                })
-                Keyboard.dismiss();
-              }}
-              onRegionChangeComplete={(region)=>{
-                //console.log('onClick',onClick);
-                this.setState({curLocation:region,onClick:true});
-                if(onClick===false) this.getPosition(region.latitude,region.longitude);
-              }}
+              onPress={this._onPressMap}
+              onRegionChangeComplete={this._onRegionChangeComplete}
               customMapStyle={global.style_map}
               showsPointsOfInterest={false}
 
@@ -561,19 +582,11 @@ export default class SearchScreen extends Component {
           curLocation={curLocation}
           circleLoc={circleLoc}
           curLoc={curLoc}
-          onRegionChangeComplete={(region)=>{
-            this.setState({curLocation:region});
-          }}
+          onRegionChangeComplete={ this._onRegionChangeComplete}
           lang={lang}
           navigation={this.props.navigation}
           data={markers}
-          getCategory={(latitude,longitude)=>{
-            this.setState({
-              circleLoc: {
-                latitude,longitude,
-              }
-            },()=>{this.getCategory(latitude,longitude)})
-            }}
+          onPressMap={(event)=>this._onPressMap(event)}
           />
 
           <Modal transparent onRequestClose={() => null}

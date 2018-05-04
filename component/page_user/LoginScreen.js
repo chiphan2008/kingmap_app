@@ -106,9 +106,10 @@ export default class LoginScreen extends Component {
 
   callLogin(){
     const {txtUsername, txtPassword, lang,isCheck} = this.state;
-    if(txtUsername==='') return this.setState({errMsg:lang.err_email});
+    //console.log(this.state);
+    if(txtUsername==='' || txtUsername===undefined) return this.setState({errMsg:lang.err_email});
     if(!hasNumber(txtUsername) && !isEmail(txtUsername)) return this.setState({errMsg:lang.err_email_format});
-    if(txtPassword==='') return this.setState({errMsg:lang.err_pwd});
+    if(txtPassword==='' || txtPassword===undefined) return this.setState({errMsg:lang.err_pwd});
     this.setState({disable:true});
     const param = {username:txtUsername,password:txtPassword,isCheck};
     const { state,goBack,navigate } = this.props.navigation;
@@ -122,9 +123,9 @@ export default class LoginScreen extends Component {
           DeviceEventEmitter.emit('goback',  {isLogin:true})
           goBack();
         }
-        
+
       }
-    })
+    }).catch(err=>{});
   }
 
   componentWillMount(){

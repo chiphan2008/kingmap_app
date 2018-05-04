@@ -6,7 +6,9 @@ import {
 } from 'react-native';
 import closeIC from '../../../src/icon/ic-white/ic-close.png';
 import arrowLeft from '../../../src/icon/ic-white/arrow-left.png';
+import {chanelVideo} from '../../libs';
 const {width,height} = Dimensions.get('window');
+
 
 export default class VideoViewer extends Component {
   constructor(props){
@@ -27,13 +29,17 @@ export default class VideoViewer extends Component {
       onPress={()=>{this.props.closeModal()}} >
       <Image source={arrowLeft} style={{width:18, height:18}} />
       </TouchableOpacity>
-      <View style={{width,height:height-24,backgroundColor:'#000',justifyContent:'center'}}>
+      <View  onLayout={()=>console.log(chanelVideo(link))} style={{width,height:height-24,backgroundColor:'#000',justifyContent:'center',alignItems:'center'}}>
 
       <WebView
-         style={{width,height:width}}
+
+         style={{width,height:width,backgroundColor:'#000',alignSelf:'center',marginTop:height/4,padding:0}}
          //resizeMode='cover'
          allowsInlineMediaPlayback
-         source={{uri: `${link}`}}
+         source={{
+           html:`<iframe  width="${width-15}" height="232" frameborder="0" vspace="0" hspace="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="true" allowtransparency="true" src="${chanelVideo(link)}"  scrolling="no"></iframe>`
+           //uri: `${link}`
+         }}
          javaScriptEnabled
          domStorageEnabled
          automaticallyAdjustContentInsets={false}

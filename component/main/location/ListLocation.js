@@ -41,6 +41,7 @@ export default class ListLocation extends Component {
     const {lang,idCat} = this.props.navigation.state.params || '';
     this.state = {
       keyword:'',
+      kw:'',
       noData:'',
       lang: lang==='vn' ? lang_vn : lang_en,
       labelLoc : "Địa điểm",
@@ -113,24 +114,25 @@ export default class ListLocation extends Component {
     }
 
     //const id_cat = this.props.navigation.state.params.idCat;
-    const { keyword,curLoc,id_cat } = this.state;
+    const { keyword,kw,curLoc,id_cat } = this.state;
     var url = `${global.url}${'search-content?category='}${id_cat}&skip=${skip}&limit=20`;
     if(curLoc.latitude!==undefined) url += `${'&location='}${curLoc.latitude},${curLoc.longitude}`;
-    if(keyword.trim()!=='') url += `${'&keyword='}${keyword}`;
-    if(id_district!==null) url += `${'&district='}${id_district}`;
-    console.log('id_district',id_district);
-    //if(loc!=='') url += `${'&location='}${loc}`;
+    if(keyword.trim()!=='' && kw!==keyword.trim()) url += `${'&keyword='}${keyword}`;
+    else {
+      url += `${'&keyword='}${keyword}`;
+      if(id_district!==null) url += `${'&district='}${id_district}`;
+      if(id_sub!==null) url += `${'&subcategory='}${id_sub}`;
+      //id_serv = id_serv.replace('-1,','');
+      if(id_serv!=='') url += `${'&service='}${id_serv}`;
+    }
+    this.setState({ kw:keyword });
 
-    if(id_sub!==null) url += `${'&subcategory='}${id_sub}`;
-    //id_serv = id_serv.replace('-1,','');
-    if(id_serv!=='') url += `${'&service='}${id_serv}`;
     console.log('-----url-----1',url);
     getApi(url)
     .then(arrData => {
       //console.log('count',arrData.data.length);
       if(skip===0){
         //console.log('-----skip===0-----');
-
         this.setState({ listData: arrData.data, isRefresh:false, noData: arrData.data.length===0 ? this.state.lang.not_found : '' });
       }else {
         //console.log('-----skip!==-----');

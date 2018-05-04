@@ -29,6 +29,20 @@ export function getThumbVideo(link){
     return `${'https://graph.facebook.com/'}${id_video}${'/picture'}`;
   }
 }
+export function chanelVideo(link){
+  if(link===null || link==='') return;
+  let id_video;
+  var youtube = /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+  var facebook = /^https:\/\/www\.facebook\.com\/([^\/?].+\/)?video(s|\.php)[\/?].*$/gm;
+  if(link.match(youtube)){
+    id_video = link.match(/^.*(youtu.be\/|v\/|e\/|u\/\w+\/|embed\/|v=)([^#\&\?]*).*/).pop();
+    return `https://www.youtube.com/embed/${id_video}?autoplay=1&amp;autohide=1&amp;fs=1&amp;rel=0&amp;hd=1&amp;wmode=transparent&amp;enablejsapi=1&amp;html5=1`;
+  }
+  if(link.match(facebook)){
+    return `https://www.facebook.com/plugins/video.php?height=232&href=${link}`;
+  }
+}
+
 export function isEmail(text){
   let email = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/ ;
   return email.test(text);

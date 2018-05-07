@@ -328,7 +328,7 @@ export default class SearchScreen extends Component {
             id_district:district,
             id_country:country,
           });
-        }, 1200);
+        }, 1500);
       })
     })
   }

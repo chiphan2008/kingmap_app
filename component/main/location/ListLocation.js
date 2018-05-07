@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import {Keyboard,Platform, View, Text, StyleSheet, Dimensions, Image,
-  TextInput, TouchableOpacity,Modal,
+  TextInput, TouchableOpacity,Modal,ActivityIndicator,
   FlatList,DeviceEventEmitter,
 } from 'react-native';
 const {height, width} = Dimensions.get('window');
@@ -67,13 +67,13 @@ export default class ListLocation extends Component {
       idDist:null,
       id_sub:null,
       id_serv:'',
-      isRefresh:false,
+      isRefresh:true,
       page:0,
       pullToRefresh:false,
       //disable:false,
       user_id:0,
       isLogin:false,
-      isLoad:true,
+      isLoad:false,
       scrollToTop:false,
     }
     this.findLoc();
@@ -81,34 +81,22 @@ export default class ListLocation extends Component {
     accessLocation();
   }
 
-  getCategory(loc){
-    const idcat = this.props.navigation.state.params.idCat;
-    const url = global.url+'search-content?category='+idcat+'&location='+loc;
-    console.log('url',url);
-    if(this.state.isLoad){
-      getApi(url)
-      .then(arrData => {
-        //console.log('arrData',arrData);
-        this.setState({ listData: arrData.data,noData: arrData.data.length===0 ? this.state.lang.not_found : '' });
-      }).catch(err => console.log(err));
-    }
-
-  }
 
   onRefresh(skip=null){
     //console.log('refreshing')
-    const { idDist,id_sub,id_serv,page,pullToRefresh } = this.state;
+    const { idDist,id_sub,id_serv,page,pullToRefresh,isRefresh } = this.state;
     const pos= skip!==null ? skip : page+20 ;
-
+    //console.log('pullToRefresh',pullToRefresh);
     if(pullToRefresh){
-        this.setState({ isRefresh: true, page: page+20 }, function() {
-          this.getContentByDist(idDist,id_sub,id_serv,pos)
-        });
-      }
+      this.setState({ pullToRefresh: false, page: page+20 },()=>{
+        this.getContentByDist(idDist,id_sub,id_serv,pos)
+      });
     }
 
-  getContentByDist(id_district,id_sub,id_serv,skip=null){
-    clearTimeout(timeout);this.setState({isLoad:false,noData:''});
+    }
+
+  getContentByDist(id_district=null,id_sub,id_serv,skip=null){
+    clearTimeout(timeout);this.setState({isLoad:true,noData:''});
     if(skip===null){
       skip = 0; this.setState({page:0})
     }
@@ -116,11 +104,17 @@ export default class ListLocation extends Component {
     //const id_cat = this.props.navigation.state.params.idCat;
     const { keyword,kw,curLoc,id_cat } = this.state;
     var url = `${global.url}${'search-content?category='}${id_cat}&skip=${skip}&limit=20`;
-    if(curLoc.latitude!==undefined) url += `${'&location='}${curLoc.latitude},${curLoc.longitude}`;
+    if(id_district!==null) {
+      url += `${'&district='}${id_district}`;
+    }else {
+      url += `${'&location='}${curLoc.latitude},${curLoc.longitude}`;
+      this.getPosition(curLoc.latitude,curLoc.longitude);
+    }
+    //if(curLoc.latitude!==undefined)
     if(keyword.trim()!=='' && kw!==keyword.trim()) url += `${'&keyword='}${keyword}`;
     else {
       url += `${'&keyword='}${keyword}`;
-      if(id_district!==null) url += `${'&district='}${id_district}`;
+
       if(id_sub!==null) url += `${'&subcategory='}${id_sub}`;
       //id_serv = id_serv.replace('-1,','');
       if(id_serv!=='') url += `${'&service='}${id_serv}`;
@@ -133,23 +127,25 @@ export default class ListLocation extends Component {
       //console.log('count',arrData.data.length);
       if(skip===0){
         //console.log('-----skip===0-----');
-        this.setState({ listData: arrData.data, isRefresh:false, noData: arrData.data.length===0 ? this.state.lang.not_found : '' });
+        this.setState({ listData: arrData.data,isLoad:false,isRefresh:false,pullToRefresh:true, noData: arrData.data.length===0 ? this.state.lang.not_found : '' });
       }else {
         //console.log('-----skip!==-----');
-        if(arrData.data.length===0) this.setState({ pullToRefresh:false });
-        this.setState({ listData: this.state.listData.concat(arrData.data), isRefresh:false });
+        if(arrData.data.length===0) this.setState({ pullToRefresh:false,isLoad:false,isRefresh:false });
+        this.setState({ listData: this.state.listData.concat(arrData.data), isLoad:false,pullToRefresh:true,isRefresh:false, });
       }
     })
     .catch(err => console.log(err));
   }
 
   saveLocation(){
-    this.setState({keyword:''})
-    checkLocation().then((e)=>{
-      //console.log('saveLocation',e);
-      this.getContentByDist(e.idDist,this.state.id_sub,this.state.id_serv);
-      this.setState({showLoc:!this.state.showLoc,idDist:e.idDist,labelLoc:e.nameDist});
-    });
+    this.setState({isRefresh:false},()=>{
+      checkLocation().then((e)=>{
+        console.log('isRefresh',this.state.isRefresh);
+        this.getContentByDist(e.idDist,this.state.id_sub,this.state.id_serv);
+        this.setState({showLoc:!this.state.showLoc,idDist:e.idDist,labelLoc:e.nameDist});
+      });
+    })
+
   }
 
    refresh(){
@@ -163,25 +159,28 @@ export default class ListLocation extends Component {
      });
    }
   findLoc(){
+
     navigator.geolocation.getCurrentPosition(
       (position) => {
         //console.log('position',position);
+        const {id_sub,id_serv,isRefresh} = this.state;
         const {latitude,longitude} = position.coords;
-        this.getPosition(latitude,longitude);
         this.setState({curLoc:{
           latitude,longitude
         }},()=>{
-          this.getCategory(`${latitude},${longitude}`);
+          if(isRefresh) this.getContentByDist(null,id_sub,id_serv,null)
+          //this.getCategory(`${latitude},${longitude}`);
         })
       },
       (error) => {
         getLocationByIP().then(e=>{
           const {latitude,longitude} = e;
-          this.getPosition(latitude,longitude);
+          const {id_sub,id_serv,isRefresh} = this.state;
           this.setState({curLoc:{
             latitude,longitude
           }},()=>{
-            this.getCategory(`${latitude},${longitude}`);
+            //console.log(isRefresh);
+            if(isRefresh) this.getContentByDist(null,id_sub,id_serv,null);
           })
         })
       },
@@ -193,9 +192,9 @@ export default class ListLocation extends Component {
     const url = `${global.url}${'get-position?location='}${lat},${lng}`;
     getApi(url).then(e=>{
       const { district,city,country } = e.data[0];
-      district!==0 && district!==undefined && this.setState({
-        idDist:district,
-      });
+      // district!==0 && district!==undefined && this.setState({
+      //   idDist:district,
+      // });
       const url1 = `${global.url}${'district/'}${district}`;
       //console.log(url1);
       getApi(url1).then(dist=>{
@@ -224,7 +223,7 @@ export default class ListLocation extends Component {
      //console.log('labelCat',labelCat);
      if(labelCat!==undefined) this.setState({labelCat});
      //if(service_items!==undefined) this.setState({service_items});
-     this.setState({pullToRefresh:true});
+     //this.setState({pullToRefresh:true});
    }
   requestLogin(){
     const {navigate} = this.props.navigation;
@@ -285,6 +284,13 @@ export default class ListLocation extends Component {
       }
       );
     }
+  }
+  renderFooter = () => {
+    if (!this.state.isLoad) return null;
+    return (
+    <View style={{alignItems:'center'}}>
+      <ActivityIndicator color="#d0021b" size="large" />
+    </View>)
   }
 
   render() {
@@ -391,10 +397,15 @@ export default class ListLocation extends Component {
                      }}
                      style={{marginBottom:Platform.OS==='ios' ? 130 : 150}}
                      ListEmptyComponent={<Text>{noData==='' ? `${'Loading ...'}` : noData }</Text> }
+                     shouldItemUpdate={(props,nextProps)=>{
+                        return props.item!==nextProps.item
+                     }}
                      //refreshing={isRefresh}
                      extraData={this.state}
                      onEndReachedThreshold={0.5}
                      onEndReached={() => this.onRefresh()}
+                     //ListHeaderComponent={null}
+                     ListFooterComponent={this.renderFooter}
                      data={listData}
                      keyExtractor={(item,index) => item.id || index}
                      renderItem={({item}) => (

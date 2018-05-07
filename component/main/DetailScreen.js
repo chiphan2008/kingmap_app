@@ -112,6 +112,15 @@ export default class DetailScreen extends Component {
     })
     this.getContent(this.props.navigation.state.params.idContent);
   }
+  likeContent(id_content){
+    const {isLogin,user_id} = this.state;
+    const {idContent} = this.props.navigation.state.params;
+    if(isLogin===false){ this.requestLogin();return;}
+    getApi(`${global.url}${'like'}${'?content='}${id_content}${'&user='}${user_id}`).then(e=>{
+      this.getContent(idContent);
+    })
+
+  }
 
   callCollect(){
     const {isLogin} = this.state;
@@ -206,7 +215,7 @@ export default class DetailScreen extends Component {
     const {navigate} = this.props.navigation;
     //console.log('this.props.navigation',this.props.navigation);
     const {lang,user_id,isLogin,scroll,hasCheckin,hasSaveLike,listData,hasCollection} = this.state;
-    console.log('lang',lang.lang);
+    //console.log('lang',lang.lang);
     const { idContent,curLoc } = this.props.navigation.state.params;
     //console.log('lang',lang);
     const {
@@ -302,7 +311,12 @@ export default class DetailScreen extends Component {
         lang={lang}
         curLoc={this.state.curLoc}
         listSuggest={listData.list_suggest}
+        likeContent={this.likeContent.bind(this)}
         navigation={this.props.navigation}
+        userId={user_id}
+        requestLogin={this.requestLogin.bind(this)}
+        isLogin={this.state.isLogin}
+        refresh={()=>this.getContent(idContent)}
         />
 
 

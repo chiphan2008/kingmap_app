@@ -29,7 +29,6 @@ export default class Content extends Component {
     };
   }
   saveVote(rate){
-      //console.log('rate');
     const {isLogin} = this.props;
     if(isLogin){
       getApi(`${global.url}${'vote?content='}${this.props.listContent.id}${'&user='}${this.props.userId}${'&point='}${rate}`).then(e=>
@@ -94,6 +93,7 @@ export default class Content extends Component {
             <TouchableOpacity onPress={()=>{this.saveVote(1)} }>
             <Rating rate={1} showVote={vote_avg===-1 ? vote : vote_avg } styleIMG={favIC} />
             </TouchableOpacity>
+
             <TouchableOpacity onPress={()=>{this.saveVote(2)} }>
             <Rating rate={2} showVote={vote_avg===-1 ? vote : vote_avg } styleIMG={favIC} />
             </TouchableOpacity>

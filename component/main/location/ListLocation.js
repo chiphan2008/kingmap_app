@@ -313,7 +313,7 @@ export default class ListLocation extends Component {
       txtTitleOverCat,txtAddrOverCat,flatlistItemCat,wrapInfoOver,
       imgUpCreate,imgUpLoc,imgUpSubCat,imgUpInfo,popoverLoc,
       padCreate,overLayout,imgInfo,overLayoutLoc,shadown,overLayoutSer,listCatOver,listOverService,colorText,
-      favIC,marRight,
+      favIC,marRight,marRight5,
     } = styles;
     //console.log('this.props.navigation',this.props.navigation);
     return (
@@ -433,13 +433,13 @@ export default class ListLocation extends Component {
                              </View>
 
                                <View style={{flexDirection:'row'}}>
-                                   <View style={{flexDirection:'row',paddingRight:10}}>
+                                   <View style={{flexDirection:'row',paddingRight:5}}>
                                       <TouchableOpacity onPress={()=>this.saveLike(item.id)}>
                                      <Image style={{width:22,height:18,marginRight:5}} source={item.like>0 ? likeFullIcon : likeIC} />
                                      </TouchableOpacity>
                                      <Text>{item.like}</Text>
                                    </View>
-                                   <View style={{paddingRight:10}}>
+                                   <View style={{paddingRight:5}}>
                                      <Text> | </Text>
                                    </View>
                                    <View  style={{flexDirection:'row',paddingRight:10}}>
@@ -459,7 +459,7 @@ export default class ListLocation extends Component {
                                      </TouchableOpacity>
 
                                      <TouchableOpacity onPress={()=>{this.saveVote(5,item.id)} }>
-                                     <Rating rate={5} showVote={item.vote} styleIMG={[favIC,marRight]} />
+                                     <Rating rate={5} showVote={item.vote} styleIMG={[favIC,marRight5]} />
                                      </TouchableOpacity>
 
                                      <Text>{item.vote}</Text>

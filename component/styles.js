@@ -46,6 +46,7 @@ module.exports = {
   },
   favIC:{width:22,height:21,marginRight:2},
   marRight:{marginRight:10},
+  marRight5:{marginRight:5},
   line:{borderBottomWidth:1,borderBottomColor:'#E3E4E8',width},
   marTop15:{marginTop:15},
   marTop10:{marginTop:10},
@@ -69,7 +70,11 @@ module.exports = {
       backgroundColor: '#D0021B',paddingTop: Platform.OS==='ios' ? 30 : 20, alignItems: 'center',height: 65,
       position:'relative',zIndex:5,
   },
-
+  inputLoc:{
+    width:width-80,borderWidth:1,borderColor:'#e0e8ed',borderRadius:3,padding:5,marginBottom:10
+  },
+  btnSearchOwn:{
+    backgroundColor:'#d0021b',borderRadius:3,width:40,height:40,justifyContent:'center',alignItems:'center'},
   wrapFilter:{
     alignItems:'center',marginTop:15,
     marginBottom:15,

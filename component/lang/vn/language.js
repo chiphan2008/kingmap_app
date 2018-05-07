@@ -27,6 +27,8 @@ module.exports = {
   plz_choose_area:'Vui lòng chọn khu vực (*)',
   plz_choose_cat:'Vui lòng chọn danh mục',
   info_general:'Thông tin chung',
+  change_owner:'Thay đổi chủ sở hữu',
+  enter_email_number:'Nhập email hoặc số điện thoại',
   info_per:'Thông tin cá nhân',
   like_location:'Địa điểm yêu thích ',
   collection:'Bộ sưu tập',

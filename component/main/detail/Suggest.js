@@ -13,8 +13,8 @@ import getApi from '../../api/getApi';
 
 import likeIcon from '../../../src/icon/ic-like.png';
 import likeFullIcon from '../../../src/icon/ic-like-full.png';
-//import favoriteIcon from '../../../src/icon/ic-favorite.png';
-//import favoriteFullIcon from '../../../src/icon/ic-favorite-full.png';
+import favoriteIcon from '../../../src/icon/ic-favorite.png';
+import favoriteFullIcon from '../../../src/icon/ic-favorite-full.png';
 
 const {width,height} = Dimensions.get('window');
 
@@ -72,34 +72,14 @@ export default class Suggest extends Component {
 
                    <View style={{flexDirection:'row',marginTop:5,alignItems:'flex-end'}}>
                        <View style={{flexDirection:'row',paddingRight:5}}>
-                        <TouchableOpacity onPress={()=>this.props.likeContent(item.id)}>
                          <Image style={{width:22,height:18,marginRight:5}} source={item.like>0 ? likeFullIcon :  likeIcon} />
-                        </TouchableOpacity>
                          <Text>{item.like}</Text>
                        </View>
                        <View style={{paddingRight:5}}>
                          <Text> | </Text>
                        </View>
                        <View  style={{flexDirection:'row',paddingRight:10}}>
-                       <TouchableOpacity onPress={()=>{this.saveVote(1,item.id)} }>
-                       <Rating rate={1} showVote={item.vote } styleIMG={favIC} />
-                       </TouchableOpacity>
-
-                       <TouchableOpacity onPress={()=>{this.saveVote(2,item.id)} }>
-                       <Rating rate={2} showVote={item.vote} styleIMG={favIC} />
-                       </TouchableOpacity>
-
-                       <TouchableOpacity onPress={()=>{this.saveVote(3,item.id)} }>
-                       <Rating rate={3} showVote={item.vote} styleIMG={favIC} />
-                       </TouchableOpacity>
-
-                       <TouchableOpacity onPress={()=>{this.saveVote(4,item.id)} }>
-                       <Rating rate={4} showVote={item.vote} styleIMG={favIC} />
-                       </TouchableOpacity>
-
-                       <TouchableOpacity onPress={()=>{this.saveVote(5,item.id)} }>
-                       <Rating rate={5} showVote={item.vote} styleIMG={[favIC,marRight5]} />
-                       </TouchableOpacity>
+                       <Image source={item.vote>0 ? favoriteFullIcon : favoriteIcon } style={favIC} />
                          <Text>{item.vote}</Text>
                        </View>
                    </View>

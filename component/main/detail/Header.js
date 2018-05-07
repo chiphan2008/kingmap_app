@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import {
-  View,Text,StyleSheet,Image,TextInput,
+  View,Text,StyleSheet,Image,
   Platform,Dimensions,TouchableOpacity,
   Modal,Share,
 } from 'react-native';
@@ -94,7 +94,7 @@ export default class Header extends Component {
                 <Text style={colorWhite}>{lang.check_in}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={{alignItems:'center'}}
-            onPress={()=>this.setState({showOption:true})}>
+            onPress={()=>this.socialShare()}>
                 <Image source={socialIC} style={shareIC} />
                 <Text style={colorWhite}>{lang.share}</Text>
             </TouchableOpacity>
@@ -105,7 +105,7 @@ export default class Header extends Component {
         </View>
       </View>
 
-      <Modal onRequestClose={() => null}transparent
+      {/*<Modal onRequestClose={() => null}transparent
       animationType={'slide'} visible={showOption}>
         <TouchableOpacity style={[actionSheetWrap]}
         onPress={()=>this.setState({showOption:false})}>
@@ -115,7 +115,7 @@ export default class Header extends Component {
             <Text style={colorTxt}>Email</Text>
             </TouchableOpacity>
 
-            {/*<View style={line}></View>
+            <View style={line}></View>
             <TouchableOpacity style={pad15}>
             <Text style={colorTxt}>Facbook</Text>
             </TouchableOpacity>
@@ -123,7 +123,7 @@ export default class Header extends Component {
             <View style={line}></View>
             <TouchableOpacity style={pad15}>
             <Text style={colorTxt}>Twitter</Text>
-            </TouchableOpacity>*/}
+            </TouchableOpacity>
 
 
           </View>
@@ -133,7 +133,7 @@ export default class Header extends Component {
             </TouchableOpacity>
           </View>
         </TouchableOpacity>
-      </Modal>
+      </Modal>*/}
       </View>
     );
   }

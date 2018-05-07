@@ -26,7 +26,7 @@ export function getThumbVideo(link,thumb=null){
     // maxresdefault
     if(thumb!==null) thumb='/hqdefault.jpg';
     else  thumb='/hqdefault.jpg';
-    console.log('thumb',`${'https://img.youtube.com/vi/'}${id_video}${thumb}`);
+    //console.log('thumb',`${'https://img.youtube.com/vi/'}${id_video}${thumb}`);
     return `${'https://img.youtube.com/vi/'}${id_video}${thumb}`;
   }
   //console.log(link);

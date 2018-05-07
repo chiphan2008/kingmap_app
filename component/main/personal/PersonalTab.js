@@ -13,6 +13,7 @@ import ListCheckin from './ListCheckin';
 import LikeLocation from './LikeLocation';
 import ListLocation from './ListLocation';
 import Collection from './Collection';
+import ChangeOwner from './ChangeOwner';
 
 import styles from '../../styles';
 import global from '../../global';
@@ -34,6 +35,7 @@ import collectionIC from '../../../src/icon/ic-white/ic-collection.png';
 import menuIC from '../../../src/icon/ic-white/ic-menu.png';
 import settingIC from '../../../src/icon/ic-white/ic-setting.png';
 import logoutIC from '../../../src/icon/ic-white/ic-logout.png';
+import changeIC from '../../../src/icon/ic-white/ic-change.png';
 import {checkUrl} from '../../libs';
 
 export default class PersonalTab extends Component {
@@ -52,6 +54,7 @@ export default class PersonalTab extends Component {
       showLikeLoc:false,
       showListLoc:false,
       showCollection:false,
+      showOwner:false,
     };
     this.getLoc();
     getLanguage().then((e) =>{
@@ -137,7 +140,9 @@ export default class PersonalTab extends Component {
 
   render() {
     const {lang, valSearch, curLoc, isLogin, user_profile,
-    showUpdateInfo,countEntry,showCheckin,showLikeLoc,showListLoc,showCollection,showSetting} = this.state;
+    showUpdateInfo,countEntry,showCheckin,showLikeLoc,
+    showListLoc,showCollection,showSetting,showOwner,
+  } = this.state;
     //console.log(lang);
     const {navigate} = this.props.navigation;
     //console.log("this.props.Hometab=",this.props);
@@ -290,13 +295,30 @@ export default class PersonalTab extends Component {
 
             <View>
               <View style={[rowItem]}>
+                <Image source={changeIC} style={imgIconPerInfo} />
+                <TouchableOpacity style={padPerInfo} onPress={()=>this.setState({showOwner:true})}>
+                <Text style={titlePer}>{`${lang.change_owner}`}</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={borderItemInfoPer}></View>
+
+              <ChangeOwner
+              lang={lang}
+              userId={user_profile.id}
+              title={lang.change_owner}
+              visible={showOwner}
+              closeModal={()=>{this.setState({showOwner:false})}}
+              />
+            </View>
+
+            <View>
+              <View style={[rowItem]}>
                 <Image source={locationIC} style={imgIconPerInfo} />
                 <TouchableOpacity style={padPerInfo} onPress={()=>this.setState({showCheckin:true})}>
                 <Text style={titlePer}>{`${'Check in'} (${countEntry.count_checkin})`}</Text>
                 </TouchableOpacity>
               </View>
               <View style={borderItemInfoPer}></View>
-
             </View>
 
             <View>

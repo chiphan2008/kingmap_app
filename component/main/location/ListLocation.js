@@ -484,8 +484,6 @@ export default class ListLocation extends Component {
           </TouchableOpacity>
         </Modal>
 
-
-
         <SelectCategory
         visible={showCat}
         saveSubCate={this.saveSubCate.bind(this)}
@@ -499,7 +497,6 @@ export default class ListLocation extends Component {
         saveService={this.saveService.bind(this)}
         closeModal={()=>this.setState({showServie:false})}
         />
-
 
 
       </View>

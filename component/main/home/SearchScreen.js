@@ -246,16 +246,16 @@ export default class SearchScreen extends Component {
        const {latitude, longitude} = coords
        timeoutCurPos = setTimeout(()=>{
          this.setState({
-           curLocation : {
-             latitude,longitude,
-             lat:latitude,lng:longitude,
-             latlng:`${latitude},${longitude}`,
-             latitudeDelta: 0.008757 ,
-             longitudeDelta: 0.010066,
-           },
+           // curLocation : {
+           //   latitude,longitude,
+           //   lat:latitude,lng:longitude,
+           //   latlng:`${latitude},${longitude}`,
+           //   latitudeDelta: 0.008757 ,
+           //   longitudeDelta: 0.010066,
+           // },
            curLoc : { latitude,longitude, },
            circleLoc : { latitude,longitude, },
-           onClick:false,
+           onClick:true,
          },()=>{
            //this.getPosition(latitude,longitude);
            this.getCategory(latitude,longitude)
@@ -277,7 +277,7 @@ export default class SearchScreen extends Component {
              },
              curLoc : { latitude,longitude, },
              circleLoc : { latitude,longitude, },
-             onClick:false,
+             onClick:true,
            },()=>{
              //this.getPosition(latitude,longitude);
              this.getCategory(latitude,longitude)
@@ -288,11 +288,12 @@ export default class SearchScreen extends Component {
    )
   }
   onPressZoom(zoom) {
+    //console.log(zoom);
       clearTimeout(timeoutZoom);
       const {latitude,longitude,lat,lng,latlng,latitudeDelta,longitudeDelta} = this.state.curLocation;
       let latDelta = zoom==='zoom_in' ? latitudeDelta*1.8 : latitudeDelta/1.8;
       let lngDelta = zoom==='zoom_in' ?  longitudeDelta*1.8 : longitudeDelta/1.8;
-      //console.log(latDelta,lngDelta);
+      //console.log(latDelta);
       timeoutZoom = setTimeout(()=>{
         latDelta > 0.002 && latDelta < 100 && this.setState({
           curLocation : {
@@ -341,12 +342,10 @@ export default class SearchScreen extends Component {
     if(service_items!==undefined) this.setState({service_items});
   }
   _onRegionChangeComplete = (region) => {
-
+    this.setState({ curLocation:region, });
     if(this.state.onClick===false) {
       this.getPosition(region.latitude,region.longitude);
-      this.setState({
-        curLocation:region,
-        onClick:true});
+      this.setState({ onClick:true });
     }
   }
   _onPressMap = (event) => {
@@ -552,22 +551,22 @@ export default class SearchScreen extends Component {
               <Image source={plusIC} style={imgPlusStyle} />
           </TouchableOpacity>*/}
 
-          <TouchableOpacity style={[btnMap,btnMapLoc,curLocation.longitude!==undefined ? show :hide]}
+          <TouchableOpacity style={[btnMap,btnMapZoom,curLocation.longitude!==undefined ? show :hide]}
           onPress={()=>{this.findCurrentLoc()}}>
           <Image source={currentLocIC} style={{width:30,height:30}} />
           </TouchableOpacity>
 
-          <View style={[btnMap,btnMapZoom,curLocation.longitude!==undefined ? show :hide]}>
+          {/*<View style={[btnMap,btnMapZoom,curLocation.longitude!==undefined ? show :hide]}>
             <TouchableOpacity style={btnZoom}
             onPress={()=>this.onPressZoom('zoom_out')}>
             <Image source={addIC} style={{width:24,height:24}} />
             </TouchableOpacity>
-            {/*<View style={{width:12,borderColor:'#999',borderBottomWidth:1}}></View>*/}
+            {<View style={{width:12,borderColor:'#999',borderBottomWidth:1}}></View>}
             <TouchableOpacity style={btnZoom}
             onPress={()=>this.onPressZoom('zoom_in')}>
             <Image source={minIC} style={{width:24,height:24}} />
             </TouchableOpacity>
-          </View>
+          </View>*/}
 
           <TouchableOpacity style={[btnMap,btnMapFull,curLocation.longitude!==undefined ? show :hide]}
           onPress={()=>{this.setState({showFullScreen:true})}}>

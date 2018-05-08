@@ -78,7 +78,7 @@ export default class DetailScreen extends Component {
 
 
   getContent(idContent){
-    const {latitude,longitude} = this.props.navigation.state.params.curLoc;
+    const {latitude,longitude} = this.state.curLoc;
     //console.log(latitude,longitude);
     //if(latlng===undefined) latlng='10.7818513,106.6769368';
     const url = `${global.url}${'content/'}${idContent}${'?location='}${latitude},${longitude}`;
@@ -209,6 +209,9 @@ export default class DetailScreen extends Component {
 
     this.props.navigation.goBack();
   }
+  scrollTop = () => {
+    this._scrollView.scrollTo({x: 0, y: 0, animated: true});
+  }
   render() {
     //console.log('this.props.navigation',this.props.navigation.state.params.curLoc);
 
@@ -230,7 +233,7 @@ export default class DetailScreen extends Component {
     } = styles;
 
     return (
-      <ScrollView scrollEnabled={scroll} style={container}>
+      <ScrollView scrollEnabled={scroll} style={container} ref={(c) => { this._scrollView = c; }}>
         <Header
         lang={lang}
         title={listData.content.name}
@@ -316,7 +319,7 @@ export default class DetailScreen extends Component {
         userId={user_id}
         requestLogin={this.requestLogin.bind(this)}
         isLogin={this.state.isLogin}
-        refresh={()=>this.getContent(idContent)}
+        refresh={(id)=>{this.getContent(id);this.scrollTop()}}
         />
 
 

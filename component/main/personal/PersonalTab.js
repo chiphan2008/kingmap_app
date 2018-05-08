@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import {
-  ScrollView,Platform, View, Text,
+  ScrollView,Platform, View, Text,Keyboard,
   Dimensions, Image, TextInput, TouchableOpacity,
   AsyncStorage,DeviceEventEmitter} from 'react-native';
 const {height, width} = Dimensions.get('window');
@@ -182,7 +182,7 @@ export default class PersonalTab extends Component {
 
         <View style={[wrapContent, isLogin ? hide : show]}>
           <Text style={{color:'#B8B9BD'}}>{lang.request_login}</Text>
-          <TouchableOpacity onPress={()=>navigate('LoginScr',{backScr:''})} style={[btnPress,marTop]}>
+          <TouchableOpacity onPress={()=>navigate('LoginScr')} style={[btnPress,marTop]}>
           <Text style={colorNext}> {lang._login}</Text>
           </TouchableOpacity>
         </View>
@@ -302,13 +302,7 @@ export default class PersonalTab extends Component {
               </View>
               <View style={borderItemInfoPer}></View>
 
-              <ChangeOwner
-              lang={lang}
-              userId={user_profile.id}
-              title={lang.change_owner}
-              visible={showOwner}
-              closeModal={()=>{this.setState({showOwner:false})}}
-              />
+
             </View>
 
             <View>
@@ -384,6 +378,14 @@ export default class PersonalTab extends Component {
           </View>
 
         </ScrollView>
+
+        <ChangeOwner
+        lang={lang}
+        userId={user_profile.id}
+        title={lang.change_owner}
+        visible={showOwner}
+        closeModal={()=>{this.setState({showOwner:false});Keyboard.dismiss()}}
+        />
 
         <ListLocation
         lang={lang}

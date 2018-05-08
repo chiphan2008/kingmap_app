@@ -43,7 +43,7 @@ export default class Suggest extends Component {
     } = styles;
     const {listSuggest,curLoc,lang} = this.props;
     const {navigate } = this.props.navigation;
-
+    //console.log('listSuggest',listSuggest.length);
     return (
       <View style={wrapContentDetail}>
 
@@ -54,13 +54,17 @@ export default class Suggest extends Component {
         <FlatList
            horizontal extraData={this.state}
            showsHorizontalScrollIndicator={false}
+           initialNumToRender={20}
            data={listSuggest}  keyExtractor={(item,index) => index}
            renderItem={({item,index}) => (
-             index<20 &&
+             //index<20 &&
              <View style={{flexDirection:'row',justifyContent:'space-between',marginBottom:10}}>
                  <View style={[widthHafl,marRight]}>
                    <TouchableOpacity
-                   onPress={()=>navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc,lang:lang.lang})}
+                   onPress={()=>{
+                     this.props.refresh(item.id)
+                     //navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc,lang:lang.lang})
+                   }}
                    >
                    <Image source={{uri :`${global.url_media}${item.avatar}`}} style={imgSpace}/>
                    </TouchableOpacity>
@@ -78,10 +82,16 @@ export default class Suggest extends Component {
                        <View style={{paddingRight:5}}>
                          <Text> | </Text>
                        </View>
-                       <View  style={{flexDirection:'row',paddingRight:10}}>
-                       <Image source={item.vote>0 ? favoriteFullIcon : favoriteIcon } style={favIC} />
-                         <Text>{item.vote}</Text>
+
+                       <View style={{flexDirection:'row',paddingRight:5}}>
+                          <Image source={item.vote>0 ? favoriteFullIcon : favoriteIcon } style={{width:19,height:18,marginRight:5}} />
+                          <Text>{item.vote}</Text>
                        </View>
+
+                       {/*<View  style={{flexDirection:'row',paddingRight:5}}>
+                         <Image source={item.vote>0 ? favoriteFullIcon : favoriteIcon } style={favIC} />
+                         <Text>{item.vote}</Text>
+                       </View>*/}
                    </View>
                  </View>
 

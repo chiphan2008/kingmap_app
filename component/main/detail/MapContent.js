@@ -20,6 +20,7 @@ export default class MapContent extends Component {
     this.state = {
       coords:[],
       showFullScreen:false,
+      direct:this.props.region,
     }
   }
   getDirection(){
@@ -29,9 +30,11 @@ export default class MapContent extends Component {
       const origin = `${latitude},${longitude}`;
       const destination = this.props.region.latlng;
       const {distance} = this.props;
+      if(this.state.direct===destination) return;
+      this.setState({direct:this.props.region.latlng})
       //const APIKEY = 'AIzaSyCUNFe8ZC0csUZzlTHRQFPp7PjiAtQ6Z0M';
       const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${destination}&mode=${mode}`;
-      //console.log(url);
+      console.log(url);
       getApi(url).then(e=> {
         if(e.routes[0].overview_polyline!==undefined){
           this.setState({
@@ -47,29 +50,25 @@ export default class MapContent extends Component {
       a=null,h=0,i=0;do a=t.charCodeAt(u++)-63,i|=(31&a)<<h,h+=5;while(a>=32);n=1&i?~(i>>1):i>>1,h=i=0;do a=t.charCodeAt(u++)-63,i|=(31&a)<<h,h+=5;
       while(a>=32);o=1&i?~(i>>1):i>>1,l+=n,r+=o,d.push([l/c,r/c])}return d=d.map(function(t){return{latitude:t[0],longitude:t[1]}})
   }
-  // componentDidMount(){
-  //   const { curLoc,region,distance } = this.props;
-  //   console.log('curLoc,region,distance',curLoc,region,distance);
-  //   if(curLoc.latitude!==undefined && region.latitude!==undefined && distance<100000){
-  //     this.getDirection()
-  //   }
-  // }
+  componentDidMount(){
+    console.log('componentDidMount');
+  }
+
   render() {
     const { curLoc,region,distance } = this.props;
-    const {showFullScreen} = this.state;
-
-    //console.log('region',region);
+    const {showFullScreen,direct} = this.state;
+    //console.log('direct',direct);
+    //console.log('region',region.latlng);
+    //console.log('curLoc',curLoc.latitude,curLoc.longitude);
     return (
-    <View style={{width,height:height/2}}
-    onLayout={()=>{
-      if(curLoc.latitude!==undefined && region.latitude!==undefined){
-        this.getDirection()
-      }
-    }}>
+    <View style={{width,height:height/2}} >
       {region.latitude!==undefined &&
         <MapView
           style={{flex:1,height:height/2,zIndex:10,alignSelf:'stretch'}}
           region={region}
+          onRegionChangeComplete={()=>{
+            this.getDirection();
+          }}
           customMapStyle={global.style_map_ios}
           showsPointsOfInterest={false}
         >

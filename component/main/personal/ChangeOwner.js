@@ -10,54 +10,83 @@ import getApi from '../../api/getApi';
 import global from '../../global';
 
 import arrowLeft from '../../../src/icon/ic-white/arrow-left.png';
-import searchIC from '../../../src/icon/ic-white/ic-search.png';
-import checkIC from '../../../src/icon/ic-create/ic-check.png';
-import {checkUrl} from '../../libs';
+//import searchIC from '../../../src/icon/ic-white/ic-search.png';
+import deleteIC from '../../../src/icon/color-red/ic-delete.png';
+import {checkUrl,removeItem} from '../../libs';
 const {width,height} = Dimensions.get('window');
 
+var timeoutLoc;
 export default class ChangeOwner extends Component {
   constructor(props){
     super(props);
     this.state = {
       txtLoc:'',
       txtUser:'',
-      listData:[],
+      listContent:[],
+      showContent:[],
       arrLoc:{},
+      showLoc:false,
+      showUser:false,
+      from_user:0,
+      to_user:0,
+      listUser:[],
+      user_profile:{},
     }
   }
-  getData(userId){
-    //const {userId} = this.props;
-    const url = `${global.url}${'user/list-location/'}${userId}`;
+  search(route){
+    const {userId} = this.props;
+    const {txtLoc,txtUser} = this.state;
+
+    const kw = route==='user' ? txtUser : txtLoc;
+    if(kw==='') return;
+
+    const url = `${global.url}${'search-'}${route}${'?query='}${kw}${'&id_user='}${userId}`;
     console.log(url);
-    getApi(url)
-    .then(arrData => {
-      setTimeout(()=>{
-        this.setState({ listData: arrData.data });
-      },2000)
-    })
-    .catch(err => console.log(err));
+    timeoutLoc = setTimeout(()=>{
+      getApi(url)
+      .then(arrData => {
+        if(route==='content')
+          this.setState({ listContent: arrData.data,from_user:userId,showLoc:true,showUser:false });
+        else
+          this.setState({ listUser: arrData.data,from_user:userId,showLoc:false,showUser:true });
+      })
+      .catch(err => console.log(err));
+    },800);
+
   }
-  chooseLoc(id){
-    if(this.state.arrLoc[id]){
-      this.setState({ arrLoc: Object.assign(this.state.arrLoc,{[id]:!id}) })
+  chooseLoc(id,item,index,pop=null){
+    this.setState({showLoc:false,txtLoc:''})
+    const {arrLoc,showContent} = this.state;
+    if(this.state.arrLoc[id] && pop===null){
+        this.setState({
+          arrLoc: Object.assign(arrLoc,{[id]:!id}),
+          showContent:removeItem(showContent,index),
+        })
     }else {
-      this.setState({ arrLoc: Object.assign(this.state.arrLoc,{[id]:id}) })
+      if(pop===null || (pop!==null && !this.state.arrLoc[id]))
+      {this.setState({
+        arrLoc: Object.assign(arrLoc,{[id]:id}),
+        showContent:showContent.concat(item),
+      })}
     }
   }
+
+
+
   render() {
     const {
-      container,headCatStyle,headContent,titleCreate,
+      wrapSetting,headCatStyle,headContent,titleCreate,
       titleTab,titleActive,inputLoc,btnSearchOwn,
-      imgShare,show,hide,colorlbl
+      imgShare,show,hide,colorlbl,
+      popupLocChange,topLocChange,topUserChange,
     } = styles;
     const {visible,title,lang,userId} = this.props;
     //console.log(userId);
-    const {txtLoc,txtUser,listData,arrLoc} = this.state;
+    const {txtLoc,txtUser,listContent,showContent,listUser,arrLoc,showLoc,showUser,user_profile} = this.state;
     return (
-      <Modal onRequestClose={() => null} transparent
-      //animationType={'slide'}
-      visible={visible} >
-        <View style={container}>
+
+        <View style={[wrapSetting,visible ? show : hide]} onLayout={()=>{//this.getData(userId)
+        }}>
           <View style={headCatStyle}>
               <View style={headContent}>
                   <TouchableOpacity onPress={()=>this.props.closeModal()}>
@@ -70,30 +99,49 @@ export default class ChangeOwner extends Component {
           <View style={{backgroundColor:'#fff'}}>
             <View style={{padding:15}}>
 
-               <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-                   <TextInput underlineColorAndroid='transparent' ref='Users'
-                   placeholder={lang.enter_email_number} style={inputLoc}
-                   onChangeText={(txtUser) => this.setState({txtUser})}
-                   value={txtUser}
-                   returnKeyType = {"done"}
-                    />
-                    <TouchableOpacity style={btnSearchOwn}>
-                    <Image source={searchIC} style={{width:20,height:20}} />
-                    </TouchableOpacity>
+                <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+                    <TextInput underlineColorAndroid='transparent'
+                    placeholder={lang.name_location} style={inputLoc}
+                    onChangeText={(txtLoc) => {
+                      this.setState({txtLoc},()=>{
+                        clearTimeout(timeoutLoc);
+                        if(txtLoc.length>3){
+                          this.search('content');
+                        }
+                      });
+                    }}
+                    value={txtLoc}
+                     />
+
+                   {/*<TouchableOpacity style={btnSearchOwn}>
+                   <Image source={searchIC} style={{width:20,height:20}} />
+                   </TouchableOpacity>*/}
                 </View>
 
                 <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-                    <TextInput underlineColorAndroid='transparent'
-                    returnKeyType = {"next"}
-                    onSubmitEditing={(event) => {this.refs.Users.focus();}}
-                    placeholder={lang.name_location} style={inputLoc}
-                    onChangeText={(txtLoc) => this.setState({txtLoc})}
-                    value={txtLoc}
+                    <TextInput underlineColorAndroid='transparent' ref='Users'
+                    placeholder={lang.enter_email_number} style={inputLoc}
+                    onChangeText={(txtUser) => {
+                      this.setState({txtUser},()=>{
+                        clearTimeout(timeoutLoc);
+                        if(txtUser.length>3){
+                          this.search('user');
+                        }
+                      })
+                    }}
+                    value={txtUser}
+
                      />
-                   <TouchableOpacity style={btnSearchOwn}>
-                   <Image source={searchIC} style={{width:20,height:20}} />
-                   </TouchableOpacity>
-                </View>
+
+                 </View>
+
+                 {user_profile.id!==undefined &&
+                   <View style={{flexDirection:'row',maxWidth:width-50}}>
+                       <Image source={{uri:checkUrl(user_profile.avatar) ? user_profile.avatar : `${global.url_media}${user_profile.avatar}`}} style={{width:50,height:40,marginRight:10}} />
+                       <View>
+                         <Text numberOfLines={1} style={colorlbl}>{user_profile.text}</Text>
+                       </View>
+                   </View>}
 
              </View>
          </View>
@@ -101,28 +149,63 @@ export default class ChangeOwner extends Component {
          <View style={{padding:15}}>
          <FlatList
             extraData={this.state}
-            data={listData}
+            data={showContent}
             keyExtractor={(item,index) => index}
-            renderItem={({item}) =>(
+            renderItem={({item,index}) =>(
               <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
-                  <View style={{flexDirection:'row',maxWidth:width-50}}>
-                      <TouchableOpacity onPress={()=>this.chooseLoc(item.id)} >
-                        <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:40,marginRight:10}} />
-                      </TouchableOpacity>
+                  <View style={{flexDirection:'row',maxWidth:width-110}}>
+                      <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:40,marginRight:10}} />
                       <View>
-                      <TouchableOpacity onPress={()=>{this.chooseLoc(item.id)} } >
-                        <Text numberOfLines={1} style={colorlbl}>{item.name}</Text>
-                      </TouchableOpacity>
-                      <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.address}, ${item._district.name}, ${item._city.name}, ${item._country.name},`}</Text>
+                      <Text numberOfLines={1} style={colorlbl}>{item.name}</Text>
+                      <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.address}`}</Text>
                       </View>
                   </View>
-                    <Image source={checkIC} style={[imgShare,arrLoc[item.id] ? show : hide ]} />
+                  <TouchableOpacity onPress={()=>{this.chooseLoc(item.id,item,index)}}
+                  style={arrLoc[item.id] ? show : hide }>
+                    <Image source={deleteIC} style={[imgShare]} />
+                  </TouchableOpacity>
               </View>
             )} />
          </View>
 
+
+         <View style={[popupLocChange,topLocChange,showLoc ? show :hide]}>
+         <FlatList
+            extraData={this.state}
+            data={listContent}
+            keyExtractor={(item,index) => index}
+            renderItem={({item,index}) =>(
+              <TouchableOpacity onPress={()=>{this.chooseLoc(item.id,item,index,'kfd')}} style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
+                  <View style={{flexDirection:'row',maxWidth:width-50}}>
+                      <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:40,marginRight:10}} />
+                      <View>
+                        <Text numberOfLines={1} style={colorlbl}>{item.name}</Text>
+                        <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.address}`}</Text>
+                      </View>
+                  </View>
+              </TouchableOpacity>
+            )} />
+         </View>
+
+         <View style={[popupLocChange,topUserChange,showUser ? show :hide]}>
+         <FlatList
+            extraData={this.state}
+            data={listUser}
+            keyExtractor={(item,index) => index}
+            renderItem={({item}) =>(
+              <TouchableOpacity onPress={()=>{this.setState({ user_profile:item,showUser:false,txtUser:'' })}} style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
+                  <View style={{flexDirection:'row',maxWidth:width-50}}>
+                      <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:40,marginRight:10}} />
+                      <View>
+                        <Text numberOfLines={1} style={colorlbl}>{item.text}</Text>
+                      </View>
+                  </View>
+              </TouchableOpacity>
+            )} />
+         </View>
+
+
         </View>
-        </Modal>
     );
   }
 }

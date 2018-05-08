@@ -44,7 +44,7 @@ module.exports = {
     position: 'absolute',
     top: 0,bottom: 0,left: 0,right: 0
   },
-  favIC:{width:22,height:21,marginRight:2},
+  favIC:{width:19,height:18,marginRight:2},
   marRight:{marginRight:10},
   marRight5:{marginRight:5},
   line:{borderBottomWidth:1,borderBottomColor:'#E3E4E8',width},
@@ -70,8 +70,15 @@ module.exports = {
       backgroundColor: '#D0021B',paddingTop: Platform.OS==='ios' ? 30 : 20, alignItems: 'center',height: 65,
       position:'relative',zIndex:5,
   },
+  popupLocChange:{
+    padding:10,width:width-30,height:(height/2)-120,
+    top:119,right:15,backgroundColor:'#f0f0f0',
+    position:'absolute',borderColor:'#e0e8ed',borderWidth:1,
+  },
+  topLocChange:{top:119},
+  topUserChange:{top:169},
   inputLoc:{
-    width:width-80,borderWidth:1,borderColor:'#e0e8ed',borderRadius:3,padding:5,marginBottom:10
+    width:width-30,borderWidth:1,borderColor:'#e0e8ed',borderRadius:3,padding:5,marginBottom:10
   },
   btnSearchOwn:{
     backgroundColor:'#d0021b',borderRadius:3,width:40,height:40,justifyContent:'center',alignItems:'center'},
@@ -79,9 +86,9 @@ module.exports = {
     alignItems:'center',marginTop:15,
     marginBottom:15,
   },
-  filterFrame:{width:width-40,justifyContent:'space-between',alignItems:'center',flexDirection:'row'},
+  filterFrame:{width:width-30,justifyContent:'space-between',alignItems:'center',flexDirection:'row'},
   inputSearch : {
-    marginTop: 3,width:width-40,backgroundColor:'#fff',borderRadius:5,padding:10,paddingRight:70,
+    marginTop: 3,width:width-30,backgroundColor:'#fff',borderRadius:5,padding:10,paddingRight:70,
   },
   btnMapLoc:{bottom:122,},
   btnMapZoom:{bottom:50,},
@@ -111,7 +118,7 @@ module.exports = {
     paddingTop: 7,paddingBottom: 0,marginTop: 0,marginBottom: 0,
   },
 
-  padLoc:{padding:20,},
+  padLoc:{padding:15,},
   wrapListLoc:{
     backgroundColor:'#fff',
     shadowOffset:{  width: 1,  height: 1,  },
@@ -125,7 +132,7 @@ module.exports = {
     padding:20
   },
   wrapFlatList:{
-    paddingLeft:20,
+    paddingLeft:15,
     paddingBottom:150,
   },
   txtTitleOverCat:{color:'#2F353F',fontSize:18,marginBottom:0,maxHeight:50,overflow:'hidden'},
@@ -135,7 +142,7 @@ module.exports = {
   flatlistItemCat:{
     justifyContent:'space-between',
     flexDirection:'row',
-    marginBottom:20,
+    marginBottom:15,
   },
 
   flatItemLoc:{

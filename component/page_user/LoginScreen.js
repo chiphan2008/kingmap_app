@@ -118,7 +118,7 @@ export default class LoginScreen extends Component {
       if(e.code!==200){
         this.setState({errMsg:this.state.lang.wrong_pwd,disable:false})
       }else{
-        if(params.backScr!==undefined) navigate('MainScr');
+        if(params.backScr!==undefined || params.backScr!=='') navigate('MainScr');
         else {
           DeviceEventEmitter.emit('goback',  {isLogin:true})
           goBack();

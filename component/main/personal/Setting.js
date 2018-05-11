@@ -3,7 +3,8 @@
 import React, { Component } from 'react';
 import {
   View,Text,Modal,TouchableOpacity,Image,
-  Dimensions,PanResponder,Animated,AsyncStorage
+  Dimensions,PanResponder,Animated,AsyncStorage,
+  DeviceEventEmitter,
 } from 'react-native';
 import ChangePwd from './ChangePwd';
 import checkNoti from '../../api/checkNoti';
@@ -107,19 +108,25 @@ export default class Setting extends Component {
   render() {
     //console.log(this.props.navigation);
     const {
-      wrapSetting,headCatStyle,headContent,titleCreate,
+      container,headCatStyle,headContent,titleCreate,
       titleTab,titleActive,listCreate,widthLblCre,show,hide,
       imgInfo,wrapInputCreImg,marTop,colorTitle,txt
     } = styles;
+
+    const {lang} = this.props.navigation.state.params;
+    const {goBack,navigate} = this.props.navigation;
     return (
 
-        <View style={[wrapSetting, this.props.visible ? show : hide]}>
+        <View style={container}>
           <View style={headCatStyle}>
               <View style={headContent}>
-                  <TouchableOpacity onPress={()=>{this.setNotify();this.props.closeModal();}}>
+                  <TouchableOpacity onPress={()=>{this.setNotify();
+                    DeviceEventEmitter.emit('goback',  {isLogin:true})
+                    goBack();
+                  }}>
                   <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                   </TouchableOpacity>
-                    <Text style={titleCreate}>{this.props.labelTitle.toUpperCase()} </Text>
+                    <Text style={titleCreate}>{lang.setting_account.toUpperCase()} </Text>
                   <View></View>
               </View>
           </View>

@@ -15,7 +15,7 @@ import LogoHome from '../../src/icon/ic-home/Logo-home.png';
 import FacebookColor from '../../src/icon/Facebook_color.png';
 import GoogleColor from '../../src/icon/Google_color.png';
 const {height, width} = Dimensions.get('window');
-import {hasNumber,isEmail,xoa_dau,onlyLetters} from '../libs';
+import {hasNumber,isEmail,xoa_dau,onlyLetters,checkPassword} from '../libs';
 
 import faceApi from '../api/faceApi';
 import {FBLogin, FBLoginManager} from 'react-native-facebook-login';
@@ -24,6 +24,7 @@ var LoginBehavior = {
   'android': FBLoginManager.LoginBehaviors.WebView
 }
 
+var timeoutCheckPwd;
 export default class SignUpScreen extends Component {
   constructor(props) {
     super(props);
@@ -41,6 +42,7 @@ export default class SignUpScreen extends Component {
       err_repwd:'',
       errMsg:'',
       disable:false,
+      color_pwd:'#d9534f',
     }
     this.getLang();
   }
@@ -64,6 +66,7 @@ export default class SignUpScreen extends Component {
       if(error) return;
       const profile = JSON.parse(data.profile);
       //console.log(profile.picture.data.url);
+      if(profile.email===undefined || profile.email==='') return;
       faceApi(`${global.url}${'login-facebook'}`,profile).then(e =>{
         if(e.code===200){
           _this.props.navigation.navigate('MainScr');
@@ -127,7 +130,7 @@ export default class SignUpScreen extends Component {
     }
     if(pwd!==re_pwd) {this.setState({errMsg:lang.err_pwd_repwd});err=true;}
     if(err){
-      console.log('1',disable);
+      //console.log('1',disable);
       this.setState({disable:false});
       return false;
     }else{
@@ -150,13 +153,22 @@ export default class SignUpScreen extends Component {
       });
     }
   }
+
+  checkPwd = (pwd) => {
+    const {lang} = this.state;
+    //console.log(pwd);
+    timeoutCheckPwd = setTimeout(()=>{
+      let obj = checkPassword(pwd,lang.lang);
+      this.setState({err_pwd:obj.msg,color_pwd:obj.color});
+    },800);
+  }
   render() {
     const {
       container, imgLogo, title, txtInput,mrgTop,imgSoci,bgImg,
       btn, colorPress, contentWrap, btnWrap,forgotpwd,btnWrapSoci,
       txtErr,show,hide,flexStart,
     } = styles;
-    const {lang,errMsg,err_fullname, err_email,err_phone, err_pwd} =this.state;
+    const {lang,errMsg,err_fullname, err_email,err_phone, err_pwd,color_pwd} =this.state;
     const {navigate,goBack} = this.props.navigation;
     return (
 
@@ -206,10 +218,13 @@ export default class SignUpScreen extends Component {
               <TextInput underlineColorAndroid='transparent' style={txtInput} selectionColor='#5b89ab' placeholder={`${lang.pwd}`} placeholderTextColor="#ddd" secureTextEntry
               onSubmitEditing={(event)=> this.refs.repwd.focus()}
               maxLength={32} ref='pwd' value={this.state.pwd}
-              onChangeText={(pwd)=>this.setState({pwd})} />
+              onChangeText={(pwd)=>{this.setState({pwd},()=>{
+                clearTimeout(timeoutCheckPwd);
+                this.checkPwd(pwd);
+              })}} />
 
               <View style={[mrgTop,err_pwd !=='' ? show : hide]}>
-              <Text style={txtErr}>{err_pwd}</Text>
+              <Text style={{color:`${color_pwd}`}}>{err_pwd}</Text>
               </View>
 
               <TextInput underlineColorAndroid='transparent' style={txtInput} selectionColor='#5b89ab' placeholder={`${lang.re_pwd}`} placeholderTextColor="#ddd" secureTextEntry

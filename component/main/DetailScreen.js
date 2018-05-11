@@ -274,6 +274,7 @@ export default class DetailScreen extends Component {
         />
 
         <MapContent
+        lang={lang}
         distance={Number.parseFloat(listData.content.line).toFixed(0)}
         curLoc={this.state.curLoc}
         region={this.state.region}

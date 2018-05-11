@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import {
   View,Text,TouchableOpacity,Image,
   Dimensions,ScrollView,Alert,FlatList,
-  TextInput,
+  TextInput,DeviceEventEmitter,
 } from 'react-native';
 
 import getApi from '../../api/getApi';
@@ -124,23 +124,27 @@ export default class Collection extends Component {
   }
   render() {
     const { showPopup,showInput,showEdit,isFocus,name_coll } = this.state;
-    const { lang,navigation,curLoc,visible } = this.props;
+    const { lang,curLoc } = this.props.navigation.state.params;
+    const { goBack,navigate } = this.props.navigation;
     //console.log('visible',visible);
     const {
-      wrapSetting,headCatStyle,headContent,titleCreate,
+      container,headCatStyle,headContent,titleCreate,
       titleTab,titleActive,listCreate,widthLblCre,show,hide,popup,
       imgInfo,wrapInputCreImg,marTop,colorTitle,txt,txtTitleOverCat,
       closeCollection,
     } = styles;
     return (
-        <ScrollView style={[wrapSetting,visible ? show : hide]}>
+        <ScrollView style={container}>
         <View style={{paddingBottom:80}}>
           <View style={headCatStyle}>
               <View style={headContent}>
-                  <TouchableOpacity onPress={()=>{this.props.closeModal();}}>
+                  <TouchableOpacity onPress={()=>{
+                    DeviceEventEmitter.emit('goback',  {isLogin:true})
+                    goBack();
+                  }}>
                   <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                   </TouchableOpacity>
-                    <Text style={titleCreate}>{this.props.labelTitle.toUpperCase()} </Text>
+                    <Text style={titleCreate}>{lang.collection.toUpperCase()} </Text>
                   <View></View>
               </View>
           </View>
@@ -208,12 +212,12 @@ export default class Collection extends Component {
                        renderItem={({item}) => (
                          <View style={{marginRight:0,padding:10,width:(width)/2}}>
                            <TouchableOpacity onPress={()=>{
-                               navigation.navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc,lang})
+                               navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc,lang})
                            }}>
                            <Image source={{uri:`${global.url_media}${item.avatar}`}} style={{width:width/2,minHeight:width/3,marginBottom:10}} />
                            </TouchableOpacity>
                            <TouchableOpacity onPress={()=>{
-                               navigation.navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc,lang})
+                               navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc,lang})
                            }}>
                            <Text style={{color:'#2F353F',fontSize:16}} numberOfLines={2}>{item.name}</Text>
                            </TouchableOpacity>

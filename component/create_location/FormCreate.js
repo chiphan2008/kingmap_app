@@ -1,7 +1,7 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import {Platform, View, Text, StyleSheet, Dimensions, Image,Alert,
+import {Platform, View, Text, StyleSheet, Dimensions, Image,
   TextInput, TouchableOpacity,ScrollView,Modal,FlatList,AsyncStorage,
   BackHandler,
 } from 'react-native';
@@ -29,11 +29,16 @@ import upDD from '../../src/icon/ic-white/ic-dropdown_up.png';
 
 import cameraIC from '../../src/icon/ic-create/ic-camera.png';
 import nameLocationIC from '../../src/icon/ic-create/ic-name-location.png';
+import wifiIC from '../../src/icon/ic-create/ic-wifi.png';
+import passwifiIC from '../../src/icon/ic-create/ic-passwifi.png';
 import cateLocationIC from '../../src/icon/ic-create/ic-cate-location.png';
 import emailIC from '../../src/icon/ic-create/ic-email.png';
 import phoneIC from '../../src/icon/ic-create/ic-phone.png';
 import timeIC from '../../src/icon/ic-create/ic-time.png';
-import priceIC from '../../src/icon/ic-create/ic-price.png';
+import productIC from '../../src/icon/ic-create/ic-product.png';
+import movieIC from '../../src/icon/ic-create/ic-movie.png';
+import spaceIC from '../../src/icon/ic-create/ic-space.png';
+//import priceIC from '../../src/icon/ic-create/ic-price.png';
 import locationIC from '../../src/icon/ic-create/ic-location.png';
 import locationMapIC from '../../src/icon/ic-create/ic-location-map.png';
 import avatarIC from '../../src/icon/ic-create/ic-avatar.png';
@@ -44,8 +49,9 @@ import descriptionIC from '../../src/icon/ic-create/ic-description.png';
 import keywordsIC from '../../src/icon/ic-create/ic-keywords.png';
 import codeIC from '../../src/icon/ic-create/ic-code.png';
 
+import {hasNumber,getIndex} from '../libs';
 
-
+var timeoutLatLng;
 export default class FormCreate extends Component {
   constructor(props) {
     super(props);
@@ -59,10 +65,11 @@ export default class FormCreate extends Component {
 
       lat:'Lat 0.0',
       lng:'Lng 0.0',
-      txtFromPrice:'',
-      txtToPrice:'',
+      txtUserWifi:'',
+      txtPassWifi:'',
       open_from:'',
       open_to:'',
+      ListOpenTime:[],
       txtName:'',
       txtPhone:'',
       txtAddress:'',
@@ -74,6 +81,7 @@ export default class FormCreate extends Component {
       lblUnit: 'VND',
       showProduct:false,
       showImgMore:false,
+      showImgSpace:false,
       img_space:[],
       img_menu:[],
       img_video:[],
@@ -93,9 +101,9 @@ export default class FormCreate extends Component {
     }
     if(this.state.txtName===''){this.setState({errMsg:this.state.lang.enter_name});return false;}
     if(Object.entries(this.state.checkSubCat).length===0){this.setState({errMsg:this.state.lang.enter_classify});return false;}
-    if(this.state.open_from===''){this.setState({errMsg:this.state.lang.enter_time});return false;}
-    if(this.state.txtFromPrice===''){this.setState({errMsg:this.state.lang.enter_price_from});return false;}
-    if(this.state.txtToPrice===''){this.setState({errMsg:this.state.lang.enter_price_to});return false;}
+    if(this.state.ListOpenTime.length===0){this.setState({errMsg:this.state.lang.enter_time});return false;}
+    //if(this.state.txtFromPrice===''){this.setState({errMsg:this.state.lang.enter_price_from});return false;}
+    //if(this.state.txtToPrice===''){this.setState({errMsg:this.state.lang.enter_price_to});return false;}
     if(this.state.txtAddress===''){this.setState({errMsg:this.state.lang.enter_address});return false;}
     if(this.state.imgAvatar.path===undefined){this.setState({errMsg:this.state.lang.enter_avatar});return false;}
 
@@ -107,11 +115,15 @@ export default class FormCreate extends Component {
         arr.append('category_item[]',e[1]);
       }
     })
+    this.state.ListOpenTime.forEach((e,index)=>{
+      arr.append('date_open[]',e);
+    })
     arr.append('open_from',this.state.open_from);
     arr.append('open_to',this.state.open_to);
-    arr.append('price_from',this.state.txtFromPrice);
-    arr.append('price_to',this.state.txtToPrice);
-    arr.append('currency',this.state.lblUnit);
+    arr.append('txtUserWifi',this.state.txtUserWifi);
+    arr.append('txtPassWifi',this.state.txtPassWifi);
+    arr.append('phone',this.state.txtPhone);
+    //arr.append('currency',this.state.lblUnit);
     arr.append('country',this.state.idCountry);
     arr.append('city',this.state.idCity);
     arr.append('district',this.state.idDist);
@@ -180,12 +192,9 @@ export default class FormCreate extends Component {
     });
   }
 
-  setOpenTime(open_from,open_to){
-    this.setState({
-      open_from,
-      open_to,
-      showOpenTime:false
-    });
+  setOpenTime(ListOpenTime){
+    console.log('ListOpenTime',ListOpenTime);
+    this.setState({ListOpenTime,showOpenTime:false});
   }
 
   getIndexProduct(element,id){
@@ -214,7 +223,6 @@ export default class FormCreate extends Component {
   }
 
   removeGroup(id){
-
     const index = this.state.addGroupProduct.findIndex((e)=>this.getIndex(e,id));
     delete this.state.listProduct[id];
     this.setState({
@@ -234,21 +242,6 @@ export default class FormCreate extends Component {
     }
   }
 
-  handleFromPrice = (text) => {
-    if (/^\d+$/.test(text)) {
-      this.setState({ txtFromPrice: text });
-    }
-  }
-  handleToPrice = (text) => {
-    if (/^\d+$/.test(text)) {
-      this.setState({ txtToPrice: text });
-    }
-  }
-
-
-  createService(service,category){
-
-  }
   uploadAvatar(){
     ImagePicker.openPicker({
       cropping: false
@@ -261,12 +254,14 @@ export default class FormCreate extends Component {
     getApi(url).then(e=>{
       let arrDataAddr = e.results[0].address_components;
       let arrDataLoc = e.results[0].geometry.location;
-      //console.log(arrDataLoc);
-      this.setState({
-        txtAddress: `${arrDataAddr[0].long_name} ${arrDataAddr[1].long_name}`,
-        lat:arrDataLoc.lat,
-        lng:arrDataLoc.lng,
-      })
+      timeoutLatLng = setTimeout(()=>{
+        this.setState({
+          txtAddress: `${arrDataAddr[0].long_name} ${arrDataAddr[1].long_name}`,
+          lat:arrDataLoc.lat,
+          lng:arrDataLoc.lng,
+        })
+      },800)
+
     })
   }
   submitImage(space,menu,video){
@@ -329,15 +324,124 @@ export default class FormCreate extends Component {
           <Image source={nameLocationIC} style={imgInfo} />
           </View>
           <TextInput underlineColorAndroid='transparent'
-          returnKeyType = {"next"}
-          autoFocus = {true}
-          onSubmitEditing={(event) => {this.refs.FromPrice.focus();}}
-          placeholder={this.state.lang.name_location} style={wrapInputCreImg}
-          onChangeText={(txtName) => this.setState({txtName})}
-          value={this.state.txtName}
+            returnKeyType = {"next"} autoFocus = {true}
+            onSubmitEditing={(event) => {this.refs.Address.focus();}}
+            placeholder={this.state.lang.name_location} style={wrapInputCreImg}
+            onChangeText={(txtName) => this.setState({txtName})}
+            value={this.state.txtName}
            />
           <View style={{width:15}}>
           <TouchableOpacity style={this.state.txtName!=='' ? show : hide} onPress={()=>{this.setState({txtName:''})}}>
+          <Image source={closeIC} style={imgShare} />
+          </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={listCreate}>
+          <View style={widthLblCre}>
+          <Image source={locationIC} style={imgInfo} />
+          </View>
+          <TextInput underlineColorAndroid='transparent'
+          onChangeText={(txtAddress) => { this.setState({txtAddress}) } }
+          value={this.state.txtAddress} ref='Address' returnKeyType = {"next"}
+          onBlur={()=>{
+            if(this.state.txtAddress!==''){
+              clearTimeout(timeoutLatLng);
+              this.getLatLng(this.state.txtAddress)
+            }
+          }}
+          onSubmitEditing={(event) => {  this.refs.Des.focus(); clearTimeout(timeoutLatLng);this.getLatLng(this.state.txtAddress);  }}
+          placeholder={this.state.lang.address} style={wrapInputCreImg} />
+          <View style={{width:15}}>
+          <TouchableOpacity style={this.state.txtAddress!=='' ? show : hide}
+          onPress={()=>{this.setState({txtAddress:'',lat:'Lat 0.0',lng:'Lng 0.0',})}}>
+          <Image source={closeIC} style={imgShare} />
+          </TouchableOpacity>
+          </View>
+        </View>
+
+        <TouchableOpacity style={listCreate}
+        onPress={()=>this.setState({showOpenTime:!this.state.showOpenTime})}>
+        <View style={{flexDirection:'row'}}>
+            <View style={widthLblCre}>
+              <Image source={timeIC} style={imgInfo} />
+            </View>
+            <View style={{paddingLeft:15}}>
+              <Text style={colorlbl}>{this.state.lang.open_time}</Text>
+              </View>
+          </View>
+          <Image source={arrowNextIC} style={imgShare}/>
+        </TouchableOpacity>
+
+        <View style={listCreate}>
+        <View style={widthLblCre}>
+          <Image source={descriptionIC} style={imgInfo} />
+        </View>
+          <TextInput underlineColorAndroid='transparent'
+          multiline
+          numberOfLines={4}
+          maxHeight={65}
+          onChangeText={(txtDes) => this.setState({txtDes})}
+          value={this.state.txtDes}
+          ref='Des' returnKeyType = {"next"}
+          onSubmitEditing={(event) => {  this.refs.UserWifi.focus();  }}
+          placeholder={this.state.lang.description} style={wrapInputCreImg} />
+          <View style={{width:15}}>
+          <TouchableOpacity style={this.state.txtDes!=='' ? show : hide} onPress={()=>{this.setState({txtDes:''})}}>
+          <Image source={closeIC} style={imgShare} />
+          </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={listCreate}>
+          <View style={widthLblCre}>
+          <Image source={wifiIC} style={imgInfo} />
+          </View>
+          <TextInput underlineColorAndroid='transparent'
+            returnKeyType = {"next"} ref='UserWifi'
+            onSubmitEditing={(event) => {this.refs.PassWifi.focus();}}
+            placeholder={this.state.lang.name_wifi} style={wrapInputCreImg}
+            onChangeText={(txtUserWifi) => this.setState({txtUserWifi})}
+            value={this.state.txtUserWifi}
+           />
+          <View style={{width:15}}>
+          <TouchableOpacity style={this.state.txtUserWifi!=='' ? show : hide} onPress={()=>{this.setState({txtUserWifi:''})}}>
+          <Image source={closeIC} style={imgShare} />
+          </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={listCreate}>
+          <View style={widthLblCre}>
+          <Image source={passwifiIC} style={imgInfo} />
+          </View>
+          <TextInput underlineColorAndroid='transparent'
+            returnKeyType = {"next"} ref='PassWifi'
+            onSubmitEditing={(event) => {this.refs.Phone.focus();}}
+            placeholder={this.state.lang.pass_wifi} style={wrapInputCreImg}
+            onChangeText={(txtPassWifi) => this.setState({txtPassWifi})}
+            value={this.state.txtPassWifi}
+           />
+          <View style={{width:15}}>
+          <TouchableOpacity style={this.state.txtPassWifi!=='' ? show : hide} onPress={()=>{this.setState({txtPassWifi:''})}}>
+          <Image source={closeIC} style={imgShare} />
+          </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={listCreate}>
+          <View style={widthLblCre}>
+          <Image source={phoneIC} style={imgInfo} />
+          </View>
+          <TextInput underlineColorAndroid='transparent'
+            returnKeyType = {"next"} ref='Phone'
+            onSubmitEditing={(event) => {this.refs.KW.focus();}}
+            placeholder={this.state.lang.phone} style={wrapInputCreImg}
+            onChangeText={(txtPhone) => this.setState({txtPhone})}
+            value={this.state.txtPhone}
+           />
+          <View style={{width:15}}>
+          <TouchableOpacity style={this.state.txtPhone!=='' ? show : hide} onPress={()=>{this.setState({txtPhone:''})}}>
           <Image source={closeIC} style={imgShare} />
           </TouchableOpacity>
           </View>
@@ -356,22 +460,9 @@ export default class FormCreate extends Component {
           <Image source={arrowNextIC} style={imgShare}/>
         </TouchableOpacity>
 
-        <TouchableOpacity style={listCreate}
-        onPress={()=>this.setState({showOpenTime:!this.state.showOpenTime})}>
-        <View style={{flexDirection:'row'}}>
-            <View style={widthLblCre}>
-              <Image source={timeIC} style={imgInfo} />
-            </View>
-            <View style={{paddingLeft:15}}>
-              <Text style={colorlbl}>{this.state.lang.open_time}</Text>
-              </View>
-          </View>
 
-          <Image source={arrowNextIC} style={imgShare}/>
 
-        </TouchableOpacity>
-
-        <View style={listCreate}>
+        {/*<View style={listCreate}>
           <View style={{flexDirection:'row'}}>
             <View style={widthLblCre}>
             <Image source={priceIC} style={imgInfo} />
@@ -382,31 +473,67 @@ export default class FormCreate extends Component {
           </View>
 
           <View style={{flexDirection:'row'}}>
-          <TextInput underlineColorAndroid='transparent'
-          placeholder={this.state.lang.price_from}
-          keyboardType={'numeric'}
-          ref='FromPrice'
-          returnKeyType = {"next"}
-          onSubmitEditing={(event) => {  this.refs.ToPrice.focus();  }}
-          style={{borderBottomWidth:1,borderBottomColor:'#DFE7ED',padding:0,width:70}}
-          onChangeText={(txtFromPrice) => this.handleFromPrice(txtFromPrice)}
-          value={this.state.txtFromPrice} />
-          <Text style={colorlbl}> - </Text>
-          <TextInput underlineColorAndroid='transparent'
-          placeholder={this.state.lang.price_to}
-          keyboardType={'numeric'}
-          ref='ToPrice'
-          returnKeyType = {"next"}
-          onSubmitEditing={(event) => {  this.refs.Address.focus();  }}
-          style={{borderBottomWidth:1,borderBottomColor:'#DFE7ED',padding:0,width:70}}
-          onChangeText={(txtToPrice) => this.handleToPrice(txtToPrice)}
-          value={this.state.txtToPrice} />
+            <TextInput underlineColorAndroid='transparent'
+            placeholder={this.state.lang.price_from}
+            keyboardType={'numeric'}
+            ref='FromPrice'
+            returnKeyType = {"next"}
+            onSubmitEditing={(event) => {  this.refs.ToPrice.focus();  }}
+            style={{borderBottomWidth:1,borderBottomColor:'#DFE7ED',padding:0,width:70}}
+            onChangeText={(txtFromPrice) => this.handleFromPrice(txtFromPrice)}
+            value={this.state.txtFromPrice} />
 
-          <TouchableOpacity
-          onPress={()=>{ this.setState({ lblUnit:this.state.lblUnit==='VND' ? 'USD' : 'VND' });}}
-          style={{width:50,backgroundColor:'#d0021b',borderRadius:3,padding:5,marginLeft:7}}>
-            <Text numberOfLines={1} style={txtKV}>{this.state.lblUnit}</Text>
-          </TouchableOpacity>
+            <Text style={colorlbl}> - </Text>
+
+            <TextInput underlineColorAndroid='transparent'
+            placeholder={this.state.lang.price_to}
+            keyboardType={'numeric'}
+            ref='ToPrice'
+            returnKeyType = {"next"}
+            onSubmitEditing={(event) => {  this.refs.Address.focus();  }}
+            style={{borderBottomWidth:1,borderBottomColor:'#DFE7ED',padding:0,width:70}}
+            onChangeText={(txtToPrice) => this.handleToPrice(txtToPrice)}
+            value={this.state.txtToPrice} />
+
+            <TouchableOpacity
+            onPress={()=>{ this.setState({ lblUnit:this.state.lblUnit==='VND' ? 'USD' : 'VND' });}}
+            style={{width:50,backgroundColor:'#d0021b',borderRadius:3,padding:5,marginLeft:7}}>
+              <Text numberOfLines={1} style={txtKV}>{this.state.lblUnit}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>*/}
+        <View style={{height:15}}></View>
+
+        <View style={listCreate}>
+          <View style={{flexDirection:'row'}}>
+            <View style={widthLblCre}>
+              <Image source={locationMapIC} style={imgInfo} />
+            </View>
+              <View style={{paddingLeft:15}}>
+              <Text style={colorlbl}>{this.state.lang.location_map}</Text>
+              </View>
+          </View>
+            <View style={{flexDirection:'row'}}>
+            <Text>{Number(this.state.lat).toFixed(6)==='NaN' ? this.state.lat : Number(this.state.lat).toFixed(6)} - {Number(this.state.lng).toFixed(6)==='NaN' ? this.state.lng : Number(this.state.lng).toFixed(6)}</Text>
+            </View>
+        </View>
+
+        <View style={listCreate}>
+          <View style={widthLblCre}>
+            <Image source={keywordsIC} style={imgInfo} />
+          </View>
+
+          <TextInput underlineColorAndroid='transparent'
+          multiline numberOfLines={4} maxHeight={65}
+          onChangeText={(txtKW) => this.setState({txtKW})}
+          value={this.state.txtKW} ref='KW' returnKeyType = {"next"}
+          onSubmitEditing={(event) => {  this.refs.Code.focus();  }}
+          placeholder={this.state.lang.keyword} style={wrapInputCreImg} />
+
+          <View style={{width:15}}>
+            <TouchableOpacity style={this.state.txtKW!=='' ? show : hide} onPress={()=>{this.setState({txtKW:''})}}>
+            <Image source={closeIC} style={imgShare} />
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -423,6 +550,51 @@ export default class FormCreate extends Component {
           <TouchableOpacity style={imgCamera}
           onPress={()=>this.uploadAvatar()}>
           <Image source={cameraIC} style={imgShare}/>
+          </TouchableOpacity>
+        </View>
+
+        <View style={listCreate}>
+            <View style={{flexDirection:'row'}}>
+              <View style={widthLblCre}>
+                <Image source={spaceIC} style={imgInfo} />
+              </View>
+              <View style={{paddingLeft:15}}>
+                <Text style={colorlbl}>{this.state.lang.space}</Text>
+                </View>
+            </View>
+          <TouchableOpacity style={imgCamera}
+          onPress={()=>{}}>
+          <Image source={cameraIC} style={imgShare}/>
+          </TouchableOpacity>
+        </View>
+
+        <View style={listCreate}>
+            <View style={{flexDirection:'row'}}>
+              <View style={widthLblCre}>
+                <Image source={productIC} style={imgInfo} />
+              </View>
+              <View style={{paddingLeft:15}}>
+                <Text style={colorlbl}>{this.state.lang.product_image}</Text>
+                </View>
+            </View>
+          <TouchableOpacity style={imgCamera}
+          onPress={()=>{}}>
+          <Image source={cameraIC} style={imgShare}/>
+          </TouchableOpacity>
+        </View>
+
+        <View style={listCreate}>
+            <View style={{flexDirection:'row'}}>
+              <View style={widthLblCre}>
+                <Image source={galleryIC} style={imgInfo} />
+              </View>
+              <View style={{paddingLeft:15}}>
+                <Text style={colorlbl}>Video</Text>
+                </View>
+            </View>
+          <TouchableOpacity style={imgCamera}
+          onPress={()=>{}}>
+          <Image source={movieIC} style={imgShare}/>
           </TouchableOpacity>
         </View>
 
@@ -443,89 +615,8 @@ export default class FormCreate extends Component {
           submitImage={this.submitImage.bind(this)}
           showImgMore={this.state.showImgMore}
           closeModal={()=>this.setState({showImgMore:false})} />
+
         <View style={{height:15}}></View>
-
-        <View style={listCreate}>
-          <View style={{flexDirection:'row'}}>
-            <View style={widthLblCre}>
-              <Image source={locationMapIC} style={imgInfo} />
-            </View>
-              <View style={{paddingLeft:15}}>
-              <Text style={colorlbl}>{this.state.lang.location_map}</Text>
-              </View>
-          </View>
-            <View style={{flexDirection:'row'}}>
-            <Text>{Number(this.state.lat).toFixed(6)==='NaN' ? this.state.lat : Number(this.state.lat).toFixed(6)} - {Number(this.state.lng).toFixed(6)==='NaN' ? this.state.lng : Number(this.state.lng).toFixed(6)}</Text>
-            </View>
-        </View>
-
-
-        <View style={listCreate}>
-          <View style={widthLblCre}>
-          <Image source={locationIC} style={imgInfo} />
-          </View>
-          <TextInput underlineColorAndroid='transparent'
-          onChangeText={(txtAddress) => this.setState({txtAddress})}
-          value={this.state.txtAddress}
-          ref='Address'
-          returnKeyType = {"next"}
-          onBlur={()=>{
-            if(this.state.txtAddress!==''){
-              this.getLatLng(this.state.txtAddress)
-            }
-          }}
-          onSubmitEditing={(event) => {  this.refs.Des.focus(); this.getLatLng(this.state.txtAddress);  }}
-          placeholder={this.state.lang.address} style={wrapInputCreImg} />
-          <View style={{width:15}}>
-          <TouchableOpacity style={this.state.txtAddress!=='' ? show : hide}
-          onPress={()=>{this.setState({txtAddress:'',lat:'Lat 0.0',lng:'Lng 0.0',})}}>
-          <Image source={closeIC} style={imgShare} />
-          </TouchableOpacity>
-          </View>
-        </View>
-
-        <View style={listCreate}>
-        <View style={widthLblCre}>
-          <Image source={descriptionIC} style={imgInfo} />
-        </View>
-          <TextInput underlineColorAndroid='transparent'
-          multiline
-          numberOfLines={4}
-          maxHeight={65}
-          onChangeText={(txtDes) => this.setState({txtDes})}
-          value={this.state.txtDes}
-          ref='Des'
-          returnKeyType = {"next"}
-          onSubmitEditing={(event) => {  this.refs.KW.focus();  }}
-          placeholder={this.state.lang.description} style={wrapInputCreImg} />
-          <View style={{width:15}}>
-          <TouchableOpacity style={this.state.txtDes!=='' ? show : hide} onPress={()=>{this.setState({txtDes:''})}}>
-          <Image source={closeIC} style={imgShare} />
-          </TouchableOpacity>
-          </View>
-        </View>
-
-        <View style={listCreate}>
-        <View style={widthLblCre}>
-          <Image source={keywordsIC} style={imgInfo} />
-        </View>
-          <TextInput underlineColorAndroid='transparent'
-          multiline
-          numberOfLines={4}
-          maxHeight={65}
-          onChangeText={(txtKW) => this.setState({txtKW})}
-          value={this.state.txtKW}
-          ref='KW'
-          returnKeyType = {"next"}
-          onSubmitEditing={(event) => {  this.refs.Code.focus();  }}
-          placeholder={this.state.lang.keyword} style={wrapInputCreImg} />
-          <View style={{width:15}}>
-          <TouchableOpacity style={this.state.txtKW!=='' ? show : hide} onPress={()=>{this.setState({txtKW:''})}}>
-          <Image source={closeIC} style={imgShare} />
-          </TouchableOpacity>
-          </View>
-        </View>
-          <View style={{height:15}}></View>
 
         <TouchableOpacity style={listCreate} onPress={()=>this.setState({showProduct:!this.state.showProduct})}>
           <View style={{flexDirection:'row'}}>

@@ -9,11 +9,7 @@ const {height, width} = Dimensions.get('window');
 
 import UpdateInfo from './UpdateInfo';
 import Setting from './Setting';
-import ListCheckin from './ListCheckin';
-import LikeLocation from './LikeLocation';
-import ListLocation from './ListLocation';
-import Collection from './Collection';
-import ChangeOwner from './ChangeOwner';
+//import Collection from './Collection';
 
 import styles from '../../styles';
 import global from '../../global';
@@ -48,13 +44,6 @@ export default class PersonalTab extends Component {
       curLoc:{},
       countEntry:{},
       user_profile:{},
-      showUpdateInfo:false,
-      showSetting:false,
-      showCheckin:false,
-      showLikeLoc:false,
-      showListLoc:false,
-      showCollection:false,
-      showOwner:false,
     };
     this.getLoc();
     getLanguage().then((e) =>{
@@ -139,10 +128,9 @@ export default class PersonalTab extends Component {
   }
 
   render() {
-    const {lang, valSearch, curLoc, isLogin, user_profile,
-    showUpdateInfo,countEntry,showCheckin,showLikeLoc,
-    showListLoc,showCollection,showSetting,showOwner,
-  } = this.state;
+    const {
+      lang, valSearch, curLoc, isLogin, user_profile, countEntry,
+    } = this.state;
     //console.log(lang);
     const {navigate} = this.props.navigation;
     //console.log("this.props.Hometab=",this.props);
@@ -279,16 +267,10 @@ export default class PersonalTab extends Component {
               <View>
                 <View style={[rowItem]}>
                   <Image source={infoIC} style={imgIconPerInfo} />
-                  <TouchableOpacity style={padPerInfo} onPress={()=>this.setState({showUpdateInfo:true})}>
+                  <TouchableOpacity style={padPerInfo} onPress={()=>{navigate('UpdateInfoScr',{lang,userId:user_profile.id})}}>
                   <Text style={titlePer}>{`${lang.info_per}`}</Text>
                   </TouchableOpacity>
-                  <UpdateInfo
-                  //navigation={this.props.navigation}
-                  lang={lang}
-                  userId={user_profile.id}
-                  labelTitle={`${lang.info_per}`}
-                  visible={showUpdateInfo}
-                  closeModal={()=>{this.setState({showUpdateInfo:false});this.refresh()}} />
+
                 </View>
               <View style={borderItemInfoPer}></View>
             </View>
@@ -296,7 +278,7 @@ export default class PersonalTab extends Component {
             <View>
               <View style={[rowItem]}>
                 <Image source={changeIC} style={imgIconPerInfo} />
-                <TouchableOpacity style={padPerInfo} onPress={()=>this.setState({showOwner:true})}>
+                <TouchableOpacity style={padPerInfo} onPress={()=>navigate('ChangeOwnerScr',{lang,userId:user_profile.id})}>
                 <Text style={titlePer}>{`${lang.change_owner}`}</Text>
                 </TouchableOpacity>
               </View>
@@ -308,7 +290,7 @@ export default class PersonalTab extends Component {
             <View>
               <View style={[rowItem]}>
                 <Image source={locationIC} style={imgIconPerInfo} />
-                <TouchableOpacity style={padPerInfo} onPress={()=>this.setState({showCheckin:true})}>
+                <TouchableOpacity style={padPerInfo} onPress={()=>navigate('ListCheckinScr',{lang,curLoc})}>
                 <Text style={titlePer}>{`${'Check in'} (${countEntry.count_checkin})`}</Text>
                 </TouchableOpacity>
               </View>
@@ -318,7 +300,7 @@ export default class PersonalTab extends Component {
             <View>
               <View style={[rowItem]}>
                 <Image source={starIC} style={imgIconPerInfo} />
-                <TouchableOpacity style={padPerInfo} onPress={()=>this.setState({showLikeLoc:true})}>
+                <TouchableOpacity style={padPerInfo} onPress={()=>navigate('LikeLocationScr',{lang,curLoc})}>
                 <Text style={titlePer}>{`${lang.like_location} (${countEntry.count_like})`}</Text>
                 </TouchableOpacity>
               </View>
@@ -329,7 +311,7 @@ export default class PersonalTab extends Component {
             <View>
               <View style={[rowItem]}>
                 <Image source={collectionIC} style={imgIconPerInfo} />
-                <TouchableOpacity style={padPerInfo} onPress={()=>this.setState({showCollection:true})}>
+                <TouchableOpacity style={padPerInfo} onPress={()=>{navigate('CollectionScr',{lang,curLoc})}}>
                 <Text style={titlePer}>{`${lang.collection} (${countEntry.count_collection})`}</Text>
                 </TouchableOpacity>
               </View>
@@ -341,7 +323,7 @@ export default class PersonalTab extends Component {
               <View style={[rowItem]}>
                 <Image source={menuIC} style={imgIconPerInfo} />
                 <TouchableOpacity style={padPerInfo}
-                onPress={()=>this.setState({showListLoc:true})}>
+                onPress={()=>{navigate('ListLocPerScr',{lang,curLoc})}}>
                 <Text style={titlePer}>{`${lang.list_location} (${countEntry.count_location})`}</Text>
                 </TouchableOpacity>
               </View>
@@ -357,7 +339,7 @@ export default class PersonalTab extends Component {
               <View>
                 <View style={[rowItem]}>
                   <Image source={settingIC} style={imgIconPerInfo} />
-                  <TouchableOpacity style={padPerInfo} onPress={()=>this.setState({showSetting:true})}>
+                  <TouchableOpacity style={padPerInfo} onPress={()=>navigate('SettingScr',{lang})}>
                   <Text style={titlePer}>{`${lang.setting_account}`}</Text>
                   </TouchableOpacity>
 
@@ -379,52 +361,7 @@ export default class PersonalTab extends Component {
 
         </ScrollView>
 
-        <ChangeOwner
-        lang={lang}
-        userId={user_profile.id}
-        title={lang.change_owner}
-        visible={showOwner}
-        closeModal={()=>{this.setState({showOwner:false});Keyboard.dismiss()}}
-        />
 
-        <ListLocation
-        lang={lang}
-        curLoc={curLoc}
-        navigation={this.props.navigation}
-        labelTitle={lang.list_location}
-        visible={showListLoc}
-        closeModal={()=>this.setState({showListLoc:false})}
-        />
-        <LikeLocation
-        lang={lang}
-        curLoc={curLoc}
-        navigation={this.props.navigation}
-        labelTitle={lang.like_location}
-        visible={showLikeLoc}
-        closeModal={()=>this.setState({showLikeLoc:false})}
-        />
-        <ListCheckin
-        lang={lang}
-        curLoc={curLoc}
-        navigation={this.props.navigation}
-        labelTitle={'Check in'}
-        visible={showCheckin}
-        closeModal={()=>{this.setState({showCheckin:false});this.refresh();}}
-        />
-        <Collection
-        lang={lang}
-        curLoc={curLoc}
-        navigation={this.props.navigation}
-        labelTitle={lang.collection}
-        visible={showCollection}
-        closeModal={()=>this.setState({showCollection:false})}
-        />
-        <Setting
-        navigation={this.props.navigation}
-        userId={user_profile.id}
-        labelTitle={`${lang.setting_account}`}
-        visible={showSetting}
-        closeModal={()=>{this.setState({showSetting:false});this.refresh();}} />
       </View>
     );
   }

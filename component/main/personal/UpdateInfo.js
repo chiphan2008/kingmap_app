@@ -2,8 +2,9 @@
 
 import React, { Component } from 'react';
 import {
-  View,Text,Modal,TouchableOpacity,Image,BackHandler,
+  View,Text,TouchableOpacity,Image,DeviceEventEmitter,
   TextInput,Dimensions,ScrollView,Alert,AsyncStorage,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import Moment from 'moment';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -116,7 +117,7 @@ export default class UpdateInfo extends Component {
     if(err) {
       return  Alert.alert(lang.err,errMsg );
     }else {
-
+      const {userId} = this.props.navigation.state.params;
       const arr = new FormData();
       arr.append('full_name',full_name);
       arr.append('birthday',`${yDay}-${mDay}-${dDay}`);
@@ -131,7 +132,7 @@ export default class UpdateInfo extends Component {
         });
       }
       //console.log(`${global.url}${'user/update/'}${this.props.userId}`);
-      postApi(`${global.url}${'user/update/'}${this.props.userId}`,arr).then(e=>{
+      postApi(`${global.url}${'user/update/'}${userId}`,arr).then(e=>{
         //console.log(e);
         if(e.code===200){
           encodeApi(`${global.url_node}${'person'}`,'POST',e.data);
@@ -152,9 +153,9 @@ export default class UpdateInfo extends Component {
       }
     }
   }
-  onBackPress () {
-      this.props.closeModal();
-      return true
+  closeModal () {
+    DeviceEventEmitter.emit('goback',  {isLogin:true})
+    this.props.navigation.goBack();
    }
 
   render() {
@@ -164,23 +165,21 @@ export default class UpdateInfo extends Component {
       imgInfo,wrapInputCreImg,marTop,colorErr,btnInfo,btnYInfo,colorTitle,
       wrapBtnInfo,wrapInfo,show,hide,posDay,posMonth,posYear,widthDay,widthYear,
     } = styles;
-    const {labelTitle,lang,visible} = this.props;
+    const {lang} = this.props.navigation.state.params;
     const {listDay,listMonth,listYear,showDay,showMonth,showYear,disable} = this.state;
     return (
-      <Modal
-      onRequestClose={() => null}
-      transparent
-      animationType={'slide'}
-      visible={visible}
-      >
+
       <ScrollView scrollEnabled={disable} horizontalScroll={disable}>
+      <TouchableWithoutFeedback onPress={()=>{
+        this.setState({showDay:false,showMonth:false,showYear:false,disable:true})
+      }}>
         <View style={wrapper}>
           <View style={headCatStyle}>
               <View style={headContent}>
-                  <TouchableOpacity onPress={()=>this.props.closeModal()}>
+                  <TouchableOpacity onPress={()=>{this.closeModal()}}>
                   <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                   </TouchableOpacity>
-                    <Text style={titleCreate}>{labelTitle.toUpperCase()} </Text>
+                    <Text style={titleCreate}>{lang.info_per.toUpperCase()} </Text>
                   <TouchableOpacity onPress={()=>this.updateUser()}>
                   <Text style={titleCreate}>{lang.save} </Text>
                   </TouchableOpacity>
@@ -188,7 +187,7 @@ export default class UpdateInfo extends Component {
           </View>
 
          <View style={{height:150,justifyContent:'center',alignItems:'center'}}>
-          <Image source={{isStatic:true,uri:this.state.avatar}} style={{width:90,height:90,borderRadius:45}} />
+          {this.state.avatar!=='' && <Image source={{isStatic:true,uri:this.state.avatar}} style={{width:90,height:90,borderRadius:45}} />}
           <TouchableOpacity style={{position:'absolute',top:90,right:(width/2)-45,padding:6,borderRadius:13,backgroundColor:'#fff',}}
           onPress={()=>this.uploadAvatar()}>
           <Image source={cameraIC} style={{width:16,height:16,}} />
@@ -214,7 +213,7 @@ export default class UpdateInfo extends Component {
              <Image source={dateIC} style={imgInfo} />
              </View>
 
-              <View style={{flexDirection:'row',width:width-100,alignItems:'center',position:'relative',overflow:'visible'}}>
+              <View style={{flexDirection:'row',width:width-100,alignItems:'center',overflow:'visible'}}>
 
                 <TouchableOpacity style={btnInfo}
                 onPress={()=>{
@@ -353,8 +352,9 @@ export default class UpdateInfo extends Component {
          </View>
 
       </View>
+      </TouchableWithoutFeedback>
+
       </ScrollView>
-    </Modal>
     );
   }
 }

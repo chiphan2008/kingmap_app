@@ -40,5 +40,9 @@ module.exports = {
   err_repwd:'Please confirm password',
   err_pwd_repwd:'Confirm password is not matching',
   update_success:'Update success',
+  notify_pwd_length:'Passwords must be at least 6 characters',
+  notify_pwd_weak:'Weak password (Password should have letters, numbers, capital letters, special characters)',
+  notify_pwd_medium:'Medium password',
+  notify_pwd_strong:'Strong password',
   lang:'en',
 };

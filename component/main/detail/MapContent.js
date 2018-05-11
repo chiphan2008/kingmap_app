@@ -50,14 +50,12 @@ export default class MapContent extends Component {
       a=null,h=0,i=0;do a=t.charCodeAt(u++)-63,i|=(31&a)<<h,h+=5;while(a>=32);n=1&i?~(i>>1):i>>1,h=i=0;do a=t.charCodeAt(u++)-63,i|=(31&a)<<h,h+=5;
       while(a>=32);o=1&i?~(i>>1):i>>1,l+=n,r+=o,d.push([l/c,r/c])}return d=d.map(function(t){return{latitude:t[0],longitude:t[1]}})
   }
-  componentDidMount(){
-    console.log('componentDidMount');
-  }
+
 
   render() {
-    const { curLoc,region,distance } = this.props;
+    const { curLoc,region,distance,lang } = this.props;
     const {showFullScreen,direct} = this.state;
-    //console.log('direct',direct);
+    //console.log('lang',lang);
     //console.log('region',region.latlng);
     //console.log('curLoc',curLoc.latitude,curLoc.longitude);
     return (
@@ -105,7 +103,10 @@ export default class MapContent extends Component {
           >
 
           {curLoc.latitude!==undefined &&
-            <MapView.Marker coordinate={{latitude: Number(curLoc.latitude),longitude: Number(curLoc.longitude)}} />}
+            <MapView.Marker coordinate={{latitude: Number(curLoc.latitude),longitude: Number(curLoc.longitude)}}>
+            {/*<View><Text>{lang.your_current_location}</Text></View>*/}
+            </MapView.Marker>
+          }
 
           {this.state.coords[0]!==undefined &&
               <MapView.Polyline coordinates={this.state.coords} strokeWidth={4} strokeColor='#BE2827' />
@@ -117,6 +118,7 @@ export default class MapContent extends Component {
             }}
             image={ Platform.OS==='android' ? logoMap : null}
             >
+            {/*<Text>{distance}</Text>*/}
             {Platform.OS==='ios' && <Image source={logoMap} style={{width:57,height:50}} />}
           </MapView.Marker>
           </MapView>}

@@ -30,7 +30,7 @@ export default class ChooseCat extends Component {
   }
 
   getCategory(lang){
-    getApi(global.url+'categories?language='+lang)
+    getApi(global.url+'categories?language='+lang+'&limit=500')
     .then(arrCategory => {
         this.setState({ listCategory: arrCategory.data });
     })
@@ -91,6 +91,7 @@ export default class ChooseCat extends Component {
                  <Text>{item.name}</Text>
              </TouchableOpacity>
            )}
+           style={{marginBottom:170}}
            keyExtractor={item => item.id}
          />
          </View>

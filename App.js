@@ -63,6 +63,15 @@ import SignUpScreen from './component/page_user/SignUpScreen';
 import ForgotPasswordScreen from './component/page_user/ForgotPasswordScreen';
 import VerifyAccountScreen from './component/page_user/VerifyAccountScreen';
 import checkLocation from './component/api/checkLocation';
+//LikeLocation,ListCheckin,UpdateInfo,Collection
+import ChangeOwner from './component/main/personal/ChangeOwner';
+import ListLocPer from './component/main/personal/ListLocPer';
+import LikeLocation from './component/main/personal/LikeLocation';
+import UpdateInfo from './component/main/personal/UpdateInfo';
+import Setting from './component/main/personal/Setting';
+import Collection from './component/main/personal/Collection';
+import ListCheckin from './component/main/personal/ListCheckin';
+
 const {width,height} = Dimensions.get('window');
 
 export default class App extends Component {
@@ -138,6 +147,7 @@ export default class App extends Component {
     },{
       headerMode: 'none',
     });
+
 
 
     const RootTabs = TabNavigator({
@@ -237,6 +247,13 @@ export default class App extends Component {
       ChooseCatScr: {
         screen: ChooseCat,
       },
+      ChangeOwnerScr: { screen : ChangeOwner },
+      ListLocPerScr: { screen : ListLocPer },
+      CollectionScr: { screen : Collection },
+      SettingScr: { screen : Setting },
+      UpdateInfoScr: { screen : UpdateInfo },
+      LikeLocationScr: { screen : LikeLocation },
+      ListCheckinScr: { screen : ListCheckin },
       FormCreateScr: {
         screen: FormCreate,
       },

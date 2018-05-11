@@ -1,5 +1,11 @@
 import Intl from 'intl';
 import 'intl/locale-data/jsonp/en';
+import lang_en from './lang/en/user/language';
+import lang_vn from './lang/vn/user/language';
+
+export function getIndex(element,id){
+  return element.key==id;
+}
 
 export function format_number(value,dv=null){
   if(value>1000 && dv !==null) {
@@ -50,6 +56,40 @@ export function chanelVideo(link,height=null){
     if(height===null) height=300;
     return `https://www.facebook.com/plugins/video.php?height=${height}&href=${link}`;
   }
+}
+export function checkPassword(pass,lang){
+  var obj ={};
+    var language = lang==='vn' ? lang_vn : lang_en;
+    var strongRegex = new RegExp("^(?=.{10,})(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).*$", "g");
+    var mediumRegex = new RegExp("^(?=.{8,})(((?=.*[A-Z])(?=.*[a-z]))|((?=.*[A-Z])(?=.*[0-9]))|((?=.*[a-z])(?=.*[0-9]))).*$", "g");
+    var enoughRegex = new RegExp("(?=.{6,}).*", "g");
+
+    if (false == enoughRegex.test(pass)) {
+      obj = {
+        color:'#d9534f',
+        msg : language.notify_pwd_length
+      };
+
+    } else if (strongRegex.test(pass)) {
+      obj = {
+        color:'#5cb85c',
+        msg : language.notify_pwd_strong
+      };
+
+    } else if (mediumRegex.test(pass)) {
+      obj = {
+        color:'#f0ad4e',
+        msg : language.notify_pwd_medium
+      };
+
+    } else {
+      obj = {
+        color:'#f0ad4e',
+        msg : language.notify_pwd_weak
+      };
+
+    }
+    return obj;
 }
 
 export function isEmail(text){

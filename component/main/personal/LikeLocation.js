@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import {
   View,Text,TouchableOpacity,Image,
-  Dimensions,ScrollView,Alert,
+  Dimensions,ScrollView,Alert,DeviceEventEmitter,
 } from 'react-native';
 
 import getApi from '../../api/getApi';
@@ -61,22 +61,26 @@ export default class LikeLocation extends Component {
    { cancelable: false } )
   }
   render() {
-    const { lang,navigation,curLoc } = this.props;
+    const { lang,curLoc } = this.props.navigation.state.params;
+    const { goBack,navigate } = this.props.navigation;
     //console.log('lang',lang);
     const {
-      wrapSetting,headCatStyle,headContent,titleCreate,
+      container,headCatStyle,headContent,titleCreate,
       titleTab,titleActive,listCreate,widthLblCre,show,hide,
       imgInfo,wrapInputCreImg,marTop,colorTitle,txt,txtTitleOverCat
     } = styles;
     return (
 
-        <ScrollView style={[wrapSetting, this.props.visible ? show : hide]}>
+        <ScrollView style={container}>
           <View style={headCatStyle}>
               <View style={headContent}>
-                  <TouchableOpacity onPress={()=>{this.props.closeModal();}}>
+                  <TouchableOpacity onPress={()=>{
+                    DeviceEventEmitter.emit('goback',  {isLogin:true})
+                    goBack();
+                  }}>
                   <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                   </TouchableOpacity>
-                    <Text style={titleCreate}>{this.props.labelTitle.toUpperCase()} </Text>
+                    <Text style={titleCreate}>{lang.like_location.toUpperCase()} </Text>
                   <View></View>
               </View>
           </View>
@@ -86,7 +90,7 @@ export default class LikeLocation extends Component {
                 <View style={{backgroundColor:'#fff'}}>
                   <TouchableOpacity onPress={()=>{
                     //this.props.closeModal()
-                    navigation.navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang})
+                    navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang})
                   }}>
                     <Image source={{uri:`${global.url_media}${e.avatar}`}} style={{width:width,minHeight:width/2,marginBottom:10}} />
                   </TouchableOpacity>
@@ -99,7 +103,7 @@ export default class LikeLocation extends Component {
                       <View style={{width:width-80}}>
                         <TouchableOpacity onPress={()=>{
                           //this.props.closeModal()
-                          navigation.navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang})
+                          navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang})
                         }}>
                           <Text numberOfLines={1} style={txtTitleOverCat}>{e.name}</Text>
                         </TouchableOpacity>

@@ -33,7 +33,7 @@ var LoginBehavior = {
   'ios': FBLoginManager.LoginBehaviors.Browser,
   'android': FBLoginManager.LoginBehaviors.WebView
 }
-import {hasNumber,isEmail} from '../libs';
+import {hasNumber,isEmail,checkPassword} from '../libs';
 
 export default class LoginScreen extends Component {
   constructor(props) {
@@ -55,7 +55,7 @@ export default class LoginScreen extends Component {
 
   getLang(){
     getLanguage().then((e) =>{
-      //console.log(e);
+      console.log(e);
       if(e!==null){
           e.valueLang==='vn' ?  this.setState({lang : lang_vn}) : this.setState({lang : lang_en});
      }
@@ -92,6 +92,7 @@ export default class LoginScreen extends Component {
       if(error) return;
       const profile = JSON.parse(data.profile);
       //console.log(profile.picture.data.url);
+      if(profile.email===undefined || profile.email==='') return;
       faceApi(`${global.url}${'login-facebook'}`,profile).then(e =>{
         if(e.code===200){
           _this.props.navigation.navigate('MainScr');

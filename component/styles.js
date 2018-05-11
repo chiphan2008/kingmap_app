@@ -15,11 +15,18 @@ module.exports = {
   clockTime : {
     width,height,backgroundColor: '#F1F2F5',justifyContent: 'center',alignSelf: 'center'
   },
+  popupDate:{top:75,position:'absolute',zIndex:999,backgroundColor:'#eee',borderColor:'#ddd',borderWidth:1},
+  popupClock:{width,height,alignItems: 'center',justifyContent: 'center',position:'absolute',zIndex:999,backgroundColor:'rgba(0,0,0,.7)'},
+  btnClock:{minWidth:(width-60)/4,backgroundColor:'#2E3B51',borderRadius:3,padding:10,alignItems:'center'},
+  padItemList:{minWidth:(width-66)/4,alignItems:'center',padding:10},
   bedtimeText: {
-    color: '#2E3B51',marginLeft: 3,fontSize: 16,
+    color: '#fff',marginLeft: 3,fontSize: 16,
   },
   wakeText: {
-    color: '#2E3B51',marginLeft: 3,fontSize: 16,
+    color: '#fff',marginLeft: 3,fontSize: 16,
+  },
+  titleOpentime: {
+    color: '#000',marginLeft: 3,fontSize: 16,
   },
   timeContainer: {
     flexDirection: 'row',
@@ -35,7 +42,7 @@ module.exports = {
     alignItems: 'center',
   },
   timeValue: {
-    color: '#2E3B51',
+    color: '#fff',
     fontSize: 35,
     fontWeight: "300",
   },
@@ -74,11 +81,12 @@ module.exports = {
     padding:10,width:width-30,height:(height/2)-120,
     top:119,right:15,backgroundColor:'#f0f0f0',
     position:'absolute',borderColor:'#e0e8ed',borderWidth:1,
+    zIndex:999,
   },
   topLocChange:{top:119},
   topUserChange:{top:169},
   inputLoc:{
-    width:width-30,borderWidth:1,borderColor:'#e0e8ed',borderRadius:3,padding:5,marginBottom:10
+    width:width-30,borderWidth:1,borderColor:'#e0e8ed',borderRadius:3,padding:5,paddingLeft:10,marginBottom:10
   },
   btnSearchOwn:{
     backgroundColor:'#d0021b',borderRadius:3,width:40,height:40,justifyContent:'center',alignItems:'center'},
@@ -228,6 +236,7 @@ module.exports = {
     borderColor : "#D0021B",
     alignItems:'center'
   },
+
   colorNext : {
     color: '#D0021B',
     textAlign: 'center',

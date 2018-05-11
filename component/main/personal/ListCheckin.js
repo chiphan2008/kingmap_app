@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import {
   View,Text,TouchableOpacity,Image,
-  Dimensions,ScrollView,Alert,
+  Dimensions,ScrollView,Alert,DeviceEventEmitter,
 } from 'react-native';
 
 import getApi from '../../api/getApi';
@@ -64,22 +64,26 @@ export default class ListCheckin extends Component {
     .catch(err => console.log(err));
   }
   render() {
-    const { navigation,lang,curLoc } = this.props;
+    const { lang,curLoc } = this.props.navigation.state.params;
+    const { navigate,goBack } = this.props.navigation;
     //console.log('curLoc',curLoc);
     const {
-      wrapSetting,headCatStyle,headContent,titleCreate,
+      container,headCatStyle,headContent,titleCreate,
       titleTab,titleActive,listCreate,widthLblCre,show,hide,
       imgInfo,wrapInputCreImg,marTop,colorTitle,txt,txtTitleOverCat
     } = styles;
     return (
 
-        <ScrollView style={[wrapSetting, this.props.visible ? show : hide]}>
+        <ScrollView style={container}>
           <View style={headCatStyle}>
               <View style={headContent}>
-                  <TouchableOpacity onPress={()=>{this.props.closeModal();}}>
+                  <TouchableOpacity onPress={()=>{
+                    DeviceEventEmitter.emit('goback',  {isLogin:true})
+                    goBack();
+                  }}>
                   <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                   </TouchableOpacity>
-                    <Text style={titleCreate}>{this.props.labelTitle.toUpperCase()} </Text>
+                    <Text style={titleCreate}>{`${'Check in'}`.toUpperCase()} </Text>
                   <View></View>
               </View>
           </View>
@@ -89,7 +93,7 @@ export default class ListCheckin extends Component {
                 <View style={{backgroundColor:'#fff'}}>
                   <TouchableOpacity onPress={()=>{
                       //this.props.closeModal()
-                      navigation.navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang})
+                      navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang})
                   }}>
                     <TouchableOpacity style={{position:'absolute',top:5,right:5,zIndex:99}}
                     onPress={()=>this.confirmDel(e.id)}>
@@ -101,7 +105,7 @@ export default class ListCheckin extends Component {
                       <View style={{width:width-80}}>
                           <TouchableOpacity onPress={()=>{
                               //this.props.closeModal()
-                              navigation.navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang})
+                              navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang})
                           }}>
                             <Text numberOfLines={1} style={txtTitleOverCat}>{e.name}</Text>
                           </TouchableOpacity>

@@ -40,5 +40,9 @@ module.exports = {
   err_repwd:'Vui lòng xác nhận mật khẩu',
   err_pwd_repwd:'Mật khẩu không trùng khớp',
   update_success:'Cập nhật thành công',
+  notify_pwd_length:'Mật khẩu phải có ít nhất 6 ký tự',
+  notify_pwd_weak:'Mật khẩu yếu (Mật khẩu nên có chữ, số, chữ viết hoa, ký tự đặc biệt)',
+  notify_pwd_medium:'Mật khẩu trung bình',
+  notify_pwd_strong:'Mật khẩu mạnh',
   lang:'vn',
 };

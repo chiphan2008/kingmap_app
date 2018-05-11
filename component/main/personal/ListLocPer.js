@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import {
   View,Text,TouchableOpacity,Image,
-  Dimensions,ScrollView,Alert,
+  Dimensions,ScrollView,Alert,DeviceEventEmitter,
 } from 'react-native';
 
 import getApi from '../../api/getApi';
@@ -22,7 +22,7 @@ import requestIC from '../../../src/icon/ic-request.png';
 const {width,height} = Dimensions.get('window');
 
 
-export default class ListLocation extends Component {
+export default class ListLocPer extends Component {
   constructor(props){
     super(props);
     this.state = {
@@ -47,12 +47,10 @@ export default class ListLocation extends Component {
   }
   getData(id){
     const url = `${global.url}${'user/list-location/'}${id}`;
+    console.log(url);
     getApi(url)
     .then(arrData => {
-      //console.log('arrData',arrData);
-      setTimeout(()=>{
         this.setState({ listData: arrData.data });
-      },2000)
     })
     .catch(err => console.log(err));
   }
@@ -89,17 +87,18 @@ export default class ListLocation extends Component {
    { cancelable: false } )
   }
   render() {
-    const { lang,navigation,curLoc,visible } = this.props;
+    const { lang,curLoc } = this.props.navigation.state.params;
+    const { goBack,navigate } = this.props.navigation;
     const { showOption,id_content,moderation } = this.state;
     //console.log('lang',lang);
     const {
-      wrapSetting,headCatStyle,headContent,titleCreate,
+      container,headCatStyle,headContent,titleCreate,
       listCreate,show,hide,txt,txtTitleOverCat,marTop10,marTop15,
       actionSheetWrap,actionSheetContent,actionSheetRadius,line,pad15,
       colorTxt
     } = styles;
     return (
-        <ScrollView style={[wrapSetting, this.props.visible ? show : hide]}>
+        <ScrollView style={container}>
 
         <View style={[actionSheetWrap,showOption ? show : hide]} >
           <View style={[actionSheetContent,actionSheetRadius]}>
@@ -140,10 +139,13 @@ export default class ListLocation extends Component {
 
           <View style={headCatStyle}>
               <View style={headContent}>
-                  <TouchableOpacity onPress={()=>{this.props.closeModal();}}>
+                  <TouchableOpacity onPress={()=>{
+                    DeviceEventEmitter.emit('goback',  {isLogin:true})
+                    goBack();
+                  }}>
                   <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                   </TouchableOpacity>
-                    <Text style={titleCreate}>{this.props.labelTitle.toUpperCase()} </Text>
+                    <Text style={titleCreate}>{lang.list_location.toUpperCase()} </Text>
                   <View></View>
               </View>
           </View>
@@ -153,7 +155,7 @@ export default class ListLocation extends Component {
                 <View style={{backgroundColor:'#fff'}}>
                   <TouchableOpacity onPress={()=>{
                     //this.props.closeModal()
-                    navigation.navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang})
+                    navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang})
                   }}>
                     <Image source={{uri:`${global.url_media}${e.avatar}`}} style={{width:width,minHeight:200,marginBottom:10}} />
                   </TouchableOpacity>
@@ -163,7 +165,7 @@ export default class ListLocation extends Component {
                       <View style={{width:width-80}}>
                         <TouchableOpacity onPress={()=>{
                           //this.props.closeModal()
-                          navigation.navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang})
+                          navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang})
                         }}>
                           <Text numberOfLines={1} style={txtTitleOverCat}>{e.name}</Text>
                         </TouchableOpacity>

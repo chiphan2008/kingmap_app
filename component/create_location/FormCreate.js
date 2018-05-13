@@ -15,10 +15,14 @@ import getApi from '../api/getApi';
 import postApi from '../api/postApi';
 import getLanguage from '../api/getLanguage';
 import GroupProduct from './GroupProduct';
-import AddImageMore from './AddImageMore';
+import AddImgSpace from './AddImgSpace';
+import AddProduct from './AddProduct';
+import AddVideo from './AddVideo';
 import OpenTime from './OpenTime';
 //import la from '../api/checkLocation';
 import ChooseArea from './ChooseArea';
+import checkLogin from '../api/checkLogin';
+
 //import LatLng from './LatLng';
 
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
@@ -80,7 +84,7 @@ export default class FormCreate extends Component {
       imgAvatar:{},
       lblUnit: 'VND',
       showProduct:false,
-      showImgMore:false,
+      showVideo:false,
       showImgSpace:false,
       img_space:[],
       img_menu:[],
@@ -91,8 +95,18 @@ export default class FormCreate extends Component {
       category_item:[],
       errArea:false,
       errMsg:'',
+      id_ctv:'',
       idCountry:'',idCity:'',idDist:'',
+      isLogin:false,
     };
+    checkLogin().then(e=>{
+      //console.log(e);
+      if(e.id===undefined){
+        this.setState({isLogin:false})
+      }else {
+        this.setState({id_ctv:e.id_ctv,isLogin:true});
+      }
+    })
     //BackHandler.addEventListener('hardwareBackPress', ()=>this.setState({showSubCat:false}));
   }
   postData(){
@@ -118,12 +132,10 @@ export default class FormCreate extends Component {
     this.state.ListOpenTime.forEach((e,index)=>{
       arr.append('date_open[]',e);
     })
-    arr.append('open_from',this.state.open_from);
-    arr.append('open_to',this.state.open_to);
-    arr.append('txtUserWifi',this.state.txtUserWifi);
-    arr.append('txtPassWifi',this.state.txtPassWifi);
+
+    arr.append('wifi',this.state.txtUserWifi);
+    arr.append('passwifi',this.state.txtPassWifi);
     arr.append('phone',this.state.txtPhone);
-    //arr.append('currency',this.state.lblUnit);
     arr.append('country',this.state.idCountry);
     arr.append('city',this.state.idCity);
     arr.append('district',this.state.idDist);
@@ -139,6 +151,7 @@ export default class FormCreate extends Component {
     arr.append('tag[]',this.state.txtKW);
     arr.append('description',this.state.txtDes);
     arr.append('code_invite',this.state.txtCode);
+    arr.append('id_ctv',this.state.id_ctv);
     this.state.img_space.forEach((e,index)=>{
       arr.append(`image_space[]`, {
         uri:`${e.path}`,
@@ -264,14 +277,7 @@ export default class FormCreate extends Component {
 
     })
   }
-  submitImage(space,menu,video){
-    //console.log('space',space,'menu',menu,'video',video);
-    this.setState({
-        img_space:space,
-        img_menu:menu,
-        img_video:video,
-    });
-  }
+
   render() {
     //console.log('navigation',this.props.navigation);
     const {navigate, goBack} = this.props.navigation;
@@ -285,6 +291,8 @@ export default class FormCreate extends Component {
       imgUpCreate,imgUpLoc,imgUpInfo,overLayout,listOverService,shadown,popoverLoc,padCreate,
       upDDLoc,upDDSubCat,selectBox,optionUnitStyle,clockTime,
     } = styles;
+
+    const {showImgSpace,showProduct,showVideo} = this.state;
 
     return (
       <View style={container}>
@@ -460,48 +468,6 @@ export default class FormCreate extends Component {
           <Image source={arrowNextIC} style={imgShare}/>
         </TouchableOpacity>
 
-
-
-        {/*<View style={listCreate}>
-          <View style={{flexDirection:'row'}}>
-            <View style={widthLblCre}>
-            <Image source={priceIC} style={imgInfo} />
-            </View>
-            <View style={{paddingLeft:15}}>
-            <Text style={colorlbl}>{this.state.lang.price}</Text>
-            </View>
-          </View>
-
-          <View style={{flexDirection:'row'}}>
-            <TextInput underlineColorAndroid='transparent'
-            placeholder={this.state.lang.price_from}
-            keyboardType={'numeric'}
-            ref='FromPrice'
-            returnKeyType = {"next"}
-            onSubmitEditing={(event) => {  this.refs.ToPrice.focus();  }}
-            style={{borderBottomWidth:1,borderBottomColor:'#DFE7ED',padding:0,width:70}}
-            onChangeText={(txtFromPrice) => this.handleFromPrice(txtFromPrice)}
-            value={this.state.txtFromPrice} />
-
-            <Text style={colorlbl}> - </Text>
-
-            <TextInput underlineColorAndroid='transparent'
-            placeholder={this.state.lang.price_to}
-            keyboardType={'numeric'}
-            ref='ToPrice'
-            returnKeyType = {"next"}
-            onSubmitEditing={(event) => {  this.refs.Address.focus();  }}
-            style={{borderBottomWidth:1,borderBottomColor:'#DFE7ED',padding:0,width:70}}
-            onChangeText={(txtToPrice) => this.handleToPrice(txtToPrice)}
-            value={this.state.txtToPrice} />
-
-            <TouchableOpacity
-            onPress={()=>{ this.setState({ lblUnit:this.state.lblUnit==='VND' ? 'USD' : 'VND' });}}
-            style={{width:50,backgroundColor:'#d0021b',borderRadius:3,padding:5,marginLeft:7}}>
-              <Text numberOfLines={1} style={txtKV}>{this.state.lblUnit}</Text>
-            </TouchableOpacity>
-          </View>
-        </View>*/}
         <View style={{height:15}}></View>
 
         <View style={listCreate}>
@@ -563,7 +529,7 @@ export default class FormCreate extends Component {
                 </View>
             </View>
           <TouchableOpacity style={imgCamera}
-          onPress={()=>{}}>
+          onPress={()=>{this.setState({showImgSpace:true})}}>
           <Image source={cameraIC} style={imgShare}/>
           </TouchableOpacity>
         </View>
@@ -578,7 +544,7 @@ export default class FormCreate extends Component {
                 </View>
             </View>
           <TouchableOpacity style={imgCamera}
-          onPress={()=>{}}>
+          onPress={()=>{this.setState({showProduct:true})}}>
           <Image source={cameraIC} style={imgShare}/>
           </TouchableOpacity>
         </View>
@@ -593,41 +559,30 @@ export default class FormCreate extends Component {
                 </View>
             </View>
           <TouchableOpacity style={imgCamera}
-          onPress={()=>{}}>
+          onPress={()=>{this.setState({showVideo:true})}}>
           <Image source={movieIC} style={imgShare}/>
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={listCreate}
-        onPress={()=>this.setState({showImgMore:true})}>
-          <View style={{flexDirection:'row'}}>
-            <View style={widthLblCre}>
-            <Image source={galleryIC} style={imgInfo} />
-            </View>
-            <View style={{paddingLeft:15}}>
-            <Text style={colorlbl}>{this.state.lang.add_gallery}</Text>
-            </View>
-          </View>
+        
+          <AddImgSpace
+          submitImage={(img_space)=>this.setState({img_space})}
+          visible={showImgSpace}
+          closeModal={()=>this.setState({showImgSpace:false})} />
 
-          <Image source={arrowNextIC} style={imgShare}/>
-          </TouchableOpacity>
-          <AddImageMore
-          submitImage={this.submitImage.bind(this)}
-          showImgMore={this.state.showImgMore}
-          closeModal={()=>this.setState({showImgMore:false})} />
+          <AddProduct
+          submitImage={(img_menu)=>this.setState({img_menu})}
+          visible={showProduct}
+          closeModal={()=>this.setState({showProduct:false})} />
+
+          <AddVideo
+          submitImage={(img_video)=>this.setState({img_video})}
+          visible={showVideo}
+          closeModal={()=>this.setState({showVideo:false})} />
 
         <View style={{height:15}}></View>
 
-        <TouchableOpacity style={listCreate} onPress={()=>this.setState({showProduct:!this.state.showProduct})}>
-          <View style={{flexDirection:'row'}}>
-            <View style={widthLblCre}>
-            <Image source={groupProductIC} style={imgInfo} />
-            </View>
-            <View style={{paddingLeft:15}}>
-            <Text style={colorlbl}>{this.state.lang.add_product_more}</Text></View>
-          </View>
-          <Image source={arrowNextIC} style={imgShare}/>
-        </TouchableOpacity>
+
 
         <TouchableOpacity style={listCreate} onPress={()=>this.setState({showService:!this.state.showService})}>
           <View style={{flexDirection:'row'}}>

@@ -15,8 +15,6 @@ import language_en from '../lang/en/language';
 import closeIC from '../../src/icon/ic-white/ic-close.png';
 
 
-
-
 export default class ChooseCat extends Component {
   constructor(props) {
     super(props);

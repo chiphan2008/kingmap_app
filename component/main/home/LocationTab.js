@@ -8,7 +8,6 @@ const {height, width} = Dimensions.get('window');
 import Geolocation from '../../api/Geolocation';
 //import hasLocationPermission from '../../api/hasLocationPermission';
 
-
 import getApi from '../../api/getApi';
 //import reqLatLng from '../../api/reqLatLng';
 import getLanguage from '../../api/getLanguage';

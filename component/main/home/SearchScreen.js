@@ -342,7 +342,7 @@ export default class SearchScreen extends Component {
     if(service_items!==undefined) this.setState({service_items});
   }
   _onRegionChangeComplete = (region) => {
-    this.setState({ curLocation:region, });
+    region.latitudeDelta > 0.002 && this.setState({ curLocation:region, });
     if(this.state.onClick===false) {
       this.getPosition(region.latitude,region.longitude);
       this.setState({ onClick:true });

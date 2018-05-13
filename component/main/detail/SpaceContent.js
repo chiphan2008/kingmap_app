@@ -159,7 +159,7 @@ export default class SpaceContent extends Component {
 const styles = StyleSheet.create({
   rowFlexImg:{flexDirection:'row',marginBottom:20},
   rowFlex:{flexDirection:'row',paddingLeft:10,paddingRight:10,marginTop:10},
-  titleSpace:{flexDirection:'row',justifyContent:'space-between',padding:30,paddingLeft:0,paddingRight:20,},
+  titleSpace:{flexDirection:'row',justifyContent:'space-between',padding:30,paddingLeft:0,paddingRight:0},
   colorText :{color:'#303B50',fontSize:17,marginTop:7},
   colorNumPP :{fontWeight: 'bold',color:'#2F353F'},
   sizeTitle:{fontSize:20},

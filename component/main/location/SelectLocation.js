@@ -48,6 +48,7 @@ export default class SelectLocation extends Component {
   }
 
   getDistrict(id_city){
+
     getApi(`${global.url}${'districts/'}${id_city}`)
     .then(arrDistrict => {
       //console.log('arrCity',arrCity);
@@ -59,7 +60,10 @@ export default class SelectLocation extends Component {
 
   componentWillMount(){
     checkLocation().then((e)=>{
-      this.getDistrict(e.idCity);
+      const {id_city} = this.props || '';
+      //console.log();
+      if(id_city!=='' || id_city!==undefined) this.getDistrict(id_city);
+      else this.getDistrict(e.idCity);
       this.setState({
         showCheckCountry:e.idCountry,
         showCheckCity: e.idCity,
@@ -151,7 +155,7 @@ export default class SelectLocation extends Component {
                      }}
                    >
                   <Text style={styles.txtItem} >{item.name}</Text>
-                  <Image style={[styles.imgCheck,this.state.showCheckCountry===item.id ? styles.show : styles.hide]} source={checkIC}/>
+                  {/*<Image style={[styles.imgCheck,this.state.showCheckCountry===item.id ? styles.show : styles.hide]} source={checkIC}/>*/}
                   </TouchableOpacity>
                   </View>
                 )} />
@@ -181,8 +185,8 @@ export default class SelectLocation extends Component {
                        this.setState({
                          showDistrict:true,showCountry:false,showCity:false,idCity:item.id,nameCity:item.name,
                          showCheckCity:item.id,
-                       });
-                       this.getDistrict(item.id);
+                       },()=>{this.getDistrict(item.id);});
+
                        AsyncStorage.setItem('@LocationKey:key', JSON.stringify({
                                  idCountry:this.state.showCheckCountry,
                                  nameCountry:this.state.nameCountry,
@@ -192,7 +196,7 @@ export default class SelectLocation extends Component {
                      }}
                    >
                   <Text style={styles.txtItem} >{item.name}</Text>
-                  <Image style={[styles.imgCheck,this.state.showCheckCity===item.id ? styles.show : styles.hide]} source={checkIC}/>
+                  {/*<Image style={[styles.imgCheck,this.state.showCheckCity===item.id ? styles.show : styles.hide]} source={checkIC}/>*/}
                   </TouchableOpacity>
                   </View>
                 )} />

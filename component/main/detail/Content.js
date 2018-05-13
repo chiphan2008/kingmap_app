@@ -123,7 +123,7 @@ export default class Content extends Component {
 
 const styles = StyleSheet.create({
   wrapContentDetail:{flexWrap:'wrap',padding:10,backgroundColor:'#fff'},
-  rowFlex:{flexDirection:'row',paddingLeft:10,paddingRight:25,marginTop:10},
+  rowFlex:{flexDirection:'row',paddingLeft:10,paddingRight:25,marginTop:10,alignItems:'center'},
   rowFlexImg:{flexDirection:'row',marginBottom:20},
   rowFlexBottom:{flexDirection:'row',padding:5,paddingLeft:10,marginTop:15,marginBottom:15,justifyContent:'space-between'},
   wrapImgDetail:{marginRight:10,alignItems:'center'},

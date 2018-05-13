@@ -65,6 +65,7 @@ export default class ListLocation extends Component {
       showCat:false,
       showServie:false,
       idDist:null,
+      id_city:'',
       id_sub:null,
       id_serv:'',
       isRefresh:true,
@@ -142,7 +143,7 @@ export default class ListLocation extends Component {
       checkLocation().then((e)=>{
         console.log('isRefresh',this.state.isRefresh);
         this.getContentByDist(e.idDist,this.state.id_sub,this.state.id_serv);
-        this.setState({showLoc:!this.state.showLoc,idDist:e.idDist,labelLoc:e.nameDist});
+        this.setState({showLoc:!this.state.showLoc,id_city:e.idCity,idDist:e.idDist,labelLoc:e.nameDist});
       });
     })
 
@@ -201,6 +202,7 @@ export default class ListLocation extends Component {
         //console.log('dist.data.name',dist.data[0].name);
           dist.data[0].name!=='' && dist.data[0].name!==undefined && this.setState({
             labelLoc:dist.data[0].name,
+            id_city:city,
           });
       })
     })
@@ -479,7 +481,9 @@ export default class ListLocation extends Component {
         style={[popoverLoc,padCreate]}>
           <Image style={[imgUpCreate,imgUpLoc]} source={upDD} />
           <View style={[overLayout,shadown]}>
-              <SelectLocation saveLocation={this.saveLocation.bind(this)} />
+              <SelectLocation
+              id_city={this.state.id_city}
+              saveLocation={this.saveLocation.bind(this)} />
           </View>
           </TouchableOpacity>
         </Modal>

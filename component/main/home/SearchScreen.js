@@ -168,7 +168,7 @@ export default class SearchScreen extends Component {
 
   saveLocation(){
     checkLocation().then((e)=>{
-      this.setState({showLoc:false,id_district:e.idDist,labelLoc:e.nameDist},()=>{
+      this.setState({showLoc:false,id_city:e.idCity,id_district:e.idDist,labelLoc:e.nameDist},()=>{
         this.getCategory();
       });
     });

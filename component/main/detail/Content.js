@@ -123,15 +123,15 @@ export default class Content extends Component {
 
 const styles = StyleSheet.create({
   wrapContentDetail:{flexWrap:'wrap',padding:10,backgroundColor:'#fff'},
-  rowFlex:{flexDirection:'row',paddingLeft:10,paddingRight:25,marginTop:10,alignItems:'center'},
+  rowFlex:{flexDirection:'row',paddingLeft:10,paddingRight:25,marginTop:10},
   rowFlexImg:{flexDirection:'row',marginBottom:20},
   rowFlexBottom:{flexDirection:'row',padding:5,paddingLeft:10,marginTop:15,marginBottom:15,justifyContent:'space-between'},
   wrapImgDetail:{marginRight:10,alignItems:'center'},
   marRight:{marginRight:10},
   colorContent:{color:'#6587A8',overflow:'hidden',fontSize:15,},
   favIC:{width:22,height:21,marginRight:2},
-  imgContentIC:{width:16,height:16,},
-  imgICLocation:{width:14,height:16,},
+  imgContentIC:{width:16,height:16,marginTop:2},
+  imgICLocation:{width:14,height:16,marginTop:2},
   likeIC:{width:25,height:21,marginRight:7},
   imgOnline : {
       width: 18,height: 18,position:'absolute',left:65,top:65

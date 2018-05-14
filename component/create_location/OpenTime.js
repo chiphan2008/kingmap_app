@@ -94,7 +94,7 @@ const opt_date_en = [
   {name:'Sat',val:6},
   {name:'Sun',val:0},
 ];
-
+var timeoutUpdateHour;
 export default class OpenTime extends Component {
   constructor(props){
     super(props);
@@ -104,7 +104,7 @@ export default class OpenTime extends Component {
       from_hour:'10:00',
       to_hour:'5:00',
       opt_date: opt_date_vn,
-      ListOpenTime:[],
+
       ListDataTime:[{
           from_date:1,
           to_date:6,
@@ -112,21 +112,24 @@ export default class OpenTime extends Component {
           to_hour:'5:00',
           index:0
         }],
-
+      ListOpenTime:[],
       index_clock:0,
-      index:1,
+      index:0,
       showClock:false,
     }
 
   }
 
   addElement(){
-    const {index,ListOpenTime,ListDataTime} = this.state;
+    let {index,ListOpenTime,ListDataTime} = this.state;
+    index +=1;
+    console.log('index',index);
     let opt_time={
         from_date:1,
         to_date:6,
         from_hour:'10:00',
         to_hour:'5:00',
+        index
       };
     ListOpenTime.push(<ListTime
       ListDataTime={ListDataTime}
@@ -135,28 +138,91 @@ export default class OpenTime extends Component {
       key={index}
       index={index}
       lang={this.props.lang} />);
-    ListDataTime.push(Object.assign(opt_time,{['index']:index}))
-    this.setState({index:index+1,ListOpenTime,ListDataTime},()=>{
+    ListDataTime.push(opt_time)
+    this.setState({index,ListOpenTime,ListDataTime},()=>{
       console.log(ListDataTime);
     });
   }
   getIndex(element,id){
-    return element.key==id;
+    return element.index==id;
   }
 
   removeGroup(id){
+    console.log('id',id);
     let {ListOpenTime,ListDataTime} = this.state;
-    const index = ListOpenTime.findIndex((e)=>this.getIndex(e,id));
+    const index = ListDataTime.findIndex((e)=>this.getIndex(e,id));
+    //console.log(index);
     if(index!==-1){
       ListOpenTime.splice(index, 1);
-      ListDataTime.splice(index+1, 1);
+      ListDataTime.splice(index, 1);
+
+      //console.log('this.state.index',this.state.index);
+
+      var arr  = [];
+      var arr2 = [];
+      ListDataTime.forEach((e,index)=>{
+        //let index = e.index;
+        arr.push(<ListTime
+          ListDataTime={this.state.ListDataTime}
+          openTimer={(index)=>this.openTimer(index)}
+          removeGroup={()=>this.removeGroup(index)}
+          key={index}
+          index={index}
+          lang={this.props.lang} />);
+        arr2.push({
+          from_date:e.from_date,
+          to_date:e.to_date,
+          from_hour:e.from_hour,
+          to_hour:e.to_hour,
+          index
+        })
+      });
+      this.state.index = arr.length-1;
+      ListOpenTime = arr;
+      ListDataTime = arr2;
+
       //console.log('ListDataTime',ListDataTime);
-      this.setState(this.state)
+      this.setState(this.state,()=>{
+        console.log(ListDataTime);
+      })
     }
 
   }
   openTimer(index_clock){
     this.setState({showClock:true,index_clock})
+  }
+  updateListItem = () => {
+    //console.log('this.state.ListDataTime',this.state.ListDataTime.length);
+    //timeoutUpdateHour = setTimeout(()=>{
+      var arr  = [];
+      this.state.ListDataTime.forEach((e,index)=>{
+        //let index = e.index;
+        arr.push(<ListTime
+          ListDataTime={this.state.ListDataTime}
+          openTimer={(index)=>this.openTimer(index)}
+          removeGroup={()=>this.removeGroup(index)}
+          key={index}
+          index={index}
+          lang={this.props.lang} />)
+      });
+
+      this.state.ListOpenTime = arr;
+      this.setState(this.state);
+    //},1200)
+
+  }
+  componentDidMount(){
+    this.setState({
+      ListOpenTime:[
+        <ListTime
+        ListDataTime={this.state.ListDataTime}
+        openTimer={(index)=>this.openTimer(index)}
+        removeGroup={()=>this.removeGroup(this.state.index)}
+        key={this.state.index}
+        index={this.state.index}
+        lang={this.props.lang} />
+      ]
+    })
   }
   render() {
     const {
@@ -180,39 +246,39 @@ export default class OpenTime extends Component {
 
       </View>
       <ScrollView>
-      <View style={{flexDirection:'row',justifyContent:'space-between',padding:5,paddingLeft:15,width}}>
+      <View style={{flexDirection:'row',justifyContent:'space-between',paddingTop:15,paddingLeft:15,width}}>
           <View style={{width:(width-60)/4,}}>
             <Text style={titleOpentime}>Từ ngày</Text>
-            <TouchableOpacity style={[btnClock,marTop10]} onPress={()=>{}}>
+            {/*<TouchableOpacity style={[btnClock,marTop10]} onPress={()=>{}}>
               <Text style={titleActive}>{ListDataTime[0].from_date!==0 ? opt_date[ListDataTime[0].from_date-1].name : opt_date[6].name}</Text>
-            </TouchableOpacity>
+            </TouchableOpacity>*/}
 
           </View>
 
           <View style={{width:(width-60)/4}}>
 
             <Text style={titleOpentime}>Đến ngày</Text>
-            <TouchableOpacity style={[btnClock,marTop10]} onPress={()=>{}}>
+            {/*<TouchableOpacity style={[btnClock,marTop10]} onPress={()=>{}}>
               <Text style={titleActive}>{ ListDataTime[0].to_date!==0 ? opt_date[ListDataTime[0].to_date-1].name : opt_date[6].name}</Text>
-            </TouchableOpacity>
+            </TouchableOpacity>*/}
 
           </View>
 
           <View style={{width:(width-60)/4}}>
             <Text style={titleOpentime}>Từ giờ</Text>
-            <TouchableOpacity style={[btnClock,marTop10]}
+            {/*<TouchableOpacity style={[btnClock,marTop10]}
             onPress={()=>{this.openTimer(0)}}>
               <Text style={titleActive}>{ ListDataTime[0].from_hour}</Text>
-            </TouchableOpacity>
+            </TouchableOpacity>*/}
 
           </View>
 
           <View style={{width:(width-60)/4}}>
             <Text style={titleOpentime}>Đến giờ</Text>
-            <TouchableOpacity style={[btnClock,marTop10]}
+            {/*<TouchableOpacity style={[btnClock,marTop10]}
             onPress={()=>{this.openTimer(0)}}>
               <Text style={titleActive}>{ListDataTime[0].to_hour}</Text>
-            </TouchableOpacity>
+            </TouchableOpacity>*/}
           </View>
 
           <TouchableOpacity>
@@ -222,7 +288,7 @@ export default class OpenTime extends Component {
       <View>
       {ListOpenTime}
       </View>
-      <View style={{width:width/2,alignSelf:'center'}}>
+      <View style={{width:width/2,alignSelf:'center',marginTop:20}}>
         <TouchableOpacity onPress={()=>this.addElement()} style={btnPress}>
         <Text style={colorNext}> + {lang.add_time_open} </Text>
         </TouchableOpacity>
@@ -237,11 +303,17 @@ export default class OpenTime extends Component {
       to_hour={ListDataTime[index_clock].to_hour}
       updateFromHour={(from_hour)=>{
         ListDataTime[index_clock].from_hour=from_hour
-        this.setState(this.state)
+        this.setState(this.state,()=>{
+          clearTimeout(timeoutUpdateHour);
+          this.updateListItem()
+        })
       }}
       updateToHour={(to_hour)=>{
         ListDataTime[index_clock].to_hour=to_hour
-        this.setState(this.state)
+        this.setState(this.state,()=>{
+          clearTimeout(timeoutUpdateHour);
+          this.updateListItem()
+        })
       }}
       closeModal={()=>this.setState({showClock:false })}
       />
@@ -255,7 +327,7 @@ export class Clock extends Component {
   constructor(props){
     super(props);
     const {from_hour, to_hour} = this.props;
-    console.log('from_hour, to_hour',from_hour, to_hour);
+    //console.log('from_hour, to_hour',from_hour, to_hour);
     this.state = {
       // startAngle:convertAngle(from_hour),
       // angleLength:convertAngle(to_hour),
@@ -272,8 +344,7 @@ export class Clock extends Component {
     });
     var f_hour = calculateTimeFromAngle(startAngle);
     var t_hour = calculateTimeFromAngle((startAngle + angleLength) % (2 * Math.PI));
-    this.props.updateFromHour(`${f_hour.h}:${padMinutes(f_hour.m)}`);
-    this.props.updateToHour(`${t_hour.h}:${padMinutes(t_hour.m)}`);
+
   }
   static propTypes = {
     updateToHour: PropTypes.func.isRequired,
@@ -292,7 +363,11 @@ export class Clock extends Component {
 
     return(
       <View style={[popupClock,showClock ? show : hide]}>
-      <TouchableOpacity onPress={()=>this.props.closeModal()} style={{position:'absolute',top:10,right:10}}>
+      <TouchableOpacity onPress={()=>{
+        this.props.updateFromHour(`${f_hour.h}:${padMinutes(f_hour.m)}`);
+        this.props.updateToHour(`${t_hour.h}:${padMinutes(t_hour.m)}`);
+        this.props.closeModal()}}
+      style={{position:'absolute',top:10,right:10}}>
       <Image source={closeIC} style={{width:18, height:18}} />
       </TouchableOpacity>
       <View style={timeContainer}>
@@ -370,7 +445,7 @@ export class ListTime extends Component {
 
       <View>
 
-      <View style={{flexDirection:'row',justifyContent:'space-between',padding:5,paddingLeft:15,width}}>
+      <View style={{flexDirection:'row',justifyContent:'space-between',paddingLeft:15,paddingRight:10,width}}>
           <View style={{width:(width-60)/4,}}>
             <TouchableOpacity style={[btnClock,marTop10]} onPress={()=>{}}>
               <Text style={titleActive}>{from_date!==0 ? opt_date[from_date-1].name : opt_date[6].name}</Text>
@@ -433,8 +508,8 @@ export class ListTime extends Component {
             </View>
           </View>
 
-          <TouchableOpacity onPress={()=>this.props.removeGroup(index)}>
-          <Text style={{fontWeight:'bold',fontSize:18,transform:[{ rotate: '45deg'}]}}>+</Text>
+          <TouchableOpacity disabled={index>0?false:true} onPress={()=>this.props.removeGroup(index)}>
+          <Text style={{fontWeight:'bold',fontSize:22,transform:[{ rotate: '45deg'}]}}>{index>0?'+': '  '}</Text>
           </TouchableOpacity>
 
       </View>

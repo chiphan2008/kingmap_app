@@ -49,7 +49,7 @@ export default class ChooseCat extends Component {
   }
 
   render() {
-    console.log('ChooseCat');
+    //console.log('ChooseCat');
     const {navigate, goBack} = this.props.navigation;
     const { lang } = this.props.navigation.state.params;
     const {

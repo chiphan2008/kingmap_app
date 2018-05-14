@@ -11,7 +11,7 @@ import closeLargeIC from '../../src/icon/ic-create/ic-close-large.png';
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
 const {width,height} = Dimensions.get('window');
 import ImagePicker from 'react-native-image-crop-picker';
-import {getIdYoutube} from '../libs';
+import {getThumbVideo} from '../libs';
 
 export default class AddVideo extends Component {
   constructor(props){
@@ -26,7 +26,7 @@ export default class AddVideo extends Component {
 
   uploadVideo(link){
     if(link!==''){
-      var youtube_video_id = getIdYoutube(link);
+      var youtube_video_id = getThumbVideo(link);
       if(this.state.imgVideo.includes(youtube_video_id)){
         return this.setState({
           txtErr:'* Link đã tồn tại!',
@@ -103,7 +103,7 @@ export default class AddVideo extends Component {
             {this.state.imgVideo.map((e,index)=>(
               <View  key={index}>
               <Image style={{width,height:300,marginBottom:5,resizeMode: 'cover'}}
-              source={{uri:`https://img.youtube.com/vi/${e}/0.jpg`}} />
+              source={{uri:e}} />
               <TouchableOpacity style={{position:'absolute',right:5,top:5}}
               onPress={()=>{
                 this.state.imgVideo.splice(index,1);

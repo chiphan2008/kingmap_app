@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image,
   TextInput, TouchableOpacity,ScrollView,Modal,FlatList,AsyncStorage,
-  BackHandler,
+  BackHandler,Alert,
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 const {height, width} = Dimensions.get('window');
@@ -16,6 +16,7 @@ import postApi from '../api/postApi';
 import getLanguage from '../api/getLanguage';
 import GroupProduct from './GroupProduct';
 import AddImgSpace from './AddImgSpace';
+import AddImgMenu from './AddImgMenu';
 import AddProduct from './AddProduct';
 import AddVideo from './AddVideo';
 import OpenTime from './OpenTime';
@@ -47,13 +48,15 @@ import locationIC from '../../src/icon/ic-create/ic-location.png';
 import locationMapIC from '../../src/icon/ic-create/ic-location-map.png';
 import avatarIC from '../../src/icon/ic-create/ic-avatar.png';
 import galleryIC from '../../src/icon/ic-create/ic-gallery.png';
+import videoIC from '../../src/icon/ic-create/ic-video.png';
 import addonIC from '../../src/icon/ic-create/ic-addon.png';
 import groupProductIC from '../../src/icon/ic-create/ic-group-product.png';
 import descriptionIC from '../../src/icon/ic-create/ic-description.png';
 import keywordsIC from '../../src/icon/ic-create/ic-keywords.png';
 import codeIC from '../../src/icon/ic-create/ic-code.png';
+import selectedIC from '../../src/icon/ic-create/ic-selected.png';
 
-import {hasNumber,getIndex} from '../libs';
+import {hasNumber,getIndex,strtoarray} from '../libs';
 
 var timeoutLatLng;
 export default class FormCreate extends Component {
@@ -86,6 +89,7 @@ export default class FormCreate extends Component {
       showProduct:false,
       showVideo:false,
       showImgSpace:false,
+      showImgMenu:false,
       img_space:[],
       img_menu:[],
       img_video:[],
@@ -93,6 +97,10 @@ export default class FormCreate extends Component {
       index:0,
       listProduct:{},
       category_item:[],
+      des_space:[],
+      title_space:[],
+      des_menu:[],
+      title_menu:[],
       errArea:false,
       errMsg:'',
       id_ctv:'',
@@ -114,11 +122,11 @@ export default class FormCreate extends Component {
       this.setState({errArea:true});return false;
     }
     if(this.state.txtName===''){this.setState({errMsg:this.state.lang.enter_name});return false;}
-    if(Object.entries(this.state.checkSubCat).length===0){this.setState({errMsg:this.state.lang.enter_classify});return false;}
+    if(this.state.txtAddress===''){this.setState({errMsg:this.state.lang.enter_address});return false;}
     if(this.state.ListOpenTime.length===0){this.setState({errMsg:this.state.lang.enter_time});return false;}
+    if(Object.entries(this.state.checkSubCat).length===0){this.setState({errMsg:this.state.lang.enter_classify});return false;}
     //if(this.state.txtFromPrice===''){this.setState({errMsg:this.state.lang.enter_price_from});return false;}
     //if(this.state.txtToPrice===''){this.setState({errMsg:this.state.lang.enter_price_to});return false;}
-    if(this.state.txtAddress===''){this.setState({errMsg:this.state.lang.enter_address});return false;}
     if(this.state.imgAvatar.path===undefined){this.setState({errMsg:this.state.lang.enter_avatar});return false;}
 
     const arr = new FormData();
@@ -130,15 +138,18 @@ export default class FormCreate extends Component {
       }
     })
     this.state.ListOpenTime.forEach((e,index)=>{
-      arr.append('date_open[]',e);
+      arr.append(`date_open[${index}][from_date]`,e.from_date);
+      arr.append(`date_open[${index}][to_date]`,e.to_date);
+      arr.append(`date_open[${index}][from_hour]`,e.from_hour);
+      arr.append(`date_open[${index}][to_hour]`,e.to_hour);
     })
-
-    arr.append('wifi',this.state.txtUserWifi);
-    arr.append('passwifi',this.state.txtPassWifi);
-    arr.append('phone',this.state.txtPhone);
     arr.append('country',this.state.idCountry);
     arr.append('city',this.state.idCity);
     arr.append('district',this.state.idDist);
+    arr.append('wifi',this.state.txtUserWifi);
+    arr.append('passwifi',this.state.txtPassWifi);
+    arr.append('phone',this.state.txtPhone);
+
     arr.append(`avatar`, {
       uri:`${this.state.imgAvatar.path}`,
       name: `my_avatar.jpg`,
@@ -147,10 +158,12 @@ export default class FormCreate extends Component {
     arr.append('address',this.state.txtAddress);
     arr.append('lat',this.state.lat);
     arr.append('lng',this.state.lng);
+    strtoarray(this.state.txtKW,',').forEach((e)=>{
+      arr.append('tag[]',e);
+    });
 
-    arr.append('tag[]',this.state.txtKW);
     arr.append('description',this.state.txtDes);
-    arr.append('code_invite',this.state.txtCode);
+    // //arr.append('code_invite',this.state.txtCode);
     arr.append('id_ctv',this.state.id_ctv);
     this.state.img_space.forEach((e,index)=>{
       arr.append(`image_space[]`, {
@@ -158,14 +171,24 @@ export default class FormCreate extends Component {
         name: `${index}_image_space.jpg`,
         type: `${e.mime}`
       });
+      let title_space = this.state.title_space[index]===undefined ? '':this.state.title_space[index][1];
+      let des_space = this.state.des_space[index]===undefined ? '':this.state.des_space[index][1];
+      arr.append(`title_space[]`, title_space);
+      arr.append(`des_space[]`, des_space);
     });
+
     this.state.img_menu.forEach((e,index)=>{
       arr.append(`image_menu[]`, {
         uri:`${e.path}`,
         name: `${index}_image_menu.jpg`,
         type: `${e.mime}`
       });
+      let title_menu = this.state.title_menu[index]===undefined ? '':this.state.title_menu[index][1];
+      let des_menu = this.state.des_menu[index]===undefined ? '':this.state.des_menu[index][1];
+      arr.append(`title_menu[]`, title_menu);
+      arr.append(`des_menu[]`, des_menu);
     })
+
     this.state.img_video.forEach((e)=>{
       arr.append('link[]',e);
     })
@@ -175,38 +198,42 @@ export default class FormCreate extends Component {
       }
     });
 
-    Object.entries(this.state.listProduct).forEach((e)=>{
-      //console.log('=Object.entries',e);
-      let group = e[0];
-      arr.append(`product[${group}][group_name]`,e[1].group_name);
-      Object.entries(e[1]).forEach((r)=>{
-        if(r[0]!=='group_name' && r[0]!=='idGroup'){
-          arr.append(`product[${group}][${r[0]}][id]`,r[0]);
-          arr.append(`product[${group}][${r[0]}][name]`,r[1].name);
-          arr.append(`product[${group}][${r[0]}][price]`,r[1].price);
-          arr.append(`product[${group}][${r[0]}][currency]`,r[1].currency);
-          if(r[1].image.path!==undefined){
-              arr.append(`product[${group}][${r[0]}][image]`, {
-              uri:`${r[1].image.path}`,
-              name: `${r[0]}_my_product.jpg`,
-              type: `${r[1].image.mime}`
-            });
-          }
-        }
-      });
+    // Object.entries(this.state.listProduct).forEach((e)=>{
+    //   //console.log('=Object.entries',e);
+    //   let group = e[0];
+    //   arr.append(`product[${group}][group_name]`,e[1].group_name);
+    //   Object.entries(e[1]).forEach((r)=>{
+    //     if(r[0]!=='group_name' && r[0]!=='idGroup'){
+    //       arr.append(`product[${group}][${r[0]}][id]`,r[0]);
+    //       arr.append(`product[${group}][${r[0]}][name]`,r[1].name);
+    //       arr.append(`product[${group}][${r[0]}][price]`,r[1].price);
+    //       arr.append(`product[${group}][${r[0]}][currency]`,r[1].currency);
+    //       if(r[1].image.path!==undefined){
+    //           arr.append(`product[${group}][${r[0]}][image]`, {
+    //           uri:`${r[1].image.path}`,
+    //           name: `${r[0]}_my_product.jpg`,
+    //           type: `${r[1].image.mime}`
+    //         });
+    //       }
+    //     }
+    //   });
+    //
+    // });
 
-    });
-    //console.log('arr',arr);
+    console.log('arr',arr);
+    console.log('arr',`${global.url}${'create-location'}`);
     postApi(`${global.url}${'create-location'}`,arr).then((e)=>{
-      //console.log('e',e);
+      console.log('e',e);
       if(e.code===200){
         this.props.navigation.navigate('MainScr');
+      }else {
+        Alert.alert(this.state.lang.notify,e.message)
       }
     });
   }
 
   setOpenTime(ListOpenTime){
-    console.log('ListOpenTime',ListOpenTime);
+    //console.log('ListOpenTime',ListOpenTime);
     this.setState({ListOpenTime,showOpenTime:false});
   }
 
@@ -265,15 +292,15 @@ export default class FormCreate extends Component {
   getLatLng(addr){
     let url = `${'https://maps.googleapis.com/maps/api/geocode/json?&address='}${addr}`;
     getApi(url).then(e=>{
+
       let arrDataAddr = e.results[0].address_components;
       let arrDataLoc = e.results[0].geometry.location;
-      timeoutLatLng = setTimeout(()=>{
-        this.setState({
-          txtAddress: `${arrDataAddr[0].long_name} ${arrDataAddr[1].long_name}`,
-          lat:arrDataLoc.lat,
-          lng:arrDataLoc.lng,
-        })
-      },800)
+      //console.log(arrDataAddr,arrDataLoc);
+      this.setState({
+        txtAddress: `${arrDataAddr[0].long_name} ${arrDataAddr[1].long_name}`,
+        lat:arrDataLoc.lat,
+        lng:arrDataLoc.lng,
+      })
 
     })
   }
@@ -292,7 +319,7 @@ export default class FormCreate extends Component {
       upDDLoc,upDDSubCat,selectBox,optionUnitStyle,clockTime,
     } = styles;
 
-    const {showImgSpace,showProduct,showVideo} = this.state;
+    const {showImgSpace,showProduct,showImgMenu,showVideo} = this.state;
 
     return (
       <View style={container}>
@@ -378,7 +405,10 @@ export default class FormCreate extends Component {
               <Text style={colorlbl}>{this.state.lang.open_time}</Text>
               </View>
           </View>
+          <View style={{flexDirection:'row'}}>
+          <Image source={selectedIC} style={[imgShare,this.state.ListOpenTime.length>0 ? show : hide]}/>
           <Image source={arrowNextIC} style={imgShare}/>
+          </View>
         </TouchableOpacity>
 
         <View style={listCreate}>
@@ -442,7 +472,7 @@ export default class FormCreate extends Component {
           <Image source={phoneIC} style={imgInfo} />
           </View>
           <TextInput underlineColorAndroid='transparent'
-            returnKeyType = {"next"} ref='Phone'
+            returnKeyType = {"next"} ref='Phone' keyboardType={'numeric'}
             onSubmitEditing={(event) => {this.refs.KW.focus();}}
             placeholder={this.state.lang.phone} style={wrapInputCreImg}
             onChangeText={(txtPhone) => this.setState({txtPhone})}
@@ -462,10 +492,15 @@ export default class FormCreate extends Component {
             <Image source={cateLocationIC} style={imgInfo} />
             </View>
               <View style={{paddingLeft:15}}>
-                <Text style={colorlbl}>{this.state.lang.classify_location}</Text>
+                <Text style={colorlbl}>{this.state.lang.classify}</Text>
               </View>
           </View>
+          <View style={{flexDirection:'row',alignItems:'center'}}>
+          <Image source={selectedIC} style={[imgShare,Object.entries(this.state.checkSubCat).length>0 ? show : hide]}/>
+          <Text style={colorlbl}>{nameCat}</Text>
           <Image source={arrowNextIC} style={imgShare}/>
+          </View>
+
         </TouchableOpacity>
 
         <View style={{height:15}}></View>
@@ -492,8 +527,8 @@ export default class FormCreate extends Component {
           <TextInput underlineColorAndroid='transparent'
           multiline numberOfLines={4} maxHeight={65}
           onChangeText={(txtKW) => this.setState({txtKW})}
-          value={this.state.txtKW} ref='KW' returnKeyType = {"next"}
-          onSubmitEditing={(event) => {  this.refs.Code.focus();  }}
+          value={this.state.txtKW} ref='KW' returnKeyType = {"done"}
+          //onSubmitEditing={(event) => {  this.refs.Code.focus();  }}
           placeholder={this.state.lang.keyword} style={wrapInputCreImg} />
 
           <View style={{width:15}}>
@@ -513,10 +548,13 @@ export default class FormCreate extends Component {
                 <Text style={colorlbl}>{this.state.lang.avatar}</Text>
                 </View>
             </View>
+          <View style={{flexDirection:'row',alignItems:'center'}}>
+          <Image source={selectedIC} style={[imgShare,this.state.imgAvatar.path!==undefined ? show : hide]}/>
           <TouchableOpacity style={imgCamera}
           onPress={()=>this.uploadAvatar()}>
           <Image source={cameraIC} style={imgShare}/>
           </TouchableOpacity>
+          </View>
         </View>
 
         <View style={listCreate}>
@@ -528,25 +566,13 @@ export default class FormCreate extends Component {
                 <Text style={colorlbl}>{this.state.lang.space}</Text>
                 </View>
             </View>
+          <View style={{flexDirection:'row',alignItems:'center'}}>
+          <Image source={selectedIC} style={[imgShare,this.state.img_space.length>0 ? show : hide]}/>
           <TouchableOpacity style={imgCamera}
           onPress={()=>{this.setState({showImgSpace:true})}}>
           <Image source={cameraIC} style={imgShare}/>
           </TouchableOpacity>
-        </View>
-
-        <View style={listCreate}>
-            <View style={{flexDirection:'row'}}>
-              <View style={widthLblCre}>
-                <Image source={productIC} style={imgInfo} />
-              </View>
-              <View style={{paddingLeft:15}}>
-                <Text style={colorlbl}>{this.state.lang.product_image}</Text>
-                </View>
-            </View>
-          <TouchableOpacity style={imgCamera}
-          onPress={()=>{this.setState({showProduct:true})}}>
-          <Image source={cameraIC} style={imgShare}/>
-          </TouchableOpacity>
+          </View>
         </View>
 
         <View style={listCreate}>
@@ -555,25 +581,46 @@ export default class FormCreate extends Component {
                 <Image source={galleryIC} style={imgInfo} />
               </View>
               <View style={{paddingLeft:15}}>
+                <Text style={colorlbl}>{this.state.lang.image}</Text>
+                </View>
+            </View>
+          <View style={{flexDirection:'row',alignItems:'center'}}>
+          <Image source={selectedIC} style={[imgShare,this.state.img_menu.length>0 ? show : hide]}/>
+          <TouchableOpacity style={imgCamera}
+          onPress={()=>{this.setState({showImgMenu:true})}}>
+          <Image source={cameraIC} style={imgShare}/>
+          </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={listCreate}>
+            <View style={{flexDirection:'row'}}>
+              <View style={widthLblCre}>
+                <Image source={videoIC} style={imgInfo} />
+              </View>
+              <View style={{paddingLeft:15}}>
                 <Text style={colorlbl}>Video</Text>
                 </View>
             </View>
-          <TouchableOpacity style={imgCamera}
-          onPress={()=>{this.setState({showVideo:true})}}>
-          <Image source={movieIC} style={imgShare}/>
-          </TouchableOpacity>
+          <View style={{flexDirection:'row',alignItems:'center'}}>
+            <Image source={selectedIC} style={[imgShare,this.state.img_video.length>0 ? show : hide]}/>
+            <TouchableOpacity style={imgCamera}
+            onPress={()=>{this.setState({showVideo:true})}}>
+            <Image source={movieIC} style={imgShare}/>
+            </TouchableOpacity>
+          </View>
         </View>
 
-        
+
           <AddImgSpace
-          submitImage={(img_space)=>this.setState({img_space})}
+          submitImage={(img_space,title_space,des_space)=>{this.setState({img_space,title_space,des_space})}}
           visible={showImgSpace}
           closeModal={()=>this.setState({showImgSpace:false})} />
 
-          <AddProduct
-          submitImage={(img_menu)=>this.setState({img_menu})}
-          visible={showProduct}
-          closeModal={()=>this.setState({showProduct:false})} />
+          <AddImgMenu
+          submitImage={(img_menu,title_menu,des_menu)=>{this.setState({img_menu,title_menu,des_menu})}}
+          visible={showImgMenu}
+          closeModal={()=>this.setState({showImgMenu:false})} />
 
           <AddVideo
           submitImage={(img_video)=>this.setState({img_video})}
@@ -592,10 +639,13 @@ export default class FormCreate extends Component {
             <View style={{paddingLeft:15}}>
             <Text style={colorlbl}>{this.state.lang.utilities}</Text></View>
           </View>
-          <Image source={arrowNextIC} style={imgShare}/>
+          <View style={{flexDirection:'row',alignItems:'center'}}>
+            <Image source={selectedIC} style={[imgShare,Object.entries(this.state.checkService).length>0 ? show : hide]}/>
+            <Image source={arrowNextIC} style={imgShare}/>
+          </View>
         </TouchableOpacity>
 
-        <View style={listCreate}>
+        {/*<View style={listCreate}>
           <View style={widthLblCre}>
           <Image source={codeIC} style={imgInfo} />
           </View>
@@ -610,7 +660,7 @@ export default class FormCreate extends Component {
           <Image source={closeIC} style={imgShare} />
           </TouchableOpacity>
           </View>
-        </View>
+        </View>*/}
         <View style={{height:15}}></View>
 
       </View>
@@ -696,7 +746,7 @@ export default class FormCreate extends Component {
               </View>
 
               <FlatList
-                  extraData={this.state}
+                extraData={this.state}
                  data={serv_items}
                  renderItem={({item}) =>(
                    <TouchableOpacity onPress={()=>{
@@ -718,7 +768,7 @@ export default class FormCreate extends Component {
             </View>
             </Modal>
 
-            <Modal
+            {/*<Modal
             onRequestClose={() => null}
             transparent
             animationType={'slide'}
@@ -747,7 +797,7 @@ export default class FormCreate extends Component {
                 </ScrollView>
 
               </View>
-              </Modal>
+              </Modal>*/}
 
 
       </View>

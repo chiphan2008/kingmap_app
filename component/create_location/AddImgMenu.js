@@ -13,22 +13,22 @@ const {width,height} = Dimensions.get('window');
 import ImagePicker from 'react-native-image-crop-picker';
 //import {getIdYoutube} from '../libs';
 
-export default class AddImgSpace extends Component {
+export default class AddImgMenu extends Component {
   constructor(props){
     super(props);
     this.state = {
-      imgSpace:[],
-      des_space:{},
-      title_space:{},
+      imgMenu:[],
+      des_menu:{},
+      title_menu:{},
       txtErr:'',
     }
   }
   uploadSpace(){
     ImagePicker.openPicker({
       multiple: true
-    }).then(imgSpace => {
-      //console.log(imgSpace);
-      this.setState({imgSpace})
+    }).then(imgMenu => {
+      //console.log(imgMenu);
+      this.setState({imgMenu})
     }).catch(e=>console.log('e'));
   }
 
@@ -37,7 +37,7 @@ export default class AddImgSpace extends Component {
       container,headCatStyle,headContent,titleCreate,
       titleTab,titleActive,show,hide,colorWhite,titleErr,
     } = styles;
-    const {imgSpace,des_space,title_space} = this.state;
+    const {imgMenu,des_menu,title_menu} = this.state;
     return (
 
       <Modal onRequestClose={() => null} transparent
@@ -47,7 +47,7 @@ export default class AddImgSpace extends Component {
           <View style={headCatStyle}>
               <View style={headContent}>
                   <TouchableOpacity onPress={()=>{
-                    this.props.submitImage(imgSpace,Object.entries(title_space),Object.entries(des_space));
+                    this.props.submitImage(imgMenu,Object.entries(title_menu),Object.entries(des_menu));
                     this.props.closeModal();
                   }}>
                   <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
@@ -67,16 +67,16 @@ export default class AddImgSpace extends Component {
             </TouchableOpacity>
             <Text style={{fontSize:20}}>TẢI ẢNH LÊN</Text>
           </View>
-          {this.state.imgSpace.length > 0 ?
+          {this.state.imgMenu.length > 0 ?
             <View>
-            {this.state.imgSpace.map((e,index)=>(
+            {this.state.imgMenu.map((e,index)=>(
               <View key={index}>
               <Image style={{width,height:300,resizeMode: 'cover'}} source={{isStatic:true,uri:`${e.path}`}} />
               <TouchableOpacity style={{position:'absolute',right:5,top:5}}
               onPress={()=>{
-                this.state.imgSpace.splice(index, 1);
-                Object.entries(this.state.title_space).splice(index, 1);
-                Object.entries(this.state.des_space).splice(index, 1);
+                this.state.imgMenu.splice(index, 1);
+                Object.entries(this.state.title_menu).splice(index, 1);
+                Object.entries(this.state.des_menu).splice(index, 1);
                 this.setState(this.state)
               }}>
               <Image source={closeLargeIC} style={{width:22,height:22}}/>
@@ -87,20 +87,20 @@ export default class AddImgSpace extends Component {
                 placeholder={'Chủ đề'}
                 placeholderTextColor={'#A9BFD0'}
                 onChangeText={(text) => {
-                  this.state.title_space = Object.assign(this.state.title_space,{[`${'title_'}${index}`]:text})
+                  this.state.title_menu = Object.assign(this.state.title_menu,{[`${'title_'}${index}`]:text})
                   this.setState(this.state);
                 }}
-                value={this.state.title_space[`${'title_'}${index}`]}
+                value={this.state.title_menu[`${'title_'}${index}`]}
                />
                <View style={{width:width-60,borderBottomWidth:1,borderColor:'#E0E8ED'}}></View>
                <TextInput underlineColorAndroid='transparent'
                  placeholder={'Viết mô tả'}
                  placeholderTextColor={'#A9BFD0'}
                  onChangeText={(text) => {
-                   this.state.des_space = Object.assign(this.state.des_space,{[`${'des_'}${index}`]:text})
+                   this.state.des_menu = Object.assign(this.state.des_menu,{[`${'des_'}${index}`]:text})
                    this.setState(this.state);
                  }}
-                 value={this.state.des_space[`${'des_'}${index}`]}
+                 value={this.state.des_menu[`${'des_'}${index}`]}
                 />
                 </View>
               </View>

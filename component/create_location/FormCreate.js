@@ -125,9 +125,11 @@ export default class FormCreate extends Component {
     if(this.state.txtAddress===''){this.setState({errMsg:this.state.lang.enter_address});return false;}
     if(this.state.ListOpenTime.length===0){this.setState({errMsg:this.state.lang.enter_time});return false;}
     if(Object.entries(this.state.checkSubCat).length===0){this.setState({errMsg:this.state.lang.enter_classify});return false;}
+    if(this.state.txtKW.trim()===''){this.setState({errMsg:this.state.lang.enter_kw});return false;}
     //if(this.state.txtFromPrice===''){this.setState({errMsg:this.state.lang.enter_price_from});return false;}
     //if(this.state.txtToPrice===''){this.setState({errMsg:this.state.lang.enter_price_to});return false;}
     if(this.state.imgAvatar.path===undefined){this.setState({errMsg:this.state.lang.enter_avatar});return false;}
+    if(this.state.lat==='Lat 0.0' || this.state.lat===''){this.setState({errMsg:this.state.lang.enter_address_again});return false;}
 
     const arr = new FormData();
     arr.append('name',this.state.txtName);
@@ -165,7 +167,7 @@ export default class FormCreate extends Component {
     arr.append('description',this.state.txtDes);
     // //arr.append('code_invite',this.state.txtCode);
     arr.append('id_ctv',this.state.id_ctv);
-    this.state.img_space.forEach((e,index)=>{
+    this.state.img_space.length>0 && this.state.img_space.forEach((e,index)=>{
       arr.append(`image_space[]`, {
         uri:`${e.path}`,
         name: `${index}_image_space.jpg`,
@@ -177,7 +179,7 @@ export default class FormCreate extends Component {
       arr.append(`des_space[]`, des_space);
     });
 
-    this.state.img_menu.forEach((e,index)=>{
+    this.state.img_menu.length>0 &&  this.state.img_menu.forEach((e,index)=>{
       arr.append(`image_menu[]`, {
         uri:`${e.path}`,
         name: `${index}_image_menu.jpg`,
@@ -189,10 +191,10 @@ export default class FormCreate extends Component {
       arr.append(`des_menu[]`, des_menu);
     })
 
-    this.state.img_video.forEach((e)=>{
+    this.state.img_video.length>0 && this.state.img_video.forEach((e)=>{
       arr.append('link[]',e);
     })
-    Object.entries(this.state.checkService).forEach((e)=>{
+    Object.entries(this.state.checkService).length>0 && Object.entries(this.state.checkService).forEach((e)=>{
       if(e[1]!==false){
         arr.append('service[]',e[1]);
       }
@@ -220,12 +222,14 @@ export default class FormCreate extends Component {
     //
     // });
 
-    console.log('arr',arr);
-    console.log('arr',`${global.url}${'create-location'}`);
+    //console.log('arr',arr);
+    //console.log('arr',`${global.url}${'create-location'}`);
     postApi(`${global.url}${'create-location'}`,arr).then((e)=>{
-      console.log('e',e);
+      //console.log('e',e);
       if(e.code===200){
-        this.props.navigation.navigate('MainScr');
+        Alert.alert(this.state.lang.notify,this.state.lang.create_success,[
+          {text: 'OK', onPress: () => this.props.navigation.navigate('MainScr')}
+        ])
       }else {
         Alert.alert(this.state.lang.notify,e.message)
       }
@@ -290,17 +294,20 @@ export default class FormCreate extends Component {
     }).catch(e=>console.log('e'));
   }
   getLatLng(addr){
+    //console.log('addr');
     let url = `${'https://maps.googleapis.com/maps/api/geocode/json?&address='}${addr}`;
     getApi(url).then(e=>{
 
       let arrDataAddr = e.results[0].address_components;
       let arrDataLoc = e.results[0].geometry.location;
       //console.log(arrDataAddr,arrDataLoc);
-      this.setState({
-        txtAddress: `${arrDataAddr[0].long_name} ${arrDataAddr[1].long_name}`,
-        lat:arrDataLoc.lat,
-        lng:arrDataLoc.lng,
-      })
+      this.state.txtAddress=`${arrDataAddr[0].long_name} ${arrDataAddr[1].long_name}`;
+      this.state.lat=arrDataLoc.lat;
+      this.state.lng=arrDataLoc.lng;
+      timeoutLatLng = setTimeout(()=>{
+        this.setState(this.state);
+      },5000)
+
 
     })
   }
@@ -314,7 +321,7 @@ export default class FormCreate extends Component {
       headCatStyle,headContent, wrapDistribute,wrapFilter,
       show,hide,hidden,colorlbl,listAdd,txtKV,
       listCreate,titleCreate,imgCamera,colorErr,
-      imgShare,imgInfo,wrapInputCreImg,wrapCreImg,widthLblCre,
+      imgShare,imgInfo,marRight,wrapInputCreImg,wrapCreImg,widthLblCre,
       imgUpCreate,imgUpLoc,imgUpInfo,overLayout,listOverService,shadown,popoverLoc,padCreate,
       upDDLoc,upDDSubCat,selectBox,optionUnitStyle,clockTime,
     } = styles;
@@ -544,9 +551,10 @@ export default class FormCreate extends Component {
               <View style={widthLblCre}>
                 <Image source={avatarIC} style={imgInfo} />
               </View>
-              <View style={{paddingLeft:15}}>
+              <View style={{paddingLeft:15,flexDirection:'row',alignItems:'center'}}>
+                <Image source={{isStatic:true,uri:`${this.state.imgAvatar.path}`}} style={[imgInfo,marRight,this.state.imgAvatar.path!==undefined ? show : hide]}/>
                 <Text style={colorlbl}>{this.state.lang.avatar}</Text>
-                </View>
+              </View>
             </View>
           <View style={{flexDirection:'row',alignItems:'center'}}>
           <Image source={selectedIC} style={[imgShare,this.state.imgAvatar.path!==undefined ? show : hide]}/>
@@ -623,6 +631,7 @@ export default class FormCreate extends Component {
           closeModal={()=>this.setState({showImgMenu:false})} />
 
           <AddVideo
+          lang={this.state.lang}
           submitImage={(img_video)=>this.setState({img_video})}
           visible={showVideo}
           closeModal={()=>this.setState({showVideo:false})} />
@@ -673,9 +682,8 @@ export default class FormCreate extends Component {
       closeModal={this.setOpenTime.bind(this)} />
       </View>
 
-        <Modal
-        onRequestClose={() => null}
-        transparent
+        {this.state.showSubCat && <Modal
+        onRequestClose={()=>null} transparent
         animationType={'slide'}
         visible={this.state.showSubCat}
         >
@@ -690,13 +698,13 @@ export default class FormCreate extends Component {
                 </View>
             </View>
 
-            <View style={{flexDirection:'row',padding:15}}>
+            {/*<View style={{flexDirection:'row',padding:15}}>
             <TextInput underlineColorAndroid='transparent'
             placeholder={this.state.lang.add_classify} style={{borderColor:'#DFE7ED',borderWidth:1,borderRadius:3,marginRight:10,padding:5,width:width-100,backgroundColor:'#fff'}} />
             <TouchableOpacity style={{backgroundColor:'#D0021B',borderRadius:3,padding:8,paddingLeft:18,paddingRight:18}}>
             <Text style={{color:'white',fontSize:18,fontWeight:'bold'}}>+</Text>
             </TouchableOpacity>
-            </View>
+            </View>*/}
             <FlatList
                extraData={this.state}
                data={sub_cat}
@@ -714,13 +722,13 @@ export default class FormCreate extends Component {
                    <Image source={checkIC} style={[imgShare,this.state.checkSubCat[`${item.id}`]===item.id ? show : hide]} />
                  </TouchableOpacity>
                )}
-               keyExtractor={item => item.id}
+               keyExtractor={item => item.id.toString()}
              />
              <View style={{height:5}}></View>
           </View>
-          </Modal>
+          </Modal>}
 
-          <Modal
+          {this.state.showService && <Modal
           onRequestClose={() => null}
           transparent
           animationType={'slide'}
@@ -737,13 +745,13 @@ export default class FormCreate extends Component {
                   </View>
               </View>
 
-              <View style={{flexDirection:'row',padding:15}}>
+              {/*<View style={{flexDirection:'row',padding:15}}>
               <TextInput underlineColorAndroid='transparent'
               placeholder={this.state.lang.add_utilities} style={{borderColor:'#DFE7ED',borderWidth:1,borderRadius:3,marginRight:10,padding:5,width:width-100,backgroundColor:'#fff'}} />
               <TouchableOpacity style={{backgroundColor:'#D0021B',borderRadius:3,padding:8,paddingLeft:18,paddingRight:18}}>
               <Text style={{color:'white',fontSize:18,fontWeight:'bold'}}>+</Text>
               </TouchableOpacity>
-              </View>
+              </View>*/}
 
               <FlatList
                 extraData={this.state}
@@ -762,42 +770,13 @@ export default class FormCreate extends Component {
                      <Image source={checkIC} style={[imgShare,this.state.checkService[`${item.id}`]===item.id ? show : hide]} />
                    </TouchableOpacity>
                  )}
-                 keyExtractor={item => item.id}
+                 keyExtractor={item => item.id.toString()}
                />
                <View style={{height:5}}></View>
             </View>
-            </Modal>
+            </Modal>}
 
-            {/*<Modal
-            onRequestClose={() => null}
-            transparent
-            animationType={'slide'}
-            visible={this.state.showProduct}
-            >
-              <View style={container}>
-                <View style={headCatStyle}>
-                    <View style={headContent}>
-                        <TouchableOpacity onPress={()=>this.setState({showProduct:!this.state.showProduct})}>
-                        <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
-                        </TouchableOpacity>
-                        <Text style={titleCreate}> {this.state.lang.add_product_more} </Text>
-                        <View></View>
-                    </View>
-                </View>
 
-                <View style={{flexDirection:'row',padding:15,justifyContent:'center'}}>
-                <TouchableOpacity
-                onPress={()=>this.insertGroup()}
-                style={{backgroundColor:'#D0021B',borderRadius:3,padding:8,paddingLeft:18,paddingRight:18}}>
-                <Text style={{color:'white',fontSize:18,fontWeight:'bold'}}>+ {this.state.lang.add_group}</Text>
-                </TouchableOpacity>
-                </View>
-                <ScrollView>
-                  {this.state.addGroupProduct}
-                </ScrollView>
-
-              </View>
-              </Modal>*/}
 
 
       </View>

@@ -6,14 +6,14 @@ import gooApi from '../api/gooApi';
 
 const loginServer = async (param) => {
   try {
-    getApi(`${global.url}${'check-login'}`)
-    .then(arr => {
-      //console.log('arr.data.length',arr.data);
+    //console.log(`${global.url}${'check-login'}`,);
+    getApi(`${global.url}${'check-login'}`).then(arr => {
+      //console.log('arr.data.length',arr.data.length);
       if(arr.data.length===0){
         if(param.id_google!==null){
+          //console.log('gooApi');
           gooApi(`${global.url}${'login-google'}`,param);
-        }
-        if(param.pwd===undefined){
+        }else {
           const params = {username:param.email,password:param.pwd};
           loginApi(`${global.url}${'login'}`,params);
         }

@@ -7,8 +7,8 @@ import {
   AsyncStorage,DeviceEventEmitter} from 'react-native';
 const {height, width} = Dimensions.get('window');
 
-import UpdateInfo from './UpdateInfo';
-import Setting from './Setting';
+//import UpdateInfo from './UpdateInfo';
+//import Setting from './Setting';
 //import Collection from './Collection';
 
 import styles from '../../styles';
@@ -19,6 +19,7 @@ import lang_vn from '../../lang/vn/language';
 import lang_en from '../../lang/en/language';
 import getLocationByIP from '../../api/getLocationByIP';
 import checkLogin from '../../api/checkLogin';
+import loginServer from '../../api/loginServer';
 
 import plusWhiteIC from '../../../src/icon/ic-white/ic-plus.png';
 import userProfileIC from '../../../src/icon/ic-user-profile.png';
@@ -34,6 +35,7 @@ import logoutIC from '../../../src/icon/ic-white/ic-logout.png';
 import changeIC from '../../../src/icon/ic-white/ic-change.png';
 import {checkUrl} from '../../libs';
 
+var timeoutUser;
 export default class PersonalTab extends Component {
   constructor(props) {
     super(props);
@@ -60,9 +62,11 @@ export default class PersonalTab extends Component {
       if(e.id===undefined){
         this.setState({isLogin:false})
       }else {
-        this.setState({user_profile:e,isLogin:true},()=>{
-          this.getUser(e.id);
-        });
+        clearTimeout(timeoutUser);
+        this.getUser(e.id);
+        this.setState({user_profile:e,isLogin:true});
+        //console.log('loginServer',e);
+        loginServer(e);
       }
     });
   }
@@ -70,7 +74,7 @@ export default class PersonalTab extends Component {
     getApi(`${global.url}${'user/get-static/'}${id}`)
     .then(arrData => {
         //console.log(arrData);
-        setTimeout(()=>{
+        timeoutUser = setTimeout(()=>{
           this.setState({ countEntry: arrData.data });
         },2000)
     })

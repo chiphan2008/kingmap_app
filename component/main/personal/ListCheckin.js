@@ -48,7 +48,7 @@ export default class ListCheckin extends Component {
     .catch(err => console.log(err));
   }
   confirmDel(id){
-    const {lang} = this.props;
+    const {lang} = this.props.navigation.state.params;
     Alert.alert(lang.notify,lang.confirm_loc_del,[
       {text: lang.cancel, style: 'cancel'},
       {text: lang.confirm, onPress: () => this.delCheckin(id)},

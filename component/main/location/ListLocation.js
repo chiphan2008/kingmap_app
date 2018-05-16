@@ -320,13 +320,13 @@ export default class ListLocation extends Component {
     //console.log('this.props.navigation',this.props.navigation);
     return (
       <View style={container}>
-      <TouchableOpacity style={[btnScrollTop,scrollToTop ? show : hide ]}
+      {scrollToTop && <TouchableOpacity style={btnScrollTop}
       onPress={()=>{
         this.refs.listPro.scrollToOffset({x: 0, y: 0, animated: true});
         this.setState({scrollToTop:false});
       }}>
       <Image source={topIC} style={{width:40,height:40}} />
-      </TouchableOpacity>
+      </TouchableOpacity>}
       <View style={headStyle}>
           <View style={headContent}>
           <TouchableOpacity
@@ -409,7 +409,7 @@ export default class ListLocation extends Component {
                      //ListHeaderComponent={null}
                      ListFooterComponent={this.renderFooter}
                      data={listData}
-                     keyExtractor={(item,index) => item.id || index}
+                     keyExtractor={(item,index) => index.toString()}
                      renderItem={({item}) => (
                        <View style={flatlistItemCat}>
                            <TouchableOpacity

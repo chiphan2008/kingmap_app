@@ -60,7 +60,7 @@ export default class AddImgSpace extends Component {
 
 
           <View style={[container]}>
-          <View style={{justifyContent:'center',alignItems:'center',backgroundColor:'#FFFEFF',padding:50,marginBottom:5}}>
+          <View style={{justifyContent:'center',alignItems:'center',backgroundColor:'#FFFEFF',padding:50,borderColor:'#ECEEF3',borderBottomWidth:1,marginBottom:5}}>
             <TouchableOpacity
             onPress={()=>this.uploadSpace()}>
             <Image source={cameraLargeIC} style={{width:60,height:60,marginBottom:10}}/>

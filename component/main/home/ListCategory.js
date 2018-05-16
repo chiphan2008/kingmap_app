@@ -411,7 +411,7 @@ export default class CategoryScreen extends Component {
 
             <FlatList
                extraData={this.state}
-               keyExtractor={(item, index) => index}
+               keyExtractor={(item, index) => index.toString()}
                data={serv_items}
                renderItem={({item}) => (
               <View  style={listOverService}>

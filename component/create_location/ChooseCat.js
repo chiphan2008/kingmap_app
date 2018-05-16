@@ -80,6 +80,7 @@ export default class ChooseCat extends Component {
     <View style={flatlistItem}>
         <FlatList
            numColumns={3}
+           extraData={this.state}
            data={this.state.listCategory}
            renderItem={({item}) =>(
              <TouchableOpacity
@@ -90,7 +91,7 @@ export default class ChooseCat extends Component {
              </TouchableOpacity>
            )}
            style={{marginBottom:170}}
-           keyExtractor={item => item.id}
+           keyExtractor={item => item.id.toString()}
          />
          </View>
     </View>

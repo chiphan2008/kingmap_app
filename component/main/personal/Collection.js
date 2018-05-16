@@ -105,7 +105,7 @@ export default class Collection extends Component {
   }
   confirmDel(id,id_content=null,route){
     //console.log(id);
-    const {lang} = this.props;
+    const {lang} = this.props.navigation.state.params;
     if(route==='delete'){
       Alert.alert(lang.notify,lang.confirm_collection_del,[
         {text: lang.cancel, style: 'cancel'},
@@ -207,7 +207,7 @@ export default class Collection extends Component {
                        horizontal
                        showsHorizontalScrollIndicator={false}
                        extraData={this.state}
-                       keyExtractor={item => item.id}
+                       keyExtractor={item => item.id.toString()}
                        data={e._contents}
                        renderItem={({item}) => (
                          <View style={{marginRight:0,padding:10,width:(width)/2}}>
@@ -221,10 +221,10 @@ export default class Collection extends Component {
                            }}>
                            <Text style={{color:'#2F353F',fontSize:16}} numberOfLines={2}>{item.name}</Text>
                            </TouchableOpacity>
-                           <TouchableOpacity onPress={()=>this.confirmDel(e.id,item.id,'remove')}
-                           style={[closeCollection,showPopup[e.id] && showEdit ? show : hide ]}>
+                           {showPopup[e.id] && showEdit && <TouchableOpacity onPress={()=>this.confirmDel(e.id,item.id,'remove')}
+                           style={[closeCollection]}>
                            <Image source={closeIC} style={{width:18,height:18}} />
-                           </TouchableOpacity>
+                           </TouchableOpacity>}
                          </View>
                        )}
                     />

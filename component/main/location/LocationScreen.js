@@ -16,6 +16,7 @@ import searchIC from '../../../src/icon/ic-gray/ic-search.png';
 import infoIC from '../../../src/icon/ic-white/ic-analysis.png';
 import socialIC from '../../../src/icon/ic-white/ic-social.png';
 
+var timeoutCat;
 export default class LocationScreen extends Component {
   constructor(props) {
     super(props);
@@ -32,19 +33,22 @@ export default class LocationScreen extends Component {
     getApi(global.url+'categories?language='+lang+'&limit=100')
     .then(arrCategory => {
       //console.log('arrCategory',arrCategory.data);
+      timeoutCat = setTimeout(()=>{
         this.setState({ listCategory: arrCategory.data });
+      },1000)
+
     })
     .catch(err => console.log(err));
   }
 
   componentWillMount(){
     getLanguage().then((e) => {
+      clearTimeout(timeoutCat);
+      this.getCategory(e.valueLang);
       this.setState({selectLang: {
         valueLang : e.valueLang,
         labelLang : e.labelLang,
-      },},()=>{
-        this.getCategory(e.valueLang);
-      })
+      }})
     });
   }
 

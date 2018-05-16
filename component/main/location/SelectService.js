@@ -52,7 +52,7 @@ export default class SelectService extends Component {
 
           <FlatList
              extraData={this.state}
-             keyExtractor={(item, index) => index}
+             keyExtractor={(item, index) => index.toString()}
              data={data}
              renderItem={({item}) => (
             <View style={listOverService}>

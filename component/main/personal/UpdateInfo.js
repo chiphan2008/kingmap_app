@@ -91,7 +91,7 @@ export default class UpdateInfo extends Component {
   updateUser(){
     let errMsg;
     let err = false;
-    const {lang} = this.props;
+    const {lang} = this.props.navigation.state.params;
     const { full_name,phone,dDay,mDay,yDay, } = this.state;
     this.setState({
       showDay:false,
@@ -131,15 +131,16 @@ export default class UpdateInfo extends Component {
           type: `${this.state.imgAvatar.mime}`
         });
       }
-      //console.log(`${global.url}${'user/update/'}${this.props.userId}`);
+      //console.log(arr);
+      console.log(`${global.url}${'user/update/'}${userId}`);
       postApi(`${global.url}${'user/update/'}${userId}`,arr).then(e=>{
-        //console.log(e);
+        console.log(e);
         if(e.code===200){
           encodeApi(`${global.url_node}${'person'}`,'POST',e.data);
           AsyncStorage.setItem('@MyAccount:key', JSON.stringify(Object.assign(e.data,{'pwd':this.state.pwd})));
           Alert.alert(lang.notify,lang.update_success,
           [
-            {text: 'OK', onPress: ()=>this.props.closeModal()}
+            {text: 'OK', onPress: ()=>this.closeModal()}
           ])
         }
       });
@@ -163,7 +164,7 @@ export default class UpdateInfo extends Component {
       wrapper,headCatStyle,headContent,titleCreate,
       titleTab,titleActive,listCreate,widthLblCre,
       imgInfo,wrapInputCreImg,marTop,colorErr,btnInfo,btnYInfo,colorTitle,
-      wrapBtnInfo,wrapInfo,show,hide,posDay,posMonth,posYear,widthDay,widthYear,
+      wrapBtnInfo,wrapSelect,show,hide,posDay,posMonth,posYear,widthDay,widthYear,
     } = styles;
     const {lang} = this.props.navigation.state.params;
     const {listDay,listMonth,listYear,showDay,showMonth,showYear,disable} = this.state;
@@ -246,8 +247,8 @@ export default class UpdateInfo extends Component {
          </View>
 
 
-         <View style={[wrapInfo,wrapBtnInfo,posDay,widthDay,showDay ? show : hide]}>
-         <ScrollView>
+         {showDay && <View style={[wrapSelect,posDay,widthDay,wrapBtnInfo]}>
+         <ScrollView style={[showDay ? show : hide]}>
          {Array(listDay).fill().map((_, i) => {
            i=i+1; i = i<10 ? `0${i}` : i;
            return (
@@ -255,12 +256,10 @@ export default class UpdateInfo extends Component {
                 <Text style={colorTitle}>{i}</Text>
             </TouchableOpacity>
          )})}
-
          </ScrollView>
-         </View>
+         </View>}
 
-
-         <View style={[wrapInfo,wrapBtnInfo,posMonth,widthDay,showMonth ? show : hide]}>
+         {showMonth && <View style={[wrapSelect,posMonth,widthDay,wrapBtnInfo]}>
          <ScrollView>
          {Array(listMonth).fill().map((_, i) => {
            i=i+1; i = i<10 ? `0${i}` : i;
@@ -270,11 +269,9 @@ export default class UpdateInfo extends Component {
             </TouchableOpacity>
          )})}
          </ScrollView>
-         </View>
+         </View>}
 
-
-
-         <View style={[wrapInfo,wrapBtnInfo,posYear,widthYear,showYear ? show : hide]}>
+         {showYear && <View style={[wrapSelect,posYear,widthYear,wrapBtnInfo]}>
          <ScrollView>
          {Array(100).fill().map((_, i) => {
            i=listYear-i;
@@ -284,7 +281,8 @@ export default class UpdateInfo extends Component {
             </TouchableOpacity>
          )})}
          </ScrollView>
-         </View>
+         </View>}
+
 
 
          <View style={[listCreate,marTop]}>

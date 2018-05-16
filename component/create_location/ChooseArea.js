@@ -82,7 +82,7 @@ export default class ChooseArea extends Component {
               <View style={[overLayout,shadown]}>
               <FlatList
                  extraData={this.state}
-                 keyExtractor={(item, index) => index}
+                 keyExtractor={(item, index) => index.toString()}
                  data={this.state.listCountry}
                  renderItem={({item}) => (
                 <View  style={listOverService}>
@@ -110,7 +110,7 @@ export default class ChooseArea extends Component {
               <View style={[overLayout,shadown]}>
               <FlatList
                  extraData={this.state}
-                 keyExtractor={(item, index) => index}
+                 keyExtractor={(item, index) => index.toString()}
                  data={this.state.listCity}
                  renderItem={({item}) => (
                 <View  style={listOverService}>
@@ -138,7 +138,7 @@ export default class ChooseArea extends Component {
               <View style={[overLayout,shadown]}>
               <FlatList
                  extraData={this.state}
-                 keyExtractor={(item, index) => index}
+                 keyExtractor={(item, index) => index.toString()}
                  data={this.state.listDist}
                  renderItem={({item}) => (
                 <View  style={listOverService}>

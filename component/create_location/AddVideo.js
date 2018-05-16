@@ -25,17 +25,18 @@ export default class AddVideo extends Component {
   }
 
   uploadVideo(link){
+    const {lang} = this.props;
     if(link!==''){
       var youtube_video_id = getThumbVideo(link);
       if(this.state.imgVideo.includes(youtube_video_id)){
         return this.setState({
-          txtErr:'* Link đã tồn tại!',
+          txtErr:'* '+lang.exi_link,
           txtVideoLink:'',
         })
       }
       if(youtube_video_id===undefined){
         return this.setState({
-          txtErr:'* Link không hợp lệ!',
+          txtErr:'* '+lang.unlink,
         })
       }
       this.setState({
@@ -46,7 +47,7 @@ export default class AddVideo extends Component {
       });
     }else {
       this.setState({
-        txtErr:'* Bạn phải nhập link',
+        txtErr:'* '+lang.require_link,
       })
     }
   }
@@ -55,6 +56,7 @@ export default class AddVideo extends Component {
       container,headCatStyle,headContent,titleCreate,
       titleTab,titleActive,show,hide,colorWhite,titleErr,
     } = styles;
+
     return (
 
       <Modal onRequestClose={() => null} transparent
@@ -76,16 +78,14 @@ export default class AddVideo extends Component {
 
           </View>
 
-
-
           <View style={[container]}>
-          <View style={{backgroundColor:'#FFFEFF',padding:50,marginBottom:5}}>
+          <View style={{backgroundColor:'#FFFEFF',padding:30,marginBottom:5,borderColor:'#ECEEF3',borderBottomWidth:1}}>
           <Text style={{fontSize:20}}>Nhập link video</Text>
           <View style={{flexDirection:'row',marginTop:10}}>
             <TextInput
             underlineColorAndroid='transparent'
             onChangeText={(text) => this.setState({txtVideoLink:text})}
-            placeholder={`${"www.youtube.com/ ..."}`}
+            placeholder={`${this.props.lang.title_link}`}
             value={this.state.txtVideoLink}
             style={{borderRadius:3,paddingLeft:10,paddingTop:5,paddingBottom:5,fontSize:16,width:width-150,borderWidth:1,borderColor:'#E1E7EC',marginRight:10}} />
             <TouchableOpacity

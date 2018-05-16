@@ -78,7 +78,7 @@ export default class ChangeOwner extends Component {
   }
 
   confirmChange = () => {
-    console.log(this.state.user_profile.text);
+    //console.log(this.state.user_profile.text);
     const {user_profile,showContent} = this.state;
     const {lang,userId} = this.props.navigation.state.params;
 
@@ -193,7 +193,7 @@ export default class ChangeOwner extends Component {
          </View>}
 
 
-         <View style={[popupLocChange,topLocChange,showLoc ? show :hide]}>
+         {showLoc && <View style={[popupLocChange,topLocChange]}>
          <FlatList
             extraData={this.state}
             data={listContent}
@@ -210,9 +210,9 @@ export default class ChangeOwner extends Component {
                   </View>
               </TouchableOpacity>
             )} />
-         </View>
+         </View>}
 
-         <View style={[popupLocChange,topUserChange,showUser ? show :hide]}>
+         {showUser && <View style={[popupLocChange,topUserChange]}>
          <FlatList
             extraData={this.state}
             data={listUser}
@@ -228,7 +228,7 @@ export default class ChangeOwner extends Component {
                   </View>
               </TouchableOpacity>
             )} />
-         </View>
+         </View>}
 
 
 

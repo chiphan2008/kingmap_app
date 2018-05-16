@@ -60,7 +60,7 @@ module.exports = {
   pad15:{padding:15,width,alignItems:'center'},
   actionSheetRadius:{borderRadius:5},
   actionSheetContent:{width:width-30,backgroundColor:'#fff',alignItems:'center',overflow:'hidden'},
-  actionSheetWrap:{justifyContent:'flex-end',paddingBottom: Platform.OS==='ios' ? 20 : 50,alignItems:'center',position:'absolute',zIndex:999,backgroundColor:'rgba(0,0,0,0.5)',width,height},
+  actionSheetWrap:{justifyContent:'flex-end',alignItems:'center',position:'absolute',zIndex:999,backgroundColor:'rgba(0,0,0,0.6)',width,height,paddingBottom:30},
   closeCollection:{position:'absolute',top:5,right:5},
   popup:{flexDirection:'row',width:45,justifyContent:'space-between'},
   btnInfo:{width:45,height:30,borderColor:'#E1E7ED',borderWidth:1,borderRadius:5,alignItems:'center',justifyContent:'space-between',padding:5,flexDirection:'row'},
@@ -248,7 +248,7 @@ module.exports = {
     width,height:Platform.OS==='ios' ? height-200 : height-230
   },
   labelCat :{
-    backgroundColor:'transparent',textAlign:'center',position:'relative'
+    backgroundColor:'transparent',textAlign:'center',//position:'absolute',top:70,zIndex:999
   },
   labelNum :{
     backgroundColor:'transparent',zIndex:9,position:'absolute',color:'#d0021b',top:0,right:0
@@ -384,7 +384,8 @@ module.exports = {
   colorText :{color:'#303B50',fontSize:17},
   widthDay:{width:45},widthYear:{width:60},
   wrapInfo:{position:'absolute',zIndex:999,width,height,top:0,left:0,backgroundColor:'transparent'},
-  wrapBtnInfo:{height:150,backgroundColor:'#fff',borderWidth:1,borderColor:'#E1E7ED',alignItems:'center' },
+  wrapSelect:{position:'absolute',zIndex:999,},
+  wrapBtnInfo:{height:150,backgroundColor:'#fff',borderWidth:1,borderColor:'#E1E7ED'},
   posDay:{top:320,left:57},
   posMonth:{top:320,left:115},
   posYear:{top:320,left:175},
@@ -428,7 +429,7 @@ module.exports = {
   txtNextItem:{color:'#6587A8',fontSize:17},
   titleHead:{color:'#fff',fontSize:24,fontWeight:'500'},
   show : { display: 'flex',},
-  hide : { display: 'none',},
+  hide : { display: 'none'},
   //hideMarker : { display: 'none',width:0,height:0},
   hidden:{ position:'absolute',right:-width}
 }

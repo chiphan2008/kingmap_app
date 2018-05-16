@@ -50,7 +50,7 @@ export default class ImageViewer extends Component {
            onScrollToIndexFailed={(info)=>console.log(info)}
            ref={(ref) => { this.flatlist = ref; }}
            showsHorizontalScrollIndicator={false}
-           keyExtractor={(item,index) => index}
+           keyExtractor={(item,index) => index.toString()}
            //getItemLayout={this.getItemLayout}
            extraData={this.state}
            data={data}

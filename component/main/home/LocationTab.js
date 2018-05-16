@@ -5,7 +5,7 @@ import {Platform, View, Text, StyleSheet, Dimensions, Image, TextInput,ScrollVie
   TouchableOpacity,PermissionsAndroid, AsyncStorage, Modal,Keyboard } from 'react-native';
 import RNSettings from 'react-native-settings';
 const {height, width} = Dimensions.get('window');
-import Geolocation from '../../api/Geolocation';
+//import Geolocation from '../../api/Geolocation';
 //import hasLocationPermission from '../../api/hasLocationPermission';
 
 import getApi from '../../api/getApi';
@@ -88,24 +88,17 @@ export default class LocationTab extends Component {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const {latitude,longitude} = position.coords;
-        AsyncStorage.setItem('@currentLocation:key',JSON.stringify({
-          latitude,longitude
-        }))
         this.setState({curLoc:{
           latitude,longitude
-        }},()=>{
-          this.getCategory(`${latitude},${longitude}`);
-        })
+        }})
       },
       (error) => {
-        // Geolocation().then(e=>{
-        //   const {latitude,longitude} = e;
-        //   this.setState({curLoc:{
-        //     latitude,longitude
-        //   }},()=>{
-        //     this.getCategory(`${latitude},${longitude}`);
-        //   })
-        // })
+        getLocationByIP().then((e) => {
+          const {latitude,longitude} = e;
+          this.setState({curLoc:{
+            latitude,longitude
+          }});
+        });
       },
       { timeout: 5000,maximumAge: 60000 },
     );
@@ -153,23 +146,24 @@ export default class LocationTab extends Component {
     }, 1000);
   }
   getCategory(lang){
-    getApi(global.url+'categories?language='+lang+'&limit=100')
+
+    getApi(global.url+'categories?language='+lang+'&limit=10')
     .then(arrCategory => {
       //console.log('arrCategory',arrCategory);
       if(arrCategory!==undefined){setTimeout(() => {
-          this.setState({ listCategory: arrCategory.data },()=>{
-            this.getListStatus();
-          });
-      }, 500);}
+          this.setState({ listCategory: arrCategory.data });
+          this.getListStatus();
+      }, 1000);}
     })
     .catch(err => console.log(err));
   }
   getListStatus(){
     getApi(global.url+'get-static')
     .then(arrData => {
-      setTimeout(()=>{
-        this.setState({ listStatus: arrData.data });
-      },500)
+      setTimeout(() => {
+          this.state.listStatus= arrData.data;
+          this.setState(this.state);
+      }, 1000);
     }).catch(err => console.log(err));
   }
 

@@ -51,7 +51,7 @@ export default class OtherCat extends Component {
   render() {
     //console.log('OtherCat');
     const {navigate, goBack} = this.props.navigation;
-    const { curLoc } = this.props.navigation.state.params;
+    const { curLoc } = this.props.navigation.state.params || {};
     //console.log(curLoc);
     const {
       container,
@@ -82,7 +82,7 @@ export default class OtherCat extends Component {
            data={this.state.listCategory}
            renderItem={({item}) =>(
              <TouchableOpacity
-              onPress={()=>navigate('SearchScr',{keyword:'',idCat:item.id,labelCat:item.name,service_items:item.service_items,lat:curLoc.latitude,lng:curLoc.longitude,lang:this.state.selectLang.valueLang,curLoc})}
+              onPress={()=>navigate('SearchScr',{keyword:'',idCat:item.id,labelCat:item.name,service_items:item.service_items,lang:this.state.selectLang.valueLang,curLoc})}
               style={flatItem}>
                  <Image style={imgFlatItemLoc} source={{uri:`${global.url_media}${item.image}`}} />
                  <Text style={{textAlign:'center'}} numberOfLines={2}>{item.name}</Text>

@@ -27,7 +27,7 @@ export default class NotifyTab extends Component {
       showShare : false,
       curLoc:{},
     };
-    this.getLoc();
+    //this.getLoc();
     getLanguage().then((e) =>{
       if(e!==null){
           e.valueLang==='vn' ?  this.setState({lang : lang_vn}) : this.setState({lang : lang_en});

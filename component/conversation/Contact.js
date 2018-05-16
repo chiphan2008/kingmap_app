@@ -20,13 +20,13 @@ export default class Contact extends Component {
       yf_id:'',
       activeTab:'system',
     };
-
     this.getData();
   }
 
   getData(){
     const { user_id } = this.props.navigation.state.params;
     const url = `${global.url_node}${'except-person/'}${user_id}`;
+    console.log(url);
     getEncodeApi(url).then(e=>{
       //console.log('e',e.data);
       this.setState({listData:e.data})
@@ -79,7 +79,7 @@ export default class Contact extends Component {
 
           <FlatList
              extraData={this.state}
-             keyExtractor={(item, index) => index}
+             keyExtractor={(item, index) => index.toString()}
              data={listData}
              renderItem={({item}) => (
                <View style={wrapItems}>

@@ -33,7 +33,7 @@ export default class OtherBranch extends Component {
       <FlatList
          horizontal extraData={this.state}
          showsHorizontalScrollIndicator={false}
-         data={listGroup}  keyExtractor={(item,index) => index}
+         data={listGroup}  keyExtractor={(item,index) => index.toString()}
          renderItem={({item,index}) => (
            <View style={[widthHafl,marRight]}
                key={item.id}>
@@ -64,7 +64,7 @@ export default class OtherBranch extends Component {
 const styles = StyleSheet.create({
   wrapContentDetail:{flexWrap:'wrap',padding:10,backgroundColor:'#fff'},
   rowFlex:{flexDirection:'row',paddingLeft:10,paddingRight:10,marginTop:10},
-  titleSpace:{flexDirection:'row',justifyContent:'space-between',padding:30,paddingLeft:0,paddingRight:20,},
+  titleSpace:{flexDirection:'row',justifyContent:'space-between',paddingTop:30,paddingBottom:30,paddingLeft:0,paddingRight:0},
   colorText :{color:'#303B50',fontSize:17,marginTop:7},
   colorNumPP :{fontWeight: 'bold',color:'#2F353F'},
   sizeTitle:{fontSize:20},

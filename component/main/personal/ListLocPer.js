@@ -79,7 +79,7 @@ export default class ListLocPer extends Component {
 
   confirmDel(id){
     this.setState({showOption:false});
-    const {lang} = this.props;
+    const {lang} = this.props.navigation.state.params;
     Alert.alert(lang.notify,lang.confirm_loc_del,[
       {text: lang.cancel, style: 'cancel'},
       {text: lang.confirm, onPress: () => this.deleteLocation(id)},
@@ -98,45 +98,8 @@ export default class ListLocPer extends Component {
       colorTxt
     } = styles;
     return (
-        <ScrollView style={container}>
-
-        <View style={[actionSheetWrap,showOption ? show : hide]} >
-          <View style={[actionSheetContent,actionSheetRadius]}>
-            <TouchableOpacity style={pad15}>
-            <Text style={colorTxt}>{lang.edit}</Text>
-            </TouchableOpacity>
-            {moderation==='publish' ?
-              <View>
-              <View style={line}></View>
-              <TouchableOpacity onPress={()=>this.callPause(id_content)} style={pad15}>
-              <Text style={colorTxt}>{lang.pause}</Text>
-              </TouchableOpacity>
-              </View>
-              :
-              <View></View>
-            }
-            {moderation==='un_publish' ?
-              <View>
-              <View style={line}></View>
-              <TouchableOpacity onPress={()=>this.reOpen(id_content)} style={pad15}>
-              <Text style={colorTxt}>{lang.reopen}</Text>
-              </TouchableOpacity>
-              </View>
-              :
-              <View></View>
-            }
-            <View style={line}></View>
-            <TouchableOpacity onPress={()=>this.confirmDel(id_content)} style={pad15}>
-            <Text style={colorTxt}>{lang.delete}</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={[actionSheetContent,actionSheetRadius,marTop10]}>
-            <TouchableOpacity onPress={()=>this.setState({showOption:false})} style={pad15}>
-            <Text style={colorTxt}>{lang.cancel}</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
+      <View style={container}>
+        <ScrollView>
           <View style={headCatStyle}>
               <View style={headContent}>
                   <TouchableOpacity onPress={()=>{
@@ -149,12 +112,11 @@ export default class ListLocPer extends Component {
                   <View></View>
               </View>
           </View>
-          {this.state.listData.length > 0 ?
+          {this.state.listData.length > 0 &&
             this.state.listData.map((e)=>(
               <View key={e.id}>
                 <View style={{backgroundColor:'#fff'}}>
                   <TouchableOpacity onPress={()=>{
-                    //this.props.closeModal()
                     navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang})
                   }}>
                     <Image source={{uri:`${global.url_media}${e.avatar}`}} style={{width:width,minHeight:200,marginBottom:10}} />
@@ -170,35 +132,32 @@ export default class ListLocPer extends Component {
                           <Text numberOfLines={1} style={txtTitleOverCat}>{e.name}</Text>
                         </TouchableOpacity>
                           <Text numberOfLines={1} style={{color:'#6587A8',lineHeight:24}}>{`${e.address}, ${e._district.name}, ${e._city.name}, ${e._country.name}`}</Text>
-                          {e.moderation==='request_publish' ?
+                          {e.moderation==='request_publish' &&
                             <View style={{flexDirection:'row'}}>
                             <Image source={favoriteIC} style={{width:16,height:16,marginTop:2}} />
                             <Text numberOfLines={1} style={{color:'#313B50',lineHeight:24}}> ({e.vote}) | </Text>
                             <Image source={requestIC} style={{width:14,height:14,marginRight:3,marginTop:5}} />
                             <Text numberOfLines={1} style={{color:'#313B50',lineHeight:24}}> {`${lang.pending}`}</Text>
                             </View>
-                            :
-                            <View></View>
+
                           }
-                          {e.moderation==='publish' ?
+                          {e.moderation==='publish' &&
                             <View style={{flexDirection:'row'}}>
                             <Image source={favoriteIC} style={{width:16,height:16,marginTop:2}} />
                             <Text numberOfLines={1} style={{color:'#313B50',lineHeight:24}}> ({e.vote}) | </Text>
                             <Image source={openingIC} style={{width:14,height:14,marginRight:3,marginTop:5}} />
                             <Text numberOfLines={1} style={{color:'#313B50',lineHeight:24}}> {`${lang.opening}`}</Text>
                             </View>
-                            :
-                            <View></View>
+
                           }
-                          {e.moderation==='un_publish' ?
+                          {e.moderation==='un_publish' &&
                             <View style={{flexDirection:'row'}}>
                             <Image source={favoriteIC} style={{width:16,height:16,marginTop:2}} />
                             <Text numberOfLines={1} style={{color:'#313B50',lineHeight:24}}> ({e.vote}) | </Text>
                             <Image source={closingIC} style={{width:14,height:14,marginRight:3,marginTop:5}} />
                             <Text numberOfLines={1} style={{color:'#313B50',lineHeight:24}}> {`${lang.closing}`}</Text>
                             </View>
-                            :
-                            <View></View>
+
                           }
 
 
@@ -210,13 +169,44 @@ export default class ListLocPer extends Component {
                 </View>
                 <View style={{height:14}}></View>
               </View>
-            ))
-            :
-            <View></View>
-          }
+            ))}
 
       </ScrollView>
+      {showOption && <View style={actionSheetWrap} >
+        <View style={[actionSheetContent,actionSheetRadius]}>
+          <TouchableOpacity style={pad15}>
+          <Text style={colorTxt}>{lang.edit}</Text>
+          </TouchableOpacity>
+          {moderation==='publish' &&
+            <View>
+            <View style={line}></View>
+            <TouchableOpacity onPress={()=>this.callPause(id_content)} style={pad15}>
+            <Text style={colorTxt}>{lang.pause}</Text>
+            </TouchableOpacity>
+            </View>
 
+          }
+          {moderation==='un_publish' &&
+            <View>
+            <View style={line}></View>
+            <TouchableOpacity onPress={()=>this.reOpen(id_content)} style={pad15}>
+            <Text style={colorTxt}>{lang.reopen}</Text>
+            </TouchableOpacity>
+            </View>
+
+          }
+          <View style={line}></View>
+          <TouchableOpacity onPress={()=>this.confirmDel(id_content)} style={pad15}>
+          <Text style={colorTxt}>{lang.delete}</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={[actionSheetContent,actionSheetRadius,marTop10]}>
+          <TouchableOpacity onPress={()=>this.setState({showOption:false})} style={pad15}>
+          <Text style={colorTxt}>{lang.cancel}</Text>
+          </TouchableOpacity>
+        </View>
+      </View>}
+      </View>
     );
   }
 }

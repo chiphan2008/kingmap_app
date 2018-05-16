@@ -156,7 +156,7 @@ export default class Comments extends Component {
                horizontal
                showsHorizontalScrollIndicator={false}
                extraData={this.state}
-               keyExtractor={(item,index) => index}
+               keyExtractor={(item,index) => index.toString()}
                data={arrImage}
                renderItem={({item,index}) => (
                  <View>
@@ -202,7 +202,7 @@ export default class Comments extends Component {
                        extraData={this.state}
                        showsHorizontalScrollIndicator={false}
                        data={e._images} extraData={this.state}
-                       keyExtractor={(item,index) => index}
+                       keyExtractor={(item,index) => index.toString()}
                        renderItem={({item,index}) => (
                          <TouchableOpacity onPress={()=>this.setState({showImgComment:true,index,arrImgModal:e._images})}>
                          <Image source={{uri:checkUrl(item.url) ? `${item.url}` : `${global.url_media}${item.url}`}} style={{width:90,height:90,marginRight:7}} />
@@ -260,7 +260,7 @@ export default class Comments extends Component {
                 <FlatList
                    horizontal showsHorizontalScrollIndicator={false}
                    data={arrImageChild} extraData={this.state}
-                   keyExtractor={(item,index) => index}
+                   keyExtractor={(item,index) => index.toString()}
                    renderItem={({item,index}) => (
                      <View>
                          <Image key={index} style={{width:90,height:90,marginTop:10,marginRight:10}}
@@ -301,7 +301,7 @@ export default class Comments extends Component {
                              horizontal showsHorizontalScrollIndicator={false}
                              extraData={this.state}
                              data={r._images}
-                             keyExtractor={(item,index) => index}
+                             keyExtractor={(item,index) => index.toString()}
                              renderItem={({item,index}) => (
                                <TouchableOpacity onPress={()=>this.setState({arrImgModal:r._images})}>
                                 <Image source={{uri: checkUrl(item.url) ? `${item.url}` : `${global.url_media}${item.url}` }} style={{width:90,height:90,marginRight:7}} />

@@ -55,7 +55,7 @@ export default class SpaceContent extends Component {
              //pagingEnabled
              ListEmptyComponent={<Text>{lang.updating}</Text>}
              showsHorizontalScrollIndicator={false}
-             keyExtractor={(item,index) => index}
+             keyExtractor={(item,index) => index.toString()}
              extraData={this.state}
              data={listImgSpace}
              renderItem={({item,index}) => (
@@ -92,7 +92,7 @@ export default class SpaceContent extends Component {
              //pagingEnabled
              ListEmptyComponent={<Text>{lang.updating}</Text>}
              showsHorizontalScrollIndicator={false}
-             keyExtractor={(item,index) => index}
+             keyExtractor={(item,index) => index.toString()}
              extraData={this.state}
              data={listImgMenu}
              renderItem={({item,index}) => (
@@ -130,7 +130,7 @@ export default class SpaceContent extends Component {
              //pagingEnabled
              ListEmptyComponent={<Text>{lang.updating}</Text>}
              showsHorizontalScrollIndicator={false}
-             keyExtractor={(item,index) => index}
+             keyExtractor={(item,index) => index.toString()}
              extraData={this.state}
              data={listImgVideo}
              renderItem={({item,index}) => (
@@ -159,7 +159,7 @@ export default class SpaceContent extends Component {
 const styles = StyleSheet.create({
   rowFlexImg:{flexDirection:'row',marginBottom:20},
   rowFlex:{flexDirection:'row',paddingLeft:10,paddingRight:10,marginTop:10},
-  titleSpace:{flexDirection:'row',justifyContent:'space-between',padding:30,paddingLeft:0,paddingRight:0},
+  titleSpace:{flexDirection:'row',justifyContent:'space-between',paddingTop:30,paddingBottom:30,paddingLeft:0,paddingRight:0},
   colorText :{color:'#303B50',fontSize:17,marginTop:7},
   colorNumPP :{fontWeight: 'bold',color:'#2F353F'},
   sizeTitle:{fontSize:20},

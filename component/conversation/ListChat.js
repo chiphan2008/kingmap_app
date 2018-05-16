@@ -61,7 +61,7 @@ export default class ListChat extends Component {
               {listData.length>0 ?
                 <FlatList
                    extraData={this.state}
-                   keyExtractor={(item, index) => index}
+                   keyExtractor={(item, index) => index.toString()}
                    data={listData}
                    renderItem={({item}) => (
                      <View style={bgWhite}>
@@ -92,7 +92,7 @@ export default class ListChat extends Component {
               {listData.length>0 ?
                 <FlatList
                    extraData={this.state}
-                   keyExtractor={(item, index) => index}
+                   keyExtractor={(item, index) => index.toString()}
                    data={listData}
                    renderItem={({item}) => (
                      <View style={[itemCenter,bgWhite]}>

@@ -22,7 +22,7 @@ import receiveIC from '../../src/icon/ic-wallet/ic-receive.png';
 import walletIC from '../../src/icon/ic-wallet/ic-wallet.png';
 import transferIC from '../../src/icon/ic-wallet/ic-transfer.png';
 import withdrawIC from '../../src/icon/ic-wallet/ic-withdraw.png';
-
+import {format_number} from '../libs';
 
 export default class MakeMoney extends Component {
   constructor(props) {
@@ -48,10 +48,10 @@ export default class MakeMoney extends Component {
   }
   componentWillMount(){
     const { code_user } = this.props.navigation.state.params;
-    this.callData(code_user);
+    //this.callData(code_user);
   }
   render() {
-    const { lang,code_user,name_module } = this.props.navigation.state.params;
+    const { lang,code_user,name_module,user_profile } = this.props.navigation.state.params;
     const { navigation } = this.props;
     const {
       container,contentWrap,headCatStyle,headContent,titleCreate,wrapDes,
@@ -86,7 +86,7 @@ export default class MakeMoney extends Component {
               <View style={{width:width/2}}>
                 <Text style={colorTitle}>{`${'Số Kcoin bạn đang có trong ví'}`}</Text>
               </View>
-              <Text style={titleCoin}>{`${'500.000'}`}</Text>
+              <Text style={titleCoin}>{`${format_number(user_profile.coin)}`}</Text>
             </View>
           </View>
 
@@ -100,12 +100,12 @@ export default class MakeMoney extends Component {
             </View>
           </View>
 
-          <TouchableOpacity style={wrapWhite}
+          {/*<TouchableOpacity style={wrapWhite}
           onPress={()=> navigation.navigate('ReceiveScr',{lang,title:lang.receive,code_user})}
           >
             <Image source={receiveIC} style={imgContent} />
             <Text style={colorTitle}>{`${'Danh sách địa điểm của bạn'}`}</Text>
-          </TouchableOpacity>
+          </TouchableOpacity>*/}
 
           <View style={{alignItems:'center'}}>
             <TouchableOpacity style={[marTop,btnTransfer]}>

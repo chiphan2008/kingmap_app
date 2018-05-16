@@ -324,12 +324,12 @@ export default class DetailScreen extends Component {
         />
 
 
-        <TouchableOpacity
+        {this.state.savelike && <TouchableOpacity
         onPress={()=>this.setState({scroll:true,savelike:false})}
         style={[saveContentStyle, this.state.savelike ? show : hide]}>
           <Image source={checkinIC} style={imgSave} />
           <Text style={{color:'#fff',fontSize:18}}>{this.state.notifyInfo}</Text>
-        </TouchableOpacity>
+        </TouchableOpacity>}
 
         <Collection
         hasCollection={(hasCollection)=>this.setState({hasCollection})}
@@ -364,7 +364,7 @@ const styles = StyleSheet.create({
   txtAddrOver:{color:'#6587A8',fontSize:14,overflow:'hidden',marginTop:5},
   colorText :{color:'#303B50',fontSize:17,marginTop:7},
   sizeTitle:{fontSize:20},
-  titleSpace:{flexDirection:'row',justifyContent:'space-between',padding:30,paddingLeft:0,paddingRight:20,},
+  titleSpace:{flexDirection:'row',justifyContent:'space-between',paddingTop:30,paddingBottom:30,paddingLeft:0,paddingRight:0},
   rowFlex:{flexDirection:'row',paddingLeft:10,paddingRight:10,marginTop:10},
   rowFlexImg:{flexDirection:'row',marginBottom:20},
   rowFlexBottom:{flexDirection:'row',padding:5,paddingLeft:10,marginTop:15,marginBottom:15,alignItems:'flex-end'},

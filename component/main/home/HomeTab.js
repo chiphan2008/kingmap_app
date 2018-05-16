@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image, TextInput,ScrollView,
-  TouchableOpacity,PermissionsAndroid, AsyncStorage, Modal,Keyboard } from 'react-native';
+  TouchableOpacity,PermissionsAndroid, AsyncStorage, Modal,Keyboard,YellowBox } from 'react-native';
 import RNSettings from 'react-native-settings';
 const {height, width} = Dimensions.get('window');
 
@@ -33,13 +33,14 @@ import checkDD from '../../../src/icon/ic-gray/ic-check-gray.png';
 import likeDD from '../../../src/icon/ic-gray/ic-like.png';
 import socialDD from '../../../src/icon/ic-gray/ic-social.png';
 import userDD from '../../../src/icon/ic-gray/ic-user.png';
+import {format_number} from '../../libs';
+YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader']);
 
 import {Select, Option} from "react-native-chooser";
-
+var timeoutLang;
 export default class HomeTab extends Component {
   constructor(props) {
     super(props);
-    Keyboard.dismiss;
     this.state = {
       //permission: PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       Width_Layout:'',
@@ -62,129 +63,119 @@ export default class HomeTab extends Component {
       user_id:0,
       avatar:'',
       curLoc:{},
+      user_profile:{},
       valSearch:'',
     };
+    accessLocation();
     checkLogin().then(e=>{
       //console.log(e);
       if(e.id===undefined){
         this.setState({isLogin:false})
       }else {
         loginServer(e);
-        this.setState({user_id:e.id,avatar:e.avatar,code_user:e.phone,isLogin:true});
+        this.setState({user_profile:e,user_id:e.id,avatar:e.avatar,code_user:e.phone,isLogin:true});
       }
     })
-    this.getLoc();
-    accessLocation();
+
+    this.findLoc();
+    this.getLang();
+    Keyboard.dismiss();
     arrLang = [{name:'VIE',v:'vn'},{name:'ENG',v:'en'}];
   }
 
-  getLoc(){
+  findLoc(){
+
     navigator.geolocation.getCurrentPosition(
-          (position) => {
-            //console.log('position',position);
-            const latlng = `${position.coords.latitude}${','}${position.coords.longitude}`;
-            this.setState({
-              curLoc : {
-                latitude:position.coords.latitude,
-                longitude: position.coords.longitude,
-                lat:position.coords.latitude,
-                lng: position.coords.longitude,
-                latitudeDelta:  0.008757,
-                longitudeDelta: 0.010066,
-                latlng:latlng,
-              }
-            });
-           },
-           (error) => {
-            getLocationByIP().then((e) => {
-              //console.log('e',e);
-                this.setState({
-                  curLoc : {
-                    latitude:e.latitude,
-                    longitude: e.longitude,
-                    lat:e.latitude,
-                    lng: e.longitude,
-                    latitudeDelta:  0.008757,
-                    longitudeDelta: 0.010066,
-                    latlng:`${e.latitude}${','}${e.longitude}`,
-                  }
-                });
-            });
-          },
-          { timeout: 5000,maximumAge: 60000 },
+      (position) => {
+        const {latitude,longitude} = position.coords;
+          this.setState({curLoc:{
+            latitude,longitude
+          }});
+      },
+      (error) => {
+        getLocationByIP().then((e) => {
+          const {latitude,longitude} = e;
+            this.setState({curLoc:{
+              latitude,longitude
+            }});
+
+        });
+      },
+      { timeout: 5000,maximumAge: 60000 },
     );
-  }
+   }
 
-  requestLogin(){
-    if(this.state.isLogin===false){
-      this.props.navigation.navigate('LoginScr',{backScr:'MainScr'});
-    }
-  }
+   requestLogin(){
+     if(this.state.isLogin===false){
+       this.props.navigation.navigate('LoginScr',{backScr:'MainScr'});
+     }
+   }
 
-  getLang(){
-    getLanguage().then((e) =>{
-      if(e!==null){
-          this.setState({
+   getLang(){
+     var _this = this;
+     getLanguage().then((e) =>{
+       //console.log('lang.Location',e);
+       if(e!==null){
+        timeoutLang = setTimeout(function () {
+          _this.setState({
             selectLang:{
               valueLang:e.valueLang,
               labelLang:e.labelLang,
-            }
+            },
+            lang : e.valueLang==='vn' ? lang_vn : lang_en,
+          },()=>{
+            _this.getCategory(e.valueLang);
           });
-          e.valueLang==='vn' ?  this.setState({lang : lang_vn}) : this.setState({lang : lang_en});
-          this.getCategory(this.state.selectLang.valueLang);
+        }, 1000);
+
+      }
+     });
+   }
+
+   onSelectLang(value, label) {
+     if(this.state.selectLang.valueLang!==value){
+       clearTimeout(timeoutLang);
+       AsyncStorage.setItem('@MyLanguage:key',JSON.stringify({valueLang:value,labelLang :label})).then(()=>{
+         setTimeout(() => {
+             this.props.screenProps();
+         }, 800);
+       });
      }
-    });
-  }
+   }
 
-  onSelectLang(value, label) {
-    AsyncStorage.setItem('@MyLanguage:key',JSON.stringify({valueLang:value,labelLang :label}));
-    value==='vn' ?  this.setState({lang : lang_vn}) : this.setState({lang : lang_en});
-    //this.getCategory(value);
-    this.setState({
-      selectLang: {
-        valueLang : value,
-        labelLang : label,
-      },
-      showShare:false,
-      showInfo:false,
-    });
-
-    setTimeout(() => {
-        this.props.screenProps(value);
-    }, 2000);
-  }
-  getCategory(lang){
-    getApi(global.url+'modules?language='+lang)
-    .then(arrCategory => {
-      //console.log('arrCategory',arrCategory);
-        this.setState({ listCategory: arrCategory.data });
-    })
-    .catch(err => console.log(err));
-  }
-  getListStatus(){
-    getApi(global.url+'get-static')
-    .then(arrData => {
-        this.setState({ listStatus: arrData.data });
-    })
-    .catch(err => console.log(err));
-  }
-  componentWillMount() {
-      this.getLang();
-      this.getListStatus();
-      //this.getCategory(this.state.selectLang.valueLang);
-  }
+   getCategory(lang){
+     getApi(global.url+'modules?language='+lang+'&limit=100')
+     .then(arrCategory => {
+       //console.log('arrCategory',arrCategory);
+       if(arrCategory!==undefined){setTimeout(() => {
+           this.setState({ listCategory: arrCategory.data },()=>{
+             this.getListStatus();
+           });
+       }, 100);}
+     })
+     .catch(err => console.log(err));
+   }
+   getListStatus(){
+     getApi(global.url+'get-static')
+     .then(arrData => {
+       setTimeout(()=>{
+         this.setState({ listStatus: arrData.data });
+       },500)
+     }).catch(err => console.log(err));
+   }
 
   findNewPoint(x, y, angle, distance) {
-      let result = {};
-      result.x = Math.round(Math.cos(angle * Math.PI / 180) * distance + x);
-      result.y = Math.round(Math.sin(angle * Math.PI / 180) * distance + y);
-      return result;
-  }
+       let result = {};angle+=13;
+       result.x = Math.round(Math.cos(angle * Math.PI / 180) * distance + x);
+       result.y = Math.round(Math.sin(angle * Math.PI / 180) * distance + y);
+       return result;
+   }
+
   render() {
     //console.log('this.props',this.props);
     const {height, width} = Dimensions.get('window');
     const {navigate} = this.props.navigation;
-    const {listStatus} = this.state;
+    const {listStatus,user_profile} = this.state;
     //console.log("this.props.Hometab=",util.inspect(this.state.listCategory,false,null));
     const {
       container, bgImg,colorlbl,flexRow,
@@ -224,14 +215,18 @@ export default class HomeTab extends Component {
           </View>
           <TextInput underlineColorAndroid='transparent'
           placeholder={this.state.lang.search} style={inputSearch}
-          onSubmitEditing={() => { if (this.state.valSearch.trim()!==''){navigate('SearchScr',{keyword:this.state.valSearch,lat:this.state.curLoc.lat,lng:this.state.curLoc.lng,lang:this.state.lang})} }}
+          onSubmitEditing={() => { if (this.state.valSearch.trim()!==''){
+            navigate('SearchScr',{keyword:this.state.valSearch,idCat:'',lat:curLoc.latitude,lng:curLoc.longitude,lang:this.state.lang.lang})}
+            this.setState({valSearch:''})
+          }}
           onChangeText={(valSearch) => this.setState({valSearch})}
           value={this.state.valSearch} />
 
           <TouchableOpacity style={{top:Platform.OS==='ios' ? 75 : 65,left:(width-50),position:'absolute'}}
           onPress={()=>{
             if (this.state.valSearch.trim()!=='') {
-              navigate('SearchScr',{keyword:this.state.valSearch,lat:this.state.curLoc.lat,lng:this.state.curLoc.lng,lang:this.state.lang});
+              navigate('SearchScr',{keyword:this.state.valSearch,lat:curLoc.latitude,lng:curLoc.longitude,idCat:'',lang:this.state.lang.lang});
+              this.setState({valSearch:''})
             }
           }}>
             <Image style={{width:16,height:16,}} source={searchIC} />
@@ -263,7 +258,7 @@ export default class HomeTab extends Component {
                             }
                           }}
                           >
-                          <Text style={labelNum}>(25)</Text>
+                          {/*<Text style={labelNum}>(25)</Text>*/}
                         <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                         <Text style={labelCat}>{e.name}</Text>
                       </TouchableOpacity>);
@@ -282,7 +277,7 @@ export default class HomeTab extends Component {
 
                           }}
                           >
-                          <Text style={labelNum}>(25)</Text>
+                          {/*<Text style={labelNum}>(25)</Text>*/}
                         <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                         <Text style={labelCat}>{e.name}</Text>
                       </TouchableOpacity>);
@@ -300,7 +295,7 @@ export default class HomeTab extends Component {
                             }
                           }}
                           >
-                          <Text style={labelNum}>(25)</Text>
+                          {/*<Text style={labelNum}>(25)</Text>*/}
                         <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                         <Text style={labelCat}>{e.name}</Text>
                       </TouchableOpacity>);
@@ -312,9 +307,13 @@ export default class HomeTab extends Component {
                       return (<TouchableOpacity
                           key={e.id}
                           style={{position:'absolute',alignItems:'center',top:pos.y,left :pos.x,overflow: 'visible'}}
-                          onPress={() => navigate('MakeMoneyScr',{icon:`${global.url_media}${e.image}`,name_module:e.name,lang:this.state.lang}) }
+                          onPress={() => {
+                            this.requestLogin();
+                            if(this.state.isLogin){
+                              navigate('MakeMoneyScr',{user_profile,icon:`${global.url_media}${e.image}`,name_module:e.name,lang:this.state.lang}) }}
+                            }
                           >
-                          <Text style={labelNum}>(25)</Text>
+                          {/*<Text style={labelNum}>(25)</Text>*/}
                         <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                         <Text style={labelCat}>{e.name}</Text>
                       </TouchableOpacity>);
@@ -327,7 +326,7 @@ export default class HomeTab extends Component {
                         onPress={()=>navigate('WalletScr',{code_user:this.state.code_user,lang:this.state.lang})}
                         style={{position:'absolute',alignItems:'center',top:pos.y,left :pos.x,overflow: 'visible'}}
                         >
-                        <Text style={labelNum}>(25)</Text>
+                        {/*<Text style={labelNum}>(25)</Text>*/}
                         {/*<Image style={imgContent} source={logoHome} />*/}
                         <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                         <Text style={labelCat}>{e.name}</Text>
@@ -342,7 +341,7 @@ export default class HomeTab extends Component {
                       style={[wrapCircle,logoCenter]}
                       onPress={() => navigate('OtherCatScr',{name_module:e.name,lang:this.state.lang}) }
                       >
-                      <Text style={labelNum}>(25)</Text>
+                      {/*<Text style={labelNum}>(25)</Text>*/}
                     <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                     <Text style={labelCat}>{e.name}</Text>
                   </TouchableOpacity>);
@@ -352,12 +351,12 @@ export default class HomeTab extends Component {
                   pos = this.findNewPoint(x, y, angle, distance);
                     return (<TouchableOpacity
                         key={e.id}
-                        style={{position:'absolute',flex:1,alignItems:'center',top:pos.y,left :pos.x,}}
+                        style={{position:'absolute',alignItems:'center',top:pos.y,left :pos.x,}}
                         onPress={() => navigate('CatScr') }
                         >
                       <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                       <Text style={labelCat}>{e.name}</Text>
-                      <Text style={labelNum}>(25)</Text>
+                      {/*<Text style={labelNum}>(25)</Text>*/}
                     </TouchableOpacity>);
                     break;
 
@@ -403,32 +402,35 @@ export default class HomeTab extends Component {
         </TouchableOpacity>
         </Modal>
 
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}
+        style={{width,backgroundColor:'#2e3c52',paddingRight:10,paddingLeft:5}}>
+
         <View style={flexRow}>
-          <View style={flexRow}>
-              <Image style={[imgShare,imgMargin]} source={locationDD} />
-              <Text style={colorTextPP}><Text style={colorWhite}>{listStatus.countContent}k</Text></Text>
-          </View>
-          <View style={flexRow}>
-              <Image style={[imgShare,imgMargin]} source={onlineDD} />
-              <Text style={colorTextPP}><Text style={colorWhite}>{listStatus.countOnline}</Text></Text>
-          </View>
-          <View style={flexRow}>
-              <Image style={[imgShare,imgMargin]} source={checkDD} />
-              <Text style={colorTextPP}><Text style={colorWhite}>{listStatus.newContent}k</Text></Text>
-          </View>
-          <View style={flexRow}>
-              <Image style={[imgShare,imgMargin]} source={likeDD} />
-              <Text style={colorTextPP}><Text style={colorWhite}>{listStatus.countLike}k</Text></Text>
-          </View>
-          <View style={flexRow}>
-              <Image style={[imgShare,imgMargin]} source={socialDD} />
-              <Text style={colorTextPP}><Text style={colorWhite}>{listStatus.countShare}k</Text></Text>
-          </View>
-          <View style={flexRow}>
-              <Image style={[imgShare,imgMargin]} source={userDD} />
-              <Text style={colorTextPP}><Text style={colorWhite}>{listStatus.countUser}</Text></Text>
-          </View>
-          </View>
+            <Image style={[imgShare,imgMargin]} source={locationDD} />
+            <Text style={colorTextPP}><Text style={colorWhite}>{format_number(listStatus.countContent)}k</Text></Text>
+        </View>
+        <View style={flexRow}>
+            <Image style={[imgShare,imgMargin]} source={onlineDD} />
+            <Text style={colorTextPP}><Text style={colorWhite}>{format_number(listStatus.countOnline)}</Text></Text>
+        </View>
+        <View style={flexRow}>
+            <Image style={[imgShare,imgMargin]} source={checkDD} />
+            <Text style={colorTextPP}><Text style={colorWhite}>{format_number(listStatus.newContent)}k</Text></Text>
+        </View>
+        <View style={flexRow}>
+            <Image style={[imgShare,imgMargin]} source={likeDD} />
+            <Text style={colorTextPP}><Text style={colorWhite}>{format_number(listStatus.countLike)}k</Text></Text>
+        </View>
+        <View style={flexRow}>
+            <Image style={[imgShare,imgMargin]} source={socialDD} />
+            <Text style={colorTextPP}><Text style={colorWhite}>{format_number(listStatus.countShare)}k</Text></Text>
+        </View>
+        <View style={flexRow}>
+            <Image style={[imgShare,imgMargin]} source={userDD} />
+            <Text style={colorTextPP}><Text style={colorWhite}>{format_number(listStatus.countUser)}</Text></Text>
+        </View>
+
+       </ScrollView>
 
       </View>
     );

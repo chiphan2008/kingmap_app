@@ -83,7 +83,7 @@ export default class SelectCategory extends Component {
           <View style={[overLayout,shadown,show_cat ? show : hide]}>
               <FlatList
                  extraData={this.state}
-                 keyExtractor={(item, index) => index}
+                 keyExtractor={(item, index) => index.toString()}
                  data={listCategory}
                  renderItem={({item}) => (
                   <View style={listOverService}>
@@ -118,7 +118,7 @@ export default class SelectCategory extends Component {
                </View>
               <FlatList
                  extraData={this.state}
-                 keyExtractor={(item, index) => index}
+                 keyExtractor={(item, index) => index.toString()}
                  data={listSubCat}
                  renderItem={({item}) => (
                   <View style={listOverService}>

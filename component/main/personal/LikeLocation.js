@@ -53,7 +53,7 @@ export default class LikeLocation extends Component {
     this.getData(this.state.user_profile.id);
   }
   confirmDel(id){
-    const {lang} = this.props;
+    const {lang} = this.props.navigation.state.params;
     Alert.alert(lang.notify,lang.confirm_like_del,[
       {text: lang.cancel, style: 'cancel'},
       {text: lang.confirm, onPress: () => this.deleteLike(id)},
@@ -70,7 +70,7 @@ export default class LikeLocation extends Component {
       imgInfo,wrapInputCreImg,marTop,colorTitle,txt,txtTitleOverCat
     } = styles;
     return (
-
+      
         <ScrollView style={container}>
           <View style={headCatStyle}>
               <View style={headContent}>

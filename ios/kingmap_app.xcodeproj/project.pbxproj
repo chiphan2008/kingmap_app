@@ -35,13 +35,11 @@
 		2D02E4C81E0B4AEC006451C7 /* libRCTWebSocket-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3E991DF850E9000B6D8A /* libRCTWebSocket-tvOS.a */; };
 		2D16E6881FA4F8E400B85C8A /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D16E6891FA4F8E400B85C8A /* libReact.a */; };
 		2DCD954D1E0B4F2C00145EB5 /* kingmap_appTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* kingmap_appTests.m */; };
-<<<<<<< ours
+
 		3CCFAE434ECD489CB2737AEF /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D949D6ECBEB0458AB31B709C /* AddressBook.framework */; };
 		465AAF75FF0546A893F22517 /* libRCTFBLogin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3951C27EB2E41CEBFED28BC /* libRCTFBLogin.a */; };
 		4C000A4970CE45889701170F /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 25BEBA22A19A42B7B654F0ED /* SystemConfiguration.framework */; };
-=======
-		2DF0FFEE2056DD460020B375 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3DAD3EA31DF850E9000B6D8A /* libReact.a */; };
->>>>>>> theirs
+
 		5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		761127E62018C7EF009DC538 /* RSKImageCropper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 761127E52018C7EF009DC538 /* RSKImageCropper.framework */; };
 		761127E72018C7EF009DC538 /* RSKImageCropper.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 761127E52018C7EF009DC538 /* RSKImageCropper.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -722,7 +720,7 @@
 				3DAD3EAB1DF850E9000B6D8A /* libcxxreact.a */,
 				3DAD3EAD1DF850E9000B6D8A /* libjschelpers.a */,
 				3DAD3EAF1DF850E9000B6D8A /* libjschelpers.a */,
-<<<<<<< ours
+
 				76E072ED20118E2B0081F946 /* libjsinspector.a */,
 				76E072EF20118E2B0081F946 /* libjsinspector-tvOS.a */,
 				76E072F120118E2B0081F946 /* libthird-party.a */,
@@ -731,16 +729,7 @@
 				76E072F720118E2B0081F946 /* libdouble-conversion.a */,
 				76E072F920118E2B0081F946 /* libprivatedata.a */,
 				76E072FB20118E2B0081F946 /* libprivatedata-tvOS.a */,
-=======
-				2DF0FFDF2056DD460020B375 /* libjsinspector.a */,
-				2DF0FFE12056DD460020B375 /* libjsinspector-tvOS.a */,
-				2DF0FFE32056DD460020B375 /* libthird-party.a */,
-				2DF0FFE52056DD460020B375 /* libthird-party.a */,
-				2DF0FFE72056DD460020B375 /* libdouble-conversion.a */,
-				2DF0FFE92056DD460020B375 /* libdouble-conversion.a */,
-				2DF0FFEB2056DD460020B375 /* libprivatedata.a */,
-				2DF0FFED2056DD460020B375 /* libprivatedata-tvOS.a */,
->>>>>>> theirs
+
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1931,16 +1920,12 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = "kingmap_app-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-<<<<<<< ours
+
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-=======
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-lc++",
->>>>>>> theirs
+
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.kingmap_app-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1963,16 +1948,12 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = "kingmap_app-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-<<<<<<< ours
+
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-=======
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-lc++",
->>>>>>> theirs
+
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.kingmap_app-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";

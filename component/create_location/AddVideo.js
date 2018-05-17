@@ -79,7 +79,7 @@ export default class AddVideo extends Component {
           </View>
 
           <View style={[container]}>
-          <View style={{backgroundColor:'#FFFEFF',padding:30,marginBottom:5,borderColor:'#ECEEF3',borderBottomWidth:1}}>
+          <View style={{backgroundColor:'#FFFEFF',paddingTop:30,paddingBottom:30,paddingLeft:15,paddingRight:15,marginBottom:5,borderColor:'#ECEEF3',borderBottomWidth:1}}>
           <Text style={{fontSize:20}}>Nhập link video</Text>
           <View style={{flexDirection:'row',marginTop:10}}>
             <TextInput
@@ -87,7 +87,7 @@ export default class AddVideo extends Component {
             onChangeText={(text) => this.setState({txtVideoLink:text})}
             placeholder={`${this.props.lang.title_link}`}
             value={this.state.txtVideoLink}
-            style={{borderRadius:3,paddingLeft:10,paddingTop:5,paddingBottom:5,fontSize:16,width:width-150,borderWidth:1,borderColor:'#E1E7EC',marginRight:10}} />
+            style={{borderRadius:3,paddingLeft:10,paddingTop:5,paddingBottom:5,fontSize:16,width:width-100,borderWidth:1,borderColor:'#E1E7EC',marginRight:10}} />
             <TouchableOpacity
             style={{justifyContent:'center',alignItems:'center',backgroundColor:'#2F353F',borderRadius:3,padding:0,paddingBottom:5,paddingLeft:10,paddingRight:10}}
             onPress={()=>{

@@ -78,7 +78,7 @@ export default class ChooseArea extends Component {
           <TouchableOpacity
           onPress={()=>this.setState({ showCountry:false }) }
           style={[popoverLoc,padCreate]}>
-          <Image style={[imgUpCreate,imgUpLoc]} source={upDD} />
+          {/*<Image style={[imgUpCreate,imgUpLoc]} source={upDD} />*/}
               <View style={[overLayout,shadown]}>
               <FlatList
                  extraData={this.state}
@@ -106,7 +106,7 @@ export default class ChooseArea extends Component {
           <TouchableOpacity
           onPress={()=>this.setState({ showCity:false }) }
           style={[popoverLoc,padCreate]}>
-          <Image style={[imgUpCreate]} source={upDD} />
+          {/*<Image style={[imgUpCreate]} source={upDD} />*/}
               <View style={[overLayout,shadown]}>
               <FlatList
                  extraData={this.state}
@@ -134,7 +134,7 @@ export default class ChooseArea extends Component {
           <TouchableOpacity
           onPress={()=>{this.setState({ showDist:false });}}
           style={[popoverLoc,padCreate]}>
-          <Image style={[imgUpCreate,imgUpInfo]} source={upDD} />
+          {/*<Image style={[imgUpCreate,imgUpInfo]} source={upDD} />*/}
               <View style={[overLayout,shadown]}>
               <FlatList
                  extraData={this.state}

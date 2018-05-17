@@ -114,7 +114,7 @@ export default class Setting extends Component {
     } = styles;
 
     const {lang} = this.props.navigation.state.params;
-    const {goBack,navigate} = this.props.navigation;
+    const {goBack} = this.props.navigation;
     return (
 
         <View style={container}>

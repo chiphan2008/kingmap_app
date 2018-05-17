@@ -174,7 +174,7 @@ export default class ChangeOwner extends Component {
             extraData={this.state}
             style={{marginTop:15}}
             data={showContent}
-            keyExtractor={(item,index) => index}
+            keyExtractor={(item,index) => index.toString()}
             renderItem={({item,index}) =>(
               <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
                   <View style={{flexDirection:'row',maxWidth:width-110}}>

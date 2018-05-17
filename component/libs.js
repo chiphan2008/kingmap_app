@@ -96,6 +96,11 @@ export function isEmail(text){
   let email = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/ ;
   return email.test(text);
 }
+
+export function checkSVG(text){
+  return text.substr(-3)=='svg';
+}
+
 export function xoa_dau(str) {
   str = str.toLowerCase();
 	str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");

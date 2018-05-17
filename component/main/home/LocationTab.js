@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image, TextInput,ScrollView,
   TouchableOpacity,PermissionsAndroid, AsyncStorage, Modal,Keyboard } from 'react-native';
 import RNSettings from 'react-native-settings';
+import SvgUri from 'react-native-svg-uri';
 const {height, width} = Dimensions.get('window');
 //import Geolocation from '../../api/Geolocation';
 //import hasLocationPermission from '../../api/hasLocationPermission';
@@ -38,7 +39,7 @@ import likeDD from '../../../src/icon/ic-gray/ic-like.png';
 import socialDD from '../../../src/icon/ic-gray/ic-social.png';
 import userDD from '../../../src/icon/ic-gray/ic-user.png';
 import {Select, Option} from "react-native-chooser";
-import {format_number} from '../../libs';
+import {format_number,checkSVG} from '../../libs';
 
 export default class LocationTab extends Component {
   constructor(props) {
@@ -257,7 +258,12 @@ export default class LocationTab extends Component {
                         style={{position:'absolute',flex:1,alignItems:'center',top:pos.y,left :pos.x,}}
                         onPress={()=>navigate('SearchScr',{idCat:e.id,labelCat:e.name,service_items:e.service_items, keyword:this.state.valSearch,lat:curLoc.latitude,lng:curLoc.longitude,lang:this.state.lang.lang}) }
                         >
-                      <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
+                      {checkSVG(e.image)?
+                        <SvgUri width="65" height="65" source={{uri:`${global.url_media}${e.image}`}} />
+                        :
+                        <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
+                      }
+
                       <Text style={labelCat}>{e.name}</Text>
                       {/*<Text style={labelNum}>(25)</Text>*/}
                     </TouchableOpacity>);

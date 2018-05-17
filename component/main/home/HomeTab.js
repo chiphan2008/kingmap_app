@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image, TextInput,ScrollView,
   TouchableOpacity,PermissionsAndroid, AsyncStorage, Modal,Keyboard,YellowBox } from 'react-native';
 import RNSettings from 'react-native-settings';
+//import SvgUri from 'react-native-svg-uri';
 const {height, width} = Dimensions.get('window');
 
 import getApi from '../../api/getApi';

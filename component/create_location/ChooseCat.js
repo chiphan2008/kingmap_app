@@ -4,8 +4,10 @@ import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image,
   TextInput, TouchableOpacity,FlatList
 } from 'react-native';
+import SvgUri from 'react-native-svg-uri';
 const {height, width} = Dimensions.get('window');
 
+import {checkSVG} from '../libs';
 import styles from '../styles';
 import global from '../global';
 import getApi from '../api/getApi';
@@ -86,7 +88,12 @@ export default class ChooseCat extends Component {
              <TouchableOpacity
               onPress={()=>navigate('FormCreateScr',{idCat:item.id,nameCat:item.name,sub_cat:item.sub_category,serv_items:item.service_items,lang:this.state.selectLang.valueLang})}
               style={flatItem}>
-                 <Image style={imgFlatItemLoc} source={{uri:`${global.url_media}${item.image}`}} />
+              {checkSVG(item.image)?
+                <SvgUri width="70" height="70" source={{uri:`${global.url_media}${item.image}`}} />
+                :
+                <Image style={imgFlatItemLoc} source={{uri:`${global.url_media}${item.image}`}} />
+              }
+
                  <Text>{item.name}</Text>
              </TouchableOpacity>
            )}

@@ -70,7 +70,7 @@ export default class LikeLocation extends Component {
       imgInfo,wrapInputCreImg,marTop,colorTitle,txt,txtTitleOverCat
     } = styles;
     return (
-      
+
         <ScrollView style={container}>
           <View style={headCatStyle}>
               <View style={headContent}>
@@ -90,7 +90,7 @@ export default class LikeLocation extends Component {
                 <View style={{backgroundColor:'#fff'}}>
                   <TouchableOpacity onPress={()=>{
                     //this.props.closeModal()
-                    navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang})
+                    navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang:lang.lang})
                   }}>
                     <Image source={{uri:`${global.url_media}${e.avatar}`}} style={{width:width,minHeight:width/2,marginBottom:10}} />
                   </TouchableOpacity>
@@ -103,7 +103,7 @@ export default class LikeLocation extends Component {
                       <View style={{width:width-80}}>
                         <TouchableOpacity onPress={()=>{
                           //this.props.closeModal()
-                          navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang})
+                          navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang:lang.lang})
                         }}>
                           <Text numberOfLines={1} style={txtTitleOverCat}>{e.name}</Text>
                         </TouchableOpacity>

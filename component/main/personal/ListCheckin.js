@@ -93,7 +93,7 @@ export default class ListCheckin extends Component {
                 <View style={{backgroundColor:'#fff'}}>
                   <TouchableOpacity onPress={()=>{
                       //this.props.closeModal()
-                      navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang})
+                      navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang:lang.lang})
                   }}>
                     <TouchableOpacity style={{position:'absolute',top:5,right:5,zIndex:99}}
                     onPress={()=>this.confirmDel(e.id)}>
@@ -105,7 +105,7 @@ export default class ListCheckin extends Component {
                       <View style={{width:width-80}}>
                           <TouchableOpacity onPress={()=>{
                               //this.props.closeModal()
-                              navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang})
+                              navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang:lang.lang})
                           }}>
                             <Text numberOfLines={1} style={txtTitleOverCat}>{e.name}</Text>
                           </TouchableOpacity>

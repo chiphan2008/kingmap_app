@@ -14,7 +14,8 @@ import global from '../global';
 import getApi from '../api/getApi';
 import postApi from '../api/postApi';
 import getLanguage from '../api/getLanguage';
-import GroupProduct from './GroupProduct';
+//import GroupProduct from './GroupProduct';
+import UpdateMore from './UpdateMore';
 import AddImgSpace from './AddImgSpace';
 import AddImgMenu from './AddImgMenu';
 import AddProduct from './AddProduct';
@@ -56,7 +57,7 @@ import keywordsIC from '../../src/icon/ic-create/ic-keywords.png';
 import codeIC from '../../src/icon/ic-create/ic-code.png';
 import selectedIC from '../../src/icon/ic-create/ic-selected.png';
 
-import {hasNumber,getIndex,strtoarray} from '../libs';
+import {hasNumber,getIndex,strtoarray,isEmail,checkSVG} from '../libs';
 
 var timeoutLatLng;
 export default class FormCreate extends Component {
@@ -69,7 +70,7 @@ export default class FormCreate extends Component {
       checkSubCat:{},
       showService:false,
       checkService:{},
-
+      idContent:'',
       lat:'Lat 0.0',
       lng:'Lng 0.0',
       txtUserWifi:'',
@@ -79,6 +80,7 @@ export default class FormCreate extends Component {
       ListOpenTime:[],
       txtName:'',
       txtPhone:'',
+      txtEmail:'',
       txtAddress:'',
       txtDes:'',
       txtKW:'',
@@ -93,9 +95,9 @@ export default class FormCreate extends Component {
       img_space:[],
       img_menu:[],
       img_video:[],
-      addGroupProduct:[],
+      //addGroupProduct:[],
       index:0,
-      listProduct:{},
+      //listProduct:{},
       category_item:[],
       des_space:[],
       title_space:[],
@@ -106,31 +108,33 @@ export default class FormCreate extends Component {
       id_ctv:'',
       idCountry:'',idCity:'',idDist:'',
       isLogin:false,
+      user_profile:{},
+      showUpdate:false,
+      showUpdateMore:true,
     };
     checkLogin().then(e=>{
       //console.log(e);
       if(e.id===undefined){
         this.setState({isLogin:false})
       }else {
-        this.setState({id_ctv:e.id_ctv,isLogin:true});
+        this.setState({user_profile:e,id_ctv:e.id_ctv,isLogin:true});
       }
     })
     //BackHandler.addEventListener('hardwareBackPress', ()=>this.setState({showSubCat:false}));
   }
-  postData(){
-    if(this.state.idCountry==='' || this.state.idCity==='' || this.state.idDist===''){
-      this.setState({errArea:true});return false;
-    }
+  confirmPostData(){
+    if(Object.entries(this.state.checkSubCat).length===0){this.setState({errMsg:this.state.lang.enter_classify});return false;}
+
     if(this.state.txtName===''){this.setState({errMsg:this.state.lang.enter_name});return false;}
     if(this.state.txtAddress===''){this.setState({errMsg:this.state.lang.enter_address});return false;}
     if(this.state.ListOpenTime.length===0){this.setState({errMsg:this.state.lang.enter_time});return false;}
-    if(Object.entries(this.state.checkSubCat).length===0){this.setState({errMsg:this.state.lang.enter_classify});return false;}
+    if(this.state.idCountry==='' || this.state.idCity==='' || this.state.idDist===''){
+      this.setState({errArea:true});return false;
+    }
     if(this.state.txtKW.trim()===''){this.setState({errMsg:this.state.lang.enter_kw});return false;}
-    //if(this.state.txtFromPrice===''){this.setState({errMsg:this.state.lang.enter_price_from});return false;}
-    //if(this.state.txtToPrice===''){this.setState({errMsg:this.state.lang.enter_price_to});return false;}
     if(this.state.imgAvatar.path===undefined){this.setState({errMsg:this.state.lang.enter_avatar});return false;}
     if(this.state.lat==='Lat 0.0' || this.state.lat===''){this.setState({errMsg:this.state.lang.enter_address_again});return false;}
-
+    if(this.state.txtEmail!==''){if(!isEmail(this.state.txtEmail))this.setState({errMsg:this.state.lang.email_format});return false;}
     const arr = new FormData();
     arr.append('name',this.state.txtName);
     arr.append('id_category',this.props.navigation.state.params.idCat);
@@ -151,6 +155,7 @@ export default class FormCreate extends Component {
     arr.append('wifi',this.state.txtUserWifi);
     arr.append('passwifi',this.state.txtPassWifi);
     arr.append('phone',this.state.txtPhone);
+    arr.append('email',this.state.txtEmail);
 
     arr.append(`avatar`, {
       uri:`${this.state.imgAvatar.path}`,
@@ -200,40 +205,18 @@ export default class FormCreate extends Component {
       }
     });
 
-    // Object.entries(this.state.listProduct).forEach((e)=>{
-    //   //console.log('=Object.entries',e);
-    //   let group = e[0];
-    //   arr.append(`product[${group}][group_name]`,e[1].group_name);
-    //   Object.entries(e[1]).forEach((r)=>{
-    //     if(r[0]!=='group_name' && r[0]!=='idGroup'){
-    //       arr.append(`product[${group}][${r[0]}][id]`,r[0]);
-    //       arr.append(`product[${group}][${r[0]}][name]`,r[1].name);
-    //       arr.append(`product[${group}][${r[0]}][price]`,r[1].price);
-    //       arr.append(`product[${group}][${r[0]}][currency]`,r[1].currency);
-    //       if(r[1].image.path!==undefined){
-    //           arr.append(`product[${group}][${r[0]}][image]`, {
-    //           uri:`${r[1].image.path}`,
-    //           name: `${r[0]}_my_product.jpg`,
-    //           type: `${r[1].image.mime}`
-    //         });
-    //       }
-    //     }
-    //   });
-    //
-    // });
-
-    //console.log('arr',arr);
-    //console.log('arr',`${global.url}${'create-location'}`);
     postApi(`${global.url}${'create-location'}`,arr).then((e)=>{
       //console.log('e',e);
       if(e.code===200){
         Alert.alert(this.state.lang.notify,this.state.lang.create_success,[
-          {text: 'OK', onPress: () => this.props.navigation.navigate('MainScr')}
+          {text: 'OK', onPress: () => this.setState({idContent:e.data.content.id,showUpdate:true})}
         ])
       }else {
         Alert.alert(this.state.lang.notify,e.message)
       }
     });
+
+    //this.setState({showUpdate:true});
   }
 
   setOpenTime(ListOpenTime){
@@ -241,50 +224,6 @@ export default class FormCreate extends Component {
     this.setState({ListOpenTime,showOpenTime:false});
   }
 
-  getIndexProduct(element,id){
-    //console.log('element[id].idGroup==id',element[id].idGroup==id);
-    return element[id].idGroup==id;
-  }
-  submitProduct(id,e){
-    this.setState({listProduct: Object.assign(this.state.listProduct,{[id]:e})});
-  }
-
-  insertGroup() {
-    this.state.addGroupProduct.push(
-          <GroupProduct
-            //listProduct={this.state.product}
-            submitProduct={this.submitProduct.bind(this)}
-            removeGroup={this.removeGroup.bind(this)}
-            indexGroup={this.state.index}
-            key={this.state.index} />)
-    this.setState({
-        index: this.state.index + 1,
-        addGroupProduct: this.state.addGroupProduct
-    })
-  }
-  getIndex(element,id){
-    return element.key==id;
-  }
-
-  removeGroup(id){
-    const index = this.state.addGroupProduct.findIndex((e)=>this.getIndex(e,id));
-    delete this.state.listProduct[id];
-    this.setState({
-        listProduct: this.state.listProduct
-    });
-    if(Object.keys(this.state.listProduct).length===0){
-      this.setState({
-          index: 0,
-          listProduct:{}
-      });
-    }
-    if(index!==-1){
-      this.state.addGroupProduct.splice(index, 1);
-      this.setState({
-          addGroupProduct: this.state.addGroupProduct
-      })
-    }
-  }
 
   uploadAvatar(){
     ImagePicker.openPicker({
@@ -319,41 +258,64 @@ export default class FormCreate extends Component {
     const {
       container,
       headCatStyle,headContent, wrapDistribute,wrapFilter,
-      show,hide,hidden,colorlbl,listAdd,txtKV,
+      show,hide,hidden,colorlbl,listAdd,txtKV,btnMap,
       listCreate,titleCreate,imgCamera,colorErr,
       imgShare,imgInfo,marRight,wrapInputCreImg,wrapCreImg,widthLblCre,
       imgUpCreate,imgUpLoc,imgUpInfo,overLayout,listOverService,shadown,popoverLoc,padCreate,
-      upDDLoc,upDDSubCat,selectBox,optionUnitStyle,clockTime,
+      upDDLoc,upDDSubCat,selectBox,optionUnitStyle,clockTime,centerVer,pad10,txtNextItem,
     } = styles;
 
-    const {showImgSpace,showProduct,showImgMenu,showVideo} = this.state;
+    const {idContent,showUpdateMore,showImgSpace,showProduct,showImgMenu,showVideo} = this.state;
 
     return (
       <View style={container}>
-      <ScrollView >
+      {showUpdateMore===false && <ScrollView >
       <View style={headCatStyle}>
           <View style={headContent}>
               <TouchableOpacity onPress={()=>goBack()}>
               <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
               </TouchableOpacity>
               <Text style={titleCreate}> {this.state.lang.create_location} </Text>
-              <TouchableOpacity onPress={()=>this.postData()}>
+              <TouchableOpacity onPress={()=>this.confirmPostData()}>
                 <Text style={titleCreate}>{this.state.lang.done}</Text>
               </TouchableOpacity>
           </View>
       </View>
     <View>
-        <View style={{padding:15,flexDirection:'row',justifyContent:'space-between'}}>
-          <Text style={colorlbl}>{this.state.lang.choose_area}</Text>
-          <View style={this.state.errArea ? show : hide}>
-            <Text style={colorErr}>{this.state.lang.plz_choose_area}</Text>
+        <TouchableOpacity style={listCreate}
+        onPress={()=>this.setState({showSubCat:!this.state.showSubCat})}>
+          <View style={{flexDirection:'row'}}>
+            <View style={widthLblCre}>
+            <Image source={cateLocationIC} style={imgInfo} />
+            </View>
+              <View style={{paddingLeft:15}}>
+                <Text style={colorlbl}>{this.state.lang.classify}</Text>
+              </View>
           </View>
-        </View>
-        <ChooseArea
-        setCountry={(idCountry)=>this.setState({idCountry})}
-        setCity={(idCity)=>this.setState({idCity})}
-        setDist={(idCountry,idCity,idDist)=>this.setState({idCountry,idCity,idDist,errArea:false})}
-        lang={this.state.lang}/>
+          <View style={{flexDirection:'row',alignItems:'center'}}>
+          <Image source={selectedIC} style={[imgShare,Object.entries(this.state.checkSubCat).length>0 ? show : hide]}/>
+          <Text style={colorlbl}>{nameCat}</Text>
+          <Image source={arrowNextIC} style={imgShare}/>
+          </View>
+
+        </TouchableOpacity>
+
+        <TouchableOpacity style={listCreate} onPress={()=>this.setState({showService:!this.state.showService})}>
+          <View style={{flexDirection:'row'}}>
+            <View style={widthLblCre}>
+            <Image source={addonIC} style={imgInfo} />
+            </View>
+            <View style={{paddingLeft:15}}>
+            <Text style={colorlbl}>{this.state.lang.utilities}</Text></View>
+          </View>
+          <View style={{flexDirection:'row',alignItems:'center'}}>
+            <Image source={selectedIC} style={[imgShare,Object.entries(this.state.checkService).length>0 ? show : hide]}/>
+            <Image source={arrowNextIC} style={imgShare}/>
+          </View>
+        </TouchableOpacity>
+        {/*<View style={{height:15}}></View>*/}
+
+
 
         <View style={{padding:15,flexDirection:'row',justifyContent:'space-between'}}>
         <Text style={colorlbl}>{this.state.lang.info_general}</Text>
@@ -438,6 +400,19 @@ export default class FormCreate extends Component {
           </View>
         </View>
 
+        <View style={{padding:15,flexDirection:'row',justifyContent:'space-between'}}>
+          <Text style={colorlbl}>{this.state.lang.choose_area}</Text>
+          <View style={this.state.errArea ? show : hide}>
+            <Text style={colorErr}>{this.state.lang.plz_choose_area}</Text>
+          </View>
+        </View>
+        <ChooseArea
+        setCountry={(idCountry)=>this.setState({idCountry})}
+        setCity={(idCity)=>this.setState({idCity})}
+        setDist={(idCountry,idCity,idDist)=>this.setState({idCountry,idCity,idDist,errArea:false})}
+        lang={this.state.lang}/>
+
+
         <View style={listCreate}>
           <View style={widthLblCre}>
           <Image source={wifiIC} style={imgInfo} />
@@ -480,7 +455,7 @@ export default class FormCreate extends Component {
           </View>
           <TextInput underlineColorAndroid='transparent'
             returnKeyType = {"next"} ref='Phone' keyboardType={'numeric'}
-            onSubmitEditing={(event) => {this.refs.KW.focus();}}
+            onSubmitEditing={(event) => {this.refs.Email.focus();}}
             placeholder={this.state.lang.phone} style={wrapInputCreImg}
             onChangeText={(txtPhone) => this.setState({txtPhone})}
             value={this.state.txtPhone}
@@ -492,23 +467,41 @@ export default class FormCreate extends Component {
           </View>
         </View>
 
-        <TouchableOpacity style={listCreate}
-        onPress={()=>this.setState({showSubCat:!this.state.showSubCat})}>
-          <View style={{flexDirection:'row'}}>
-            <View style={widthLblCre}>
-            <Image source={cateLocationIC} style={imgInfo} />
-            </View>
-              <View style={{paddingLeft:15}}>
-                <Text style={colorlbl}>{this.state.lang.classify}</Text>
-              </View>
+        <View style={listCreate}>
+          <View style={widthLblCre}>
+          <Image source={emailIC} style={imgInfo} />
           </View>
-          <View style={{flexDirection:'row',alignItems:'center'}}>
-          <Image source={selectedIC} style={[imgShare,Object.entries(this.state.checkSubCat).length>0 ? show : hide]}/>
-          <Text style={colorlbl}>{nameCat}</Text>
-          <Image source={arrowNextIC} style={imgShare}/>
+          <TextInput underlineColorAndroid='transparent'
+            returnKeyType = {"next"} ref='Email'
+            onSubmitEditing={(event) => {this.refs.KW.focus();}}
+            placeholder={'Email'} style={wrapInputCreImg}
+            onChangeText={(txtEmail) => this.setState({txtEmail})}
+            value={this.state.txtEmail}
+           />
+          <View style={{width:15}}>
+          <TouchableOpacity style={this.state.txtEmail!=='' ? show : hide} onPress={()=>{this.setState({txtEmail:''})}}>
+          <Image source={closeIC} style={imgShare} />
+          </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={listCreate}>
+          <View style={widthLblCre}>
+            <Image source={keywordsIC} style={imgInfo} />
           </View>
 
-        </TouchableOpacity>
+          <TextInput underlineColorAndroid='transparent'
+          multiline numberOfLines={4} maxHeight={65}
+          onChangeText={(txtKW) => this.setState({txtKW})}
+          value={this.state.txtKW} ref='KW' returnKeyType = {"done"}
+          placeholder={this.state.lang.keyword} style={wrapInputCreImg} />
+
+          <View style={{width:15}}>
+            <TouchableOpacity style={this.state.txtKW!=='' ? show : hide} onPress={()=>{this.setState({txtKW:''})}}>
+            <Image source={closeIC} style={imgShare} />
+            </TouchableOpacity>
+          </View>
+        </View>
 
         <View style={{height:15}}></View>
 
@@ -526,24 +519,7 @@ export default class FormCreate extends Component {
             </View>
         </View>
 
-        <View style={listCreate}>
-          <View style={widthLblCre}>
-            <Image source={keywordsIC} style={imgInfo} />
-          </View>
 
-          <TextInput underlineColorAndroid='transparent'
-          multiline numberOfLines={4} maxHeight={65}
-          onChangeText={(txtKW) => this.setState({txtKW})}
-          value={this.state.txtKW} ref='KW' returnKeyType = {"done"}
-          //onSubmitEditing={(event) => {  this.refs.Code.focus();  }}
-          placeholder={this.state.lang.keyword} style={wrapInputCreImg} />
-
-          <View style={{width:15}}>
-            <TouchableOpacity style={this.state.txtKW!=='' ? show : hide} onPress={()=>{this.setState({txtKW:''})}}>
-            <Image source={closeIC} style={imgShare} />
-            </TouchableOpacity>
-          </View>
-        </View>
 
         <View style={{height:15}}></View>
         <View style={listCreate}>
@@ -636,23 +612,7 @@ export default class FormCreate extends Component {
           visible={showVideo}
           closeModal={()=>this.setState({showVideo:false})} />
 
-        <View style={{height:15}}></View>
 
-
-
-        <TouchableOpacity style={listCreate} onPress={()=>this.setState({showService:!this.state.showService})}>
-          <View style={{flexDirection:'row'}}>
-            <View style={widthLblCre}>
-            <Image source={addonIC} style={imgInfo} />
-            </View>
-            <View style={{paddingLeft:15}}>
-            <Text style={colorlbl}>{this.state.lang.utilities}</Text></View>
-          </View>
-          <View style={{flexDirection:'row',alignItems:'center'}}>
-            <Image source={selectedIC} style={[imgShare,Object.entries(this.state.checkService).length>0 ? show : hide]}/>
-            <Image source={arrowNextIC} style={imgShare}/>
-          </View>
-        </TouchableOpacity>
 
         {/*<View style={listCreate}>
           <View style={widthLblCre}>
@@ -671,17 +631,43 @@ export default class FormCreate extends Component {
           </View>
         </View>*/}
         <View style={{height:15}}></View>
-
+        {console.log('svg',checkSVG('http://thenewcode.com/assets/images/thumbnails/homer-simpson.svg'))}
       </View>
 
-      </ScrollView>
+      </ScrollView>}
 
       <View style={[clockTime,this.state.showOpenTime ? show : hidden]}>
       <OpenTime
       lang={this.state.lang}
       closeModal={this.setOpenTime.bind(this)} />
       </View>
+      {this.state.showUpdate &&
+        <View style={[popoverLoc,centerVer]}>
+            <View style={[overLayout,pad10]}>
+              <View style={[pad10]}></View>
+              <Text style={txtNextItem}>{`${this.state.lang.update_more}`}</Text>
+              <View style={{flexDirection:'row',alignItems:'center',marginTop:20}}>
+              <TouchableOpacity style={{alignItems:'center',padding:7,borderWidth:1,borderRadius:4,borderColor:'#d0021b',minWidth:width/3}}
+              onPress={()=>{this.props.navigation.navigate('MainScr')}}>
+                <Text style={{color:'#d0021b',fontSize:16}}>{`${this.state.lang.later}`}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={{alignItems:'center',padding:7,borderRadius:4,backgroundColor:'#d0021b',marginLeft:10,minWidth:width/3}}
+              onPress={()=>{this.setState({showUpdateMore:true,showUpdate:false})}}>
+                <Text style={{color:'#fff',fontSize:16}}>{`${this.state.lang.update}`}</Text>
+              </TouchableOpacity>
+              </View>
+            </View>
+        </View>
+      }
 
+      {this.state.showUpdateMore &&
+        <UpdateMore
+        user_profile={this.state.user_profile}
+        lang={this.state.lang}
+        visible={this.state.showUpdateMore}
+        closeModal={()=>{this.setState({showUpdateMore:false});goBack();}}
+        />
+      }
         {this.state.showSubCat && <Modal
         onRequestClose={()=>null} transparent
         animationType={'slide'}

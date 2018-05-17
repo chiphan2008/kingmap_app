@@ -58,6 +58,7 @@ module.exports = {
   marTop15:{marginTop:15},
   marTop10:{marginTop:10},
   pad15:{padding:15,width,alignItems:'center'},
+  pad10:{padding:10,alignItems:'center'},
   actionSheetRadius:{borderRadius:5},
   actionSheetContent:{width:width-30,backgroundColor:'#fff',alignItems:'center',overflow:'hidden'},
   actionSheetWrap:{justifyContent:'flex-end',alignItems:'center',position:'absolute',zIndex:999,backgroundColor:'rgba(0,0,0,0.6)',width,height,paddingBottom:30},
@@ -296,7 +297,7 @@ module.exports = {
     backgroundColor:'rgba(0,0,0,0.7)',
     zIndex:5,
   },
-
+  centerVer:{justifyContent:'center'},
   padCreate:{ paddingTop: 165},
   padBuySell:{ paddingTop: 120},
   popoverLoc : {

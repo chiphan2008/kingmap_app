@@ -4,8 +4,10 @@ import React, { Component } from 'react';
 import {Keyboard,Platform, View, Text, StyleSheet, Dimensions, Image,
   TextInput, TouchableOpacity,FlatList,
 } from 'react-native';
+import SvgUri from 'react-native-svg-uri';
 const {height, width} = Dimensions.get('window');
 
+import {checkSVG} from '../../libs';
 import styles from '../../styles';
 import global from '../../global';
 import getApi from '../../api/getApi';
@@ -84,7 +86,11 @@ export default class OtherCat extends Component {
              <TouchableOpacity
               onPress={()=>navigate('SearchScr',{keyword:'',idCat:item.id,labelCat:item.name,service_items:item.service_items,lang:this.state.selectLang.valueLang,curLoc})}
               style={flatItem}>
-                 <Image style={imgFlatItemLoc} source={{uri:`${global.url_media}${item.image}`}} />
+                {checkSVG(item.image)?
+                  <SvgUri width="70" height="70" source={{uri:`${global.url_media}${item.image}`}} />
+                  :
+                  <Image style={imgFlatItemLoc} source={{uri:`${global.url_media}${item.image}`}} />
+                }
                  <Text style={{textAlign:'center'}} numberOfLines={2}>{item.name}</Text>
              </TouchableOpacity>
            )}

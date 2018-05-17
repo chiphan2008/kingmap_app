@@ -212,12 +212,12 @@ export default class Collection extends Component {
                        renderItem={({item}) => (
                          <View style={{marginRight:0,padding:10,width:(width)/2}}>
                            <TouchableOpacity onPress={()=>{
-                               navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc,lang})
+                               navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc,lang:lang.lang})
                            }}>
                            <Image source={{uri:`${global.url_media}${item.avatar}`}} style={{width:width/2,minHeight:width/3,marginBottom:10}} />
                            </TouchableOpacity>
                            <TouchableOpacity onPress={()=>{
-                               navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc,lang})
+                               navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc,lang:lang.lang})
                            }}>
                            <Text style={{color:'#2F353F',fontSize:16}} numberOfLines={2}>{item.name}</Text>
                            </TouchableOpacity>

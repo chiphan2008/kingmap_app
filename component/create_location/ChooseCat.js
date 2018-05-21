@@ -97,7 +97,7 @@ export default class ChooseCat extends Component {
                  <Text>{item.name}</Text>
              </TouchableOpacity>
            )}
-           style={{marginBottom:170}}
+           style={{marginBottom:Platform.OS==='ios' ? 0 : 170}}
            keyExtractor={item => item.id.toString()}
          />
          </View>

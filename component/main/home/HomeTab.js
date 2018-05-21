@@ -35,6 +35,7 @@ import likeDD from '../../../src/icon/ic-gray/ic-like.png';
 import socialDD from '../../../src/icon/ic-gray/ic-social.png';
 import userDD from '../../../src/icon/ic-gray/ic-user.png';
 import {format_number} from '../../libs';
+YellowBox.ignoreWarnings(['Class RCTCxxModule']);
 YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader']);
 
 import {Select, Option} from "react-native-chooser";

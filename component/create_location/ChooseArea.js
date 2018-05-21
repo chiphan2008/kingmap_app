@@ -144,7 +144,9 @@ export default class ChooseArea extends Component {
                 <View  style={listOverService}>
                 <TouchableOpacity
                     onPress={()=>{
-                      this.props.setDist(this.state.idCountry,this.state.idCity,item.id);
+                      this.props.setDist(
+                        this.state.idCountry,this.state.idCity,item.id,
+                        this.state.nameCountry,this.state.nameCity,item.name);
                       this.setState({ idDist:item.id,nameDist:item.name,showDist:false });
                     }}
                     style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',padding:15}} >

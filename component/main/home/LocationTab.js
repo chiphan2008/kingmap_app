@@ -2,9 +2,11 @@
 
 import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image, TextInput,ScrollView,
-  TouchableOpacity,PermissionsAndroid, AsyncStorage, Modal,Keyboard } from 'react-native';
+  TouchableOpacity,PermissionsAndroid, AsyncStorage, Modal,Keyboard,YellowBox } from 'react-native';
 import RNSettings from 'react-native-settings';
 import SvgUri from 'react-native-svg-uri';
+YellowBox.ignoreWarnings(['Class RCTCxxModule']);
+YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader']);
 const {height, width} = Dimensions.get('window');
 //import Geolocation from '../../api/Geolocation';
 //import hasLocationPermission from '../../api/hasLocationPermission';

@@ -10,6 +10,7 @@ import global from '../global';
 import getApi from '../api/getApi';
 import cameraLargeIC from '../../src/icon/ic-create/ic-camera-large.png';
 import closeLargeIC from '../../src/icon/ic-create/ic-close-large.png';
+import closeIC from '../../src/icon/ic-white/ic-close.png';
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
 import checkIC from '../../src/icon/ic-check.png';
 import uncheckIC from '../../src/icon/ic-uncheck.png';
@@ -36,6 +37,7 @@ export default class UpdateMore extends Component {
       desProduct:'',
       priceProduct:'',
       arrLoc:{},
+      listLocChoose:[],
     }
   }
   uploadProduct(){
@@ -62,7 +64,20 @@ export default class UpdateMore extends Component {
     })
     .catch(err => console.log(err));
   }
-
+  updateListLoc = () => {
+    var {arrLoc,listLocChoose,listLoc} = this.state;
+    //console.log('arrLoc',Object.entries(arrLoc));
+    var arr=[];
+    listLoc.forEach(e=>{
+      if(arrLoc[e.id]) arr.push(e);
+      //console.log('listLocChooseAAA');
+    })
+    listLocChoose=arr;
+    //console.log('listLocChoose',listLocChoose);
+    this.setState(this.state,()=>{
+      //console.log('updateListLoc1',this.state);
+    });
+  }
   render() {
     const {
       container,headCatStyle,headContent,titleCreate,
@@ -71,7 +86,7 @@ export default class UpdateMore extends Component {
       imgShare
     } = styles;
     const {lang,visible,user_profile}= this.props;
-    const {nameProduct,desProduct,priceProduct,imgProduct,listLoc,showLoc,arrLoc}= this.state;
+    var {nameProduct,desProduct,priceProduct,imgProduct,listLoc,showLoc,arrLoc,listLocChoose}= this.state;
     return (
 
       <Modal
@@ -200,19 +215,58 @@ export default class UpdateMore extends Component {
             <Text style={colorNext}> + {lang.add_brank} </Text>
             </TouchableOpacity>
           </View>
+          <FlatList
+             extraData={this.state}
+             style={{padding:15,width}}
+             data={listLocChoose}
+             keyExtractor={(item,index) => index.toString()}
+             renderItem={({item,index}) =>(
+               <TouchableOpacity style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginBottom:10}}
+               onPress={()=>{
+                 if(arrLoc[item.id]){
+                   arrLoc= Object.assign(arrLoc,{[item.id]:!item.id})
+                 }else {
+                   arrLoc= Object.assign(arrLoc,{[item.id]:item.id})
+                 }
+                 this.setState(this.state);
+               }}>
+               {console.log('item.id',item.id)}
+                   <View style={{flexDirection:'row',maxWidth:width-110}}>
+                       <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:40,marginRight:10}} />
+                       <View>
+                         <Text numberOfLines={1} style={colorlbl}>{item.name}</Text>
+                         <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.address}`}</Text>
+                       </View>
+                   </View>
+                     <Image source={arrLoc[item.id]?checkIC:uncheckIC} style={imgShare} />
+               </TouchableOpacity>
+             )} />
+
           </View>}
 
           {showLoc &&
             <View style={[popoverLoc,centerVer]}>
+                {/*<TouchableOpacity onPress={()=>{this.setState({showLoc:false})}}
+                style={{position:'absolute',top:15,right:15}}>
+                  <Image source={closeIC} style={[imgShare]} />
+                </TouchableOpacity>*/}
                 <View style={[overLayout,pad10]}>
                 <Text numberOfLines={1} style={colorlbl}>{'ĐỊA ĐIỂM CÙNG HỆ THỐNG'}</Text>
                 <FlatList
                    extraData={this.state}
-                   style={{marginTop:15}}
+                   style={{marginTop:15,padding:15,width:width-30}}
                    data={listLoc}
                    keyExtractor={(item,index) => index.toString()}
                    renderItem={({item,index}) =>(
-                     <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
+                     <TouchableOpacity style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginBottom:10}}
+                     onPress={()=>{
+                       if(arrLoc[item.id]){
+                         arrLoc= Object.assign(arrLoc,{[item.id]:!item.id})
+                       }else {
+                         arrLoc= Object.assign(arrLoc,{[item.id]:item.id})
+                       }
+                       this.setState(this.state);
+                     }}>
                          <View style={{flexDirection:'row',maxWidth:width-110}}>
                              <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:40,marginRight:10}} />
                              <View>
@@ -220,13 +274,21 @@ export default class UpdateMore extends Component {
                                <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.address}`}</Text>
                              </View>
                          </View>
-                         <TouchableOpacity onPress={()=>{this.chooseLoc(item.id,item,index)}}
-                         style={arrLoc[item.id] ? show : hide }>
-                           <Image source={checkIC} style={[imgShare]} />
-                         </TouchableOpacity>
-                     </View>
+                           <Image source={arrLoc[item.id]?checkIC:uncheckIC} style={imgShare} />
+                     </TouchableOpacity>
                    )} />
-
+                   <View style={{flexDirection:'row',alignItems:'center',marginTop:20}}>
+                       <TouchableOpacity style={{alignItems:'center',padding:7,borderWidth:1,borderRadius:4,borderColor:'#d0021b',minWidth:width/3}}
+                       onPress={()=>{this.setState({showLoc:false,arrLoc:[]})}}>
+                         <Text style={{color:'#d0021b',fontSize:16}}>{`${'Huỷ'}`}</Text>
+                       </TouchableOpacity>
+                       <TouchableOpacity style={{alignItems:'center',padding:7,borderRadius:4,backgroundColor:'#d0021b',marginLeft:10,minWidth:width/3}}
+                       onPress={()=>{this.setState({showLoc:false},()=>{
+                         this.updateListLoc();
+                       })}}>
+                         <Text style={{color:'#fff',fontSize:16}}>{`${'Done'}`}</Text>
+                       </TouchableOpacity>
+                   </View>
                 </View>
             </View>
           }

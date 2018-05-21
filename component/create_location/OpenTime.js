@@ -231,14 +231,14 @@ export default class OpenTime extends Component {
   }
 
   updateDate = (index) => {
-    console.log(index);
+    //console.log(index);
     let {ListDataTime,updateFromDate,updateToDate} = this.state;
     if(updateFromDate!==''){
       ListDataTime[updateFromDate].from_date = index;
     }else {
       ListDataTime[updateToDate].to_date = index;
     }
-    console.log('ListDataTime',ListDataTime);
+    //console.log('ListDataTime',ListDataTime);
     this.setState(this.state,()=>{
       this.updateListItem();
     })
@@ -300,7 +300,7 @@ export default class OpenTime extends Component {
           </View>
 
           <TouchableOpacity>
-          <Text style={{fontWeight:'bold',fontSize:18,transform:[{ rotate: '45deg'}]}}> </Text>
+          <Text style={{fontWeight:'bold',fontSize:18,transform:[{ rotate: '45deg'}]}}>   </Text>
           </TouchableOpacity>
       </View>
       <View>
@@ -546,9 +546,15 @@ export class ListTime extends Component {
           </TouchableOpacity>
           </View>
 
-          <TouchableOpacity disabled={index>0?false:true} onPress={()=>this.props.removeGroup(index)}>
-          <Text numberOfLines={1} style={{fontWeight:'bold',fontSize:22,transform:[{ rotate: '45deg'}]}}>{index>0?'+': '  '}</Text>
+          {index>0 ?
+          <TouchableOpacity onPress={()=>this.props.removeGroup(index)}>
+          <Text numberOfLines={1} style={{fontWeight:'bold',fontSize:22,transform:[{ rotate: '45deg'}]}}>{'+'}</Text>
           </TouchableOpacity>
+          :
+          <View>
+          <Text numberOfLines={1} style={{fontWeight:'bold',fontSize:22,transform:[{ rotate: '45deg'}]}}>{'  '}</Text>
+          </View>
+          }
 
       </View>
 

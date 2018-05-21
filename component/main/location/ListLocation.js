@@ -125,15 +125,22 @@ export default class ListLocation extends Component {
     console.log('-----url-----1',url);
     getApi(url)
     .then(arrData => {
-      //console.log('count',arrData.data.length);
+      //console.log(arrData.data.length);
       if(skip===0){
-        //console.log('-----skip===0-----');
-        this.setState({ listData: arrData.data,isLoad:false,isRefresh:false,pullToRefresh:true, noData: arrData.data.length===0 ? this.state.lang.not_found : '' });
+        this.state.listData= arrData.data;
+        this.state.isLoad=false;
+        this.state.isRefresh=false;
+        this.state.pullToRefresh=true;
+        this.state.noData= arrData.data.length===0 ? this.state.lang.not_found : '' ;
       }else {
         //console.log('-----skip!==-----');
-        if(arrData.data.length===0) this.setState({ pullToRefresh:false,isLoad:false,isRefresh:false });
-        this.setState({ listData: this.state.listData.concat(arrData.data), isLoad:false,pullToRefresh:true,isRefresh:false, });
+        this.state.listData= this.state.listData.concat(arrData.data);
+        this.state.isLoad=false;this.state.pullToRefresh=true;this.state.isRefresh=false;
       }
+      if(arrData.data.length<20) {
+        this.state.pullToRefresh=false;this.state.isLoad=false;this.state.isRefresh=false;
+      };
+      this.setState(this.state);
     })
     .catch(err => console.log(err));
   }
@@ -289,7 +296,9 @@ export default class ListLocation extends Component {
   }
   renderFooter = () => {
     if (!this.state.isLoad) return null;
+    //console.log('this.state.isLoad',this.state.isLoad);
     return (
+    this.state.isLoad &&
     <View style={{alignItems:'center'}}>
       <ActivityIndicator color="#d0021b" size="large" />
     </View>)
@@ -405,7 +414,7 @@ export default class ListLocation extends Component {
                      //refreshing={isRefresh}
                      extraData={this.state}
                      onEndReachedThreshold={0.5}
-                     onEndReached={() => this.onRefresh()}
+                     onEndReached={() => {this.onRefresh()}}
                      //ListHeaderComponent={null}
                      ListFooterComponent={this.renderFooter}
                      data={listData}

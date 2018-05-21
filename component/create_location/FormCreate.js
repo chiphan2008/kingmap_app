@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image,
   TextInput, TouchableOpacity,ScrollView,Modal,FlatList,AsyncStorage,
-  BackHandler,Alert,
+  BackHandler,Alert,ActivityIndicator,
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 const {height, width} = Dimensions.get('window');
@@ -68,8 +68,10 @@ export default class FormCreate extends Component {
       showSubCat:false,
       showOpenTime:false,
       checkSubCat:{},
+      hasSubCat:0,
       showService:false,
       checkService:{},
+      hasService:0,
       idContent:'',
       lat:'Lat 0.0',
       lng:'Lng 0.0',
@@ -107,10 +109,12 @@ export default class FormCreate extends Component {
       errMsg:'',
       id_ctv:'',
       idCountry:'',idCity:'',idDist:'',
+      nameCountry:'',nameCity:'',nameDist:'',
       isLogin:false,
+      showLoading:false,
       user_profile:{},
       showUpdate:false,
-      showUpdateMore:true,
+      showUpdateMore:false,
     };
     checkLogin().then(e=>{
       //console.log(e);
@@ -123,18 +127,28 @@ export default class FormCreate extends Component {
     //BackHandler.addEventListener('hardwareBackPress', ()=>this.setState({showSubCat:false}));
   }
   confirmPostData(){
-    if(Object.entries(this.state.checkSubCat).length===0){this.setState({errMsg:this.state.lang.enter_classify});return false;}
-
+    //console.log('confirmPostData1');
+    if(this.state.hasSubCat===0){this.setState({errMsg:this.state.lang.enter_classify});return false;}
+    //console.log('confirmPostData2');
     if(this.state.txtName===''){this.setState({errMsg:this.state.lang.enter_name});return false;}
+    //console.log('confirmPostData3');
     if(this.state.txtAddress===''){this.setState({errMsg:this.state.lang.enter_address});return false;}
+    //console.log('confirmPostData4');
     if(this.state.ListOpenTime.length===0){this.setState({errMsg:this.state.lang.enter_time});return false;}
+    //console.log('confirmPostData5');
     if(this.state.idCountry==='' || this.state.idCity==='' || this.state.idDist===''){
       this.setState({errArea:true});return false;
     }
-    if(this.state.txtKW.trim()===''){this.setState({errMsg:this.state.lang.enter_kw});return false;}
+    //console.log('confirmPostData6');
+    if(this.state.txtKW.trim()==='' || strtoarray(this.state.txtKW,',').length<3 ){this.setState({errMsg:this.state.lang.enter_kw});return false;}
+    //console.log('confirmPostData7');
     if(this.state.imgAvatar.path===undefined){this.setState({errMsg:this.state.lang.enter_avatar});return false;}
+    //console.log('confirmPostData8');
     if(this.state.lat==='Lat 0.0' || this.state.lat===''){this.setState({errMsg:this.state.lang.enter_address_again});return false;}
-    if(this.state.txtEmail!==''){if(!isEmail(this.state.txtEmail))this.setState({errMsg:this.state.lang.email_format});return false;}
+    //console.log('confirmPostData9',isEmail(this.state.txtEmail));
+    if(this.state.txtEmail!==''){if(!isEmail(this.state.txtEmail)) {this.setState({errMsg:this.state.lang.email_format});return false;}}
+    //console.log('confirmPostData10');
+    this.setState({showLoading:true});
     const arr = new FormData();
     arr.append('name',this.state.txtName);
     arr.append('id_category',this.props.navigation.state.params.idCat);
@@ -206,14 +220,16 @@ export default class FormCreate extends Component {
     });
 
     postApi(`${global.url}${'create-location'}`,arr).then((e)=>{
-      //console.log('e',e);
-      if(e.code===200){
-        Alert.alert(this.state.lang.notify,this.state.lang.create_success,[
-          {text: 'OK', onPress: () => this.setState({idContent:e.data.content.id,showUpdate:true})}
-        ])
-      }else {
-        Alert.alert(this.state.lang.notify,e.message)
-      }
+      this.setState({showLoading:false},()=>{
+        if(e.code===200){
+          Alert.alert(this.state.lang.notify,this.state.lang.create_success,[
+            {text: 'OK', onPress: () => this.setState({idContent:e.data.content.id,showUpdate:true})}
+          ])
+        }else {
+          Alert.alert(this.state.lang.notify,e.message)
+        }
+      });
+
     });
 
     //this.setState({showUpdate:true});
@@ -232,20 +248,29 @@ export default class FormCreate extends Component {
       this.setState({imgAvatar:image});
     }).catch(e=>console.log('e'));
   }
-  getLatLng(addr){
+  getLatLng(){
     //console.log('addr');
-    let url = `${'https://maps.googleapis.com/maps/api/geocode/json?&address='}${addr}`;
+    const { nameCountry,nameCity,nameDist,txtAddress } = this.state;
+    //console.log('nameCountry,nameCity,nameDist,txtAddress',nameCountry,nameCity,nameDist,txtAddress);
+    var params='';
+    if(txtAddress.trim()!=='' && txtAddress!==undefined) {params += txtAddress + ', ';}
+    //if(nameDist.trim()!=='' && nameDist.trim()!==undefined) {params += nameDist + ', ';}
+    if(nameCity.trim()!=='' && nameCity.trim()!==undefined) {params += nameCity + ', ';}
+    if(nameCountry.trim()!=='' && nameCountry.trim()!==undefined) {params += nameCountry;}
+    //console.log('params',params);
+    let url = `${'https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyCCCOoPlN2D-mfrYEMWkz-eN7MZnOsnZ44&sensor=true&address='}${params}`;
+    console.log(url);
     getApi(url).then(e=>{
 
       let arrDataAddr = e.results[0].address_components;
       let arrDataLoc = e.results[0].geometry.location;
       //console.log(arrDataAddr,arrDataLoc);
-      this.state.txtAddress=`${arrDataAddr[0].long_name} ${arrDataAddr[1].long_name}`;
+      if(txtAddress.trim()!=='' && txtAddress.trim()!==undefined) this.state.txtAddress=`${arrDataAddr[0].long_name} ${arrDataAddr[1].long_name}`;
       this.state.lat=arrDataLoc.lat;
       this.state.lng=arrDataLoc.lng;
       timeoutLatLng = setTimeout(()=>{
         this.setState(this.state);
-      },5000)
+      },3000)
 
 
     })
@@ -288,12 +313,13 @@ export default class FormCreate extends Component {
             <View style={widthLblCre}>
             <Image source={cateLocationIC} style={imgInfo} />
             </View>
-              <View style={{paddingLeft:15}}>
+              <View style={{paddingLeft:15,flexDirection:'row'}}>
                 <Text style={colorlbl}>{this.state.lang.classify}</Text>
+                <Text style={colorErr}>{' *'}</Text>
               </View>
           </View>
           <View style={{flexDirection:'row',alignItems:'center'}}>
-          <Image source={selectedIC} style={[imgShare,Object.entries(this.state.checkSubCat).length>0 ? show : hide]}/>
+          <Image source={selectedIC} style={[imgShare,this.state.hasSubCat>0 ? show : hide]}/>
           <Text style={colorlbl}>{nameCat}</Text>
           <Image source={arrowNextIC} style={imgShare}/>
           </View>
@@ -309,12 +335,11 @@ export default class FormCreate extends Component {
             <Text style={colorlbl}>{this.state.lang.utilities}</Text></View>
           </View>
           <View style={{flexDirection:'row',alignItems:'center'}}>
-            <Image source={selectedIC} style={[imgShare,Object.entries(this.state.checkService).length>0 ? show : hide]}/>
+            <Image source={selectedIC} style={[imgShare,this.state.hasService>0 ? show : hide]}/>
             <Image source={arrowNextIC} style={imgShare}/>
           </View>
         </TouchableOpacity>
         {/*<View style={{height:15}}></View>*/}
-
 
 
         <View style={{padding:15,flexDirection:'row',justifyContent:'space-between'}}>
@@ -330,7 +355,7 @@ export default class FormCreate extends Component {
           <TextInput underlineColorAndroid='transparent'
             returnKeyType = {"next"} autoFocus = {true}
             onSubmitEditing={(event) => {this.refs.Address.focus();}}
-            placeholder={this.state.lang.name_location} style={wrapInputCreImg}
+            placeholder={`${this.state.lang.name_location}${' *'}`} style={wrapInputCreImg}
             onChangeText={(txtName) => this.setState({txtName})}
             value={this.state.txtName}
            />
@@ -347,15 +372,15 @@ export default class FormCreate extends Component {
           </View>
           <TextInput underlineColorAndroid='transparent'
           onChangeText={(txtAddress) => { this.setState({txtAddress}) } }
-          value={this.state.txtAddress} ref='Address' returnKeyType = {"next"}
+          value={`${this.state.txtAddress}`} ref='Address' returnKeyType = {"next"}
           onBlur={()=>{
             if(this.state.txtAddress!==''){
               clearTimeout(timeoutLatLng);
-              this.getLatLng(this.state.txtAddress)
+              this.getLatLng()
             }
           }}
-          onSubmitEditing={(event) => {  this.refs.Des.focus(); clearTimeout(timeoutLatLng);this.getLatLng(this.state.txtAddress);  }}
-          placeholder={this.state.lang.address} style={wrapInputCreImg} />
+          onSubmitEditing={(event) => {  this.refs.Des.focus(); clearTimeout(timeoutLatLng);this.getLatLng();  }}
+          placeholder={`${this.state.lang.address}${' *'}`} style={wrapInputCreImg} />
           <View style={{width:15}}>
           <TouchableOpacity style={this.state.txtAddress!=='' ? show : hide}
           onPress={()=>{this.setState({txtAddress:'',lat:'Lat 0.0',lng:'Lng 0.0',})}}>
@@ -370,8 +395,9 @@ export default class FormCreate extends Component {
             <View style={widthLblCre}>
               <Image source={timeIC} style={imgInfo} />
             </View>
-            <View style={{paddingLeft:15}}>
+            <View style={{paddingLeft:15,flexDirection:'row'}}>
               <Text style={colorlbl}>{this.state.lang.open_time}</Text>
+              <Text style={colorErr}>{' *'}</Text>
               </View>
           </View>
           <View style={{flexDirection:'row'}}>
@@ -401,15 +427,20 @@ export default class FormCreate extends Component {
         </View>
 
         <View style={{padding:15,flexDirection:'row',justifyContent:'space-between'}}>
-          <Text style={colorlbl}>{this.state.lang.choose_area}</Text>
-          <View style={this.state.errArea ? show : hide}>
+          <View style={{flexDirection:'row'}}>
+            <Text style={colorlbl}>{this.state.lang.choose_area}</Text>
+            <Text style={colorErr}>{' *'}</Text>
+          </View>
+        <View style={this.state.errArea ? show : hide}>
             <Text style={colorErr}>{this.state.lang.plz_choose_area}</Text>
           </View>
         </View>
         <ChooseArea
         setCountry={(idCountry)=>this.setState({idCountry})}
         setCity={(idCity)=>this.setState({idCity})}
-        setDist={(idCountry,idCity,idDist)=>this.setState({idCountry,idCity,idDist,errArea:false})}
+        setDist={(idCountry,idCity,idDist,nameCountry,nameCity,nameDist)=>{this.setState({idCountry,idCity,idDist,nameCountry,nameCity,nameDist,errArea:false},()=>{
+          this.getLatLng();
+        })}}
         lang={this.state.lang}/>
 
 
@@ -459,6 +490,7 @@ export default class FormCreate extends Component {
             placeholder={this.state.lang.phone} style={wrapInputCreImg}
             onChangeText={(txtPhone) => this.setState({txtPhone})}
             value={this.state.txtPhone}
+            maxLength={11}
            />
           <View style={{width:15}}>
           <TouchableOpacity style={this.state.txtPhone!=='' ? show : hide} onPress={()=>{this.setState({txtPhone:''})}}>
@@ -494,7 +526,7 @@ export default class FormCreate extends Component {
           multiline numberOfLines={4} maxHeight={65}
           onChangeText={(txtKW) => this.setState({txtKW})}
           value={this.state.txtKW} ref='KW' returnKeyType = {"done"}
-          placeholder={this.state.lang.keyword} style={wrapInputCreImg} />
+          placeholder={`${this.state.lang.keyword}${' (*)'}`} style={wrapInputCreImg} />
 
           <View style={{width:15}}>
             <TouchableOpacity style={this.state.txtKW!=='' ? show : hide} onPress={()=>{this.setState({txtKW:''})}}>
@@ -530,6 +562,7 @@ export default class FormCreate extends Component {
               <View style={{paddingLeft:15,flexDirection:'row',alignItems:'center'}}>
                 <Image source={{isStatic:true,uri:`${this.state.imgAvatar.path}`}} style={[imgInfo,marRight,this.state.imgAvatar.path!==undefined ? show : hide]}/>
                 <Text style={colorlbl}>{this.state.lang.avatar}</Text>
+                <Text style={colorErr}>{' *'}</Text>
               </View>
             </View>
           <View style={{flexDirection:'row',alignItems:'center'}}>
@@ -631,7 +664,6 @@ export default class FormCreate extends Component {
           </View>
         </View>*/}
         <View style={{height:15}}></View>
-        {console.log('svg',checkSVG('http://thenewcode.com/assets/images/thumbnails/homer-simpson.svg'))}
       </View>
 
       </ScrollView>}
@@ -644,18 +676,23 @@ export default class FormCreate extends Component {
       {this.state.showUpdate &&
         <View style={[popoverLoc,centerVer]}>
             <View style={[overLayout,pad10]}>
-              <View style={[pad10]}></View>
+              <View style={pad10}></View>
+              <View style={{alignItems:'center',padding:15}}>
               <Text style={txtNextItem}>{`${this.state.lang.update_more}`}</Text>
-              <View style={{flexDirection:'row',alignItems:'center',marginTop:20}}>
-              <TouchableOpacity style={{alignItems:'center',padding:7,borderWidth:1,borderRadius:4,borderColor:'#d0021b',minWidth:width/3}}
-              onPress={()=>{this.props.navigation.navigate('MainScr')}}>
-                <Text style={{color:'#d0021b',fontSize:16}}>{`${this.state.lang.later}`}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={{alignItems:'center',padding:7,borderRadius:4,backgroundColor:'#d0021b',marginLeft:10,minWidth:width/3}}
-              onPress={()=>{this.setState({showUpdateMore:true,showUpdate:false})}}>
-                <Text style={{color:'#fff',fontSize:16}}>{`${this.state.lang.update}`}</Text>
-              </TouchableOpacity>
               </View>
+              <View style={{flexDirection:'row',alignItems:'center',marginTop:20}}>
+                  <TouchableOpacity style={{alignItems:'center',padding:7,borderWidth:1,borderRadius:4,borderColor:'#d0021b',minWidth:width/3}}
+                  onPress={()=>{this.props.navigation.navigate('MainScr')}}>
+                    <Text style={{color:'#d0021b',fontSize:16}}>{`${this.state.lang.later}`}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={{alignItems:'center',padding:7,borderRadius:4,backgroundColor:'#d0021b',marginLeft:10,minWidth:width/3}}
+                  onPress={()=>{this.setState({showUpdateMore:true,showUpdate:false})}}>
+                    <Text style={{color:'#fff',fontSize:16}}>{`${this.state.lang.update}`}</Text>
+                  </TouchableOpacity>
+              </View>
+
+              <View style={pad10}></View>
+              
             </View>
         </View>
       }
@@ -697,12 +734,14 @@ export default class FormCreate extends Component {
                renderItem={({item}) =>(
                  <TouchableOpacity onPress={()=>{
                    if(this.state.checkSubCat[`${item.id}`]!==item.id){
-                     this.setState({checkSubCat:Object.assign(this.state.checkSubCat,{[item.id]:item.id})})
+                     this.state.hasSubCat +=1;
+                     this.state.checkSubCat=Object.assign(this.state.checkSubCat,{[item.id]:item.id});
                    }else{
-                     this.setState({checkSubCat:Object.assign(this.state.checkSubCat,{[item.id]:!item.id})})
+                     this.state.hasSubCat -=1;
+                     this.state.checkSubCat=Object.assign(this.state.checkSubCat,{[item.id]:!item.id});
                    }
-
-                 } }
+                   this.setState(this.state)
+                 }}
                  style={listAdd}>
                    <Text style={colorlbl}>{item.name}</Text>
                    <Image source={checkIC} style={[imgShare,this.state.checkSubCat[`${item.id}`]===item.id ? show : hide]} />
@@ -745,11 +784,13 @@ export default class FormCreate extends Component {
                  renderItem={({item}) =>(
                    <TouchableOpacity onPress={()=>{
                      if(this.state.checkService[`${item.id}`]!==item.id){
-                       this.setState({checkService:Object.assign(this.state.checkService,{[item.id]:item.id})})
+                       this.state.hasService +=1;
+                       this.state.checkService=Object.assign(this.state.checkService,{[item.id]:item.id});
                      }else{
-                       this.setState({checkService:Object.assign(this.state.checkService,{[item.id]:!item.id})})
+                       this.state.hasService -=1;
+                       this.state.checkService=Object.assign(this.state.checkService,{[item.id]:!item.id});
                      }
-
+                     this.setState(this.state);
                    } }
                    style={listAdd}>
                      <Text style={colorlbl}>{item.name}</Text>
@@ -762,9 +803,13 @@ export default class FormCreate extends Component {
             </View>
             </Modal>}
 
-
-
-
+            {this.state.showLoading &&
+            <Modal onRequestClose={() => null} transparent
+            visible={this.state.showLoading} >
+              <View style={{flex:1,justifyContent:'center',alignItems:'center',backgroundColor:'rgba(0,0,0,0.6)'}}>
+                <ActivityIndicator size="large" color="#d0021b" />
+              </View>
+            </Modal>}
       </View>
     );
   }

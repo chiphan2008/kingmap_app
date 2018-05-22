@@ -8,6 +8,7 @@ import {
 import styles from '../styles';
 import global from '../global';
 import getApi from '../api/getApi';
+import postApi from '../api/postApi';
 import cameraLargeIC from '../../src/icon/ic-create/ic-camera-large.png';
 import closeLargeIC from '../../src/icon/ic-create/ic-close-large.png';
 import closeIC from '../../src/icon/ic-white/ic-close.png';
@@ -36,6 +37,7 @@ export default class UpdateMore extends Component {
       nameProduct:'',
       desProduct:'',
       priceProduct:'',
+      listProduct:[],
       arrLoc:{},
       listLocChoose:[],
     }
@@ -47,6 +49,32 @@ export default class UpdateMore extends Component {
       //console.log(imgProduct);
       this.setState({imgProduct})
     }).catch(e=>console.log('e'));
+  }
+  createProduct(){
+    const {nameProduct,desProduct,priceProduct,imgProduct} = this.state;
+    const {content_id} = this.props;
+
+    if(nameProduct===''||desProduct===''||priceProduct===''||imgProduct.path===undefined) return false;
+    const arr = new FormData();
+    arr.append('content_id','83597');
+    arr.append('name',nameProduct);
+    arr.append('des',desProduct);
+    arr.append('price',priceProduct);
+    arr.append(`image`, {
+      uri:`${imgProduct.path}`,
+      name: `my_image.jpg`,
+      type: `${imgProduct.mime}`
+    });
+    postApi(`${global.url}${'product/create'}`,arr).then((e)=>{
+      if(e.code===200){
+        this.getListProduct();
+      }
+    });
+  }
+  getListProduct(){
+    getApi(`${global.url}${'product/list/'}${this.props.content_id}`).then((e)=>{
+      this.setState({listProduct:e.data});
+    });
   }
   uploadMenu(){
     ImagePicker.openPicker({
@@ -86,7 +114,7 @@ export default class UpdateMore extends Component {
       imgShare
     } = styles;
     const {lang,visible,user_profile}= this.props;
-    var {nameProduct,desProduct,priceProduct,imgProduct,listLoc,showLoc,arrLoc,listLocChoose}= this.state;
+    var {nameProduct,desProduct,priceProduct,imgProduct,listLoc,showLoc,arrLoc,listLocChoose,listProduct}= this.state;
     return (
 
       <Modal
@@ -145,25 +173,50 @@ export default class UpdateMore extends Component {
               onChangeText={(nameProduct) => this.setState({nameProduct})}
               placeholder={`${"Tên"}`} value={nameProduct}
               style={{
-                paddingLeft:10,paddingTop:5,paddingBottom:5,fontSize:16,width:width-150,borderBottomWidth:1,borderColor:'#E1E7EC',marginRight:10}}
+                paddingTop:5,paddingBottom:5,fontSize:16,width:width-150,borderBottomWidth:1,borderColor:'#E1E7EC',marginRight:10}}
                 />
               <TextInput
               underlineColorAndroid='transparent'
               onChangeText={(desProduct) => this.setState({desProduct})}
               placeholder={`${"Mô tả"}`} value={desProduct}
               style={{
-                paddingLeft:10,paddingTop:5,paddingBottom:5,fontSize:16,width:width-150,borderBottomWidth:1,borderColor:'#E1E7EC',marginRight:10}}
+                paddingTop:5,paddingBottom:5,fontSize:16,width:width-150,borderBottomWidth:1,borderColor:'#E1E7EC',marginRight:10}}
                 />
               <TextInput
               underlineColorAndroid='transparent'
               onChangeText={(priceProduct) => this.setState({priceProduct})}
               placeholder={`${"Giá"}`} value={priceProduct}
               style={{
-                paddingLeft:10,paddingTop:5,paddingBottom:5,fontSize:16,width:width-150,borderBottomWidth:1,borderColor:'#E1E7EC',marginRight:10}}
+                paddingTop:5,paddingBottom:5,fontSize:16,width:width-150,borderBottomWidth:1,borderColor:'#E1E7EC',marginRight:10}}
                 />
               </View>
 
           </View>
+          <View style={{width:width/2,alignSelf:'center',marginTop:20}}>
+            <TouchableOpacity onPress={()=>this.createProduct()} style={btnPress}>
+            <Text style={colorNext}> + {'Thêm sản phẩm dịch vụ'} </Text>
+            </TouchableOpacity>
+          </View>
+          <FlatList
+             extraData={this.state}
+             style={{marginTop:15,padding:15,width:width-30}}
+             data={listProduct}
+             keyExtractor={(item,index) => index.toString()}
+             renderItem={({item,index}) =>(
+               <TouchableOpacity style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginBottom:10}}
+               onPress={()=>{
+
+               }}>
+                   <View style={{flexDirection:'row',maxWidth:width-110}}>
+                       <Image source={{uri:checkUrl(item.thumb) ? item.thumb : `${global.url_media}${item.thumb}`}} style={{width:50,height:40,marginRight:10}} />
+                       <View>
+                         <Text numberOfLines={1} style={colorlbl}>{item.name}</Text>
+                         <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.price}`}</Text>
+                       </View>
+                   </View>
+                     <Image source={arrLoc[item.id]?checkIC:uncheckIC} style={imgShare} />
+               </TouchableOpacity>
+             )} />
 
           </View>}
 
@@ -186,7 +239,7 @@ export default class UpdateMore extends Component {
               onChangeText={(nameProduct) => this.setState({nameProduct})}
               placeholder={`${"Tên"}`} value={nameProduct}
               style={{
-                paddingLeft:10,paddingTop:5,paddingBottom:5,fontSize:16,width:width-150,borderBottomWidth:1,borderColor:'#E1E7EC',marginRight:10}}
+                paddingTop:5,paddingBottom:5,fontSize:16,width:width-150,borderBottomWidth:1,borderColor:'#E1E7EC',marginRight:10}}
                 />
               <TextInput
               underlineColorAndroid='transparent'
@@ -230,7 +283,7 @@ export default class UpdateMore extends Component {
                  }
                  this.setState(this.state);
                }}>
-               {console.log('item.id',item.id)}
+
                    <View style={{flexDirection:'row',maxWidth:width-110}}>
                        <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:40,marginRight:10}} />
                        <View>

@@ -162,7 +162,7 @@ export default class OpenTime extends Component {
 
   removeGroup(id){
     //console.log('id',id);
-    let {ListOpenTime,ListDataTime} = this.state;
+    var {ListOpenTime,ListDataTime} = this.state;
     const i = ListOpenTime.findIndex((e)=>this.getIndex(e,id));
     if(i!==-1){
       ListDataTime.splice(i, 1);
@@ -194,8 +194,7 @@ export default class OpenTime extends Component {
       this.state.index = ListDataTime.length-1;
 
       this.setState(this.state,()=>{
-        // console.log('this.state.index',this.state.index);
-        // console.log('removeGroup_ListDataTime',ListDataTime);
+        this.setState({ListOpenTime})
       })
     }
 

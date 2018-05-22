@@ -57,7 +57,7 @@ import keywordsIC from '../../src/icon/ic-create/ic-keywords.png';
 import codeIC from '../../src/icon/ic-create/ic-code.png';
 import selectedIC from '../../src/icon/ic-create/ic-selected.png';
 
-import {hasNumber,getIndex,strtoarray,isEmail,checkSVG} from '../libs';
+import {hasNumber,getIndex,strtoarray,isEmail,checkSVG,checkKeyword} from '../libs';
 
 var timeoutLatLng;
 export default class FormCreate extends Component {
@@ -114,7 +114,7 @@ export default class FormCreate extends Component {
       showLoading:false,
       user_profile:{},
       showUpdate:false,
-      showUpdateMore:false,
+      showUpdateMore:true,
     };
     checkLogin().then(e=>{
       //console.log(e);
@@ -524,7 +524,26 @@ export default class FormCreate extends Component {
 
           <TextInput underlineColorAndroid='transparent'
           multiline numberOfLines={4} maxHeight={65}
-          onChangeText={(txtKW) => this.setState({txtKW})}
+          onChangeText={(text) => {
+            if(text.substr(-1)===','){
+              //console.log(checkKeyword(text));
+              if(!checkKeyword(text))  this.setState({txtKW:text})
+              else {
+                var arr = this.state.txtKW.split(',');
+                arr.splice(-1);
+                this.setState({txtKW:arr.toString()})
+              }
+              //this.setState({txtKW:txtKW.substr(-1)})
+            }else {
+              this.setState({txtKW:text})
+            }
+          }}
+          onBlur={()=>{
+            var arr = this.state.txtKW.split(',');
+            arr.splice(-1);
+            this.setState({txtKW:arr.toString()})
+          }}
+
           value={this.state.txtKW} ref='KW' returnKeyType = {"done"}
           placeholder={`${this.state.lang.keyword}${' (*)'}`} style={wrapInputCreImg} />
 
@@ -678,7 +697,7 @@ export default class FormCreate extends Component {
             <View style={[overLayout,pad10]}>
               <View style={pad10}></View>
               <View style={{alignItems:'center',padding:15}}>
-              <Text style={txtNextItem}>{`${this.state.lang.update_more}`}</Text>
+              <Text style={{color:'#6587A8',fontSize:17,textAlign:'center'}}>{`${this.state.lang.update_more}`}</Text>
               </View>
               <View style={{flexDirection:'row',alignItems:'center',marginTop:20}}>
                   <TouchableOpacity style={{alignItems:'center',padding:7,borderWidth:1,borderRadius:4,borderColor:'#d0021b',minWidth:width/3}}
@@ -692,7 +711,7 @@ export default class FormCreate extends Component {
               </View>
 
               <View style={pad10}></View>
-              
+
             </View>
         </View>
       }
@@ -700,6 +719,7 @@ export default class FormCreate extends Component {
       {this.state.showUpdateMore &&
         <UpdateMore
         user_profile={this.state.user_profile}
+        content_id={idContent}
         lang={this.state.lang}
         visible={this.state.showUpdateMore}
         closeModal={()=>{this.setState({showUpdateMore:false});goBack();}}

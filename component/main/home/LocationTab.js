@@ -261,7 +261,7 @@ export default class LocationTab extends Component {
                         onPress={()=>navigate('SearchScr',{idCat:e.id,labelCat:e.name,service_items:e.service_items, keyword:this.state.valSearch,lat:curLoc.latitude,lng:curLoc.longitude,lang:this.state.lang.lang}) }
                         >
                       {checkSVG(e.image)?
-                        <SvgUri width="65" height="65" source={{uri:`${global.url_media}${e.image}`}} />
+                        <SvgUri width="70" height="70" source={{uri:`${global.url_media}${e.image}`}} />
                         :
                         <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                       }

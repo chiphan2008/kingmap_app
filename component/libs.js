@@ -13,8 +13,6 @@ export function format_number(value,dv=null){
   }
 
   const formatter = new Intl.NumberFormat('pt-BR', {
-        //style: 'currency',
-        //currency: 'BRL',
         minimumFractionDigits: 0,
     });
     return formatter.format(value);
@@ -90,6 +88,24 @@ export function checkPassword(pass,lang){
 
     }
     return obj;
+}
+export function checkKeyword(str,char=null){
+  if(str!==undefined){
+    str.toLowerCase();
+    if(char===null){
+      char=',';
+    }
+    var arr = str.split(char);
+    arr.splice(-1,1);
+    if(arr.length>1){
+      //console.log('arr.length',arr);
+      var lastElement = arr[arr.length-1].trim();
+      return arr.includes(lastElement);
+      //return true;
+    }
+    return false;
+  }
+  return false;
 }
 
 export function isEmail(text){

@@ -160,6 +160,7 @@ module.exports = {
     paddingBottom:20,
   },
   titleCreate:{color:'white',fontSize:18,paddingTop:5},
+  titleTabPro:{color:'white',fontSize:16,paddingTop:5},
 
   wrapDistribute:{
     width:width-20,borderRadius:5,backgroundColor:'#fff',minHeight:height,
@@ -199,7 +200,7 @@ module.exports = {
 
   },
   headContent : {
-      width: width - 40,justifyContent: 'space-between',flexDirection: 'row',
+      width: width - 30,justifyContent: 'space-between',flexDirection: 'row',
   },
   imgLogoTop : {
       width: 138,height: 25,
@@ -368,9 +369,9 @@ module.exports = {
   padPerInfo:{paddingTop:15,paddingBottom:15,width:width-75},
   imgIconPerInfo:{width:24,height:24,marginRight:15},
   imgIconPer:{width:24,height:24,marginRight:15,marginTop:15},
-  titleTab:{color:'#9B9A9B',fontSize:18},
-  titleTabActive:{color:'#000',fontSize:18},
-  titleActive:{color:'#fff',fontSize:18},
+  titleTab:{color:'#9B9A9B',fontSize:16},
+  titleTabActive:{color:'#000',fontSize:16},
+  titleActive:{color:'#fff',fontSize:16},
   titleErr:{color:'#D0021B',fontSize:18},
   colorErr:{color:'#D0021B'},
   wrapListImage:{

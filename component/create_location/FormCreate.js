@@ -57,14 +57,16 @@ import keywordsIC from '../../src/icon/ic-create/ic-keywords.png';
 import codeIC from '../../src/icon/ic-create/ic-code.png';
 import selectedIC from '../../src/icon/ic-create/ic-selected.png';
 
-import {hasNumber,getIndex,strtoarray,isEmail,checkSVG,checkKeyword} from '../libs';
+import {hasNumber,getIndex,strtoarray,isEmail,checkSVG,checkKeyword,toObject} from '../libs';
 
 var timeoutLatLng;
 export default class FormCreate extends Component {
   constructor(props) {
     super(props);
+    const {lang,sub_cat,nameCat, serv_items,idContent} = this.props.navigation.state.params;
     this.state = {
-      lang: this.props.navigation.state.params.lang==='vn' ? language_vn : language_en,
+      lang: lang==='vn' ? language_vn : language_en,
+      sub_cat,nameCat, serv_items,
       showSubCat:false,
       showOpenTime:false,
       checkSubCat:{},
@@ -114,7 +116,8 @@ export default class FormCreate extends Component {
       showLoading:false,
       user_profile:{},
       showUpdate:false,
-      showUpdateMore:true,
+      showUpdateMore:false,
+      editLoc:false,
     };
     checkLogin().then(e=>{
       //console.log(e);
@@ -125,7 +128,37 @@ export default class FormCreate extends Component {
       }
     })
     //BackHandler.addEventListener('hardwareBackPress', ()=>this.setState({showSubCat:false}));
+    if(idContent!==undefined) this.getContent(idContent);
   }
+  getContent(idContent){
+    const url = `${global.url}${'content/'}${idContent}`;
+    console.log('url',url);
+    getApi(url)
+    .then(arrData => {
+      //console.log('arrData.data.content.lat',arrData.data.content.lat);
+      const content = arrData.data.content;
+      //console.log('content',content);
+      var serv_items = [];
+      arrData.data.list_service.forEach(e=>{
+        let obj = {
+          id:e.id_service_item,
+          name:e.name
+        }
+        serv_items.push(obj);
+      })
+        this.setState({
+          serv_items,
+          checkService:toObject(content.service_content),
+          txtName:content.name,
+          txtAddress:content.address,
+          ListOpenTime:content._date_open,
+          txtDes:content.description,
+          idCountry:content._country.id,idCity:content._city.id,idDist:content._district.id,
+          nameCountry:content._country.name,nameCity:content._city.name,nameDist:content._district.name,
+        });
+    }).catch(err => {});
+  }
+
   confirmPostData(){
     //console.log('confirmPostData1');
     if(this.state.hasSubCat===0){this.setState({errMsg:this.state.lang.enter_classify});return false;}
@@ -272,14 +305,13 @@ export default class FormCreate extends Component {
         this.setState(this.state);
       },3000)
 
-
     })
   }
 
   render() {
     //console.log('navigation',this.props.navigation);
     const {navigate, goBack} = this.props.navigation;
-    const { idCat, nameCat, sub_cat, serv_items,lang } = this.props.navigation.state.params;
+    const { idCat,lang } = this.props.navigation.state.params;
     const {
       container,
       headCatStyle,headContent, wrapDistribute,wrapFilter,
@@ -290,7 +322,7 @@ export default class FormCreate extends Component {
       upDDLoc,upDDSubCat,selectBox,optionUnitStyle,clockTime,centerVer,pad10,txtNextItem,
     } = styles;
 
-    const {idContent,showUpdateMore,showImgSpace,showProduct,showImgMenu,showVideo} = this.state;
+    const {idContent,showUpdateMore,showImgSpace,showProduct,showImgMenu,showVideo,sub_cat,nameCat, serv_items,} = this.state;
 
     return (
       <View style={container}>
@@ -719,6 +751,7 @@ export default class FormCreate extends Component {
       {this.state.showUpdateMore &&
         <UpdateMore
         user_profile={this.state.user_profile}
+        lang={this.state.lang.lang}
         content_id={idContent}
         lang={this.state.lang}
         visible={this.state.showUpdateMore}

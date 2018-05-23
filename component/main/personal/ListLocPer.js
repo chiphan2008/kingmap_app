@@ -31,6 +31,7 @@ export default class ListLocPer extends Component {
       user_profile:{},
       showOption:false,
       id_content:'',
+      idCat:'',
       moderation:'',
     }
     this.refresh();
@@ -47,7 +48,7 @@ export default class ListLocPer extends Component {
   }
   getData(id){
     const url = `${global.url}${'user/list-location/'}${id}`;
-    console.log(url);
+    //console.log(url);
     getApi(url)
     .then(arrData => {
         this.setState({ listData: arrData.data });
@@ -89,7 +90,7 @@ export default class ListLocPer extends Component {
   render() {
     const { lang,curLoc } = this.props.navigation.state.params;
     const { goBack,navigate } = this.props.navigation;
-    const { showOption,id_content,moderation } = this.state;
+    const { showOption,id_content,idCat,moderation } = this.state;
     //console.log('lang',lang);
     const {
       container,headCatStyle,headContent,titleCreate,
@@ -162,7 +163,11 @@ export default class ListLocPer extends Component {
 
 
                       </View>
-                      <TouchableOpacity onPress={()=>this.setState({showOption:true,id_content:e.id,moderation:e.moderation})}>
+                      <TouchableOpacity onPress={()=>this.setState({
+                        showOption:true,
+                        id_content:e.id,
+                        idCat:e.id_category,
+                        moderation:e.moderation})}>
                         <Image source={moreIC} style={{width:20,height:20}} />
                         </TouchableOpacity>
                     </View>
@@ -174,7 +179,10 @@ export default class ListLocPer extends Component {
       </ScrollView>
       {showOption && <View style={actionSheetWrap} >
         <View style={[actionSheetContent,actionSheetRadius]}>
-          <TouchableOpacity style={pad15}>
+          <TouchableOpacity style={pad15}
+          onPress={()=>{this.setState({showOption:false},()=>{
+            navigate('FormCreateScr',{idContent:id_content,lang:lang.lang})
+          })}}>
           <Text style={colorTxt}>{lang.edit}</Text>
           </TouchableOpacity>
           {moderation==='publish' &&

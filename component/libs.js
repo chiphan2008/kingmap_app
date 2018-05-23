@@ -132,6 +132,17 @@ export function onlyLetters(str) {
     let regex = /^[a-zA-Z\s]+$/;
     return regex.test(xoa_dau(str));
 }
+export function toObject(arr) {
+  var rv = {};
+  for (var i = 0; i < arr.length; ++i)
+    rv[i] = arr[i];
+  return rv;
+}
+
+export function onlyNumber(str) {
+    let regex = /^[0-9\s]+$/;
+    return regex.test(str);
+}
 export function checkUrl(url){
   return url.indexOf('http')!=-1;
 }

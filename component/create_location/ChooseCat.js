@@ -86,7 +86,7 @@ export default class ChooseCat extends Component {
            data={this.state.listCategory}
            renderItem={({item}) =>(
              <TouchableOpacity
-                onPress={()=>navigate('FormCreateScr',{idCat:item.id,nameCat:item.name,sub_cat:item.sub_category,serv_items:item.service_items,lang:this.state.selectLang.valueLang})}
+                onPress={()=>navigate('FormCreateScr',{idCat:item.id,nameCat:item.name,serv_items:item.service_items,lang:this.state.selectLang.valueLang})}
               style={flatItem}>
               {checkSVG(item.image)?
                 <SvgUri width="70" height="70" source={{uri:`${global.url_media}${item.image}`}} />

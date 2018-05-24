@@ -57,16 +57,17 @@ import keywordsIC from '../../src/icon/ic-create/ic-keywords.png';
 import codeIC from '../../src/icon/ic-create/ic-code.png';
 import selectedIC from '../../src/icon/ic-create/ic-selected.png';
 
-import {hasNumber,getIndex,strtoarray,isEmail,checkSVG,checkKeyword,toObject} from '../libs';
+import {hasNumber,getIndex,strtoarray,isEmail,checkSVG,checkKeyword} from '../libs';
 
 var timeoutLatLng;
 export default class FormCreate extends Component {
   constructor(props) {
     super(props);
-    const {lang,sub_cat,nameCat, serv_items,idContent} = this.props.navigation.state.params;
+    const {lang,nameCat,idCat,serv_items,idContent} = this.props.navigation.state.params;
+    this.getCategory(idCat,lang)
     this.state = {
       lang: lang==='vn' ? language_vn : language_en,
-      sub_cat,nameCat, serv_items,
+      sub_cat:[],nameCat, serv_items,
       showSubCat:false,
       showOpenTime:false,
       checkSubCat:{},
@@ -74,7 +75,7 @@ export default class FormCreate extends Component {
       showService:false,
       checkService:{},
       hasService:0,
-      idContent:'',
+      idContent,
       lat:'Lat 0.0',
       lng:'Lng 0.0',
       txtUserWifi:'',
@@ -118,6 +119,7 @@ export default class FormCreate extends Component {
       showUpdate:false,
       showUpdateMore:false,
       editLoc:false,
+
     };
     checkLogin().then(e=>{
       //console.log(e);
@@ -128,8 +130,20 @@ export default class FormCreate extends Component {
       }
     })
     //BackHandler.addEventListener('hardwareBackPress', ()=>this.setState({showSubCat:false}));
-    if(idContent!==undefined) this.getContent(idContent);
+    //console.log('idContent',idContent);
+    if(idContent!==undefined) {
+      this.getContent(idContent);
+    }
   }
+
+  getCategory(id,lang){
+    getApi(global.url+'category/'+id+'?language='+lang)
+    .then(arrCategory => {
+        this.setState({ sub_cat: arrCategory.data[0].sub_category });
+    })
+    .catch(err => console.log(err));
+  }
+
   getContent(idContent){
     const url = `${global.url}${'content/'}${idContent}`;
     console.log('url',url);
@@ -137,7 +151,7 @@ export default class FormCreate extends Component {
     .then(arrData => {
       //console.log('arrData.data.content.lat',arrData.data.content.lat);
       const content = arrData.data.content;
-      //console.log('content',content);
+      //console.log('content',content); checkSubCat
       var serv_items = [];
       arrData.data.list_service.forEach(e=>{
         let obj = {
@@ -146,16 +160,35 @@ export default class FormCreate extends Component {
         }
         serv_items.push(obj);
       })
+      arrData.data.service_content.forEach(e=>{
+        console.log(e);
+        this.setState({checkService: Object.assign(this.state.checkService,{[e]:e.toString()})});
+      })
+      content._category_items.forEach(e=>{
+        this.setState({checkSubCat: Object.assign(this.state.checkSubCat,{[e.id]:e.id})});
+      })
+      setTimeout(()=>{
         this.setState({
           serv_items,
-          checkService:toObject(content.service_content),
           txtName:content.name,
           txtAddress:content.address,
           ListOpenTime:content._date_open,
           txtDes:content.description,
+          txtUserWifi:content.wifi,
+          txtPassWifi:content.pass_wifi,
+          txtPhone:content.phone,
+          lat:content.lat,
+          lng:content.lng,
+          txtEmail:content.email,
+          txtKW:content.keyword_ad,
           idCountry:content._country.id,idCity:content._city.id,idDist:content._district.id,
           nameCountry:content._country.name,nameCity:content._city.name,nameDist:content._district.name,
+        },()=>{
+          // console.log(this.state.idDist);
+          // console.log(this.state.nameDist);
         });
+      },1200)
+
     }).catch(err => {});
   }
 
@@ -179,11 +212,11 @@ export default class FormCreate extends Component {
     //console.log('confirmPostData8');
     if(this.state.lat==='Lat 0.0' || this.state.lat===''){this.setState({errMsg:this.state.lang.enter_address_again});return false;}
     //console.log('confirmPostData9',isEmail(this.state.txtEmail));
-    if(this.state.txtEmail!==''){if(!isEmail(this.state.txtEmail)) {this.setState({errMsg:this.state.lang.email_format});return false;}}
+    if(this.state.txtEmail!==''){if(!isEmail(this.state.txtEmail.trim())) {this.setState({errMsg:this.state.lang.email_format});return false;}}
     //console.log('confirmPostData10');
     this.setState({showLoading:true});
     const arr = new FormData();
-    arr.append('name',this.state.txtName);
+    arr.append('name',this.state.txtName.trim());
     arr.append('id_category',this.props.navigation.state.params.idCat);
     Object.entries(this.state.checkSubCat).forEach((e)=>{
       if(e[1]!==false){
@@ -199,17 +232,17 @@ export default class FormCreate extends Component {
     arr.append('country',this.state.idCountry);
     arr.append('city',this.state.idCity);
     arr.append('district',this.state.idDist);
-    arr.append('wifi',this.state.txtUserWifi);
-    arr.append('passwifi',this.state.txtPassWifi);
-    arr.append('phone',this.state.txtPhone);
-    arr.append('email',this.state.txtEmail);
+    arr.append('wifi',this.state.txtUserWifi.trim());
+    arr.append('passwifi',this.state.txtPassWifi.trim());
+    arr.append('phone',this.state.txtPhone.trim());
+    arr.append('email',this.state.txtEmail.trim());
 
     arr.append(`avatar`, {
       uri:`${this.state.imgAvatar.path}`,
       name: `my_avatar.jpg`,
       type: `${this.state.imgAvatar.mime}`
     });
-    arr.append('address',this.state.txtAddress);
+    arr.append('address',this.state.txtAddress.trim());
     arr.append('lat',this.state.lat);
     arr.append('lng',this.state.lng);
     strtoarray(this.state.txtKW,',').forEach((e)=>{
@@ -256,8 +289,10 @@ export default class FormCreate extends Component {
       this.setState({showLoading:false},()=>{
         if(e.code===200){
           Alert.alert(this.state.lang.notify,this.state.lang.create_success,[
+            {text: '', style: 'cancel'},
             {text: 'OK', onPress: () => this.setState({idContent:e.data.content.id,showUpdate:true})}
-          ])
+          ],
+         { cancelable: false })
         }else {
           Alert.alert(this.state.lang.notify,e.message)
         }
@@ -332,7 +367,7 @@ export default class FormCreate extends Component {
               <TouchableOpacity onPress={()=>goBack()}>
               <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
               </TouchableOpacity>
-              <Text style={titleCreate}> {this.state.lang.create_location} </Text>
+              <Text style={titleCreate}> {idContent===undefined? this.state.lang.create_location:  this.state.lang.edit_location} </Text>
               <TouchableOpacity onPress={()=>this.confirmPostData()}>
                 <Text style={titleCreate}>{this.state.lang.done}</Text>
               </TouchableOpacity>
@@ -473,6 +508,12 @@ export default class FormCreate extends Component {
         setDist={(idCountry,idCity,idDist,nameCountry,nameCity,nameDist)=>{this.setState({idCountry,idCity,idDist,nameCountry,nameCity,nameDist,errArea:false},()=>{
           this.getLatLng();
         })}}
+        idCountry={this.state.idCountry}
+        idCity={this.state.idCity}
+        idDist={this.state.idDist}
+        nameCountry={this.state.nameCountry}
+        nameCity={this.state.nameCity}
+        nameDist={this.state.nameDist}
         lang={this.state.lang}/>
 
 
@@ -557,23 +598,25 @@ export default class FormCreate extends Component {
           <TextInput underlineColorAndroid='transparent'
           multiline numberOfLines={4} maxHeight={65}
           onChangeText={(text) => {
+            //console.log(text);
             if(text.substr(-1)===','){
-              //console.log(checkKeyword(text));
               if(!checkKeyword(text))  this.setState({txtKW:text})
               else {
                 var arr = this.state.txtKW.split(',');
                 arr.splice(-1);
                 this.setState({txtKW:arr.toString()})
               }
-              //this.setState({txtKW:txtKW.substr(-1)})
             }else {
               this.setState({txtKW:text})
             }
           }}
           onBlur={()=>{
-            var arr = this.state.txtKW.split(',');
-            arr.splice(-1);
-            this.setState({txtKW:arr.toString()})
+            console.log(this.state.txtKW);
+              if(checkKeyword(this.state.txtKW)){
+                var arr = this.state.txtKW.split(',');
+                arr.splice(-1);
+                this.setState({txtKW:arr.toString()})
+              }
           }}
 
           value={this.state.txtKW} ref='KW' returnKeyType = {"done"}
@@ -786,6 +829,7 @@ export default class FormCreate extends Component {
                data={sub_cat}
                renderItem={({item}) =>(
                  <TouchableOpacity onPress={()=>{
+
                    if(this.state.checkSubCat[`${item.id}`]!==item.id){
                      this.state.hasSubCat +=1;
                      this.state.checkSubCat=Object.assign(this.state.checkSubCat,{[item.id]:item.id});
@@ -836,6 +880,7 @@ export default class FormCreate extends Component {
                  data={serv_items}
                  renderItem={({item}) =>(
                    <TouchableOpacity onPress={()=>{
+                     console.log('this.state.checkService',this.state.checkService);
                      if(this.state.checkService[`${item.id}`]!==item.id){
                        this.state.hasService +=1;
                        this.state.checkService=Object.assign(this.state.checkService,{[item.id]:item.id});

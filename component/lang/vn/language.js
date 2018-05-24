@@ -23,6 +23,7 @@ module.exports = {
   choose_loc:'Chọn địa điểm của bạn',
   choose_create:'Chọn loại địa điểm mà bạn muốn tạo',
   create_location:'Tạo địa điểm',
+  edit_location:'Sửa địa điểm',
   create_prom:'Tạo khuyến mãi',
   create_ads:'Tạo quảng cáo',
   choose_area:'Chọn khu vực',

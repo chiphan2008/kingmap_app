@@ -10,6 +10,7 @@ import getApi from '../api/getApi';
 import upDD from '../../src/icon/ic-white/ic-dropdown_up.png';
 import checkLocation from '../api/checkLocation';
 
+var timeoutRecive;
 export default class ChooseArea extends Component {
   constructor(props){
     super(props);
@@ -17,6 +18,7 @@ export default class ChooseArea extends Component {
       idCountry:'',nameCountry:'',listCountry:[],showCountry:false,
       idCity:'',nameCity:'',listCity:[],showCity:false,
       idDist:'',nameDist:'Quận/Huyện',listDist:[],showDist:false,
+      update:true,
     }
   }
   getCountry(){
@@ -42,11 +44,22 @@ export default class ChooseArea extends Component {
     })
     .catch(err => console.log(err));
   }
-  componentWillMount(){
-    checkLocation().then(e=>{
-      //console.log(e);
-      this.setState({idCountry:e.idCountry, nameCountry:e.nameCountry,idCity:e.idCity, nameCity:e.nameCity, })
-    });
+  componentWillUpdate(){
+    clearTimeout(timeoutRecive);
+    const {idCountry, nameCountry,idCity, nameCity, idDist, nameDist} = this.props;
+    timeoutRecive = setTimeout(()=>{
+    if(idDist!==''){
+      this.state.update && this.setState({idCountry, nameCountry,idCity, nameCity, idDist, nameDist},()=>{
+        this.setState({update:false})
+      })
+    }else {
+
+        console.log('null');
+        checkLocation().then(e=>{
+          this.setState({idCountry:e.idCountry, nameCountry:e.nameCountry,idCity:e.idCity, nameCity:e.nameCity, })
+        });
+    }
+    },1000)
   }
 
   render() {
@@ -56,7 +69,8 @@ export default class ChooseArea extends Component {
     } = styles;
     const { lang } = this.props;
     return (
-      <View>
+
+      <View onLayout={()=>{console.log(this.props.idDist);}}>
       <View style={listCreate}>
           <TouchableOpacity
           onPress={()=>{ this.setState({ showCountry:true });this.getCountry() }}

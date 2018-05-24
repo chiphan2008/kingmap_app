@@ -7,6 +7,21 @@ export function getIndex(element,id){
   return element.key==id;
 }
 
+export function calcAngle(str){
+  var h = parseInt(str.substr(0,2));
+  var m = parseInt(str.substr(-2));
+  if (h >= 12) h = h - 12;
+  if (m === 60) m = 0;
+  console.log('h,m',h,m);
+  let hour_angle = (0.5 * (h * 60 + m));
+  let minute_angle = 6 * m;
+  console.log('hour_angle,minute_angle',hour_angle,minute_angle);
+  let angle = Math.abs(hour_angle - minute_angle);
+  //angle = Math.min(360 - angle, angle);
+
+  return (angle * (2 * Math.PI / (12 * 12))) / 5;
+}
+
 export function format_number(value,dv=null){
   if(value>1000 && dv !==null) {
     value = Number.parseFloat(value/1000).toFixed(0);
@@ -96,12 +111,10 @@ export function checkKeyword(str,char=null){
       char=',';
     }
     var arr = str.split(char);
-    arr.splice(-1,1);
-    if(arr.length>1){
-      //console.log('arr.length',arr);
-      var lastElement = arr[arr.length-1].trim();
-      return arr.includes(lastElement);
-      //return true;
+    if(arr.length>2){
+      var lastElement = arr[arr.length-1]==='' ? arr[arr.length-2].trim() : arr[arr.length-1].trim();
+      var index = arr.indexOf(lastElement);
+      return !(index===-1);
     }
     return false;
   }
@@ -131,12 +144,6 @@ export function xoa_dau(str) {
 export function onlyLetters(str) {
     let regex = /^[a-zA-Z\s]+$/;
     return regex.test(xoa_dau(str));
-}
-export function toObject(arr) {
-  var rv = {};
-  for (var i = 0; i < arr.length; ++i)
-    rv[i] = arr[i];
-  return rv;
 }
 
 export function onlyNumber(str) {

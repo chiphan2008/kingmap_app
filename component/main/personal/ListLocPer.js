@@ -32,6 +32,7 @@ export default class ListLocPer extends Component {
       showOption:false,
       id_content:'',
       idCat:'',
+      nameCat:'',
       moderation:'',
     }
     this.refresh();
@@ -48,7 +49,7 @@ export default class ListLocPer extends Component {
   }
   getData(id){
     const url = `${global.url}${'user/list-location/'}${id}`;
-    //console.log(url);
+    console.log(url);
     getApi(url)
     .then(arrData => {
         this.setState({ listData: arrData.data });
@@ -90,7 +91,7 @@ export default class ListLocPer extends Component {
   render() {
     const { lang,curLoc } = this.props.navigation.state.params;
     const { goBack,navigate } = this.props.navigation;
-    const { showOption,id_content,idCat,moderation } = this.state;
+    const { showOption,id_content,idCat,nameCat,moderation } = this.state;
     //console.log('lang',lang);
     const {
       container,headCatStyle,headContent,titleCreate,
@@ -166,7 +167,8 @@ export default class ListLocPer extends Component {
                       <TouchableOpacity onPress={()=>this.setState({
                         showOption:true,
                         id_content:e.id,
-                        idCat:e.id_category,
+                        idCat:e._category_type.id,
+                        nameCat:e._category_type.name,
                         moderation:e.moderation})}>
                         <Image source={moreIC} style={{width:20,height:20}} />
                         </TouchableOpacity>
@@ -181,7 +183,7 @@ export default class ListLocPer extends Component {
         <View style={[actionSheetContent,actionSheetRadius]}>
           <TouchableOpacity style={pad15}
           onPress={()=>{this.setState({showOption:false},()=>{
-            navigate('FormCreateScr',{idContent:id_content,lang:lang.lang})
+            navigate('FormCreateScr',{idContent:id_content,idCat,nameCat,lang:lang.lang})
           })}}>
           <Text style={colorTxt}>{lang.edit}</Text>
           </TouchableOpacity>

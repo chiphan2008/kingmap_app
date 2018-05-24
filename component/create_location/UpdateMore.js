@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import {
   View,Text,Modal,TouchableOpacity,Image,Keyboard,
   TextInput,Dimensions,ScrollView,FlatList,Alert,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import styles from '../styles';
 import global from '../global';
@@ -52,6 +53,7 @@ export default class UpdateMore extends Component {
       edit:false,
       product_id:'',
       discount_id:'',
+      disable:false,
     }
     this.getList('product');
   }
@@ -76,40 +78,45 @@ export default class UpdateMore extends Component {
     var des = route==='product'?desProduct:desKM;
     var price = route==='product'?priceProduct:priceKM;
     var img = route==='product'?imgProduct:imgKM;
-    if(name===''||des===''||price===''||img.path===undefined) return false;
+    if(name===''||des===''||price===''||img.path===undefined) {
+      this.setState({disable:false},()=>{
+        return false;
+      })
+    }else {
+      arr.append('content_id',content_id);
+      arr.append('name',name);
+      arr.append('des',des);
+      arr.append('price',price);
+      product_id!=='' && arr.append('product_id',product_id);
+      discount_id!=='' && arr.append('discount_id',discount_id);
+      !checkUrl(img.path) && arr.append(`image`, {
+        uri:`${img.path}`,
+        name: `my_image.jpg`,
+        type: `${img.mime}`
+      });
+      const act = edit?'edit':'create';
 
-    arr.append('content_id','7717');
-    arr.append('name',name);
-    arr.append('des',des);
-    arr.append('price',price);
-    product_id!=='' && arr.append('product_id',product_id);
-    discount_id!=='' && arr.append('discount_id',discount_id);
-    !checkUrl(img.path) && arr.append(`image`, {
-      uri:`${img.path}`,
-      name: `my_image.jpg`,
-      type: `${img.mime}`
-    });
-    const act = edit?'edit':'create';
+      postApi(`${global.url}${route}/${act}`,arr).then((e)=>{
+        if(e.code===200){
+          this.setState({
+            nameProduct:'',desProduct:'',priceProduct:'',imgProduct:{},
+            nameKM:'',desKM:'',priceKM:'',imgKM:{},
+            lblPro:lang.title_add_pro,
+            lblKM:lang.title_add_km,
+            edit:false,discount_id:'',discount_id:'',
+            disable:false,
+          },()=>{
+            this.getList(route);
+          });
+        }
+      });
+    }
 
-    postApi(`${global.url}${route}/${act}`,arr).then((e)=>{
-      if(e.code===200){
-        this.setState({
-          nameProduct:'',desProduct:'',priceProduct:'',imgProduct:{},
-          nameKM:'',desKM:'',priceKM:'',imgKM:{},
-          lblPro:lang.title_add_pro,
-          lblKM:lang.title_add_km,
-          edit:false,discount_id:'',discount_id:'',
-        },()=>{
-          this.getList(route);
-        });
-      }
-    });
   }
   getList(route){
     Keyboard.dismiss();
     const {content_id} = this.props;
-    //console.log(`${global.url}${route}${'/list/'}${'7717'}`);
-    getApi(`${global.url}${route}${'/list/'}${'7717'}`).then((e)=>{
+    getApi(`${global.url}${route}${'/list/'}${content_id}`).then((e)=>{
       if(route==='product') this.state.listProduct=e.data;
       if(route==='discount') this.state.listKM=e.data;
       this.setState(this.state);
@@ -166,7 +173,8 @@ export default class UpdateMore extends Component {
   }
   getData(){
     const {content_id} = this.props;
-    const url = `${global.url}${'branch/list-content/'}${'7717'}`;
+    const url = `${global.url}${'branch/list-content/'}${content_id}`;
+    console.log(url);
     getApi(url)
     .then(arrData => {
         this.setState({ listLoc: arrData.data });
@@ -182,7 +190,7 @@ export default class UpdateMore extends Component {
       {text: lang.cancel, style: 'cancel'},
       {text: lang.confirm, onPress: () => {
         var arr = new FormData;
-        arr.append('content_id',7717);
+        arr.append('content_id',content_id);
         arr.append('content_id_other',id);
         postApi(`${global.url}${'branch/remove'}`,arr).then((e)=>{
           this.updateListLoc()
@@ -193,11 +201,12 @@ export default class UpdateMore extends Component {
 
   }
   addListLoc = () => {
+    if(Object.entries(this.state.arrLoc).length===0) return;
     const {content_id} = this.props;
     var arr = new FormData;
-    arr.append('content_id',7717);
+    arr.append('content_id',content_id);
     this.state.listLoc.forEach(e=>{
-      arr.append('arr_content[]',e.id);
+      if(this.state.arrLoc[e.id])arr.append('arr_content[]',e.id);
     })
     //console.log(arr);
     postApi(`${global.url}${'branch/add'}`,arr).then((e)=>{
@@ -206,7 +215,7 @@ export default class UpdateMore extends Component {
   }
   updateListLoc = () => {
     const {content_id} = this.props;
-    const url = `${global.url}${'branch/list/'}${'7717'}`;
+    const url = `${global.url}${'branch/list/'}${content_id}`;
     getApi(url).then(arrData => {
         this.setState({ listLocChoose: arrData.data });
     })
@@ -222,7 +231,7 @@ export default class UpdateMore extends Component {
     const {lang,visible,user_profile}= this.props;
     var {
       nameProduct,desProduct,priceProduct,imgProduct,listLoc,showLoc,arrLoc,listLocChoose,listProduct,listKM,
-      nameKM,desKM,priceKM,imgKM,
+      nameKM,desKM,priceKM,imgKM,disable,
     }= this.state;
     return (
 
@@ -230,6 +239,7 @@ export default class UpdateMore extends Component {
       onRequestClose={() => null} transparent //animationType={'slide'}
       visible={visible}
       >
+      <TouchableWithoutFeedback onPress={()=>{Keyboard.dismiss()}}>
       <View style={container}>
 
           <View style={headCatStyle}>
@@ -293,8 +303,8 @@ export default class UpdateMore extends Component {
                 />
               <TextInput
               underlineColorAndroid='transparent'
-              onChangeText={(priceProduct) => {if(onlyNumber(priceProduct))this.setState({priceProduct})}}
-              keyboardType={'numeric'}
+              onChangeText={(priceProduct) => {if(priceProduct==='' || (onlyNumber(priceProduct) && priceProduct.substr(0,1)>0) )this.setState({priceProduct})}}
+              keyboardType={'numeric'} maxLength={9}
               placeholder={`${"Giá"}`} value={priceProduct.toString()}
               style={{
                 paddingTop:5,paddingBottom:5,fontSize:16,width:width-150,borderBottomWidth:1,borderColor:'#E1E7EC',marginRight:10}}
@@ -303,7 +313,9 @@ export default class UpdateMore extends Component {
 
           </View>
           <View style={{width:width-(width/4),alignSelf:'center',marginTop:20}}>
-            <TouchableOpacity onPress={()=>this.createPKM('product')} style={btnPress}>
+            <TouchableOpacity disabled={disable} onPress={()=>{this.setState({disable:true},()=>{
+              this.createPKM('product');
+            })}} style={btnPress}>
             <Text style={colorNext}> {this.state.lblPro} </Text>
             </TouchableOpacity>
           </View>
@@ -361,8 +373,8 @@ export default class UpdateMore extends Component {
                 />
               <TextInput
               underlineColorAndroid='transparent'
-              onChangeText={(priceKM) => {if(onlyNumber(priceKM))this.setState({priceKM})}}
-              keyboardType={'numeric'}
+              onChangeText={(priceKM) => {if(priceKM==='' || (onlyNumber(priceKM) && priceKM.substr(0,1)>0) )this.setState({priceKM})}}
+              keyboardType={'numeric'} maxLength={9}
               placeholder={`${"Giá"}`} value={priceKM.toString()}
               style={{
                 paddingTop:5,paddingBottom:5,fontSize:16,width:width-150,borderBottomWidth:1,borderColor:'#E1E7EC',marginRight:10}}
@@ -371,7 +383,9 @@ export default class UpdateMore extends Component {
 
           </View>
           <View style={{width:width-(width/4),alignSelf:'center',marginTop:20}}>
-            <TouchableOpacity onPress={()=>this.createPKM('discount')} style={btnPress}>
+            <TouchableOpacity onPress={()=>{this.setState({disable:true},()=>{
+              this.createPKM('discount')
+            })}} style={btnPress}>
             <Text style={colorNext}> {this.state.lblKM} </Text>
             </TouchableOpacity>
           </View>
@@ -407,13 +421,13 @@ export default class UpdateMore extends Component {
           </View>
 
           {listLocChoose.length>0 &&
+            <View style={{marginTop:15,paddingTop:15,paddingBottom:15,width,backgroundColor:'#fff'}}>
             <FlatList
              extraData={this.state}
-             style={{marginTop:15,padding:15,width,backgroundColor:'#fff'}}
              data={listLocChoose}
              keyExtractor={(item,index) => index.toString()}
              renderItem={({item,index}) =>(
-               <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginBottom:10}} >
+               <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',paddingBottom:15,paddingLeft:15,paddingRight:15}} >
                    <View style={{flexDirection:'row',maxWidth:width-110}}>
                        <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:40,marginRight:10}} />
                        <View>
@@ -425,7 +439,8 @@ export default class UpdateMore extends Component {
                      <Image source={removeIC} style={imgShare} />
                   </TouchableOpacity>
                </View>
-             )} />}
+             )} />
+           </View>}
 
           </View>}
 
@@ -439,7 +454,7 @@ export default class UpdateMore extends Component {
                 <Text numberOfLines={1} style={colorlbl}>{'ĐỊA ĐIỂM CÙNG HỆ THỐNG'}</Text>
                 <FlatList
                    extraData={this.state}
-                   style={{marginTop:15,padding:15,width:width-30}}
+                   style={{marginTop:15,width:width-30,paddingBottom:15,paddingLeft:5,paddingRight:5,}}
                    data={listLoc}
                    keyExtractor={(item,index) => index.toString()}
                    renderItem={({item,index}) =>(
@@ -462,7 +477,7 @@ export default class UpdateMore extends Component {
                            <Image source={arrLoc[item.id]?checkIC:uncheckIC} style={imgShare} />
                      </TouchableOpacity>
                    )} />
-                   <View style={{flexDirection:'row',alignItems:'center',marginTop:20}}>
+                   <View style={{flexDirection:'row',alignItems:'center',marginTop:10}}>
                        <TouchableOpacity style={{alignItems:'center',padding:7,borderWidth:1,borderRadius:4,borderColor:'#d0021b',minWidth:width/3}}
                        onPress={()=>{this.setState({showLoc:false,arrLoc:[]})}}>
                          <Text style={{color:'#d0021b',fontSize:16}}>{`${'Huỷ'}`}</Text>
@@ -471,13 +486,14 @@ export default class UpdateMore extends Component {
                        onPress={()=>{this.setState({showLoc:false},()=>{
                          this.addListLoc();
                        })}}>
-                         <Text style={{color:'#fff',fontSize:16}}>{`${'Done'}`}</Text>
+                         <Text style={{color:'#fff',fontSize:16}}>{`${'Xong'}`}</Text>
                        </TouchableOpacity>
                    </View>
                 </View>
             </View>
           }
         </View>
+        </TouchableWithoutFeedback>
         </Modal>
 
     );

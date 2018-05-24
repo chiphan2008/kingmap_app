@@ -17,7 +17,7 @@ const {width,height} = Dimensions.get('window');
 import CircularSlider from 'react-native-circular-slider';
 import Svg, { G, Path } from 'react-native-svg';
 
-import {getIndex} from '../libs';
+import {getIndex,calcAngle} from '../libs';
 
 const WAKE_ICON = (
   <G>
@@ -49,23 +49,6 @@ function calculateTimeFromAngle(angle) {
   return { h, m };
 }
 
-function convertAngle(h) {
-  if(h==='') return;
-  var arr = h.split(':');
-  var h = parseInt(arr[0]);
-  var m = parseInt(arr[1]);
-  //console.log(h,m);
-  var hour_angle = 0.5 * (h * 60 + m)
-  var minute_angle = 6 * m
-  var angle = Math.abs(hour_angle - minute_angle)
-
-  angle = Math.min(360 - angle, angle)
-
-  return angle
-
-  // const angle = h/60+m;
-  // return Math.round(angle * (2 * Math.PI / (12 * 12)))/5;
-}
 
 function roundAngleToFives(angle) {
   const fiveMinuteAngle = 2 * Math.PI / 144;
@@ -319,8 +302,8 @@ export default class OpenTime extends Component {
       from_hour={ListDataTime[index_clock].from_hour}
       to_hour={ListDataTime[index_clock].to_hour}
       updateFTHour={(from_hour,to_hour)=>{
-        ListDataTime[index_clock].from_hour=from_hour;
-        ListDataTime[index_clock].to_hour=to_hour;
+        ListDataTime[index_clock].from_hour=from_hour===24?0:from_hour;
+        ListDataTime[index_clock].to_hour=to_hour===24?0:to_hour;
         this.setState(this.state,()=>{
           clearTimeout(timeoutUpdateHour);
           this.updateListItem()
@@ -396,14 +379,14 @@ export class Clock extends Component {
   constructor(props){
     super(props);
     const {from_hour, to_hour,lang} = this.props;
-    //console.log('from_hour, to_hour',from_hour, to_hour);
+    console.log('from_hour, to_hour',calcAngle(from_hour), calcAngle(to_hour));
     this.state = {
-      // startAngle:convertAngle(from_hour),
-      // angleLength:convertAngle(to_hour),
-      apmFrom:false,
-      apmTo:false,
-      startAngle: Math.PI * 10/6,
-      angleLength: Math.PI * 7/6,
+      startAngle:calcAngle(from_hour),
+      angleLength:calcAngle(to_hour),
+      apmFrom:parseInt(from_hour.substr(0,2))>12?true:false,
+      apmTo:parseInt(to_hour.substr(0,2))>12?true:false,
+      // startAngle: Math.PI * 10/6,
+      // angleLength: Math.PI * 7/6,
       opt_date: lang.lang==='vn'?opt_date_vn:opt_date_en,
     }
   }

@@ -37,6 +37,7 @@ module.exports = {
   setting_account:'Account setting',
   choose_time:'Choose time',
   create_location:'Create location',
+  edit_location:'Edit location',
   create_prom:'Create promotion',
   create_ads:'Create ads',
   city:'City',

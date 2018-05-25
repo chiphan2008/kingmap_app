@@ -53,10 +53,9 @@ export default class ChooseArea extends Component {
         this.setState({update:false})
       })
     }else {
-
-        console.log('null');
-        checkLocation().then(e=>{
-          this.setState({idCountry:e.idCountry, nameCountry:e.nameCountry,idCity:e.idCity, nameCity:e.nameCity, })
+      //  console.log('null');
+        this.state.update && checkLocation().then(e=>{
+          this.setState({update:false,idCountry:e.idCountry, nameCountry:e.nameCountry,idCity:e.idCity, nameCity:e.nameCity, })
         });
     }
     },1000)

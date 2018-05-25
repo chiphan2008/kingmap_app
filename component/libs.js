@@ -111,9 +111,17 @@ export function checkKeyword(str,char=null){
       char=',';
     }
     var arr = str.split(char);
-    if(arr.length>2){
-      var lastElement = arr[arr.length-1]==='' ? arr[arr.length-2].trim() : arr[arr.length-1].trim();
+    if(arr[arr.length-1]==='') arr.splice(-1);
+    for(i=0;i<arr.length;i++){
+        arr[i] = arr[i].replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+    }
+    if(arr.length>1){
+      console.log('arr',arr);
+      var lastElement = arr[arr.length-1].trim();
+      console.log('lastElement',lastElement);
+      arr.splice(-1);
       var index = arr.indexOf(lastElement);
+      console.log('index',index);
       return !(index===-1);
     }
     return false;

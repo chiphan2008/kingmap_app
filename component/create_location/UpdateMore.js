@@ -27,11 +27,12 @@ import {checkUrl,onlyNumber} from '../libs';
 export default class UpdateMore extends Component {
   constructor(props){
     super(props);
-    const {lang} = this.props
+    const {lang} = this.props;
+    //console.log('lang.',lang.lang);
     this.state = {
-      lang: lang==='vn'?lang_vn:lang_en,
-      lblPro: lang==='vn'?lang_vn.title_add_pro:lang_en.title_add_pro,
-      lblKM: lang==='vn'?lang_vn.title_add_km:lang_en.title_add_km,
+      lang: lang.lang==='vn'?lang_vn:lang_en,
+      lblPro: lang.lang==='vn'?lang_vn.title_add_pro:lang_en.title_add_pro,
+      lblKM: lang.lang==='vn'?lang_vn.title_add_km:lang_en.title_add_km,
       showProductTab:true,
       showKMTab:false,
       showBrandTab:false,
@@ -174,7 +175,7 @@ export default class UpdateMore extends Component {
   getData(){
     const {content_id} = this.props;
     const url = `${global.url}${'branch/list-content/'}${content_id}`;
-    console.log(url);
+    //console.log(url);
     getApi(url)
     .then(arrData => {
         this.setState({ listLoc: arrData.data });
@@ -260,15 +261,15 @@ export default class UpdateMore extends Component {
             backgroundColor: '#D0021B',}}>
           <TouchableOpacity
           onPress={()=>{this.getList('product');this.setState({showProductTab:true,showKMTab:false,showBrandTab:false})}}>
-              <Text style={[titleTabPro,this.state.showProductTab ? titleActive : titleTab]}>{`${'SẢN PHẨM DV'}`.toUpperCase()}</Text>
+              <Text style={[titleTabPro,this.state.showProductTab ? titleActive : titleTab]}>{`${lang.product_service}`.toUpperCase()}</Text>
           </TouchableOpacity>
           <TouchableOpacity
           onPress={()=>{this.getList('discount');this.setState({showProductTab:false,showKMTab:true,showBrandTab:false})}}>
-              <Text style={[titleTabPro,this.state.showKMTab ? titleActive : titleTab]}>{`${'KHUYẾN MÃI'}`.toUpperCase()}</Text>
+              <Text style={[titleTabPro,this.state.showKMTab ? titleActive : titleTab]}>{`${lang.discount}`.toUpperCase()}</Text>
           </TouchableOpacity>
           <TouchableOpacity
           onPress={()=>{this.updateListLoc();this.setState({showProductTab:false,showKMTab:false,showBrandTab:true});}}>
-              <Text style={[titleTabPro,this.state.showBrandTab ? titleActive : titleTab]}>{`${'CHI NHÁNH'}`.toUpperCase()}</Text>
+              <Text style={[titleTabPro,this.state.showBrandTab ? titleActive : titleTab]}>{`${lang.brank}`.toUpperCase()}</Text>
           </TouchableOpacity>
           </View>
 
@@ -290,24 +291,24 @@ export default class UpdateMore extends Component {
               <TextInput
               underlineColorAndroid='transparent'
               onChangeText={(nameProduct) => this.setState({nameProduct})}
-              placeholder={`${"Tên"}`} value={nameProduct}
+              placeholder={`${lang.name}`} value={nameProduct}
               style={{
-                paddingTop:5,paddingBottom:5,fontSize:16,width:width-150,borderBottomWidth:1,borderColor:'#E1E7EC',marginRight:10}}
+                paddingLeft:0,paddingTop:5,paddingBottom:5,fontSize:16,width:width-150,borderBottomWidth:1,borderColor:'#E1E7EC',marginRight:10}}
                 />
               <TextInput
               underlineColorAndroid='transparent'
               onChangeText={(desProduct) => this.setState({desProduct})}
-              placeholder={`${"Mô tả"}`} value={desProduct}
+              placeholder={`${lang.des}`} value={desProduct}
               style={{
-                paddingTop:5,paddingBottom:5,fontSize:16,width:width-150,borderBottomWidth:1,borderColor:'#E1E7EC',marginRight:10}}
+                paddingLeft:0,paddingTop:5,paddingBottom:5,fontSize:16,width:width-150,borderBottomWidth:1,borderColor:'#E1E7EC',marginRight:10}}
                 />
               <TextInput
               underlineColorAndroid='transparent'
               onChangeText={(priceProduct) => {if(priceProduct==='' || (onlyNumber(priceProduct) && priceProduct.substr(0,1)>0) )this.setState({priceProduct})}}
               keyboardType={'numeric'} maxLength={9}
-              placeholder={`${"Giá"}`} value={priceProduct.toString()}
+              placeholder={`${lang.price}`} value={priceProduct.toString()}
               style={{
-                paddingTop:5,paddingBottom:5,fontSize:16,width:width-150,borderBottomWidth:1,borderColor:'#E1E7EC',marginRight:10}}
+                paddingLeft:0,paddingTop:5,paddingBottom:5,fontSize:16,width:width-150,borderBottomWidth:1,borderColor:'#E1E7EC',marginRight:10}}
                 />
               </View>
 
@@ -360,30 +361,30 @@ export default class UpdateMore extends Component {
               <TextInput
               underlineColorAndroid='transparent'
               onChangeText={(nameKM) => this.setState({nameKM})}
-              placeholder={`${"Tên"}`} value={nameKM}
+              placeholder={`${lang.name}`} value={nameKM}
               style={{
-                paddingTop:5,paddingBottom:5,fontSize:16,width:width-150,borderBottomWidth:1,borderColor:'#E1E7EC',marginRight:10}}
+                paddingLeft:0,paddingTop:5,paddingBottom:5,fontSize:16,width:width-150,borderBottomWidth:1,borderColor:'#E1E7EC',marginRight:10}}
                 />
               <TextInput
               underlineColorAndroid='transparent'
               onChangeText={(desKM) => this.setState({desKM})}
-              placeholder={`${"Mô tả"}`} value={desKM}
+              placeholder={`${lang.des}`} value={desKM}
               style={{
-                paddingTop:5,paddingBottom:5,fontSize:16,width:width-150,borderBottomWidth:1,borderColor:'#E1E7EC',marginRight:10}}
+                paddingLeft:0,paddingTop:5,paddingBottom:5,fontSize:16,width:width-150,borderBottomWidth:1,borderColor:'#E1E7EC',marginRight:10}}
                 />
               <TextInput
               underlineColorAndroid='transparent'
               onChangeText={(priceKM) => {if(priceKM==='' || (onlyNumber(priceKM) && priceKM.substr(0,1)>0) )this.setState({priceKM})}}
               keyboardType={'numeric'} maxLength={9}
-              placeholder={`${"Giá"}`} value={priceKM.toString()}
+              placeholder={`${lang.price}`} value={priceKM.toString()}
               style={{
-                paddingTop:5,paddingBottom:5,fontSize:16,width:width-150,borderBottomWidth:1,borderColor:'#E1E7EC',marginRight:10}}
+                paddingLeft:0,paddingTop:5,paddingBottom:5,fontSize:16,width:width-150,borderBottomWidth:1,borderColor:'#E1E7EC',marginRight:10}}
                 />
               </View>
 
           </View>
           <View style={{width:width-(width/4),alignSelf:'center',marginTop:20}}>
-            <TouchableOpacity onPress={()=>{this.setState({disable:true},()=>{
+            <TouchableOpacity disabled={disable} onPress={()=>{this.setState({disable:true},()=>{
               this.createPKM('discount')
             })}} style={btnPress}>
             <Text style={colorNext}> {this.state.lblKM} </Text>

@@ -48,7 +48,14 @@ function calculateTimeFromAngle(angle) {
   const m = minutes - h * 60;
   return { h, m };
 }
-
+// function calcAngle(str){
+//   var h = parseInt(str.substr(0,2));
+//   var m = parseInt(str.substr(-2));
+//   if (h >= 12) h = h - 12;
+//   if (m === 60) m = 0;
+//   var mili = (m+h)/60;
+//   return mili*(2 * Math.PI / (12 * 12))/5;
+// }
 
 function roundAngleToFives(angle) {
   const fiveMinuteAngle = 2 * Math.PI / 144;
@@ -97,6 +104,8 @@ export default class OpenTime extends Component {
           to_date:6,
           from_hour:'10:00',
           to_hour:'17:00',
+          angle_from:5.235987755982989,
+          angle_to:3.665191429188092,
           index:0
         }],
       ListOpenTime:[],
@@ -118,6 +127,8 @@ export default class OpenTime extends Component {
         to_date:6,
         from_hour:'10:00',
         to_hour:'17:00',
+        angle_from:5.235987755982989,
+        angle_to:3.665191429188092,
         index
       };
     ListDataTime.push(opt_time);
@@ -157,6 +168,8 @@ export default class OpenTime extends Component {
           to_date:e.to_date,
           from_hour:e.from_hour,
           to_hour:e.to_hour,
+          angle_from:e.angle_from,
+          angle_to:e.angle_to,
           index
         })
       });
@@ -301,9 +314,14 @@ export default class OpenTime extends Component {
       showClock={this.state.showClock}
       from_hour={ListDataTime[index_clock].from_hour}
       to_hour={ListDataTime[index_clock].to_hour}
-      updateFTHour={(from_hour,to_hour)=>{
-        ListDataTime[index_clock].from_hour=from_hour===24?0:from_hour;
-        ListDataTime[index_clock].to_hour=to_hour===24?0:to_hour;
+      startAngle={ListDataTime[index_clock].angle_from}
+      angleLength={ListDataTime[index_clock].angle_to}
+      updateFTHour={(from_hour,to_hour,startAngle,angleLength)=>{
+        //console.log(startAngle,angleLength);
+        ListDataTime[index_clock].from_hour= from_hour===24?0:from_hour;
+        ListDataTime[index_clock].to_hour= to_hour===24?0:to_hour;
+        ListDataTime[index_clock].angle_from= startAngle;
+        ListDataTime[index_clock].angle_to= angleLength;
         this.setState(this.state,()=>{
           clearTimeout(timeoutUpdateHour);
           this.updateListItem()
@@ -378,15 +396,14 @@ export class ListChooseDate extends Component {
 export class Clock extends Component {
   constructor(props){
     super(props);
-    const {from_hour, to_hour,lang} = this.props;
-    console.log('from_hour, to_hour',calcAngle(from_hour), calcAngle(to_hour));
+    const {from_hour, to_hour,startAngle,angleLength,lang} = this.props;
+    //console.log('from_hour, to_hour',calcAngle(from_hour), calcAngle(to_hour));
     this.state = {
-      startAngle:calcAngle(from_hour),
-      angleLength:calcAngle(to_hour),
+      // startAngle:calcAngle(from_hour),
+      // angleLength:calcAngle(to_hour),
       apmFrom:parseInt(from_hour.substr(0,2))>12?true:false,
       apmTo:parseInt(to_hour.substr(0,2))>12?true:false,
-      // startAngle: Math.PI * 10/6,
-      // angleLength: Math.PI * 7/6,
+      startAngle,angleLength,
       opt_date: lang.lang==='vn'?opt_date_vn:opt_date_en,
     }
   }
@@ -418,7 +435,7 @@ export class Clock extends Component {
       showClock &&
       <View style={[popupClock,showClock ? show : hide]}>
       <TouchableOpacity onPress={()=>{
-        this.props.updateFTHour(`${apmFrom?f_hour.h+12:f_hour.h}:${padMinutes(f_hour.m)}`,`${apmTo?t_hour.h+12:t_hour.h}:${padMinutes(t_hour.m)}`);
+        this.props.updateFTHour(`${apmFrom?f_hour.h+12:f_hour.h}:${padMinutes(f_hour.m)}`,`${apmTo?t_hour.h+12:t_hour.h}:${padMinutes(t_hour.m)}`,startAngle,angleLength);
         this.props.closeModal()}}
       style={{position:'absolute',top:10,right:10}}>
       <Image source={closeIC} style={{width:18, height:18}} />

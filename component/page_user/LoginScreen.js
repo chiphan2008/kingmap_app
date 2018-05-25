@@ -55,34 +55,29 @@ export default class LoginScreen extends Component {
 
   getLang(){
     getLanguage().then((e) =>{
-      console.log(e);
+      //console.log(e);
       if(e!==null){
           e.valueLang==='vn' ?  this.setState({lang : lang_vn}) : this.setState({lang : lang_en});
      }
     });
   }
-  getGoogleID(){
-      //Alert.alert('Thong bao','getGoogleID')
-    return new Promise((resolve,reject)=>{
-      GoogleSignin.currentUserAsync().then((user) => {
-        resolve(user)
-      }).done();
-    })
-  }
-  loginGooIOS(){
 
-      this.getGoogleID().then((user) => {
-        console.log(user);
-        //Alert.alert('user',user.id)
-        //this.setState({txtUsername:user.id})
-        gooApi(`${global.url}${'login-google'}`,user).then(e =>{
-          if(e.code===200){
-            this.props.navigation.navigate('MainScr');
-          }else{
-            this.setState({errMsg:e.message})
-          }
-        })
-    })
+  loginGooIOS(){
+    GoogleSignin.signIn().then((user) => {
+      console.log('user',user);
+    }).done();
+    //   this.getGoogleID().then((user) => {
+    //     console.log(user);
+    //     //Alert.alert('user',user.id)
+    //     //this.setState({txtUsername:user.id})
+    //     gooApi(`${global.url}${'login-google'}`,user).then(e =>{
+    //       if(e.code===200){
+    //         this.props.navigation.navigate('MainScr');
+    //       }else{
+    //         this.setState({errMsg:e.message})
+    //       }
+    //     })
+    // })
   }
 
   loginFB(){
@@ -130,12 +125,16 @@ export default class LoginScreen extends Component {
   }
 
   componentWillMount(){
-    // const {onGoBack} = this.props.navigation.state.params;
-    // onGoBack(e=>console.log('aaa'));
+    GoogleSignin.hasPlayServices({ autoResolve: true }).then(() => {
+    // play services are available. can now configure library
+    })
+    .catch((err) => {
+      console.log("Play services error", err.code, err.message);
+    })
     GoogleSignin.configure({
       iosClientId: '1004951541310-3ns8ppuvvallfta76rchcarcq1acbttl.apps.googleusercontent.com', // only for iOS
-      // webClientId: '972786239931-ca9skanuemmet91712knn6l4m6igm8g9.apps.googleusercontent.com',
-      // offlineAccess: true
+      webClientId: '972786239931-ca9skanuemmet91712knn6l4m6igm8g9.apps.googleusercontent.com',
+      offlineAccess: false
     })
   }
   render() {

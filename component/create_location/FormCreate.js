@@ -206,7 +206,7 @@ export default class FormCreate extends Component {
       this.setState({errArea:true});return false;
     }
     //console.log('confirmPostData6');
-    if(this.state.txtKW.trim()==='' || strtoarray(this.state.txtKW,',').length<3 ){this.setState({errMsg:this.state.lang.enter_kw});return false;}
+    if(this.state.txtKW===null || this.state.txtKW.trim()==='' || strtoarray(this.state.txtKW,',').length<3 ){this.setState({errMsg:this.state.lang.enter_kw});return false;}
     //console.log('confirmPostData7');
     if(this.state.imgAvatar.path===undefined){this.setState({errMsg:this.state.lang.enter_avatar});return false;}
     //console.log('confirmPostData8');
@@ -228,6 +228,8 @@ export default class FormCreate extends Component {
       arr.append(`date_open[${index}][to_date]`,e.to_date);
       arr.append(`date_open[${index}][from_hour]`,e.from_hour);
       arr.append(`date_open[${index}][to_hour]`,e.to_hour);
+      arr.append(`date_open[${index}][angle_from]`,e.angle_from);
+      arr.append(`date_open[${index}][angle_to]`,e.angle_to);
     })
     arr.append('country',this.state.idCountry);
     arr.append('city',this.state.idCity);
@@ -246,7 +248,7 @@ export default class FormCreate extends Component {
     arr.append('lat',this.state.lat);
     arr.append('lng',this.state.lng);
     strtoarray(this.state.txtKW,',').forEach((e)=>{
-      arr.append('tag[]',e);
+      e.trim()!=='' && arr.append('tag[]',e);
     });
 
     arr.append('description',this.state.txtDes);

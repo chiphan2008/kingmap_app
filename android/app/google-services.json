@@ -1,33 +1,39 @@
 {
   "project_info": {
-    "project_number": "972786239931",
-    "project_id": "firebase-siginkingmap"
+    "project_number": "128467014732",
+    "firebase_url": "https://kingmapapp.firebaseio.com",
+    "project_id": "kingmapapp",
+    "storage_bucket": "kingmapapp.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:972786239931:android:24c39d491e1dc8fd",
+        "mobilesdk_app_id": "1:128467014732:android:24c39d491e1dc8fd",
         "android_client_info": {
           "package_name": "com.kingmap_app"
         }
       },
       "oauth_client": [
         {
-          "client_id": "972786239931-ca9skanuemmet91712knn6l4m6igm8g9.apps.googleusercontent.com",
+          "client_id": "128467014732-j8mpqfabmqunq18kposi099nui5t62jc.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.kingmap_app",
-            "certificate_hash": "64f9db13fbd3f75d6d745ba6fb36e956edf4c408"
+            "certificate_hash": "fcdbe291069131f4979f71eaa7a517b46ef05170"
           }
         },
         {
-          "client_id": "972786239931-dp1lauleblc4uord2jo3o5sa99dgjcek.apps.googleusercontent.com",
+          "client_id": "128467014732-17onor6ogr34ko35tbk1bg2c1horth99.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "128467014732-17onor6ogr34ko35tbk1bg2c1horth99.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyB486mFm-MLMPqauYHB53VMK9oTBxEqbGY"
+          "current_key": "AIzaSyCqupSmoZDpKhpsR8vE_0FSIR6jzl79UFs"
         }
       ],
       "services": {
@@ -35,11 +41,16 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "128467014732-17onor6ogr34ko35tbk1bg2c1horth99.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
-          "status": 1
+          "status": 2
         }
       }
     }

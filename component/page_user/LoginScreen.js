@@ -64,7 +64,14 @@ export default class LoginScreen extends Component {
 
   loginGooIOS(){
     GoogleSignin.signIn().then((user) => {
-      console.log('user',user);
+      //console.log('user',user);
+      gooApi(`${global.url}${'login-google'}`,user).then(e =>{
+            if(e.code===200){
+              this.props.navigation.navigate('MainScr');
+            }else{
+              this.setState({errMsg:e.message})
+            }
+      })
     }).done();
     //   this.getGoogleID().then((user) => {
     //     console.log(user);
@@ -133,7 +140,7 @@ export default class LoginScreen extends Component {
     })
     GoogleSignin.configure({
       iosClientId: '1004951541310-3ns8ppuvvallfta76rchcarcq1acbttl.apps.googleusercontent.com', // only for iOS
-      webClientId: '972786239931-ca9skanuemmet91712knn6l4m6igm8g9.apps.googleusercontent.com',
+      //webClientId: '128467014732-j8mpqfabmqunq18kposi099nui5t62jc.apps.googleusercontent.com',
       offlineAccess: false
     })
   }

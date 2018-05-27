@@ -81,10 +81,13 @@ export default class UpdateMore extends Component {
     var img = route==='product'?imgProduct:imgKM;
     if(name===''||des===''||price===''||img.path===undefined) {
       this.setState({disable:false},()=>{
-        return false;
+        if(name===''){Alert.alert(lang.notify,lang.plz_name);return false;}
+        if(des===''){Alert.alert(lang.notify,lang.plz_des);return false;}
+        if(price===''){Alert.alert(lang.notify,lang.plz_price);return false;}
+        if(img.path===undefined){Alert.alert(lang.notify,lang.choose_img);return false;}
       })
     }else {
-      arr.append('content_id',content_id);
+      arr.append('content_id','7717');
       arr.append('name',name);
       arr.append('des',des);
       arr.append('price',price);
@@ -117,7 +120,7 @@ export default class UpdateMore extends Component {
   getList(route){
     Keyboard.dismiss();
     const {content_id} = this.props;
-    getApi(`${global.url}${route}${'/list/'}${content_id}`).then((e)=>{
+    getApi(`${global.url}${route}${'/list/'}${'7717'}`).then((e)=>{
       if(route==='product') this.state.listProduct=e.data;
       if(route==='discount') this.state.listKM=e.data;
       this.setState(this.state);
@@ -174,7 +177,7 @@ export default class UpdateMore extends Component {
   }
   getData(){
     const {content_id} = this.props;
-    const url = `${global.url}${'branch/list-content/'}${content_id}`;
+    const url = `${global.url}${'branch/list-content/'}${'7717'}`;
     //console.log(url);
     getApi(url)
     .then(arrData => {
@@ -183,15 +186,15 @@ export default class UpdateMore extends Component {
     .catch(err => console.log(err));
   }
 
-  delBrank(id){
+  delBranch(id){
     //console.log(`${global.url}${'product/list/'}${'83597'}`);
     const {lang} = this.state;
     const {content_id} = this.props;
-    Alert.alert(lang.notify,lang.confirm_brank_del,[
+    Alert.alert(lang.notify,lang.confirm_branch_del,[
       {text: lang.cancel, style: 'cancel'},
       {text: lang.confirm, onPress: () => {
         var arr = new FormData;
-        arr.append('content_id',content_id);
+        arr.append('content_id','7717');
         arr.append('content_id_other',id);
         postApi(`${global.url}${'branch/remove'}`,arr).then((e)=>{
           this.updateListLoc()
@@ -205,7 +208,7 @@ export default class UpdateMore extends Component {
     if(Object.entries(this.state.arrLoc).length===0) return;
     const {content_id} = this.props;
     var arr = new FormData;
-    arr.append('content_id',content_id);
+    arr.append('content_id','7717');
     this.state.listLoc.forEach(e=>{
       if(this.state.arrLoc[e.id])arr.append('arr_content[]',e.id);
     })
@@ -216,7 +219,7 @@ export default class UpdateMore extends Component {
   }
   updateListLoc = () => {
     const {content_id} = this.props;
-    const url = `${global.url}${'branch/list/'}${content_id}`;
+    const url = `${global.url}${'branch/list/'}${'7717'}`;
     getApi(url).then(arrData => {
         this.setState({ listLocChoose: arrData.data });
     })
@@ -269,7 +272,7 @@ export default class UpdateMore extends Component {
           </TouchableOpacity>
           <TouchableOpacity
           onPress={()=>{this.updateListLoc();this.setState({showProductTab:false,showKMTab:false,showBrandTab:true});}}>
-              <Text style={[titleTabPro,this.state.showBrandTab ? titleActive : titleTab]}>{`${lang.brank}`.toUpperCase()}</Text>
+              <Text style={[titleTabPro,this.state.showBrandTab ? titleActive : titleTab]}>{`${lang.branch}`.toUpperCase()}</Text>
           </TouchableOpacity>
           </View>
 
@@ -322,16 +325,16 @@ export default class UpdateMore extends Component {
           </View>
           <FlatList
              extraData={this.state}
-             style={{marginTop:15,paddingBottom:15,paddingLeft:15,width:width-15}}
+             style={{marginTop:15,paddingBottom:15,paddingLeft:15,paddingRight:15,width}}
              data={listProduct}
              keyExtractor={(item,index) => index.toString()}
              renderItem={({item,index}) =>(
                <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginBottom:10}}
                >
-                   <TouchableOpacity style={{flexDirection:'row',maxWidth:width-90}}
+                   <TouchableOpacity style={{flexDirection:'row',maxWidth:width-50}}
                    onPress={()=>this.getOne('product',item.id)}>
                        <Image source={{uri:checkUrl(item.thumb) ? item.thumb : `${global.url_media}${item.thumb}`}} style={{width:50,height:40,marginRight:10}} />
-                       <View>
+                       <View style={{minWidth:width-50}}>
                          <Text numberOfLines={1} style={colorlbl}>{item.name}</Text>
                          <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.price} ${item.currency}`}</Text>
                        </View>
@@ -398,10 +401,10 @@ export default class UpdateMore extends Component {
              renderItem={({item,index}) =>(
                <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginBottom:10}}
                >
-                   <TouchableOpacity style={{flexDirection:'row',maxWidth:width-90}}
+                   <TouchableOpacity style={{flexDirection:'row',maxWidth:width-50}}
                    onPress={()=>this.getOne('discount',item.id)}>
                        <Image source={{uri:checkUrl(item.thumb) ? item.thumb : `${global.url_media}${item.thumb}`}} style={{width:50,height:40,marginRight:10}} />
-                       <View>
+                       <View style={{minWidth:width-50}}>
                          <Text numberOfLines={1} style={colorlbl}>{item.name}</Text>
                          <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.price}`}</Text>
                        </View>
@@ -417,7 +420,7 @@ export default class UpdateMore extends Component {
           <View style={[container,this.state.showBrandTab ? show : hide]}>
           <View style={{width:width-(width/4),alignSelf:'center',marginTop:20}}>
             <TouchableOpacity onPress={()=>{this.getData();this.setState({showLoc:true})}} style={btnPress}>
-            <Text style={colorNext}> + {lang.add_brank} </Text>
+            <Text style={colorNext}> + {lang.add_branch} </Text>
             </TouchableOpacity>
           </View>
 
@@ -436,7 +439,7 @@ export default class UpdateMore extends Component {
                          <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.address}`}</Text>
                        </View>
                    </View>
-                   <TouchableOpacity onPress={()=>{this.delBrank(item.id)}}>
+                   <TouchableOpacity onPress={()=>{this.delBranch(item.id)}}>
                      <Image source={removeIC} style={imgShare} />
                   </TouchableOpacity>
                </View>
@@ -452,7 +455,7 @@ export default class UpdateMore extends Component {
                   <Image source={closeIC} style={[imgShare]} />
                 </TouchableOpacity>*/}
                 <View style={[overLayout,pad10]}>
-                <Text numberOfLines={1} style={colorlbl}>{'ĐỊA ĐIỂM CÙNG HỆ THỐNG'}</Text>
+                <Text numberOfLines={1} style={colorlbl}>{lang.add_branch}</Text>
                 <FlatList
                    extraData={this.state}
                    style={{marginTop:15,width:width-30,paddingBottom:15,paddingLeft:5,paddingRight:5,}}

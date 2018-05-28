@@ -18,6 +18,7 @@
     "react-native-image-crop-picker": "^0.19.1",
     "react-native-image-zoom-viewer": "^2.0.18",
     "react-native-maps": "^0.19.0",
+    "react-native-push-notification": "^3.0.2",
     "react-native-settings": "0.0.1-alpha5",
     "react-native-snap-carousel": "^3.5.0",
     "react-native-svg": "^6.2.2",

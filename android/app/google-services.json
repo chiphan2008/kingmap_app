@@ -1,39 +1,47 @@
 {
   "project_info": {
-    "project_number": "128467014732",
-    "firebase_url": "https://kingmapapp.firebaseio.com",
-    "project_id": "kingmapapp",
-    "storage_bucket": "kingmapapp.appspot.com"
+    "project_number": "278965524140",
+    "firebase_url": "https://king-map-develop.firebaseio.com",
+    "project_id": "king-map-develop",
+    "storage_bucket": "king-map-develop.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:128467014732:android:24c39d491e1dc8fd",
+        "mobilesdk_app_id": "1:278965524140:android:24c39d491e1dc8fd",
         "android_client_info": {
           "package_name": "com.kingmap_app"
         }
       },
       "oauth_client": [
         {
-          "client_id": "128467014732-j8mpqfabmqunq18kposi099nui5t62jc.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.kingmap_app",
-            "certificate_hash": "fcdbe291069131f4979f71eaa7a517b46ef05170"
-          }
-        },
-        {
-          "client_id": "128467014732-17onor6ogr34ko35tbk1bg2c1horth99.apps.googleusercontent.com",
+          "client_id": "278965524140-kdfddo63ljd1ljp06mp61ljgpnad9sj0.apps.googleusercontent.com",
           "client_type": 3
         },
         {
-          "client_id": "128467014732-17onor6ogr34ko35tbk1bg2c1horth99.apps.googleusercontent.com",
+          "client_id": "278965524140-3l80mj8re5j47antihuh7mpeki2vmdhd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kingmap_app",
+            "certificate_hash": "c3bc4843a41e23460d0c4a29cace9b8029d09477"
+          }
+        },
+        {
+          "client_id": "278965524140-f9pqq5qt8hq5nljro3tlgevo7bf4sgom.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "278965524140-82uj4m1efe2b41jq9cnb79rumg8hh6i7.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "278965524140-kdfddo63ljd1ljp06mp61ljgpnad9sj0.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCqupSmoZDpKhpsR8vE_0FSIR6jzl79UFs"
+          "current_key": "AIzaSyAO-WSieEpK6HlLw9lOgloqBGoL37plrfQ"
         }
       ],
       "services": {
@@ -44,7 +52,7 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "128467014732-17onor6ogr34ko35tbk1bg2c1horth99.apps.googleusercontent.com",
+              "client_id": "278965524140-kdfddo63ljd1ljp06mp61ljgpnad9sj0.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

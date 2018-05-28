@@ -1,11 +1,18 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import {Platform, View, Text, StyleSheet, Dimensions, Image, TextInput, TouchableOpacity} from 'react-native';
+import {
+  Platform, View, Text, StyleSheet, Dimensions, Image, TextInput, TouchableOpacity,
+FlatList} from 'react-native';
+import Moment from 'moment';
 const {height, width} = Dimensions.get('window');
 
+import getApi from '../../api/getApi';
+import global from '../../global';
 import styles from '../../styles';
 import getLanguage from '../../api/getLanguage';
+import checkLogin from '../../api/checkLogin';
+import loginServer from '../../api/loginServer';
 import lang_vn from '../../lang/vn/language';
 import lang_en from '../../lang/en/language';
 import getLocationByIP from '../../api/getLocationByIP';
@@ -25,7 +32,10 @@ export default class NotifyTab extends Component {
       lang : lang_vn,
       showInfo : false,
       showShare : false,
+      isLogin:false,
       curLoc:{},
+      listNoti:[],
+
     };
     //this.getLoc();
     getLanguage().then((e) =>{
@@ -33,60 +43,44 @@ export default class NotifyTab extends Component {
           e.valueLang==='vn' ?  this.setState({lang : lang_vn}) : this.setState({lang : lang_en});
      }
     });
+    checkLogin().then(e=>{
+      //console.log('checkLogin',e);
+      if(e.id===undefined){
+        this.setState({isLogin:false})
+      }else {
+        this.setState({isLogin:true});
+        loginServer(e);
+      }
+    });
+    this.getData();
   }
-  getLoc(){
-    navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const latlng = `${position.coords.latitude}${','}${position.coords.longitude}`;
-            this.setState({
-              curLoc : {
-                latitude:position.coords.latitude,
-                longitude: position.coords.longitude,
-                lat:position.coords.latitude,
-                lng: position.coords.longitude,
-                latitudeDelta:  0.008757,
-                longitudeDelta: 0.010066,
-                latlng:latlng,
-              }
-            });
-           },
-           (error) => {
-            getLocationByIP().then((e) => {
-                this.setState({
-                  curLoc : {
-                    latitude:e.latitude,
-                    longitude: e.longitude,
-                    lat:e.latitude,
-                    lng: e.longitude,
-                    latitudeDelta:  0.008757,
-                    longitudeDelta: 0.010066,
-                    latlng:`${e.latitude}${','}${e.longitude}`,
-                  }
-                });
-            });
-          },
-          {enableHighAccuracy: true, timeout: 20000, maximumAge: 10000}
-    );
+  getData(){
+    const url = `${global.url}${'getlistnoti'}`;
+    //console.log(url);
+    getApi(url)
+    .then(arrData => {
+      //console.log('arrData',arrData.data);
+        this.setState({ listNoti: arrData.data });
+    })
+    .catch(err => console.log(err));
   }
   render() {
     const {navigate} = this.props.navigation;
     //console.log("this.props.Hometab=",util.inspect(this.props.navigation,false,null));
     const {
       container, bgImg,
-      headStyle, imgLogoTop,imgSocial, imgInfo,wrapIcRight,headContent,
-      selectBox,optionListStyle,OptionItem,inputSearch,show,hide,colorTextPP,colorNumPP,
-      wrapContent,leftContent,rightContent,middleContent,imgContent,labelCat,
-      plusStyle,popover,overLayout,listOver,imgMargin,imgUp,imgUpInfo,imgUpShare
+      headStyle, imgLogoTop,headContent,inputSearch,colorlbl,
+      listAdd,imgShare,wrapContent,btnPress,marTop,colorNext,
     } = styles;
-
+    const {listNoti,isLogin,lang} = this.state;
     return (
       <View style={container}>
 
         <View style={headStyle}>
           <View style={headContent}>
-          <View></View>
-          <Image source={logoTop} style={imgLogoTop} />
-          <View></View>
+            <View></View>
+            <Image source={logoTop} style={imgLogoTop} />
+            <View></View>
           </View>
           <View style={{height:11}}></View>
           <TextInput underlineColorAndroid='transparent'
@@ -105,6 +99,35 @@ export default class NotifyTab extends Component {
           </TouchableOpacity>
         </View>
 
+        <View>
+        {listNoti.notifications !== undefined && isLogin ?
+          <FlatList
+           extraData={this.state}
+           data={listNoti.notifications}
+           keyExtractor={item => item.id.toString()}
+           renderItem={({item}) =>(
+             <TouchableOpacity onPress={()=>{
+             }}
+             style={{padding:15,flexDirection:'row',backgroundColor:'white',marginBottom:1}}>
+             <Image source={{uri: `${global.url_media}${item.image}`}}
+             style={{width:35,height:35,marginRight:5}} />
+             <View style={{paddingRight:30,}}>
+             <Text numberOfLines={1} style={{color:'#000'}}>{item.contentText}</Text>
+             <Text numberOfLines={1} style={{fontSize:12}}>{Moment(item.created_at).format("DD/MM/YYYY h:m:s")}</Text>
+             </View>
+             </TouchableOpacity>
+           )}
+           style={{marginBottom:110,}}
+         />
+         :
+         <View style={wrapContent}>
+           <Text style={{color:'#B8B9BD'}}>{lang.request_login}</Text>
+           <TouchableOpacity onPress={()=>navigate('LoginScr')} style={[btnPress,marTop]}>
+           <Text style={colorNext}> {lang._login}</Text>
+           </TouchableOpacity>
+         </View>
+          }
+        </View>
       </View>
     );
   }

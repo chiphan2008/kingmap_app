@@ -5,6 +5,7 @@ import {Platform, View, Text, StyleSheet, Dimensions, Image,
   TextInput, TouchableOpacity,FlatList
 } from 'react-native';
 import SvgUri from 'react-native-svg-uri';
+import PushNotification from 'react-native-push-notification';
 const {height, width} = Dimensions.get('window');
 
 import {checkSVG} from '../libs';
@@ -38,7 +39,6 @@ export default class ChooseCat extends Component {
   }
 
   componentWillMount(){
-
     const { lang } = this.props.navigation.state.params;
     this.getCategory(lang);
       this.setState({

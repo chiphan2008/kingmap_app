@@ -117,7 +117,7 @@ export default class FormCreate extends Component {
       showLoading:false,
       user_profile:{},
       showUpdate:false,
-      showUpdateMore:true,
+      showUpdateMore:false,
       editLoc:false,
 
     };
@@ -146,7 +146,7 @@ export default class FormCreate extends Component {
 
   getContent(idContent){
     const url = `${global.url}${'content/'}${idContent}`;
-    console.log('url',url);
+    //console.log('url',url);
     getApi(url)
     .then(arrData => {
       //console.log('arrData.data.content.lat',arrData.data.content.lat);
@@ -161,15 +161,19 @@ export default class FormCreate extends Component {
         serv_items.push(obj);
       })
       arrData.data.service_content.forEach(e=>{
-        console.log(e);
+        //console.log(e);
         this.setState({checkService: Object.assign(this.state.checkService,{[e]:e.toString()})});
       })
       content._category_items.forEach(e=>{
         this.setState({checkSubCat: Object.assign(this.state.checkSubCat,{[e.id]:e.id})});
       })
+      //console.log('content._district.name',content._district.name);
       setTimeout(()=>{
         this.setState({
           serv_items,
+          imgAvatar:{
+            path:`${global.url_media}${content.avatar}`
+          },
           txtName:content.name,
           txtAddress:content.address,
           ListOpenTime:content._date_open,
@@ -613,7 +617,6 @@ export default class FormCreate extends Component {
             }
           }}
           onBlur={()=>{
-            console.log(this.state.txtKW);
               if(checkKeyword(this.state.txtKW)){
                 var arr = this.state.txtKW.split(',');
                 arr.splice(-1);
@@ -646,7 +649,6 @@ export default class FormCreate extends Component {
             <Text>{Number(this.state.lat).toFixed(6)==='NaN' ? this.state.lat : Number(this.state.lat).toFixed(6)} - {Number(this.state.lng).toFixed(6)==='NaN' ? this.state.lng : Number(this.state.lng).toFixed(6)}</Text>
             </View>
         </View>
-
 
 
         <View style={{height:15}}></View>

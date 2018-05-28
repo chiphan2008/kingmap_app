@@ -87,7 +87,7 @@ export default class UpdateMore extends Component {
         if(img.path===undefined){Alert.alert(lang.notify,lang.choose_img);return false;}
       })
     }else {
-      arr.append('content_id','7717');
+      arr.append('content_id','content_id');
       arr.append('name',name);
       arr.append('des',des);
       arr.append('price',price);
@@ -120,7 +120,7 @@ export default class UpdateMore extends Component {
   getList(route){
     Keyboard.dismiss();
     const {content_id} = this.props;
-    getApi(`${global.url}${route}${'/list/'}${'7717'}`).then((e)=>{
+    getApi(`${global.url}${route}${'/list/'}${'content_id'}`).then((e)=>{
       if(route==='product') this.state.listProduct=e.data;
       if(route==='discount') this.state.listKM=e.data;
       this.setState(this.state);
@@ -177,7 +177,7 @@ export default class UpdateMore extends Component {
   }
   getData(){
     const {content_id} = this.props;
-    const url = `${global.url}${'branch/list-content/'}${'7717'}`;
+    const url = `${global.url}${'branch/list-content/'}${'content_id'}`;
     //console.log(url);
     getApi(url)
     .then(arrData => {
@@ -194,7 +194,7 @@ export default class UpdateMore extends Component {
       {text: lang.cancel, style: 'cancel'},
       {text: lang.confirm, onPress: () => {
         var arr = new FormData;
-        arr.append('content_id','7717');
+        arr.append('content_id','content_id');
         arr.append('content_id_other',id);
         postApi(`${global.url}${'branch/remove'}`,arr).then((e)=>{
           this.updateListLoc()
@@ -208,7 +208,7 @@ export default class UpdateMore extends Component {
     if(Object.entries(this.state.arrLoc).length===0) return;
     const {content_id} = this.props;
     var arr = new FormData;
-    arr.append('content_id','7717');
+    arr.append('content_id','content_id');
     this.state.listLoc.forEach(e=>{
       if(this.state.arrLoc[e.id])arr.append('arr_content[]',e.id);
     })
@@ -219,7 +219,7 @@ export default class UpdateMore extends Component {
   }
   updateListLoc = () => {
     const {content_id} = this.props;
-    const url = `${global.url}${'branch/list/'}${'7717'}`;
+    const url = `${global.url}${'branch/list/'}${'content_id'}`;
     getApi(url).then(arrData => {
         this.setState({ listLocChoose: arrData.data });
     })

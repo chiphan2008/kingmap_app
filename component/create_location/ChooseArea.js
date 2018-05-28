@@ -49,16 +49,19 @@ export default class ChooseArea extends Component {
     const {idCountry, nameCountry,idCity, nameCity, idDist, nameDist} = this.props;
     timeoutRecive = setTimeout(()=>{
     if(idDist!==''){
+      // console.log('!!!null');
       this.state.update && this.setState({idCountry, nameCountry,idCity, nameCity, idDist, nameDist},()=>{
-        this.setState({update:false})
+        this.setState({update:false});
+        console.log('nameDist',nameDist);
+
       })
     }else {
-      //  console.log('null');
+       // console.log('null');
         this.state.update && checkLocation().then(e=>{
-          this.setState({update:false,idCountry:e.idCountry, nameCountry:e.nameCountry,idCity:e.idCity, nameCity:e.nameCity, })
+          this.setState({idCountry:e.idCountry, nameCountry:e.nameCountry,idCity:e.idCity, nameCity:e.nameCity,})
         });
     }
-    },1000)
+  },500)
   }
 
   render() {
@@ -67,9 +70,11 @@ export default class ChooseArea extends Component {
       colorlbl,listOverService,imgUpInfo,
     } = styles;
     const { lang } = this.props;
+    //console.log('nameDist',this.props.nameDist);
+    //this.props.nameDist!=='' && this.setState({nameDist:this.props.nameDist})
     return (
 
-      <View onLayout={()=>{console.log(this.props.idDist);}}>
+      <View>
       <View style={listCreate}>
           <TouchableOpacity
           onPress={()=>{ this.setState({ showCountry:true });this.getCountry() }}

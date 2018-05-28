@@ -105,7 +105,7 @@ export function checkPassword(pass,lang){
     return obj;
 }
 export function checkKeyword(str,char=null){
-  if(str!==undefined){
+  if(str!==undefined && str !==null){
     str.toLowerCase();
     if(char===null){
       char=',';

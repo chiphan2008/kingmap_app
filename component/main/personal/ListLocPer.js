@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import {
   View,Text,TouchableOpacity,Image,
-  Dimensions,ScrollView,Alert,DeviceEventEmitter,
+  Dimensions,FlatList,Alert,DeviceEventEmitter,
 } from 'react-native';
 
 import getApi from '../../api/getApi';
@@ -34,6 +34,9 @@ export default class ListLocPer extends Component {
       idCat:'',
       nameCat:'',
       moderation:'',
+      loading:true,
+      isLoad:false,
+      page:0,
     }
     this.refresh();
   }
@@ -42,32 +45,46 @@ export default class ListLocPer extends Component {
       if(e.id===undefined){
         this.setState({isLogin:false})
       }else {
-        this.setState({user_profile:e,isLogin:true});
-        this.getData(e.id);
+        this.setState({user_profile:e,isLogin:true},()=>{
+          this.getData();
+        });
       }
     });
   }
-  getData(id){
-    const url = `${global.url}${'user/list-location/'}${id}`;
-    console.log(url);
-    getApi(url)
-    .then(arrData => {
-        this.setState({ listData: arrData.data });
+
+  renderFooter = () => {
+    if (!this.state.isLoad) return null;
+    return (
+    this.state.isLoad &&
+    <View style={{alignItems:'center'}}>
+      <ActivityIndicator color="#d0021b" size="large" />
+    </View>)
+  }
+
+  getData(page=null){
+    this.setState({loading:false});
+    let url = `${global.url}${'user/list-location/'}${this.state.user_profile.id}`;
+    if(page!==null) url +=`${'?skip='}${page}${'&limit=20'}`
+    //console.log(url);
+    getApi(url).then(arrData => {
+        this.state.listData=page!==null?this.state.listData.concat(arrData.data):arrData.data;
+        this.state.loading=arrData.data.length<20?false:true;
+        this.setState(this.state);
     })
     .catch(err => console.log(err));
   }
   deleteLocation(idContent){
     const url = `${global.url}${'user/delete-location/'}${idContent}`;
-    console.log('url',url);
+    //console.log('url',url);
     getApi(url).then(e => {
-      if(e.code===200) this.getData(this.state.user_profile.id);
+      if(e.code===200) this.getData();
     }).catch(err => console.log(err));
   }
   callPause(idContent){
     this.setState({showOption:false});
     const url = `${global.url}${'user/close-location/'}${idContent}`;
     getApi(url).then(e => {
-      if(e.code===200) this.getData(this.state.user_profile.id);
+      if(e.code===200) this.getData();
     }).catch(err => console.log(err));
 
   }
@@ -75,7 +92,7 @@ export default class ListLocPer extends Component {
     this.setState({showOption:false});
     const url = `${global.url}${'user/open-location/'}${idContent}`;
     getApi(url).then(e=>{
-      if(e.code===200) this.getData(this.state.user_profile.id);
+      if(e.code===200) this.getData();
     }).catch(err => console.log(err));
   }
 
@@ -91,7 +108,7 @@ export default class ListLocPer extends Component {
   render() {
     const { lang,curLoc } = this.props.navigation.state.params;
     const { goBack,navigate } = this.props.navigation;
-    const { showOption,id_content,idCat,nameCat,moderation } = this.state;
+    const { showOption,id_content,idCat,nameCat,moderation,loading,page } = this.state;
     //console.log('lang',lang);
     const {
       container,headCatStyle,headContent,titleCreate,
@@ -101,7 +118,7 @@ export default class ListLocPer extends Component {
     } = styles;
     return (
       <View style={container}>
-        <ScrollView>
+
           <View style={headCatStyle}>
               <View style={headContent}>
                   <TouchableOpacity onPress={()=>{
@@ -114,71 +131,83 @@ export default class ListLocPer extends Component {
                   <View></View>
               </View>
           </View>
-          {this.state.listData.length > 0 &&
-            this.state.listData.map((e)=>(
-              <View key={e.id}>
-                <View style={{backgroundColor:'#fff'}}>
-                  <TouchableOpacity onPress={()=>{
-                    navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang:lang.lang})
-                  }}>
-                    <Image source={{uri:`${global.url_media}${e.avatar}`}} style={{width:width,minHeight:200,marginBottom:10}} />
-                  </TouchableOpacity>
+
+        <FlatList
+         extraData={this.state}
+         data={this.state.listData}
+         onEndReachedThreshold={0.5}
+         onEndReached={() => {
+           if(loading){
+             this.state.page +=20;
+             this.setState(this.state,()=>{
+               this.getData(this.state.page);
+             });
+           }
+         }}
+         keyExtractor={(item,index) => index.toString()}
+         renderItem={({item,index}) =>(
+           <View >
+             <View style={{backgroundColor:'#fff'}}>
+               <TouchableOpacity onPress={()=>{
+                 navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc,lang:lang.lang})
+               }}>
+                 <Image source={{uri:`${global.url_media}${item.avatar}`}} style={{width:width,minHeight:200,marginBottom:10}} />
+               </TouchableOpacity>
 
 
-                    <View style={listCreate}>
-                      <View style={{width:width-80}}>
-                        <TouchableOpacity onPress={()=>{
-                          //this.props.closeModal()
-                          navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang:lang.lang})
-                        }}>
-                          <Text numberOfLines={1} style={txtTitleOverCat}>{e.name}</Text>
-                        </TouchableOpacity>
-                          <Text numberOfLines={1} style={{color:'#6587A8',lineHeight:24}}>{`${e.address}, ${e._district.name}, ${e._city.name}, ${e._country.name}`}</Text>
-                          {e.moderation==='request_publish' &&
-                            <View style={{flexDirection:'row'}}>
-                            <Image source={favoriteIC} style={{width:16,height:16,marginTop:2}} />
-                            <Text numberOfLines={1} style={{color:'#313B50',lineHeight:24}}> ({e.vote}) | </Text>
-                            <Image source={requestIC} style={{width:14,height:14,marginRight:3,marginTop:5}} />
-                            <Text numberOfLines={1} style={{color:'#313B50',lineHeight:24}}> {`${lang.pending}`}</Text>
-                            </View>
+                 <View style={listCreate}>
+                   <View style={{width:width-80}}>
+                     <TouchableOpacity onPress={()=>{
+                       //this.props.closeModal()
+                       navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc,lang:lang.lang})
+                     }}>
+                       <Text numberOfLines={1} style={txtTitleOverCat}>{item.name}</Text>
+                     </TouchableOpacity>
+                       <Text numberOfLines={1} style={{color:'#6587A8',lineHeight:24}}>{`${item.address}, ${item._district.name}, ${item._city.name}, ${item._country.name}`}</Text>
+                       {item.moderation==='request_publish' &&
+                         <View style={{flexDirection:'row'}}>
+                         <Image source={favoriteIC} style={{width:16,height:16,marginTop:2}} />
+                         <Text numberOfLines={1} style={{color:'#313B50',lineHeight:24}}> ({item.vote}) | </Text>
+                         <Image source={requestIC} style={{width:14,height:14,marginRight:3,marginTop:5}} />
+                         <Text numberOfLines={1} style={{color:'#313B50',lineHeight:24}}> {`${lang.pending}`}</Text>
+                         </View>
 
-                          }
-                          {e.moderation==='publish' &&
-                            <View style={{flexDirection:'row'}}>
-                            <Image source={favoriteIC} style={{width:16,height:16,marginTop:2}} />
-                            <Text numberOfLines={1} style={{color:'#313B50',lineHeight:24}}> ({e.vote}) | </Text>
-                            <Image source={openingIC} style={{width:14,height:14,marginRight:3,marginTop:5}} />
-                            <Text numberOfLines={1} style={{color:'#313B50',lineHeight:24}}> {`${lang.opening}`}</Text>
-                            </View>
+                       }
+                       {item.moderation==='publish' &&
+                         <View style={{flexDirection:'row'}}>
+                         <Image source={favoriteIC} style={{width:16,height:16,marginTop:2}} />
+                         <Text numberOfLines={1} style={{color:'#313B50',lineHeight:24}}> ({item.vote}) | </Text>
+                         <Image source={openingIC} style={{width:14,height:14,marginRight:3,marginTop:5}} />
+                         <Text numberOfLines={1} style={{color:'#313B50',lineHeight:24}}> {`${lang.opening}`}</Text>
+                         </View>
 
-                          }
-                          {e.moderation==='un_publish' &&
-                            <View style={{flexDirection:'row'}}>
-                            <Image source={favoriteIC} style={{width:16,height:16,marginTop:2}} />
-                            <Text numberOfLines={1} style={{color:'#313B50',lineHeight:24}}> ({e.vote}) | </Text>
-                            <Image source={closingIC} style={{width:14,height:14,marginRight:3,marginTop:5}} />
-                            <Text numberOfLines={1} style={{color:'#313B50',lineHeight:24}}> {`${lang.closing}`}</Text>
-                            </View>
+                       }
+                       {item.moderation==='un_publish' &&
+                         <View style={{flexDirection:'row'}}>
+                         <Image source={favoriteIC} style={{width:16,height:16,marginTop:2}} />
+                         <Text numberOfLines={1} style={{color:'#313B50',lineHeight:24}}> ({item.vote}) | </Text>
+                         <Image source={closingIC} style={{width:14,height:14,marginRight:3,marginTop:5}} />
+                         <Text numberOfLines={1} style={{color:'#313B50',lineHeight:24}}> {`${lang.closing}`}</Text>
+                         </View>
 
-                          }
+                       }
 
 
-                      </View>
-                      <TouchableOpacity onPress={()=>this.setState({
-                        showOption:true,
-                        id_content:e.id,
-                        idCat:e._category_type.id,
-                        nameCat:e._category_type.name,
-                        moderation:e.moderation})}>
-                        <Image source={moreIC} style={{width:20,height:20}} />
-                        </TouchableOpacity>
-                    </View>
-                </View>
-                <View style={{height:14}}></View>
-              </View>
-            ))}
+                   </View>
+                   <TouchableOpacity onPress={()=>this.setState({
+                     showOption:true,
+                     id_content:item.id,
+                     idCat:item._category_type.id,
+                     nameCat:item._category_type.name,
+                     moderation:item.moderation})}>
+                     <Image source={moreIC} style={{width:20,height:20}} />
+                     </TouchableOpacity>
+                 </View>
+             </View>
+             <View style={{height:14}}></View>
+           </View>
+         )} />
 
-      </ScrollView>
       {showOption && <View style={actionSheetWrap} >
         <View style={[actionSheetContent,actionSheetRadius]}>
           <TouchableOpacity style={pad15}

@@ -16,11 +16,13 @@ import ImagePicker from 'react-native-image-crop-picker';
 export default class AddImgSpace extends Component {
   constructor(props){
     super(props);
+
     this.state = {
       imgSpace:[],
       des_space:{},
       title_space:{},
       txtErr:'',
+      update:true,
     }
   }
   uploadSpace(){
@@ -31,13 +33,30 @@ export default class AddImgSpace extends Component {
       this.setState({imgSpace})
     }).catch(e=>console.log('e'));
   }
-
+  componentWillUpdate(){
+    const {img_space} = this.props;
+    if(img_space.length>0){
+      let title_space={};
+      let des_space={};
+      img_space.forEach((e,index)=>{
+        title_space = Object.assign(title_space,{[`${'title_'}${index}`]:e.title});
+        des_space = Object.assign(des_space,{[`${'des_'}${index}`]:e.description});
+      })
+      this.state.title_space=title_space;
+      this.state.des_space=des_space;
+      this.state.imgSpace=img_space;
+      this.state.update && this.setState(this.state,()=>{
+        this.props.submitImage(this.state.imgSpace,Object.entries(this.state.title_space),Object.entries(this.state.des_space));
+        this.setState({update:false});
+      })
+    }
+  }
   render() {
     const {
       container,headCatStyle,headContent,titleCreate,
       titleTab,titleActive,show,hide,colorWhite,titleErr,
     } = styles;
-    const {imgSpace,des_space,title_space} = this.state;
+    const {imgSpace,des_space,title_space,update} = this.state;
     return (
 
       <Modal onRequestClose={() => null} transparent
@@ -71,7 +90,7 @@ export default class AddImgSpace extends Component {
             <View>
             {this.state.imgSpace.map((e,index)=>(
               <View key={index}>
-              <Image style={{width,height:300,resizeMode: 'cover'}} source={{isStatic:true,uri:`${e.path}`}} />
+              <Image style={{width,height:300,resizeMode: 'cover'}} source={{isStatic:true,uri:update?`${e.path}`:`${e.url}`}} />
               <TouchableOpacity style={{position:'absolute',right:5,top:5}}
               onPress={()=>{
                 this.state.imgSpace.splice(index, 1);

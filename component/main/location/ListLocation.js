@@ -296,7 +296,6 @@ export default class ListLocation extends Component {
   }
   renderFooter = () => {
     if (!this.state.isLoad) return null;
-    //console.log('this.state.isLoad',this.state.isLoad);
     return (
     this.state.isLoad &&
     <View style={{alignItems:'center'}}>
@@ -415,7 +414,6 @@ export default class ListLocation extends Component {
                      extraData={this.state}
                      onEndReachedThreshold={0.5}
                      onEndReached={() => {this.onRefresh()}}
-                     //ListHeaderComponent={null}
                      ListFooterComponent={this.renderFooter}
                      data={listData}
                      keyExtractor={(item,index) => index.toString()}

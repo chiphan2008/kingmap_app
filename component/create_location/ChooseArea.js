@@ -44,20 +44,22 @@ export default class ChooseArea extends Component {
     })
     .catch(err => console.log(err));
   }
+  componentWillUnmount(){
+    clearTimeout(timeoutRecive);
+  }
   componentWillUpdate(){
     clearTimeout(timeoutRecive);
     const {idCountry, nameCountry,idCity, nameCity, idDist, nameDist} = this.props;
     timeoutRecive = setTimeout(()=>{
     if(idDist!==''){
-      // console.log('!!!null');
+       //console.log('!!!null');
       this.state.update && this.setState({idCountry, nameCountry,idCity, nameCity, idDist, nameDist},()=>{
         this.setState({update:false});
-        console.log('nameDist',nameDist);
-
+        //console.log('nameDist',nameDist);
       })
     }else {
-       // console.log('null');
-        this.state.update && checkLocation().then(e=>{
+        //console.log('null');
+        checkLocation().then(e=>{
           this.setState({idCountry:e.idCountry, nameCountry:e.nameCountry,idCity:e.idCity, nameCity:e.nameCity,})
         });
     }
@@ -69,7 +71,7 @@ export default class ChooseArea extends Component {
       listCreate,itemKV,txtKV,popoverLoc,padCreate,imgUpCreate,imgUpLoc,overLayout,shadown,
       colorlbl,listOverService,imgUpInfo,
     } = styles;
-    const { lang } = this.props;
+    const { lang,nameDist,nameCity,nameCountry } = this.props;
     //console.log('nameDist',this.props.nameDist);
     //this.props.nameDist!=='' && this.setState({nameDist:this.props.nameDist})
     return (
@@ -79,17 +81,17 @@ export default class ChooseArea extends Component {
           <TouchableOpacity
           onPress={()=>{ this.setState({ showCountry:true });this.getCountry() }}
           style={itemKV}>
-            <Text numberOfLines={1} style={txtKV}>{this.state.nameCountry}</Text>
+            <Text numberOfLines={1} style={txtKV}>{nameCountry!==''?nameCountry:this.state.nameCountry}</Text>
           </TouchableOpacity>
           <TouchableOpacity
           onPress={()=>{this.setState({ showCity:true });this.getCity(this.state.idCountry)}}
           style={itemKV}>
-            <Text numberOfLines={1} style={txtKV}>{this.state.nameCity}</Text>
+            <Text numberOfLines={1} style={txtKV}>{nameCity!==''?nameCity:this.state.nameCity}</Text>
           </TouchableOpacity>
           <TouchableOpacity
           onPress={()=>{this.setState({ showDist:true }); this.getDist(this.state.idCity)}}
           style={itemKV}>
-            <Text numberOfLines={1} style={txtKV}>{this.state.nameDist}</Text>
+            <Text numberOfLines={1} style={txtKV}>{nameDist!==''?nameDist:this.state.nameDist}</Text>
           </TouchableOpacity>
 
           <Modal onRequestClose={() => null} transparent visible={this.state.showCountry}>

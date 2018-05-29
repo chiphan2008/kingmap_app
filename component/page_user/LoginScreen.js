@@ -73,7 +73,7 @@ export default class LoginScreen extends Component {
             }
       })
     }).catch((err) => {
-      //alert(err.toString())
+      alert(err.toString())
   //console.log('WRONG SIGNIN', err);
 }).done();
     //   this.getGoogleID().then((user) => {
@@ -142,7 +142,8 @@ export default class LoginScreen extends Component {
       console.log("Play services error", err.code, err.message);
     })
     GoogleSignin.configure({
-      iosClientId: '1004951541310-3ns8ppuvvallfta76rchcarcq1acbttl.apps.googleusercontent.com', // only for iOS
+      //iosClientId: '1004951541310-3ns8ppuvvallfta76rchcarcq1acbttl.apps.googleusercontent.com', // only for iOS
+      iosClientId: '278965524140-npl5pvrlnkh302hagt7lr648msoui2fc.apps.googleusercontent.com',
       webClientId: '278965524140-kdfddo63ljd1ljp06mp61ljgpnad9sj0.apps.googleusercontent.com',
       offlineAccess: false
     })

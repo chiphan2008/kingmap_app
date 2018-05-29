@@ -11,5 +11,43 @@
       <string>1</string>
       <key>BUNDLE_ID</key>
       <string>org.reactjs.native.example.kingmap-app</string>
+      
+      <key>AD_UNIT_ID_FOR_BANNER_TEST</key>
+      <string>ca-app-pub-3940256099942544/2934735716</string>
+      <key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
+      <string>ca-app-pub-3940256099942544/4411468910</string>
+      <key>CLIENT_ID</key>
+      <string>278965524140-npl5pvrlnkh302hagt7lr648msoui2fc.apps.googleusercontent.com</string>
+      <key>REVERSED_CLIENT_ID</key>
+      <string>com.googleusercontent.apps.278965524140-npl5pvrlnkh302hagt7lr648msoui2fc</string>
+      <key>ANDROID_CLIENT_ID</key>
+      <string>278965524140-3l80mj8re5j47antihuh7mpeki2vmdhd.apps.googleusercontent.com</string>
+      <key>API_KEY</key>
+      <string>AIzaSyBgpyNpdyRZMjD4zYmmG7UBDcCc109iAYk</string>
+      <key>GCM_SENDER_ID</key>
+      <string>278965524140</string>
+      <key>PLIST_VERSION</key>
+      <string>1</string>
+      <key>BUNDLE_ID</key>
+      <string>org.reactjs.native.example.kingmap-app</string>
+      <key>PROJECT_ID</key>
+      <string>king-map-develop</string>
+      <key>STORAGE_BUCKET</key>
+      <string>king-map-develop.appspot.com</string>
+      <key>IS_ADS_ENABLED</key>
+      <true></true>
+      <key>IS_ANALYTICS_ENABLED</key>
+      <false></false>
+      <key>IS_APPINVITE_ENABLED</key>
+      <true></true>
+      <key>IS_GCM_ENABLED</key>
+      <true></true>
+      <key>IS_SIGNIN_ENABLED</key>
+      <true></true>
+      <key>GOOGLE_APP_ID</key>
+      <string>1:278965524140:ios:8410b85b741dae1d</string>
+      <key>DATABASE_URL</key>
+      <string>https://king-map-develop.firebaseio.com</string>
     </dict>
+    
     </plist>

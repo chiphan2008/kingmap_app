@@ -102,7 +102,7 @@ export default class FormCreate extends Component {
       img_video:[],
       //addGroupProduct:[],
       index:0,
-      //listProduct:{},
+
       category_item:[],
       des_space:[],
       title_space:[],
@@ -174,6 +174,10 @@ export default class FormCreate extends Component {
           imgAvatar:{
             path:`${global.url_media}${content.avatar}`
           },
+          img_space:arrData.data.image_space,
+          img_menu:arrData.data.image_menu,
+          img_video:arrData.data.link_video,
+
           txtName:content.name,
           txtAddress:content.address,
           ListOpenTime:content._date_open,
@@ -187,6 +191,7 @@ export default class FormCreate extends Component {
           txtKW:content.keyword_ad,
           idCountry:content._country.id,idCity:content._city.id,idDist:content._district.id,
           nameCountry:content._country.name,nameCity:content._city.name,nameDist:content._district.name,
+          editLoc:true,
         },()=>{
           // console.log(this.state.idDist);
           // console.log(this.state.nameDist);
@@ -220,6 +225,7 @@ export default class FormCreate extends Component {
     //console.log('confirmPostData10');
     this.setState({showLoading:true});
     const arr = new FormData();
+    this.state.editLoc && arr.append('id_content',this.state.idContent);
     arr.append('name',this.state.txtName.trim());
     arr.append('id_category',this.props.navigation.state.params.idCat);
     Object.entries(this.state.checkSubCat).forEach((e)=>{
@@ -290,15 +296,20 @@ export default class FormCreate extends Component {
         arr.append('service[]',e[1]);
       }
     });
-
-    postApi(`${global.url}${'create-location'}`,arr).then((e)=>{
+    const act = this.state.editLoc?'update-location':'create-location';
+    postApi(`${global.url}${act}`,arr).then((e)=>{
       this.setState({showLoading:false},()=>{
         if(e.code===200){
-          Alert.alert(this.state.lang.notify,this.state.lang.create_success,[
-            {text: '', style: 'cancel'},
-            {text: 'OK', onPress: () => this.setState({idContent:e.data.content.id,showUpdate:true})}
-          ],
-         { cancelable: false })
+          if(this.state.editLoc){
+            Alert.alert(this.state.lang.notify,this.state.update_success);
+          }else {
+            Alert.alert(this.state.lang.notify,this.state.lang.create_success,[
+              {text: '', style: 'cancel'},
+              {text: 'OK', onPress: () => this.setState({idContent:e.data.content.id,showUpdate:true})}
+            ],
+           { cancelable: false })
+          }
+
         }else {
           Alert.alert(this.state.lang.notify,e.message)
         }
@@ -350,14 +361,14 @@ export default class FormCreate extends Component {
   }
 
   render() {
-    //console.log('navigation',this.props.navigation);
+    //console.log('idContent',this.state.idContent);
     const {navigate, goBack} = this.props.navigation;
     const { idCat,lang } = this.props.navigation.state.params;
     const {
       container,
       headCatStyle,headContent, wrapDistribute,wrapFilter,
       show,hide,hidden,colorlbl,listAdd,txtKV,btnMap,
-      listCreate,titleCreate,imgCamera,colorErr,
+      listCreate,titleCreate,imgCamera,colorErr,btnPress,colorNext,
       imgShare,imgInfo,marRight,wrapInputCreImg,wrapCreImg,widthLblCre,
       imgUpCreate,imgUpLoc,imgUpInfo,overLayout,listOverService,shadown,popoverLoc,padCreate,
       upDDLoc,upDDSubCat,selectBox,optionUnitStyle,clockTime,centerVer,pad10,txtNextItem,
@@ -652,7 +663,8 @@ export default class FormCreate extends Component {
 
 
         <View style={{height:15}}></View>
-        <View style={listCreate}>
+        <TouchableOpacity style={listCreate}
+        onPress={()=>this.uploadAvatar()}>
             <View style={{flexDirection:'row'}}>
               <View style={widthLblCre}>
                 <Image source={avatarIC} style={imgInfo} />
@@ -665,14 +677,14 @@ export default class FormCreate extends Component {
             </View>
           <View style={{flexDirection:'row',alignItems:'center'}}>
           <Image source={selectedIC} style={[imgShare,this.state.imgAvatar.path!==undefined ? show : hide]}/>
-          <TouchableOpacity style={imgCamera}
-          onPress={()=>this.uploadAvatar()}>
+          <View style={imgCamera}>
           <Image source={cameraIC} style={imgShare}/>
-          </TouchableOpacity>
           </View>
-        </View>
+          </View>
+        </TouchableOpacity>
 
-        <View style={listCreate}>
+        <TouchableOpacity style={listCreate}
+        onPress={()=>{this.setState({showImgSpace:true})}}>
             <View style={{flexDirection:'row'}}>
               <View style={widthLblCre}>
                 <Image source={spaceIC} style={imgInfo} />
@@ -683,14 +695,14 @@ export default class FormCreate extends Component {
             </View>
           <View style={{flexDirection:'row',alignItems:'center'}}>
           <Image source={selectedIC} style={[imgShare,this.state.img_space.length>0 ? show : hide]}/>
-          <TouchableOpacity style={imgCamera}
-          onPress={()=>{this.setState({showImgSpace:true})}}>
+          <View style={imgCamera}>
           <Image source={cameraIC} style={imgShare}/>
-          </TouchableOpacity>
           </View>
-        </View>
+          </View>
+        </TouchableOpacity>
 
-        <View style={listCreate}>
+        <TouchableOpacity style={listCreate}
+        onPress={()=>{this.setState({showImgMenu:true})}}>
             <View style={{flexDirection:'row'}}>
               <View style={widthLblCre}>
                 <Image source={galleryIC} style={imgInfo} />
@@ -701,14 +713,13 @@ export default class FormCreate extends Component {
             </View>
           <View style={{flexDirection:'row',alignItems:'center'}}>
           <Image source={selectedIC} style={[imgShare,this.state.img_menu.length>0 ? show : hide]}/>
-          <TouchableOpacity style={imgCamera}
-          onPress={()=>{this.setState({showImgMenu:true})}}>
+          <View style={imgCamera}>
           <Image source={cameraIC} style={imgShare}/>
-          </TouchableOpacity>
           </View>
-        </View>
+          </View>
+        </TouchableOpacity>
 
-        <View style={listCreate}>
+        <TouchableOpacity style={listCreate} onPress={()=>{this.setState({showVideo:true})}}>
             <View style={{flexDirection:'row'}}>
               <View style={widthLblCre}>
                 <Image source={videoIC} style={imgInfo} />
@@ -719,28 +730,31 @@ export default class FormCreate extends Component {
             </View>
           <View style={{flexDirection:'row',alignItems:'center'}}>
             <Image source={selectedIC} style={[imgShare,this.state.img_video.length>0 ? show : hide]}/>
-            <TouchableOpacity style={imgCamera}
-            onPress={()=>{this.setState({showVideo:true})}}>
+            <View style={imgCamera} >
             <Image source={movieIC} style={imgShare}/>
-            </TouchableOpacity>
+            </View>
           </View>
-        </View>
+
+        </TouchableOpacity>
 
 
           <AddImgSpace
           submitImage={(img_space,title_space,des_space)=>{this.setState({img_space,title_space,des_space})}}
           visible={showImgSpace}
+          img_space={this.state.img_space}
           closeModal={()=>this.setState({showImgSpace:false})} />
 
           <AddImgMenu
           submitImage={(img_menu,title_menu,des_menu)=>{this.setState({img_menu,title_menu,des_menu})}}
           visible={showImgMenu}
+          img_menu={this.state.img_menu}
           closeModal={()=>this.setState({showImgMenu:false})} />
 
           <AddVideo
           lang={this.state.lang}
           submitImage={(img_video)=>this.setState({img_video})}
           visible={showVideo}
+          listVideo={this.state.img_video}
           closeModal={()=>this.setState({showVideo:false})} />
 
 
@@ -762,6 +776,16 @@ export default class FormCreate extends Component {
           </View>
         </View>*/}
         <View style={{height:15}}></View>
+        {this.state.editLoc &&
+          <View>
+          <View style={{width:width-(width/4),alignSelf:'center',marginBottom:5}}>
+            <TouchableOpacity onPress={()=>{this.setState({showUpdateMore:true})}} style={btnPress}>
+            <Text style={colorNext}> {this.state.lang.update_general_info} </Text>
+            </TouchableOpacity>
+          </View>
+          <View style={{height:15}}></View>
+          </View>
+        }
       </View>
 
       </ScrollView>}
@@ -802,6 +826,8 @@ export default class FormCreate extends Component {
         content_id={idContent}
         lang={this.state.lang}
         visible={this.state.showUpdateMore}
+        editLoc={this.state.editLoc}
+        updateModal={()=>{this.setState({showUpdateMore:false});}}
         closeModal={()=>{this.setState({showUpdateMore:false});goBack();}}
         />
       }

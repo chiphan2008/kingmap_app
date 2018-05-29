@@ -3,7 +3,8 @@
 import React, { Component } from 'react';
 import {
   View,Text,TouchableOpacity,Image,
-  Dimensions,ScrollView,Alert,DeviceEventEmitter,
+  Dimensions,Alert,DeviceEventEmitter,
+  FlatList
 } from 'react-native';
 
 import getApi from '../../api/getApi';
@@ -38,6 +39,16 @@ export default class ListCheckin extends Component {
       }
     });
   }
+
+  renderFooter = () => {
+    if (!this.state.isLoad) return null;
+    return (
+    this.state.isLoad &&
+    <View style={{alignItems:'center'}}>
+      <ActivityIndicator color="#d0021b" size="large" />
+    </View>)
+  }
+  
   getData(id){
     const url = `${global.url}${'user/list-checkin/'}${id}`;
     getApi(url)
@@ -74,7 +85,7 @@ export default class ListCheckin extends Component {
     } = styles;
     return (
 
-        <ScrollView style={container}>
+        <View style={container}>
           <View style={headCatStyle}>
               <View style={headContent}>
                   <TouchableOpacity onPress={()=>{
@@ -87,41 +98,40 @@ export default class ListCheckin extends Component {
                   <View></View>
               </View>
           </View>
-          {this.state.listData.length > 0 ?
-            this.state.listData.map((e)=>(
-              <View key={e.id}>
-                <View style={{backgroundColor:'#fff'}}>
-                  <TouchableOpacity onPress={()=>{
-                      //this.props.closeModal()
-                      navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang:lang.lang})
-                  }}>
-                    <TouchableOpacity style={{position:'absolute',top:5,right:5,zIndex:99}}
-                    onPress={()=>this.confirmDel(e.id)}>
-                    <Image source={closeIC} style={{width:20,height:20}} />
-                    </TouchableOpacity>
-                    <Image source={{uri:`${global.url_media}${e.avatar}`}} style={{width:width,minHeight:width/2,marginBottom:10}} />
-                    </TouchableOpacity>
-                    <View style={listCreate}>
-                      <View style={{width:width-80}}>
-                          <TouchableOpacity onPress={()=>{
-                              //this.props.closeModal()
-                              navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang:lang.lang})
-                          }}>
-                            <Text numberOfLines={1} style={txtTitleOverCat}>{e.name}</Text>
-                          </TouchableOpacity>
-                          <Text numberOfLines={1} style={{color:'#6587A8',lineHeight:24}}>{`${e.address}, ${e._district.name}, ${e._city.name}, ${e._country.name}`}</Text>
-                      </View>
-                      <View></View>
-                    </View>
-                </View>
-                <View style={{height:14}}></View>
-              </View>
-            ))
-            :
-            <View></View>
-          }
+          <FlatList
+           extraData={this.state}
+           data={this.state.listData}
+           keyExtractor={(item,index) => index.toString()}
+           renderItem={({item,index}) =>(
+             <View>
+               <View style={{backgroundColor:'#fff'}}>
+                 <TouchableOpacity onPress={()=>{
+                     navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc,lang:lang.lang})
+                 }}>
+                   <TouchableOpacity style={{position:'absolute',top:5,right:5,zIndex:99}}
+                   onPress={()=>this.confirmDel(item.id)}>
+                   <Image source={closeIC} style={{width:20,height:20}} />
+                   </TouchableOpacity>
+                   <Image source={{uri:`${global.url_media}${item.avatar}`}} style={{width:width,minHeight:width/2,marginBottom:10}} />
+                   </TouchableOpacity>
+                   <View style={listCreate}>
+                     <View style={{width:width-80}}>
+                         <TouchableOpacity onPress={()=>{
+                             navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc,lang:lang.lang})
+                         }}>
+                           <Text numberOfLines={1} style={txtTitleOverCat}>{item.name}</Text>
+                         </TouchableOpacity>
+                         <Text numberOfLines={1} style={{color:'#6587A8',lineHeight:24}}>{`${item.address}, ${item._district.name}, ${item._city.name}, ${item._country.name}`}</Text>
+                     </View>
+                     <View></View>
+                   </View>
+               </View>
+               <View style={{height:14}}></View>
+             </View>
+           )} />
 
-      </ScrollView>
+
+      </View>
 
     );
   }

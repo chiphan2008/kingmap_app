@@ -21,9 +21,23 @@ export default class AddVideo extends Component {
       listVideo:[],
       txtVideoLink:'',
       txtErr:'',
+      update:true,
     }
   }
-
+  componentWillUpdate(){
+    const {listVideo} = this.props;
+    if(listVideo.length>0){
+      var imgVideo = [];
+      listVideo.forEach((e)=>{
+        imgVideo = imgVideo.concat(getThumbVideo(e));
+      })
+      this.state.listVideo = listVideo;
+      this.state.imgVideo = imgVideo;
+      this.state.update && this.setState(this.state,()=>{
+        this.setState({update:false});
+      })
+    }
+  }
   uploadVideo(link){
     const {lang} = this.props;
     if(link!==''){

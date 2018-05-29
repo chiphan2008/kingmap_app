@@ -106,15 +106,16 @@ export function checkPassword(pass,lang){
 }
 export function checkKeyword(str,char=null){
   if(str!==undefined && str !==null){
-    str.toLowerCase();
+    //str.toLowerCase();
     if(char===null){
       char=',';
     }
     var arr = str.split(char);
     if(arr[arr.length-1]==='') arr.splice(-1);
     for(i=0;i<arr.length;i++){
-        arr[i] = arr[i].replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+        arr[i] = arr[i].replace(/^\s\s*/, '').replace(/\s\s*$/, '').toLowerCase();
     }
+    //console.log('arr',arr);
     if(arr.length>1){
       //console.log('arr',arr);
       var lastElement = arr[arr.length-1].trim();

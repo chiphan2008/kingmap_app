@@ -103,6 +103,7 @@ module.exports = {
   enter_text:'You must enter text.',
   err:'Error!!',
   update_success:'Update success',
+  update_general_info:'Update general information',
   confirm_like_del:'Confirm delete of this favorite place',
   confirm_collection_del:'Confirm delete of this collection',
   confirm_loc_col_del:'Confirm delete this content from collection',

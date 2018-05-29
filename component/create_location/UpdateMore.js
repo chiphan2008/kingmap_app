@@ -118,6 +118,15 @@ export default class UpdateMore extends Component {
     }
 
   }
+
+  // componentWillUpdate(){
+  //   this.state.update && this.setState({update:false},()=>{
+  //     this.updateListLoc();
+  //     this.getList('product');
+  //
+  //   })
+  // }
+
   getList(route){
     Keyboard.dismiss();
     const {content_id} = this.props;
@@ -168,14 +177,6 @@ export default class UpdateMore extends Component {
     });
   }
 
-  uploadMenu(){
-    ImagePicker.openPicker({
-      multiple: true
-    }).then(imgKM => {
-      //console.log(imgKM);
-      this.setState({imgKM})
-    }).catch(e=>console.log('e'));
-  }
   getData(){
     const {content_id} = this.props;
     const url = `${global.url}${'branch/list-content/'}${content_id}`;
@@ -233,7 +234,7 @@ export default class UpdateMore extends Component {
       btnPress,colorNext,popoverLoc,centerVer,overLayout,pad10,colorlbl,
       imgShare
     } = styles;
-    const {lang,visible,user_profile}= this.props;
+    const {lang,visible,user_profile,editLoc}= this.props;
     var {
       nameProduct,desProduct,priceProduct,imgProduct,listLoc,showLoc,arrLoc,listLocChoose,listProduct,listKM,
       nameKM,desKM,priceKM,imgKM,disable,
@@ -249,14 +250,26 @@ export default class UpdateMore extends Component {
 
           <View style={headCatStyle}>
               <View style={headContent}>
+
+                  {editLoc ?
                   <TouchableOpacity onPress={()=>{
-                    //this.props.submitImage(this.state.imgProduct,this.state.imgKM,this.state.listVideo);
-                    this.props.closeModal();
+                    this.props.updateModal();
                   }}>
                   <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                   </TouchableOpacity>
-                    <Text style={titleCreate}> {lang.update} </Text>
-                  <View></View>
+                  :
+                  <View><Text>   </Text></View>
+                  }
+                  <Text style={titleCreate}> {lang.update} </Text>
+
+                  {editLoc ?
+                    <View></View>
+                  :
+                  <TouchableOpacity onPress={()=>{this.props.closeModal();}}>
+                    <Text style={titleCreate}>{lang.done}</Text>
+                  </TouchableOpacity>
+                  }
+
               </View>
 
           </View>
@@ -426,14 +439,15 @@ export default class UpdateMore extends Component {
           </View>
 
           {listLocChoose.length>0 &&
-            <View style={{marginTop:15,paddingTop:15,paddingBottom:15,width,backgroundColor:'#fff'}}>
+            <View style={{width,backgroundColor:'#fff',marginTop:15}}>
             <FlatList
+              style={{marginTop:15,paddingBottom:15,paddingLeft:15,width:width-15}}
              extraData={this.state}
              data={listLocChoose}
              keyExtractor={(item,index) => index.toString()}
              renderItem={({item,index}) =>(
-               <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',paddingBottom:15,paddingLeft:15,paddingRight:15}} >
-                   <View style={{flexDirection:'row',maxWidth:width-110}}>
+               <View style={{flexDirection:'row',justifyContent:'space-between'}} >
+                   <View style={{minWidth:width-50,flexDirection:'row'}}>
                        <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:40,marginRight:10}} />
                        <View>
                          <Text numberOfLines={1} style={colorlbl}>{item.name}</Text>

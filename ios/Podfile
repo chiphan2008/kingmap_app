@@ -1,4 +1,5 @@
 target 'kingmap_app' do
+  platform :ios, '9.0'
   rn_path = '../node_modules/react-native'
   rn_maps_path = '../node_modules/react-native-maps'
 
@@ -14,16 +15,15 @@ target 'kingmap_app' do
     'RCTSettings',
     'RCTText',
     'RCTVibration',
-    'RCTWebSocket',
-    'BatchedBridge'
+    'RCTWebSocket'
   ]
-  
+
   pod 'Google/SignIn'
   pod 'GoogleMaps'
   pod 'react-native-maps', path: rn_maps_path
   pod 'RSKImageCropper'
   pod 'QBImagePickerController'
-
+  pod 'Firebase/Core'
 
 
   pod 'RNSVG', :path => '../node_modules/react-native-svg'

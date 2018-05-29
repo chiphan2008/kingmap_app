@@ -21,6 +21,7 @@ export default class AddImgMenu extends Component {
       des_menu:{},
       title_menu:{},
       txtErr:'',
+      update:true,
     }
   }
   uploadSpace(){
@@ -31,13 +32,30 @@ export default class AddImgMenu extends Component {
       this.setState({imgMenu})
     }).catch(e=>console.log('e'));
   }
-
+  componentWillUpdate(){
+    const {img_menu} = this.props;
+    if(img_menu.length>0){
+      let title_menu={};
+      let des_menu={};
+      img_menu.forEach((e,index)=>{
+        title_menu = Object.assign(title_menu,{[`${'title_'}${index}`]:e.title});
+        des_menu = Object.assign(des_menu,{[`${'des_'}${index}`]:e.description});
+      })
+      this.state.title_menu=title_menu;
+      this.state.des_menu=des_menu;
+      this.state.imgMenu=img_menu;
+      this.state.update && this.setState(this.state,()=>{
+        this.props.submitImage(this.state.imgMenu,Object.entries(this.state.title_menu),Object.entries(this.state.des_menu));
+        this.setState({update:false});
+      })
+    }
+  }
   render() {
     const {
       container,headCatStyle,headContent,titleCreate,
       titleTab,titleActive,show,hide,colorWhite,titleErr,
     } = styles;
-    const {imgMenu,des_menu,title_menu} = this.state;
+    const {imgMenu,des_menu,title_menu,update} = this.state;
     return (
 
       <Modal onRequestClose={() => null} transparent
@@ -71,7 +89,7 @@ export default class AddImgMenu extends Component {
             <View>
             {this.state.imgMenu.map((e,index)=>(
               <View key={index}>
-              <Image style={{width,height:300,resizeMode: 'cover'}} source={{isStatic:true,uri:`${e.path}`}} />
+              <Image style={{width,height:300,resizeMode: 'cover'}} source={{isStatic:true,uri:update?`${e.path}`:`${e.url}`}} />
               <TouchableOpacity style={{position:'absolute',right:5,top:5}}
               onPress={()=>{
                 this.state.imgMenu.splice(index, 1);

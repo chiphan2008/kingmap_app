@@ -3,7 +3,8 @@
 import React, { Component } from 'react';
 import {
   View,Text,TouchableOpacity,Image,
-  Dimensions,ScrollView,Alert,DeviceEventEmitter,
+  Dimensions,Alert,DeviceEventEmitter,
+  FlatList
 } from 'react-native';
 
 import getApi from '../../api/getApi';
@@ -25,32 +26,48 @@ export default class LikeLocation extends Component {
       listData:[],
       isLogin:false,
       user_profile:{},
+      loading:true,
     }
     checkLogin().then(e=>{
       //console.log('checkLogin',e);
       if(e.id===undefined){
         this.setState({isLogin:false})
       }else {
-        this.setState({user_profile:e,isLogin:true});
-        this.getData(e.id);
+        this.setState({user_profile:e,isLogin:true},()=>{
+          this.getData();
+        });
+
       }
     });
   }
 
-  getData(id){
-    const url = `${global.url}${'user/list-like/'}${id}`;
-    getApi(url)
-    .then(arrData => {
-      //console.log('arrData',arrData);
-        this.setState({ listData: arrData.data });
+  renderFooter = () => {
+    if (!this.state.isLoad) return null;
+    return (
+    this.state.isLoad &&
+    <View style={{alignItems:'center'}}>
+      <ActivityIndicator color="#d0021b" size="large" />
+    </View>)
+  }
+
+  getData(page=null){
+    this.setState({loading:false});
+    let url = `${global.url}${'user/list-like/'}${this.state.user_profile.id}`;
+    if(page!==null) url +=`${'?skip='}${page}${'&limit=20'}`
+    //console.log(url);
+    getApi(url).then(arrData => {
+        this.state.listData=page!==null?this.state.listData.concat(arrData.data):arrData.data;
+        this.state.loading=arrData.data.length<20?false:true;
+        this.setState(this.state);
     })
     .catch(err => console.log(err));
   }
+
   deleteLike(idContent){
     const url = `${global.url}${'user/delete-like/'}${idContent}`;
-    console.log('url',url);
+    //console.log('url',url);
     getApi(url).then(e => console.log(e)).catch(err => console.log(err));
-    this.getData(this.state.user_profile.id);
+    this.getData();
   }
   confirmDel(id){
     const {lang} = this.props.navigation.state.params;
@@ -71,7 +88,7 @@ export default class LikeLocation extends Component {
     } = styles;
     return (
 
-        <ScrollView style={container}>
+        <View style={container}>
           <View style={headCatStyle}>
               <View style={headContent}>
                   <TouchableOpacity onPress={()=>{
@@ -84,42 +101,40 @@ export default class LikeLocation extends Component {
                   <View></View>
               </View>
           </View>
-          {this.state.listData.length > 0 ?
-            this.state.listData.map((e)=>(
-              <View key={e.id}>
-                <View style={{backgroundColor:'#fff'}}>
-                  <TouchableOpacity onPress={()=>{
-                    //this.props.closeModal()
-                    navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang:lang.lang})
-                  }}>
-                    <Image source={{uri:`${global.url_media}${e.avatar}`}} style={{width:width,minHeight:width/2,marginBottom:10}} />
-                  </TouchableOpacity>
-                  <TouchableOpacity style={{position:'absolute',top:7,right:7}}
-                    onPress={()=>this.confirmDel(e.id)}>
-                    <Image source={closeIC} style={{width:20,height:20}} />
-                    </TouchableOpacity>
 
-                    <View style={listCreate}>
-                      <View style={{width:width-80}}>
-                        <TouchableOpacity onPress={()=>{
-                          //this.props.closeModal()
-                          navigate('DetailScr',{idContent:e.id,lat:e.lat,lng:e.lng,curLoc,lang:lang.lang})
-                        }}>
-                          <Text numberOfLines={1} style={txtTitleOverCat}>{e.name}</Text>
-                        </TouchableOpacity>
-                          <Text numberOfLines={1} style={{color:'#6587A8',lineHeight:24}}>{`${e.address}, ${e._district.name}, ${e._city.name}, ${e._country.name}`}</Text>
-                      </View>
+          <FlatList
+           extraData={this.state}
+           data={this.state.listData}
+           keyExtractor={(item,index) => index.toString()}
+           renderItem={({item,index}) =>(
+             <View>
+               <View style={{backgroundColor:'#fff'}}>
+                 <TouchableOpacity onPress={()=>{
+                   navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc,lang:lang.lang})
+                 }}>
+                   <Image source={{uri:`${global.url_media}${item.avatar}`}} style={{width:width,minHeight:width/2,marginBottom:10}} />
+                 </TouchableOpacity>
+                 <TouchableOpacity style={{position:'absolute',top:7,right:7}}
+                   onPress={()=>this.confirmDel(item.id)}>
+                   <Image source={closeIC} style={{width:20,height:20}} />
+                   </TouchableOpacity>
 
-                    </View>
-                </View>
-                <View style={{height:14}}></View>
-              </View>
-            ))
-            :
-            <View></View>
-          }
+                   <View style={listCreate}>
+                     <View style={{width:width-80}}>
+                       <TouchableOpacity onPress={()=>{
+                         navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc,lang:lang.lang})
+                       }}>
+                         <Text numberOfLines={1} style={txtTitleOverCat}>{item.name}</Text>
+                       </TouchableOpacity>
+                         <Text numberOfLines={1} style={{color:'#6587A8',lineHeight:24}}>{`${item.address}, ${item._district.name}, ${item._city.name}, ${item._country.name}`}</Text>
+                     </View>
 
-      </ScrollView>
+                   </View>
+               </View>
+               <View style={{height:14}}></View>
+             </View>
+           )} />
+      </View>
 
     );
   }

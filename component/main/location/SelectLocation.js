@@ -48,10 +48,10 @@ export default class SelectLocation extends Component {
   }
 
   getDistrict(id_city){
-
+    console.log(`${global.url}${'districts/'}${id_city}`);
     getApi(`${global.url}${'districts/'}${id_city}`)
     .then(arrDistrict => {
-      //console.log('arrCity',arrCity);
+      //console.log('arrDistrict',arrDistrict);
         this.setState({ listDistrict: arrDistrict.data });
     })
     .catch(err => console.log(err));
@@ -61,9 +61,11 @@ export default class SelectLocation extends Component {
   componentWillMount(){
     checkLocation().then((e)=>{
       const {id_city} = this.props || '';
-      //console.log();
-      if(id_city!=='' || id_city!==undefined) this.getDistrict(id_city);
+      //console.log('id_city',id_city);
+      //console.log('id_city',e.idCity);
+      if(id_city!=='' && id_city!==undefined) this.getDistrict(id_city);
       else this.getDistrict(e.idCity);
+
       this.setState({
         showCheckCountry:e.idCountry,
         showCheckCity: e.idCity,
@@ -92,7 +94,7 @@ export default class SelectLocation extends Component {
                 ListEmptyComponent={<Text>Loading ...</Text>}
                 refreshing
                 data={this.state.listDistrict}
-                keyExtractor={item => item.id}
+                keyExtractor={item => item.id.toString()}
                 renderItem={({item}) => (
 
                     <View style={styles.listItem}>
@@ -144,7 +146,7 @@ export default class SelectLocation extends Component {
            <FlatList
                 ListEmptyComponent={<Text>Loading ...</Text>}
                 data={this.state.listCountry}
-                keyExtractor={item => item.id}
+                keyExtractor={item => item.id.toString()}
                 renderItem={({item}) => (
                   <View  style={styles.listItem}>
                   <TouchableOpacity
@@ -176,7 +178,7 @@ export default class SelectLocation extends Component {
            <FlatList
                 ListEmptyComponent={<Text>Loading ...</Text>}
                 data={this.state.listCity}
-                keyExtractor={item => item.id}
+                keyExtractor={item => item.id.toString()}
                 renderItem={({item}) => (
                   <View  style={styles.listItem}>
                   <TouchableOpacity

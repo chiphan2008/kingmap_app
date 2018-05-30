@@ -26,6 +26,8 @@ export default class ListCheckin extends Component {
       listData:[],
       isLogin:false,
       user_profile:{},
+      loading:true,
+      page:0,
     }
     this.refresh();
   }
@@ -34,8 +36,9 @@ export default class ListCheckin extends Component {
       if(e.id===undefined){
         this.setState({isLogin:false})
       }else {
-        this.setState({user_profile:e,isLogin:true});
-        this.getData(e.id);
+        this.setState({user_profile:e,isLogin:true},()=>{
+          this.getData();
+        });
       }
     });
   }
@@ -48,13 +51,17 @@ export default class ListCheckin extends Component {
       <ActivityIndicator color="#d0021b" size="large" />
     </View>)
   }
-  
-  getData(id){
-    const url = `${global.url}${'user/list-checkin/'}${id}`;
+
+  getData(page=null){
+    this.setState({loading:false});
+    if(page===null) page=0;
+    let url = `${global.url}${'user/list-checkin/'}${this.state.user_profile.id}${'?skip='}${page}${'&limit=20'}`;
+    console.log(url);
     getApi(url)
     .then(arrData => {
-      //console.log('arrData',arrData);
-        this.setState({ listData: arrData.data });
+      this.state.listData = page!==null?this.state.listData.concat(arrData.data):arrData.data;
+      this.state.loading = arrData.data.length<20?false:true;
+      this.setState(this.state);
     })
     .catch(err => console.log(err));
   }
@@ -83,6 +90,7 @@ export default class ListCheckin extends Component {
       titleTab,titleActive,listCreate,widthLblCre,show,hide,
       imgInfo,wrapInputCreImg,marTop,colorTitle,txt,txtTitleOverCat
     } = styles;
+    const {loading,listData} = this.state;
     return (
 
         <View style={container}>
@@ -100,8 +108,17 @@ export default class ListCheckin extends Component {
           </View>
           <FlatList
            extraData={this.state}
-           data={this.state.listData}
+           data={listData}
            keyExtractor={(item,index) => index.toString()}
+           onEndReachedThreshold={0.5}
+           onEndReached={() => {
+             if(loading){
+               this.state.page +=20;
+               this.setState(this.state,()=>{
+                 this.getData(this.state.page);
+               });
+             }
+           }}
            renderItem={({item,index}) =>(
              <View>
                <View style={{backgroundColor:'#fff'}}>

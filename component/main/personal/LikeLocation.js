@@ -27,6 +27,7 @@ export default class LikeLocation extends Component {
       isLogin:false,
       user_profile:{},
       loading:true,
+      page:0,
     }
     checkLogin().then(e=>{
       //console.log('checkLogin',e);
@@ -43,7 +44,7 @@ export default class LikeLocation extends Component {
 
   renderFooter = () => {
     if (!this.state.isLoad) return null;
-    return (
+    return(
     this.state.isLoad &&
     <View style={{alignItems:'center'}}>
       <ActivityIndicator color="#d0021b" size="large" />
@@ -53,14 +54,13 @@ export default class LikeLocation extends Component {
   getData(page=null){
     this.setState({loading:false});
     let url = `${global.url}${'user/list-like/'}${this.state.user_profile.id}`;
-    if(page!==null) url +=`${'?skip='}${page}${'&limit=20'}`
+    if(page!==null) url +=`${'?skip='}${page}${'&limit=20'}`;
     //console.log(url);
     getApi(url).then(arrData => {
         this.state.listData=page!==null?this.state.listData.concat(arrData.data):arrData.data;
         this.state.loading=arrData.data.length<20?false:true;
         this.setState(this.state);
-    })
-    .catch(err => console.log(err));
+    }).catch(err => console.log(err));
   }
 
   deleteLike(idContent){
@@ -80,6 +80,7 @@ export default class LikeLocation extends Component {
   render() {
     const { lang,curLoc } = this.props.navigation.state.params;
     const { goBack,navigate } = this.props.navigation;
+    const {loading,page,listData} = this.state;
     //console.log('lang',lang);
     const {
       container,headCatStyle,headContent,titleCreate,
@@ -104,8 +105,17 @@ export default class LikeLocation extends Component {
 
           <FlatList
            extraData={this.state}
-           data={this.state.listData}
+           data={listData}
            keyExtractor={(item,index) => index.toString()}
+           onEndReachedThreshold={0.5}
+           onEndReached={() => {
+             if(loading){
+               this.state.page +=20;
+               this.setState(this.state,()=>{
+                 this.getData(this.state.page);
+               });
+             }
+           }}
            renderItem={({item,index}) =>(
              <View>
                <View style={{backgroundColor:'#fff'}}>

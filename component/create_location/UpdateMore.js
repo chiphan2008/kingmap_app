@@ -139,7 +139,7 @@ export default class UpdateMore extends Component {
   delProduct(route,id){
     //console.log(`${global.url}${'product/list/'}${'83597'}`);
     const {lang} = this.state;
-    Alert.alert(lang.notify,lang.confirm_pro_del,[
+    Alert.alert(lang.notify,route==='product'?lang.confirm_pro_del:lang.confirm_discount_del,[
       {text: lang.cancel, style: 'cancel'},
       {text: lang.confirm, onPress: () => {
         getApi(`${global.url}${route}${'/delete/'}${id}`).then((e)=>{
@@ -439,17 +439,17 @@ export default class UpdateMore extends Component {
           </View>
 
           {listLocChoose.length>0 &&
-            <View style={{width,backgroundColor:'#fff',marginTop:15}}>
+            <View style={{backgroundColor:'#fff',marginTop:15,marginBottom:10,paddingTop:15}}>
             <FlatList
-              style={{marginTop:15,paddingBottom:15,paddingLeft:15,width:width-15}}
              extraData={this.state}
              data={listLocChoose}
              keyExtractor={(item,index) => index.toString()}
              renderItem={({item,index}) =>(
-               <View style={{flexDirection:'row',justifyContent:'space-between'}} >
-                   <View style={{minWidth:width-50,flexDirection:'row'}}>
+               <TouchableWithoutFeedback>
+               <View style={{flexDirection:'row',justifyContent:'center'}}>
+                   <View style={{flexDirection:'row',paddingBottom:15}}>
                        <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:40,marginRight:10}} />
-                       <View>
+                       <View style={{width:width-110}}>
                          <Text numberOfLines={1} style={colorlbl}>{item.name}</Text>
                          <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.address}`}</Text>
                        </View>
@@ -457,9 +457,11 @@ export default class UpdateMore extends Component {
                    <TouchableOpacity onPress={()=>{this.delBranch(item.id)}}>
                      <Image source={removeIC} style={imgShare} />
                   </TouchableOpacity>
-               </View>
+                  </View>
+                </TouchableWithoutFeedback>
              )} />
-           </View>}
+            </View>
+           }
 
           </View>}
 

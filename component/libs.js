@@ -113,7 +113,7 @@ export function checkKeyword(str,char=null){
     var arr = str.split(char);
     if(arr[arr.length-1]==='') arr.splice(-1);
     for(i=0;i<arr.length;i++){
-        arr[i] = arr[i].replace(/^\s\s*/, '').replace(/\s\s*$/, '').toLowerCase();
+        arr[i] = arr[i].replace(/^\s\s*/, '').replace(/\s\s*$/, '').toLowerCase().trim();
     }
     //console.log('arr',arr);
     if(arr.length>1){

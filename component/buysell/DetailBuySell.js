@@ -55,7 +55,7 @@ export default class DetailBuySell extends Component {
     getApi(url)
     .then(arrData => {
       console.log('arrData',arrData);
-        this.setState({ listData: arrData.data });
+        this.setState({ listData: arrData.data[0] });
     })
     .catch(err => console.log(err));
   }

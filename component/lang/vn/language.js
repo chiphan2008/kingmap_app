@@ -110,6 +110,7 @@ module.exports = {
   confirm_loc_del:'Xác nhận xoá địa điểm này',
   confirm_branch_del:'Xác nhận xoá chi nhánh này',
   confirm_pro_del:'Xác nhận xoá sản phẩm, dịch vụ này',
+  confirm_discount_del:'Xác nhận xoá khuyến mãi này',
   title_add_pro:'+ Thêm sản phẩm dịch vụ',
   title_edit_pro:'Sửa sản phẩm dịch vụ',
   title_add_km:'+ Thêm khuyến mãi',

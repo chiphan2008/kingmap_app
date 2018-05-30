@@ -37,26 +37,32 @@ export default class Collection extends Component {
       user_profile:{},
       name_coll:'',
       isFocus:false,
+      loading:true,
+      page:0,
     }
     checkLogin().then(e=>{
       //console.log('checkLogin',e);
       if(e.id===undefined){
         this.setState({isLogin:false})
       }else {
-        this.setState({user_profile:e,isLogin:true});
-        this.getData(e.id);
+        this.setState({user_profile:e,isLogin:true},()=>{
+          //console.log('checkLogin');
+          this.getData();
+        });
       }
     });
   }
 
-  getData(id){
-    const url = `${global.url}${'collection/get/user/'}${id}`;
-    getApi(url)
-    .then(arrData => {
-      //console.log('arrData',arrData);
-        this.setState({ listData: arrData.data });
-    })
-    .catch(err => console.log(err));
+  getData(page=null){
+    this.setState({loading:false});
+    if(page===null) page=0;
+    const url = `${global.url}${'collection/get/user/'}${this.state.user_profile.id}${'?skip='}${page}${'&limit=20'}`;
+    //console.log(url);
+    getApi(url).then(arrData => {
+      this.state.listData = page!==null?this.state.listData.concat(arrData.data):arrData.data;
+      this.state.loading = arrData.data.length<20?false:true;
+      this.setState(this.state);
+    }).catch(err => console.log(err));
   }
   delCollection(idCollection){
     const arr = new FormData();
@@ -65,25 +71,23 @@ export default class Collection extends Component {
     const url = `${global.url}${'collection/delete'}`;
 
     postApi(url,arr).then(e => {
-      if(e.code===200){
-        this.getData(this.state.user_profile.id);
-      }
+      if(e.code===200) this.getData();
     }).catch(err => console.log(err));
 
   }
 
   editCollection(idCollection){
-    console.log();
+    //console.log();
     const arr = new FormData();
     arr.append('collection_id',idCollection);
     arr.append('name',this.state.name_coll);
     arr.append('user_id',this.state.user_profile.id);
     const url = `${global.url}${'collection/edit'}`;
-    console.log(arr);
+    //console.log(arr);
     postApi(url,arr).then(e => {
       if(e.code===200){
         this.setState({name_coll:'',},()=>{
-          this.getData(this.state.user_profile.id);
+          this.getData();
         })
       }
     }).catch(err => console.log(err));
@@ -97,9 +101,7 @@ export default class Collection extends Component {
     const url = `${global.url}${'collection/remove'}`;
 
     postApi(url,arr).then(e => {
-      if(e.code===200){
-        this.getData(this.state.user_profile.id);
-      }
+      if(e.code===200) this.getData();
     }).catch(err => console.log(err));
 
   }
@@ -134,8 +136,8 @@ export default class Collection extends Component {
       closeCollection,
     } = styles;
     return (
-        <ScrollView style={container}>
-        <View style={{paddingBottom:80}}>
+
+        <View style={container}>
           <View style={headCatStyle}>
               <View style={headContent}>
                   <TouchableOpacity onPress={()=>{
@@ -148,99 +150,99 @@ export default class Collection extends Component {
                   <View></View>
               </View>
           </View>
-          {this.state.listData.length > 0 ?
-            this.state.listData.map((e)=>(
-              <View key={e.id}>
-                <View style={{backgroundColor:'#fff'}}>
-
-                    <View style={listCreate}>
-                      <View style={{width:width-105,flexDirection:'row',alignItems:'center'}}>
-                           <View style={isFocus && showInput[e.id] ? show : hide}>
-                             <TextInput underlineColorAndroid='transparent' autoFocus={isFocus}
-                               onSubmitEditing={(event) => {}}
-                               style={{padding:5,fontSize:18,maxWidth:width-(width/3)}} value={name_coll}
-                               onChangeText={(name_coll) => this.setState({name_coll})}
-                              />
-                           </View>
-                           <View style={showInput[e.id] ? hide : show}>
-                           <Text numberOfLines={1} style={txtTitleOverCat}>{e.name} ({e._contents.length})</Text>
-                           </View>
-                          <TouchableOpacity style={{padding:5}}
-                          onPress={()=>{
-                            if(isFocus){
-                              this.editCollection(e.id);
-                              this.setState({isFocus:false,showInput:Object.assign(showInput,{[e.id]:!e.id})});
-
-                            }else {
-                              this.setState({
-                                isFocus:true,name_coll:e.name,
-                                showInput:Object.assign(showInput,{[e.id]:e.id})})
-                            }
-                          }}>
-                            <Image source={isFocus && showInput[e.id] ? saveBlueIC : editBlueIC} style={{width:15,height:15}} />
-                          </TouchableOpacity>
-                      </View>
-                      <TouchableOpacity onPress={()=>{
-                        if(showPopup[e.id]===e.id){
-                        this.setState({showPopup: {[e.id]:!e.id} })
-                        }else {
-                        this.setState({showPopup: {[e.id]:e.id} })
-                        }
-                      }}>
-                      <Image source={moreIC} style={{width:20,height:20}} />
-                      </TouchableOpacity>
-                      <View style={[popup ,showPopup[e.id] ? show : hide]}>
-                        <TouchableOpacity onPress={()=>{this.confirmDel(e.id,null,'delete');
-                        this.setState({showPopup: {[e.id]:!e.id} }) }}>
-                          <Image source={removeIC} style={{width:20,height:20}} />
-                        </TouchableOpacity>
-
-                        <TouchableOpacity onPress={()=>this.setState({showEdit:!showEdit,})}>
-                          <Image source={showPopup[e.id] && showEdit===false ? editIC : doneIC} style={{width:20,height:20}} />
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-
-
-
-                    <FlatList
-                       horizontal
-                       showsHorizontalScrollIndicator={false}
-                       extraData={this.state}
-                       keyExtractor={item => item.id.toString()}
-                       data={e._contents}
-                       renderItem={({item}) => (
-                         <View style={{marginRight:0,padding:10,width:(width)/2}}>
-                           <TouchableOpacity onPress={()=>{
-                               navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc,lang:lang.lang})
+          <FlatList
+             extraData={this.state}
+             keyExtractor={item => item.id.toString()}
+             onEndReachedThreshold={0.5}
+             onEndReached={() => {
+               if(this.state.loading){
+                 this.state.page +=20;
+                 this.setState(this.state,()=>{
+                   //console.log('onEndReached');
+                   this.getData(this.state.page);
+                 });
+               }
+             }}
+             data={this.state.listData}
+             renderItem={({item}) => (
+               <View>
+                 <View style={{backgroundColor:'#fff'}}>
+                     <View style={listCreate}>
+                       <View style={{width:width-105,flexDirection:'row',alignItems:'center'}}>
+                            <View style={isFocus && showInput[item.id] ? show : hide}>
+                              <TextInput underlineColorAndroid='transparent' autoFocus={isFocus}
+                                onSubmitEditing={(event) => {}}
+                                style={{padding:5,fontSize:18,maxWidth:width-(width/3)}} value={name_coll}
+                                onChangeText={(name_coll) => this.setState({name_coll})}
+                               />
+                            </View>
+                            <View style={showInput[item.id] ? hide : show}>
+                            <Text numberOfLines={1} style={txtTitleOverCat}>{item.name} ({item._contents.length})</Text>
+                            </View>
+                           <TouchableOpacity style={{padding:5}} onPress={()=>{
+                             if(isFocus){
+                               this.editCollection(item.id);
+                               this.setState({isFocus:false,showInput:Object.assign(showInput,{[item.id]:!item.id})});
+                             }else {
+                               this.setState({
+                                 isFocus:true,name_coll:item.name,
+                                 showInput:Object.assign(showInput,{[item.id]:item.id})})
+                             }
                            }}>
-                           <Image source={{uri:`${global.url_media}${item.avatar}`}} style={{width:width/2,minHeight:width/3,marginBottom:10}} />
+                             <Image source={isFocus && showInput[item.id] ? saveBlueIC : editBlueIC} style={{width:15,height:15}} />
                            </TouchableOpacity>
-                           <TouchableOpacity onPress={()=>{
-                               navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc,lang:lang.lang})
-                           }}>
-                           <Text style={{color:'#2F353F',fontSize:16}} numberOfLines={2}>{item.name}</Text>
-                           </TouchableOpacity>
-                           {showPopup[e.id] && showEdit && <TouchableOpacity onPress={()=>this.confirmDel(e.id,item.id,'remove')}
-                           style={[closeCollection]}>
-                           <Image source={closeIC} style={{width:18,height:18}} />
-                           </TouchableOpacity>}
-                         </View>
-                       )}
-                    />
+                       </View>
+                       <TouchableOpacity onPress={()=>{
+                         if(showPopup[item.id]===item.id){
+                            this.setState({showPopup: {[item.id]:!item.id} })
+                         }else {
+                            this.setState({showPopup: {[item.id]:item.id} })
+                         }
+                       }}>
+                       <Image source={moreIC} style={{width:20,height:20}} />
+                       </TouchableOpacity>
+                       <View style={[popup ,showPopup[item.id] ? show : hide]}>
+                         <TouchableOpacity onPress={()=>{this.confirmDel(item.id,null,'delete');
+                         this.setState({showPopup: {[item.id]:!item.id} }) }}>
+                           <Image source={removeIC} style={{width:20,height:20}} />
+                         </TouchableOpacity>
 
-                </View>
-                <View style={{height:14}}></View>
-              </View>
-            ))
-            :
-            <View></View>
-          }
+                         <TouchableOpacity onPress={()=>this.setState({showEdit:!showEdit,})}>
+                           <Image source={showPopup[item.id] && showEdit===false ? editIC : doneIC} style={{width:20,height:20}} />
+                         </TouchableOpacity>
+                       </View>
+                     </View>
+                     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                     {item._contents.length>0 && item._contents.map(el=>{
+                       return (<View key={el.id.toString()} style={{marginRight:0,padding:10,width:(width)/2}}>
 
+                         <TouchableOpacity onPress={()=>{
+                           console.log(`${global.url_media}${el.avatar}`);
+                             navigate('DetailScr',{idContent:el.id,lat:el.lat,lng:el.lng,curLoc,lang:lang.lang})
+                         }}>
+                         <Image source={{uri:`${global.url_media}${el.avatar}`}} style={{width:width/2,minHeight:width/3,marginBottom:10}} />
+                         </TouchableOpacity>
+                         <TouchableOpacity onPress={()=>{
+                             navigate('DetailScr',{idContent:el.id,lat:el.lat,lng:el.lng,curLoc,lang:lang.lang})
+                         }}>
+                         <Text style={{color:'#2F353F',fontSize:16}} numberOfLines={2}>{el.name}</Text>
+                         </TouchableOpacity>
+                         {showPopup[item.id] && showEdit && <TouchableOpacity onPress={()=>this.confirmDel(item.id,el.id,'remove')}
+                         style={[closeCollection]}>
+                         <Image source={closeIC} style={{width:18,height:18}} />
+                         </TouchableOpacity>}
+                       </View>)
+                     })}
+                     </ScrollView>
 
+                 </View>
+                 <View style={{height:14}}></View>
+               </View>
+             )}
+          />
 
           </View>
-      </ScrollView>
+
     );
   }
 }

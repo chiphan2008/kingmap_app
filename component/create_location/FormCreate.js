@@ -167,7 +167,7 @@ export default class FormCreate extends Component {
       content._category_items.forEach(e=>{
         this.setState({checkSubCat: Object.assign(this.state.checkSubCat,{[e.id]:e.id})});
       })
-      //console.log('content._district.name',content._district.name);
+      //console.log('content._category_items.length',content._category_items.length);
       setTimeout(()=>{
         this.setState({
           serv_items,
@@ -177,7 +177,7 @@ export default class FormCreate extends Component {
           img_space:arrData.data.image_space,
           img_menu:arrData.data.image_menu,
           img_video:arrData.data.link_video,
-
+          hasSubCat:content._category_items.length,
           txtName:content.name,
           txtAddress:content.address,
           ListOpenTime:content._date_open,
@@ -188,7 +188,7 @@ export default class FormCreate extends Component {
           lat:content.lat,
           lng:content.lng,
           txtEmail:content.email,
-          txtKW:content.keyword_ad,
+          txtKW:content.tag,
           idCountry:content._country.id,idCity:content._city.id,idDist:content._district.id,
           nameCountry:content._country.name,nameCity:content._city.name,nameDist:content._district.name,
           editLoc:true,
@@ -202,7 +202,7 @@ export default class FormCreate extends Component {
   }
 
   confirmPostData(){
-    //console.log('confirmPostData1');
+    //console.log('confirmPostData1',this.state.hasSubCat);
     if(this.state.hasSubCat===0){this.setState({errMsg:this.state.lang.enter_classify});return false;}
     //console.log('confirmPostData2');
     if(this.state.txtName===''){this.setState({errMsg:this.state.lang.enter_name});return false;}
@@ -221,12 +221,12 @@ export default class FormCreate extends Component {
     //console.log('confirmPostData8');
     if(this.state.lat==='Lat 0.0' || this.state.lat===''){this.setState({errMsg:this.state.lang.enter_address_again});return false;}
     //console.log('confirmPostData9',isEmail(this.state.txtEmail));
-    if(this.state.txtEmail!==''){if(!isEmail(this.state.txtEmail.trim())) {this.setState({errMsg:this.state.lang.email_format});return false;}}
+    if(this.state.txtEmail!=='' && this.state.txtEmail!==null){if(!isEmail(this.state.txtEmail.trim())) {this.setState({errMsg:this.state.lang.email_format});return false;}}
     //console.log('confirmPostData10');
     this.setState({showLoading:true});
     const arr = new FormData();
     this.state.editLoc && arr.append('id_content',this.state.idContent);
-    arr.append('name',this.state.txtName.trim());
+    this.state.txtName!==null && arr.append('name',this.state.txtName.trim());
     arr.append('id_category',this.props.navigation.state.params.idCat);
     Object.entries(this.state.checkSubCat).forEach((e)=>{
       if(e[1]!==false){
@@ -244,17 +244,17 @@ export default class FormCreate extends Component {
     arr.append('country',this.state.idCountry);
     arr.append('city',this.state.idCity);
     arr.append('district',this.state.idDist);
-    arr.append('wifi',this.state.txtUserWifi.trim());
-    arr.append('passwifi',this.state.txtPassWifi.trim());
-    arr.append('phone',this.state.txtPhone.trim());
-    arr.append('email',this.state.txtEmail.trim());
+    this.state.txtUserWifi!==null && arr.append('wifi',this.state.txtUserWifi.trim());
+    this.state.txtPassWifi!==null && arr.append('passwifi',this.state.txtPassWifi.trim());
+    this.state.txtPhone!==null && arr.append('phone',this.state.txtPhone.trim());
+    this.state.txtEmail!==null && arr.append('email',this.state.txtEmail.trim());
 
-    arr.append(`avatar`, {
+    this.state.imgAvatar.mime!==undefined && arr.append(`avatar`, {
       uri:`${this.state.imgAvatar.path}`,
       name: `my_avatar.jpg`,
       type: `${this.state.imgAvatar.mime}`
     });
-    arr.append('address',this.state.txtAddress.trim());
+    this.state.txtAddress!==null && arr.append('address',this.state.txtAddress.trim());
     arr.append('lat',this.state.lat);
     arr.append('lng',this.state.lng);
     strtoarray(this.state.txtKW,',').forEach((e)=>{
@@ -265,27 +265,27 @@ export default class FormCreate extends Component {
     // //arr.append('code_invite',this.state.txtCode);
     arr.append('id_ctv',this.state.id_ctv);
     this.state.img_space.length>0 && this.state.img_space.forEach((e,index)=>{
-      arr.append(`image_space[]`, {
+      e.path!==undefined &&  arr.append(`image_space[]`, {
         uri:`${e.path}`,
         name: `${index}_image_space.jpg`,
         type: `${e.mime}`
       });
       let title_space = this.state.title_space[index]===undefined ? '':this.state.title_space[index][1];
       let des_space = this.state.des_space[index]===undefined ? '':this.state.des_space[index][1];
-      arr.append(`title_space[]`, title_space);
-      arr.append(`des_space[]`, des_space);
+      e.path!==undefined && arr.append(`title_space[]`, title_space);
+      e.path!==undefined && arr.append(`des_space[]`, des_space);
     });
 
     this.state.img_menu.length>0 &&  this.state.img_menu.forEach((e,index)=>{
-      arr.append(`image_menu[]`, {
+      e.path!==undefined && arr.append(`image_menu[]`, {
         uri:`${e.path}`,
         name: `${index}_image_menu.jpg`,
         type: `${e.mime}`
       });
       let title_menu = this.state.title_menu[index]===undefined ? '':this.state.title_menu[index][1];
       let des_menu = this.state.des_menu[index]===undefined ? '':this.state.des_menu[index][1];
-      arr.append(`title_menu[]`, title_menu);
-      arr.append(`des_menu[]`, des_menu);
+      e.path!==undefined && arr.append(`title_menu[]`, title_menu);
+      e.path!==undefined && arr.append(`des_menu[]`, des_menu);
     })
 
     this.state.img_video.length>0 && this.state.img_video.forEach((e)=>{
@@ -297,11 +297,14 @@ export default class FormCreate extends Component {
       }
     });
     const act = this.state.editLoc?'update-location':'create-location';
+    console.log('arr',arr);
+      //console.log('e',`${global.url}${act}`);
     postApi(`${global.url}${act}`,arr).then((e)=>{
-      this.setState({showLoading:false},()=>{
+      //console.log('e',e);
+      this.setState({showLoading:false,errMsg:''},()=>{
         if(e.code===200){
           if(this.state.editLoc){
-            Alert.alert(this.state.lang.notify,this.state.update_success);
+            Alert.alert(this.state.lang.notify,this.state.lang.update_success);
           }else {
             Alert.alert(this.state.lang.notify,this.state.lang.create_success,[
               {text: '', style: 'cancel'},
@@ -339,9 +342,9 @@ export default class FormCreate extends Component {
     //console.log('nameCountry,nameCity,nameDist,txtAddress',nameCountry,nameCity,nameDist,txtAddress);
     var params='';
     if(txtAddress.trim()!=='' && txtAddress!==undefined) {params += txtAddress + ', ';}
-    //if(nameDist.trim()!=='' && nameDist.trim()!==undefined) {params += nameDist + ', ';}
-    if(nameCity.trim()!=='' && nameCity.trim()!==undefined) {params += nameCity + ', ';}
-    if(nameCountry.trim()!=='' && nameCountry.trim()!==undefined) {params += nameCountry;}
+    if(nameDist.trim()!=='' && nameDist.trim()!==undefined) {params += nameDist + ', ';}
+    //if(nameCity.trim()!=='' && nameCity.trim()!==undefined) {params += nameCity + ', ';}
+    //if(nameCountry.trim()!=='' && nameCountry.trim()!==undefined) {params += nameCountry;}
     //console.log('params',params);
     let url = `${'https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyCCCOoPlN2D-mfrYEMWkz-eN7MZnOsnZ44&sensor=true&address='}${params}`;
     console.log(url);
@@ -350,7 +353,9 @@ export default class FormCreate extends Component {
       let arrDataAddr = e.results[0].address_components;
       let arrDataLoc = e.results[0].geometry.location;
       //console.log(arrDataAddr,arrDataLoc);
-      if(txtAddress.trim()!=='' && txtAddress.trim()!==undefined) this.state.txtAddress=`${arrDataAddr[0].long_name} ${arrDataAddr[1].long_name}`;
+      if(txtAddress.trim()!=='' && txtAddress.trim()!==undefined){
+        this.state.txtAddress=`${arrDataAddr[0].long_name} ${arrDataAddr[1].long_name}`;
+      }
       this.state.lat=arrDataLoc.lat;
       this.state.lng=arrDataLoc.lng;
       timeoutLatLng = setTimeout(()=>{
@@ -612,12 +617,13 @@ export default class FormCreate extends Component {
             <Image source={keywordsIC} style={imgInfo} />
           </View>
 
-          <TextInput underlineColorAndroid='transparent'
+          <TextInput underlineColorAndroid='transparent' autoCorrect={false}
           multiline numberOfLines={4} maxHeight={65}
           onChangeText={(text) => {
-            //console.log(text);
-            if(text.substr(-1)===','){
-              if(!checkKeyword(text))  this.setState({txtKW:text})
+            let formattedText = text.split(' ').join('');
+            //if(formattedText.trim().substr(-1,1)===',') alert(formattedText.trim().substr(-1,1)===',');
+            if(formattedText.trim().substr(-1,1)===','){
+              if(!checkKeyword(formattedText))  this.setState({txtKW:text})
               else {
                 var arr = this.state.txtKW.split(',');
                 arr.splice(-1);
@@ -860,7 +866,7 @@ export default class FormCreate extends Component {
                renderItem={({item}) =>(
                  <TouchableOpacity onPress={()=>{
 
-                   if(this.state.checkSubCat[`${item.id}`]!==item.id){
+                   if(this.state.checkSubCat[item.id]!==item.id){
                      this.state.hasSubCat +=1;
                      this.state.checkSubCat=Object.assign(this.state.checkSubCat,{[item.id]:item.id});
                    }else{
@@ -871,7 +877,7 @@ export default class FormCreate extends Component {
                  }}
                  style={listAdd}>
                    <Text style={colorlbl}>{item.name}</Text>
-                   <Image source={checkIC} style={[imgShare,this.state.checkSubCat[`${item.id}`]===item.id ? show : hide]} />
+                   <Image source={checkIC} style={[imgShare,this.state.checkSubCat[item.id]===item.id ? show : hide]} />
                  </TouchableOpacity>
                )}
                keyExtractor={item => item.id.toString()}

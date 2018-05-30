@@ -110,6 +110,7 @@ module.exports = {
   confirm_loc_del:'Confirm delete this place',
   confirm_branch_del:'Confirm delete this branch',
   confirm_pro_del:'Confirm delete this products, services',
+  confirm_discount_del:'Confirm delete this discount',
   title_add_pro:'+ Add product, service',
   title_edit_pro:'Edit product, service',
   title_add_km:'+ Add discount',

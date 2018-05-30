@@ -115,8 +115,8 @@ export default class App extends Component {
     });
 
     const HomeScreen = StackNavigator({
-      //HomeTabs: { screen: HomeTab },
-      HomeTabs: { screen:LocationTab},
+      HomeTabs: { screen: HomeTab },
+      //HomeTabs: { screen:LocationTab},
 
       //ListCatScr: { screen: ListCategory },
 

@@ -48,11 +48,9 @@ export default class ListBuySell extends Component {
     //const { activeTab } = this.state;
     //if(kind===null) kind=activeTab;
     const url = `${global.url}${'raovat-type'}`;
-    getApi(url)
-    .then(arrData => {
+    getApi(url).then(arrData => {
         this.setState({ listData: arrData.data });
-    })
-    .catch(err => console.log(err));
+    }).catch(err => console.log(err));
   }
 
 
@@ -127,7 +125,7 @@ export default class ListBuySell extends Component {
             <FlatList
                numColumns={3}
                extraData={this.state}
-               keyExtractor={item => item.id}
+               keyExtractor={(item) => item.id.toString()}
                data={listData}
                renderItem={({item}) =>(
                  <TouchableOpacity style={flatItem}

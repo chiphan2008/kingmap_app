@@ -53,9 +53,8 @@ export default class ListProductBS extends Component {
     if(district!==null)  url += `${'&district='}${district}`;
     if(city!==null)  url += `${'&city='}${city}`;
     if(country!==null)  url += `${'&country='}${country}`;
-    console.log('url',url);
-    getApi(url)
-    .then(arrData => {
+    //console.log('url',url);
+    getApi(url).then(arrData => {
       if(skip===0){
         this.setState({ listData: arrData.data, isRefresh:false });
       }else {
@@ -79,7 +78,7 @@ export default class ListProductBS extends Component {
 
   saveLocation(){
     //console.log('saveLocation');
-    let district;
+    //let district;
     checkLocation().then((e)=>{
       // if(e.idDist===0) district=null;
       // else district=e.idDist;
@@ -153,7 +152,7 @@ export default class ListProductBS extends Component {
                    onEndReachedThreshold={0.5}
                    onEndReached={() => this.onRefresh()}
                    data={listData}
-                   keyExtractor={item => item.id}
+                   keyExtractor={item => item.id.toString()}
                    renderItem={({item}) => (
                      <View style={flatlistItemCat}>
                          <TouchableOpacity onPress={()=>navigate('DetailBuySellScr',{id_raovat:item.id})}>
@@ -193,7 +192,7 @@ export default class ListProductBS extends Component {
         style={[popoverLoc,padBuySell]}>
           <View style={[overLayout,shadown]}>
           <FlatList
-             keyExtractor={item => item.id}
+             keyExtractor={item => item.id.toString()}
              data={subtypes}
              renderItem={({item}) => (
                <View style={listOverService}>

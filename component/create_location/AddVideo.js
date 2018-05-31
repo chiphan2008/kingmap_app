@@ -70,7 +70,7 @@ export default class AddVideo extends Component {
       container,headCatStyle,headContent,titleCreate,
       titleTab,titleActive,show,hide,colorWhite,titleErr,
     } = styles;
-
+    const {lang}= this.props;
     return (
 
       <Modal onRequestClose={() => null} transparent
@@ -94,7 +94,7 @@ export default class AddVideo extends Component {
 
           <View style={[container]}>
           <View style={{backgroundColor:'#FFFEFF',paddingTop:30,paddingBottom:30,paddingLeft:15,paddingRight:15,marginBottom:5,borderColor:'#ECEEF3',borderBottomWidth:1}}>
-          <Text style={{fontSize:20}}>Nhập link video</Text>
+          <Text style={{fontSize:20}}>{lang.enter_video_link}</Text>
           <View style={{flexDirection:'row',marginTop:10}}>
             <TextInput
             underlineColorAndroid='transparent'
@@ -107,7 +107,7 @@ export default class AddVideo extends Component {
             onPress={()=>{
               this.uploadVideo(this.state.txtVideoLink);
             }}>
-              <Text style={titleCreate}>Thêm</Text>
+              <Text style={titleCreate}>{lang.add}</Text>
             </TouchableOpacity>
             </View>
             <Text style={[titleErr,this.state.txtErr ? show : hide]}>{this.state.txtErr}</Text>

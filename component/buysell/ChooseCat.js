@@ -42,12 +42,12 @@ export default class ChooseCat extends Component {
     }else {
       url = `${global.url}${'raovat-type'}/${id_sub}`;
     }
-    getApi(url)
-    .then(arrData => {
+    console.log(url);
+    getApi(url).then(arrData => {
       if(id_sub===null){
         this.setState({ listData: arrData.data });
       }else {
-        this.setState({ sub_cat: arrData.data._subtypes });
+        this.setState({ sub_cat: arrData.data[0]._subtypes });
       }
     })
     .catch(err => console.log(err));
@@ -114,7 +114,7 @@ export default class ChooseCat extends Component {
         style={[popoverLoc,padBuySell]}>
           <View style={[overLayout,shadown]}>
           <FlatList
-             keyExtractor={item => item.id}
+             keyExtractor={item => item.id.toString()}
              data={listData}
              renderItem={({item}) => (
                <View style={listOverService}>
@@ -136,6 +136,7 @@ export default class ChooseCat extends Component {
       <View style={[wrapListLoc]}>
       <FlatList
          extraData={this.state}
+         keyExtractor={item => item.id.toString()}
          data={sub_cat}
          renderItem={({item}) =>(
            <View style={listOverService}>
@@ -152,7 +153,6 @@ export default class ChooseCat extends Component {
            </TouchableOpacity>
            </View>
          )}
-         keyExtractor={item => item.id}
        />
        <View style={{height:5}}></View>
        </View>

@@ -234,10 +234,10 @@ export default class UpdateMore extends Component {
       btnPress,colorNext,popoverLoc,centerVer,overLayout,pad10,colorlbl,
       imgShare
     } = styles;
-    const {lang,visible,user_profile,editLoc}= this.props;
+    const {visible,user_profile,editLoc}= this.props;
     var {
       nameProduct,desProduct,priceProduct,imgProduct,listLoc,showLoc,arrLoc,listLocChoose,listProduct,listKM,
-      nameKM,desKM,priceKM,imgKM,disable,
+      nameKM,desKM,priceKM,imgKM,disable,lang,
     }= this.state;
     return (
 
@@ -501,13 +501,13 @@ export default class UpdateMore extends Component {
                    <View style={{flexDirection:'row',alignItems:'center',marginTop:10}}>
                        <TouchableOpacity style={{alignItems:'center',padding:7,borderWidth:1,borderRadius:4,borderColor:'#d0021b',minWidth:width/3}}
                        onPress={()=>{this.setState({showLoc:false,arrLoc:[]})}}>
-                         <Text style={{color:'#d0021b',fontSize:16}}>{`${'Huỷ'}`}</Text>
+                         <Text style={{color:'#d0021b',fontSize:16}}>{`${lang.cancel}`}</Text>
                        </TouchableOpacity>
                        <TouchableOpacity style={{alignItems:'center',padding:7,borderRadius:4,backgroundColor:'#d0021b',marginLeft:10,minWidth:width/3}}
                        onPress={()=>{this.setState({showLoc:false},()=>{
                          this.addListLoc();
                        })}}>
-                         <Text style={{color:'#fff',fontSize:16}}>{`${'Xong'}`}</Text>
+                         <Text style={{color:'#fff',fontSize:16}}>{`${lang.done}`}</Text>
                        </TouchableOpacity>
                    </View>
                 </View>

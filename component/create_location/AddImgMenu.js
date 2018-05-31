@@ -56,6 +56,7 @@ export default class AddImgMenu extends Component {
       titleTab,titleActive,show,hide,colorWhite,titleErr,
     } = styles;
     const {imgMenu,des_menu,title_menu,update} = this.state;
+    const {lang} = this.props;
     return (
 
       <Modal onRequestClose={() => null} transparent
@@ -70,7 +71,7 @@ export default class AddImgMenu extends Component {
                   }}>
                   <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                   </TouchableOpacity>
-                    <Text style={titleCreate}> THÊM HÌNH ẢNH </Text>
+                    <Text style={titleCreate}> {lang.add_gallery} </Text>
                   <View></View>
               </View>
 
@@ -83,7 +84,7 @@ export default class AddImgMenu extends Component {
             onPress={()=>this.uploadSpace()}>
             <Image source={cameraLargeIC} style={{width:60,height:60,marginBottom:10}}/>
             </TouchableOpacity>
-            <Text style={{fontSize:20}}>TẢI ẢNH LÊN</Text>
+            <Text style={{fontSize:20}}>{lang.upload_image.toUpperCase()}</Text>
           </View>
           {this.state.imgMenu.length > 0 ?
             <View>

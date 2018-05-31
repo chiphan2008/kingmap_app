@@ -21,8 +21,10 @@ import cameraIC from '../../src/icon/ic-create/ic-camera.png';
 export default class CreateBuySell extends Component {
   constructor(props) {
     super(props);
+    const {lang} = this.props.navigation.state.params;
+    //console.log('lang',lang);
     this.state = {
-      lang:language_vn,
+      lang:lang.lang==='vn'?language_vn:language_en,
       name:'',
       price:'',
       quantity:'',
@@ -55,7 +57,7 @@ export default class CreateBuySell extends Component {
     const { user_id,kind,name_module,lang } = this.props.navigation.state.params;
     if(idDist==='') {
       this.setState({posted:false});
-      return Alert.alert(lang.notify,'Bạn phải chọn khu vực');
+      return Alert.alert(lang.notify,lang.plz_choose_area);
     }
     if(name==='') {
       // console.log('name');
@@ -88,9 +90,9 @@ export default class CreateBuySell extends Component {
     const arr = new FormData();
     arr.append('name',name);
     arr.append('price',price);
-    arr.append('quantity',quantity);
-    arr.append('size',size);
-    arr.append('material',material);
+    // arr.append('quantity',quantity);
+    // arr.append('size',size);
+    // arr.append('material',material);
     arr.append('country',idCountry);
     arr.append('city',idCity);
     arr.append('district',idDist);
@@ -141,7 +143,7 @@ export default class CreateBuySell extends Component {
               </TouchableOpacity>
                 <Text style={titleCreate}> {`${sub_module}`.toUpperCase()} </Text>
               <TouchableOpacity disabled={posted} onPress={()=>{this.postContent()}}>
-              <Text style={titleCreate}> {'Xong'} </Text>
+              <Text style={titleCreate}> {this.state.lang.done} </Text>
               </TouchableOpacity>
           </View>
       </View>
@@ -158,14 +160,14 @@ export default class CreateBuySell extends Component {
         <ChooseArea
         setCountry={(idCountry)=>this.setState({idCountry})}
         setCity={(idCity)=>this.setState({idCity})}
-        setDist={(idCountry,idCity,idDist)=>this.setState({idCountry,idCity,idDist,errArea:false})}
+        setDist={(idCountry,idCity,idDist,nameCountry,nameCity,nameDist)=>{this.setState({idCountry,idCity,idDist,nameCountry,nameCity,nameDist,errArea:false})}}
         lang={lang}/>
       </View>
       <View style={{height:30}}></View>
 
         <View style={wrapItems}>
           <View style={widthLable}>
-            <Text style={colorlbl}>Tên </Text>
+            <Text style={colorlbl}>{this.state.lang.name} </Text>
           </View>
           <View style={widthContentItem}>
             <View>
@@ -182,7 +184,7 @@ export default class CreateBuySell extends Component {
 
         <View style={wrapItems}>
           <View style={widthLable}>
-            <Text style={colorlbl}>Giá </Text>
+            <Text style={colorlbl}>{this.state.lang.price} </Text>
           </View>
           <View style={widthContentItem}>
             <View>
@@ -197,7 +199,7 @@ export default class CreateBuySell extends Component {
           </View>
         </View>
 
-        <View style={wrapItems}>
+        {/*<View style={wrapItems}>
           <View style={widthLable}>
             <Text style={colorlbl}>Số lượng </Text>
           </View>
@@ -246,7 +248,7 @@ export default class CreateBuySell extends Component {
             </View>
             <View></View>
           </View>
-        </View>
+        </View>*/}
 
         <TouchableOpacity style={wrapItems}
         onPress={()=>this.setState({showCat:true})}>
@@ -265,7 +267,7 @@ export default class CreateBuySell extends Component {
 
         <View style={wrapItems}>
           <View style={widthLable}>
-            <Text style={colorlbl}>Hình ảnh </Text>
+            <Text style={colorlbl}>{this.state.lang.image}</Text>
           </View>
           <View style={widthContentItem}>
           <View></View>
@@ -277,14 +279,14 @@ export default class CreateBuySell extends Component {
         </View>
 
         <View style={{padding:10,paddingLeft:15}}>
-        <Text style={{color:'#6587A8'}}>Nội dung </Text>
+        <Text style={{color:'#6587A8'}}>{this.state.lang.content}</Text>
         </View>
 
         <View style={wrapItems}>
         <TextInput underlineColorAndroid='transparent'
         multiline numberOfLines={6} maxHeight={100}
         onChangeText={(content) => this.setState({content})}
-        value={content} placeholder={'Nhập mô tả'}
+        value={content} placeholder={this.state.lang.des}
         style={{width:width-30,textAlign:'left'}} />
 
         </View>

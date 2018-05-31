@@ -271,27 +271,25 @@ export default class OpenTime extends Component {
                 <Text style={titleCreate}> {lang.choose_time} </Text>
               <TouchableOpacity onPress={()=>{
                 this.props.closeModal(ListDataTime)}}>
-              <Text style={titleCreate}> Xong </Text>
+              <Text style={titleCreate}> {lang.done} </Text>
               </TouchableOpacity>
           </View>
 
       </View>
       <ScrollView>
       <View style={{flexDirection:'row',justifyContent:'space-between',paddingTop:15,paddingLeft:15,width}}>
-          <View style={{width:(width-60)/4,}}>
-            <Text style={titleOpentime}>Từ ngày</Text>
+          <View style={{width:(width-40)/4,}}>
+            <Text style={titleOpentime}>{lang.from_date}</Text>
           </View>
 
-          <View style={{width:(width-60)/4}}>
-            <Text style={titleOpentime}>Đến ngày</Text>
+          <View style={{width:(width-40)/4}}>
+            <Text style={titleOpentime}>{lang.to_date}</Text>
           </View>
 
-          <View style={{width:(width-60)/4}}>
-            <Text style={titleOpentime}>Từ giờ</Text>
-          </View>
+          <View style={{width:(width-40)/2,flexDirection:'row',justifyContent:'space-between'}}>
+            <Text style={titleOpentime}>{lang.from_hour}</Text>
 
-          <View style={{width:(width-60)/4}}>
-            <Text style={titleOpentime}>Đến giờ</Text>
+            <Text style={titleOpentime}>{lang.to_hour}</Text>
           </View>
 
           <TouchableOpacity>

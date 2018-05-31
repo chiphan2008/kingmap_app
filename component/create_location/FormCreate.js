@@ -80,8 +80,8 @@ export default class FormCreate extends Component {
       lng:'Lng 0.0',
       txtUserWifi:'',
       txtPassWifi:'',
-      open_from:'',
-      open_to:'',
+      from_hour:'',
+      to_hour:'',
       ListOpenTime:[],
       txtName:'',
       txtPhone:'',
@@ -180,7 +180,7 @@ export default class FormCreate extends Component {
           hasSubCat:content._category_items.length,
           txtName:content.name,
           txtAddress:content.address,
-          ListOpenTime:content._date_open,
+          ListOpenTime:content._date_open_api,
           txtDes:content.description,
           txtUserWifi:content.wifi,
           txtPassWifi:content.pass_wifi,
@@ -304,13 +304,17 @@ export default class FormCreate extends Component {
       this.setState({showLoading:false,errMsg:''},()=>{
         if(e.code===200){
           if(this.state.editLoc){
-            Alert.alert(this.state.lang.notify,this.state.lang.update_success);
+            Alert.alert(this.state.lang.notify,this.state.lang.update_success,[
+              {text: '', style: 'cancel'},
+              {text: 'OK', onPress: () => this.props.navigation.goBack()}
+            ],
+           { cancelable: false })
           }else {
             Alert.alert(this.state.lang.notify,this.state.lang.create_success,[
               {text: '', style: 'cancel'},
               {text: 'OK', onPress: () => this.setState({idContent:e.data.content.id,showUpdate:true})}
             ],
-           { cancelable: false })
+           {cancelable: false });
           }
 
         }else {
@@ -748,16 +752,21 @@ export default class FormCreate extends Component {
           submitImage={(img_space,title_space,des_space)=>{this.setState({img_space,title_space,des_space})}}
           visible={showImgSpace}
           img_space={this.state.img_space}
+          lang={this.state.lang}
+          editLoc={this.state.editLoc}
           closeModal={()=>this.setState({showImgSpace:false})} />
 
           <AddImgMenu
           submitImage={(img_menu,title_menu,des_menu)=>{this.setState({img_menu,title_menu,des_menu})}}
           visible={showImgMenu}
           img_menu={this.state.img_menu}
+          lang={this.state.lang}
+          editLoc={this.state.editLoc}
           closeModal={()=>this.setState({showImgMenu:false})} />
 
           <AddVideo
           lang={this.state.lang}
+          editLoc={this.state.editLoc}
           submitImage={(img_video)=>this.setState({img_video})}
           visible={showVideo}
           listVideo={this.state.img_video}

@@ -27,10 +27,7 @@ export default class DetailBuySell extends Component {
       avatar:'',
       user_id:'',
       activeSlide:0,
-      listData:{
-        _images:[],
-        _created_by:{}
-      }
+      listData:{}
     }
     this.getData();
     checkLogin().then(e=>{
@@ -52,9 +49,8 @@ export default class DetailBuySell extends Component {
     const { id_raovat } = this.props.navigation.state.params;
     const url = `${global.url}${'raovat/get/'}${id_raovat}`;
     //console.log(url);
-    getApi(url)
-    .then(arrData => {
-      console.log('arrData',arrData);
+    getApi(url).then(arrData => {
+      //console.log('arrData',arrData);
         this.setState({ listData: arrData.data[0] });
     })
     .catch(err => console.log(err));
@@ -62,6 +58,7 @@ export default class DetailBuySell extends Component {
   get pagination () {
         const { listData, activeSlide } = this.state;
         return (
+          listData._images!==undefined &&
             <Pagination
               dotsLength={listData._images.length}
               activeDotIndex={activeSlide}
@@ -89,6 +86,7 @@ export default class DetailBuySell extends Component {
     } = styles;
     const { navigate,goBack } = this.props.navigation;
     const { listData,activeSlide,zoom,isLogin,user_id } = this.state;
+    console.log('listData',listData);
     return (
       <View style={container}>
 
@@ -102,8 +100,10 @@ export default class DetailBuySell extends Component {
           </View>
       </View>
 
-      <View>
-          <Carousel
+      {listData.name!==undefined &&
+        <View>
+        <View>
+            <Carousel
             activeSlideAlignment={'start'}
             inactiveSlideScale={1}
             inactiveSlideOpacity={1}
@@ -127,13 +127,13 @@ export default class DetailBuySell extends Component {
             <Text style={txtAddrOverCat} numberOfLines={1}>Ngày đăng: {Moment(listData.created_at).format('DD/MM/YYYY')}</Text>
           </View>
           <View style={{width:width/3}}>
-            <View style={[user_id!==listData._created_by.id ? show : hide]}>
+            <View style={[user_id!==listData.created_by ? show : hide]}>
               <TouchableOpacity style={{backgroundColor:'#d0021b',padding:5,borderRadius:10,maxWidth:100,alignItems:'center'}}
               onPress={()=>{
                   this.requestLogin();
                   if(isLogin){
-                    const port = user_id<listData._created_by.id ? `${user_id}_${listData._created_by.id}` : `${listData._created_by.id}_${user_id}`;
-                    navigate('MessengerScr',{user_id,yf_id:listData._created_by.id,yf_avatar:`${global.url_media}${listData._created_by.avatar}`,name:listData._created_by.full_name,port_connect:port})
+                    const port = user_id<listData.created_by ? `${user_id}_${listData.created_by}` : `${listData.created_by}_${user_id}`;
+                    navigate('MessengerScr',{user_id,yf_id:listData.created_by,yf_avatar:`${global.url_media}${listData._created_by.avatar}`,name:listData._created_by.full_name,port_connect:port})
                   }
               }}>
               <Text style={{fontSize:16,color:'#fff',lineHeight:23}} numberOfLines={2}>Chat online</Text>
@@ -141,12 +141,11 @@ export default class DetailBuySell extends Component {
               </View>
           </View>
         </View>
-        <View style={{padding:15,paddingLeft:0,}}>
+        {/*<View style={{padding:15,paddingLeft:0,}}>
         <Text style={{fontSize:16,color:'#000',lineHeight:25}} numberOfLines={1}>Kích thước: {listData.size}</Text>
         <Text style={{fontSize:16,color:'#000',lineHeight:25}} numberOfLines={1}>Chất liệu: {listData.material}</Text>
         <Text style={{fontSize:16,color:'#000',lineHeight:25}} numberOfLines={1}>Số lượng: {listData.quantity}</Text>
-
-        </View>
+        </View>*/}
 
         <View>
           <Text style={{fontSize:16,color:'#333',lineHeight:25}}>
@@ -154,6 +153,9 @@ export default class DetailBuySell extends Component {
           </Text>
         </View>
       </View>
+
+      </View>}
+
       <Modal onRequestClose={() => null} visible={zoom} transparent>
         <TouchableOpacity onPress={()=>this.setState({zoom:false})}
         style={{position:'absolute',padding:10,alignSelf:'flex-end',zIndex:9999}}>

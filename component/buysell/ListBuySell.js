@@ -154,40 +154,23 @@ export default class ListBuySell extends Component {
         transparent
         visible={showCreate}>
         <View style={popoverCreate}>
+
             <TouchableOpacity
             onPress={()=>{
               this.setState({showCreate:false});
-              navigation.navigate('CreateBuySellScr',{kind:'mua',user_id,sub_module:'Đăng tin cần mua',lang,name_module});
+              navigation.navigate('CreateBuySellScr',{user_id,sub_module:'Quản lý tin',lang,name_module});
             }}
             style={itemCreate}>
-              <Text style={colorlbl}>Đăng tin cần mua</Text>
+              <Text style={colorlbl}>Quản lý tin</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
             onPress={()=>{
               this.setState({showCreate:false});
-              navigation.navigate('CreateBuySellScr',{kind:'ban',user_id,sub_module:'Đăng tin cần bán',lang,name_module});
+              navigation.navigate('CreateBuySellScr',{user_id,sub_module:'Đăng tin',lang,name_module});
             }}
             style={itemCreate}>
-              <Text style={colorlbl}>Đăng tin cần bán</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-            onPress={()=>{
-              this.setState({showCreate:false});
-              navigation.navigate('CreateBuySellScr',{kind:'thue',user_id,sub_module:'Đăng tin cần thuê',lang,name_module});
-            }}
-            style={itemCreate}>
-              <Text style={colorlbl}>Đăng tin cần thuê</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-            onPress={()=>{
-              this.setState({showCreate:false});
-              navigation.navigate('CreateBuySellScr',{kind:'cho_thue',user_id,sub_module:'Đăng tin cho thuê',lang,name_module});
-            }}
-            style={itemCreate}>
-              <Text style={colorlbl}>Đăng tin cho thuê</Text>
+              <Text style={colorlbl}>Đăng tin</Text>
             </TouchableOpacity>
 
             <TouchableOpacity

@@ -20,6 +20,9 @@ export default class ChooseArea extends Component {
       idDist:'',nameDist:'Quận/Huyện',listDist:[],showDist:false,
       update:true,
     }
+    checkLocation().then(e=>{
+      this.setState({idCountry:e.idCountry, nameCountry:e.nameCountry,idCity:e.idCity, nameCity:e.nameCity,})
+    });
   }
   getCountry(){
     getApi(`${global.url}${'countries'}`)
@@ -45,13 +48,14 @@ export default class ChooseArea extends Component {
     .catch(err => console.log(err));
   }
   componentWillUnmount(){
+    //console.log('componentWillUnmount');
     clearTimeout(timeoutRecive);
   }
   componentWillUpdate(){
     clearTimeout(timeoutRecive);
     const {idCountry, nameCountry,idCity, nameCity, idDist, nameDist} = this.props;
     timeoutRecive = setTimeout(()=>{
-    if(idDist!==''){
+    if(idDist!=='' && idDist!==undefined){
        //console.log('!!!null');
       this.state.update && this.setState({idCountry, nameCountry,idCity, nameCity, idDist, nameDist},()=>{
         this.setState({update:false});
@@ -59,8 +63,11 @@ export default class ChooseArea extends Component {
       })
     }else {
         //console.log('null');
-        checkLocation().then(e=>{
-          this.setState({idCountry:e.idCountry, nameCountry:e.nameCountry,idCity:e.idCity, nameCity:e.nameCity,})
+        this.state.update && checkLocation().then(e=>{
+          //console.log(e);
+          this.setState({idCountry:e.idCountry, nameCountry:e.nameCountry,idCity:e.idCity, nameCity:e.nameCity,},()=>{
+            this.setState({update:false});
+          })
         });
     }
   },500)
@@ -72,6 +79,7 @@ export default class ChooseArea extends Component {
       colorlbl,listOverService,imgUpInfo,
     } = styles;
     const { lang,nameDist,nameCity,nameCountry } = this.props;
+    //console.log('componentWillUnmount',nameCountry);
     //console.log('nameDist',this.props.nameDist);
     //this.props.nameDist!=='' && this.setState({nameDist:this.props.nameDist})
     return (
@@ -81,17 +89,17 @@ export default class ChooseArea extends Component {
           <TouchableOpacity
           onPress={()=>{ this.setState({ showCountry:true });this.getCountry() }}
           style={itemKV}>
-            <Text numberOfLines={1} style={txtKV}>{nameCountry!==''?nameCountry:this.state.nameCountry}</Text>
+            <Text numberOfLines={1} style={txtKV}>{nameCountry!=='' && nameCountry!==undefined ?nameCountry:this.state.nameCountry}</Text>
           </TouchableOpacity>
           <TouchableOpacity
           onPress={()=>{this.setState({ showCity:true });this.getCity(this.state.idCountry)}}
           style={itemKV}>
-            <Text numberOfLines={1} style={txtKV}>{nameCity!==''?nameCity:this.state.nameCity}</Text>
+            <Text numberOfLines={1} style={txtKV}>{nameCity!=='' && nameCity!==undefined ?nameCity:this.state.nameCity}</Text>
           </TouchableOpacity>
           <TouchableOpacity
           onPress={()=>{this.setState({ showDist:true }); this.getDist(this.state.idCity)}}
           style={itemKV}>
-            <Text numberOfLines={1} style={txtKV}>{nameDist!==''?nameDist:this.state.nameDist}</Text>
+            <Text numberOfLines={1} style={txtKV}>{nameDist!=='' && nameDist!==undefined ?nameDist:this.state.nameDist}</Text>
           </TouchableOpacity>
 
           <Modal onRequestClose={() => null} transparent visible={this.state.showCountry}>

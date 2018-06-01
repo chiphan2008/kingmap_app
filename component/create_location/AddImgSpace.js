@@ -35,7 +35,7 @@ export default class AddImgSpace extends Component {
     ImagePicker.openPicker({
       multiple: true
     }).then(img => {
-      console.log(img);
+      //console.log(img);
       if(this.state.update){
         img.forEach(e=>{
           this.state.imgSpace.unshift(e);

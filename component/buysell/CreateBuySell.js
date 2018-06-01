@@ -2,10 +2,11 @@
 
 import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image,
-  TouchableOpacity,TextInput,ScrollView,Alert,
+  TouchableOpacity,TextInput,ScrollView,Alert,Modal,FlatList,Keyboard
 } from 'react-native';
 const {height, width} = Dimensions.get('window');
 import postApi from '../api/postApi';
+import getApi from '../api/getApi';
 import global from '../global';
 import language_vn from '../lang/vn/language';
 import language_en from '../lang/en/language';
@@ -16,8 +17,20 @@ import ChooseArea from '../create_location/ChooseArea';
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
 import arrowNextIC from '../../src/icon/ic-arrow-next.png';
 import cameraIC from '../../src/icon/ic-create/ic-camera.png';
+import {onlyNumber} from '../libs';
 // import closeIC from '../../src/icon/ic-home/ic-close.png';
-
+const listKind_vn=[
+  {name:'Mua',val:'mua'},
+  {name:'Bán',val:'ban'},
+  {name:'Thuê',val:'thue'},
+  {name:'Cho thuê',val:'cho_thue'},
+];
+const listKind_en=[
+  {name:'Buy',val:'mua'},
+  {name:'Sell',val:'ban'},
+  {name:'Rent',val:'thue'},
+  {name:'For rent',val:'cho_thue'},
+];
 export default class CreateBuySell extends Component {
   constructor(props) {
     super(props);
@@ -38,23 +51,48 @@ export default class CreateBuySell extends Component {
       errType:'',
       posted:false,
       showCat:false,
+      showKind:false,
       arrImg:[],
       idCity:'',idCountry:'',idDist:'',
-
+      kind:'',
+      labelKind:'',
+      listKind:lang.lang==='vn'?listKind_vn:listKind_en,
     }
-
+    const {id} = this.props.navigation.state.params;
+    if(id!==undefined) this.getContent(id);
   }
   submitImage(arrImg){
     this.setState({arrImg})
   }
+  getContent(id){
+    getApi(`${global.url}${'raovat/get/'}${id}`).then(arrData=>{
+      const content = arrData.data[0];
+      this.state.name=content.name;
+      this.state.price=content.price;
+      this.state.raovat_type=content.raovat_type;
+      this.state.kind=content.kind;
+      this.state.content=content.content;
+      this.state.idCountry=content.country;
+      this.state.idCity=content.city;
+      this.state.idDist=content.district;
+      this.state.arrImg=content._images;
+      let subtypes=[];
+      content._subtypes.forEach(e=>{
+        //console.log(e.id);
+        subtypes.push(e.id);
+      });
+      this.state.subtype=subtypes;
+      this.setState(this.state);
+    });
+  }
   postContent(){
-    this.setState({posted:true})
+    this.setState({posted:true});Keyboard.dismiss();
     const {
       name,price,quantity,size,material,content,raovat_type,subtype,arrImg,
-      idCountry,idCity,idDist,
-
+      idCountry,idCity,idDist,kind,
      } = this.state;
-    const { user_id,kind,name_module,lang } = this.props.navigation.state.params;
+    const { user_id,name_module,lang,id } = this.props.navigation.state.params;
+    console.log(this.state.raovat_type);
     if(idDist==='') {
       this.setState({posted:false});
       return Alert.alert(lang.notify,lang.plz_choose_area);
@@ -65,9 +103,12 @@ export default class CreateBuySell extends Component {
       return Alert.alert(lang.notify,lang.title_buysell);
     }
     if(price==='') {
-      // console.log('price');
       this.setState({posted:false});
       return Alert.alert(lang.notify,'Bạn phải nhập giá');
+    }
+    if(kind==='') {
+      this.setState({posted:false});
+      return Alert.alert(lang.notify,'Vui lòng chọn loại tin');
     }
     if(raovat_type==='' || Object.entries(subtype).length===0) {
       // console.log('raovat_type');
@@ -88,6 +129,7 @@ export default class CreateBuySell extends Component {
 
 
     const arr = new FormData();
+    id!==undefined && arr.append('id',id);
     arr.append('name',name);
     arr.append('price',price);
     // arr.append('quantity',quantity);
@@ -105,17 +147,19 @@ export default class CreateBuySell extends Component {
     arr.append('kind',kind);
 
     arrImg.forEach((e,index)=>{
-      arr.append(`image[]`, {
+      e.path!==undefined && arr.append(`image[]`, {
         uri:`${e.path}`,
         name: `${index}_image.jpg`,
         type: `${e.mime}`
       });
     })
     arr.append('active',1);
-
-    postApi(`${global.url}${'raovat/create'}`,arr).then((e)=>{
+    const act = id===undefined?'create':'edit';
+    console.log(arr,'arr');
+    console.log(`${global.url}${'raovat/'}${act}`);
+    postApi(`${global.url}${'raovat/'}${act}`,arr).then((e)=>{
       if(e.code===200){
-        this.props.navigation.navigate('ListBuySellScr',{name_module,lang});
+        this.props.navigation.goBack();
       }else {
         this.setState({posted:false});
       }
@@ -124,13 +168,15 @@ export default class CreateBuySell extends Component {
   }
 
   render() {
-    const { user_id,kind,name_module,lang,sub_module } = this.props.navigation.state.params;
+    const { user_id,name_module,lang,sub_module } = this.props.navigation.state.params;
+    //console.log('user_id',user_id);
     const { navigation } = this.props;
-    const { name,price,quantity,size,material,visible,content,showCat,raovat_name,posted } = this.state;
+    const { name,price,quantity,size,material,visible,content,showCat,showKind,raovat_name,posted,labelKind } = this.state;
     const {
       container,headCatStyle,headContent,titleCreate,hide,show,
       colorlbl,wrapItems,widthLable,widthContentItem,wrapCamera,
-      colorErr,
+      colorErr,popoverLoc,padBuySell,overLayout,shadown,listOverService,colorText,
+
     } = styles;
 
     return (
@@ -160,6 +206,7 @@ export default class CreateBuySell extends Component {
         <ChooseArea
         setCountry={(idCountry)=>this.setState({idCountry})}
         setCity={(idCity)=>this.setState({idCity})}
+        idDist={this.state.idDist}
         setDist={(idCountry,idCity,idDist,nameCountry,nameCity,nameDist)=>{this.setState({idCountry,idCity,idDist,nameCountry,nameCity,nameDist,errArea:false})}}
         lang={lang}/>
       </View>
@@ -175,7 +222,7 @@ export default class CreateBuySell extends Component {
             onSubmitEditing={(event) => {}}
             placeholder={'------'} style={{width:width-15-(width/3),padding:0}}
             onChangeText={(name) => this.setState({name})}
-            value={name}
+            value={name.toString()}
              />
             </View>
             <View></View>
@@ -191,8 +238,8 @@ export default class CreateBuySell extends Component {
             <TextInput underlineColorAndroid='transparent'
             onSubmitEditing={(event) => {}}
             placeholder={'------'} style={{width:width-15-(width/3),padding:0}}
-            onChangeText={(price) => this.setState({price})}
-            value={price}
+            onChangeText={(price) =>{if(price==='' || (onlyNumber(price) && price.substr(0,1)>0) ) this.setState({price})}}
+            value={price.toString()} maxLength={9}
              />
             </View>
             <View></View>
@@ -263,6 +310,19 @@ export default class CreateBuySell extends Component {
           </View>
         </TouchableOpacity>
 
+        <TouchableOpacity style={wrapItems}
+        onPress={()=>this.setState({showKind:true})}>
+          <View style={widthLable}>
+            <Text style={colorlbl}>Loại tin </Text>
+          </View>
+          <View style={widthContentItem}>
+            <View>
+              <Text>{labelKind} </Text>
+            </View>
+            <Image source={arrowNextIC} style={{width:16,height:16}} />
+          </View>
+        </TouchableOpacity>
+
         <View style={{height:20}}></View>
 
         <View style={wrapItems}>
@@ -286,7 +346,7 @@ export default class CreateBuySell extends Component {
         <TextInput underlineColorAndroid='transparent'
         multiline numberOfLines={6} maxHeight={100}
         onChangeText={(content) => this.setState({content})}
-        value={content} placeholder={this.state.lang.des}
+        value={content.toString()} placeholder={this.state.lang.des}
         style={{width:width-30,textAlign:'left'}} />
 
         </View>
@@ -302,12 +362,56 @@ export default class CreateBuySell extends Component {
       closeModal={()=>this.setState({showCat:false})}
       submitCat={(raovat_type,raovat_name,subtype)=>this.setState({raovat_type,raovat_name,subtype,errType:''})} />
 
+      <Modal onRequestClose={() => null} transparent visible={showKind}>
+        <TouchableOpacity onPress={()=>this.setState({showKind:false})} style={[popoverLoc,padBuySell]}>
+        <View style={[overLayout,shadown]}>
+        <FlatList
+           keyExtractor={(item,index) => index.toString()}
+           data={this.state.listKind}
+           renderItem={({item}) => (
+             <View style={listOverService}>
+             <TouchableOpacity onPress={()=>{ this.setState({showKind:false,labelKind:item.name,kind:item.val});}}
+             style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',padding:15}}>
+                  <Text style={colorText}>{item.name}</Text>
+              </TouchableOpacity>
+              </View>
+        )} />
+        {/*<Image style={[imgUpBuySell,imgUpInfo]} source={upDD} />*/}
+
+        </View>
+
+        </TouchableOpacity>
+      </Modal>
+
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  colorText :{color:'#303B50',fontSize:17},
+  listOverService:{
+      borderBottomColor:'#EEEDEE',
+      borderBottomWidth:1,
+  },
+  shadown:{
+    shadowOffset:{  width: 1,  height: 1,  },
+    shadowColor: '#999',
+    shadowOpacity: .5,
+  },
+  overLayout:{
+    backgroundColor:'#fff',width: width-20,borderRadius:6,overflow:'hidden',top:7,
+    maxHeight:Platform.OS ==='ios' ? 350 : 380,
+    //position:'absolute',zIndex:999,
+  },
+  padBuySell:{ paddingTop: 120},
+  popoverLoc : {
+    alignItems:'center',
+    position:'absolute',
+    width,height,
+    backgroundColor:'rgba(0,0,0,0.7)',
+    zIndex:8,
+  },
   container: {
     width,
     height,

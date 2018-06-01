@@ -27,6 +27,7 @@ import ListBuySell from './component/buysell/ListBuySell';
 import CreateBuySell from './component/buysell/CreateBuySell';
 import ListProductBS from './component/buysell/ListProductBS';
 import DetailBuySell from './component/buysell/DetailBuySell';
+import ManageBuySell from './component/buysell/ManageBuySell';
 
 //import ads
 import Ads from './component/ads/Ads';
@@ -229,6 +230,7 @@ export default class App extends Component {
       WalletGuideScr: { screen: WalletGuide },
       TransferScr: { screen: Transfer },
       HistoryScr: { screen: History },
+      ManageBuySellScr: { screen: ManageBuySell },
       DetailBuySellScr: { screen: DetailBuySell },
       ListProductBScr: { screen: ListProductBS },
       CreateBuySellScr: { screen: CreateBuySell },

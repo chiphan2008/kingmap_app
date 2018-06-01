@@ -53,8 +53,6 @@ export default class ListBuySell extends Component {
     }).catch(err => console.log(err));
   }
 
-
-
   render() {
     const { lang,name_module } = this.props.navigation.state.params;
 
@@ -158,7 +156,7 @@ export default class ListBuySell extends Component {
             <TouchableOpacity
             onPress={()=>{
               this.setState({showCreate:false});
-              navigation.navigate('CreateBuySellScr',{user_id,sub_module:'Quản lý tin',lang,name_module});
+              navigation.navigate('ManageBuySellScr',{user_id,sub_module:'Danh sách tin',lang,name_module});
             }}
             style={itemCreate}>
               <Text style={colorlbl}>Quản lý tin</Text>

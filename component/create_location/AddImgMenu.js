@@ -6,13 +6,16 @@ import {
   TextInput,Dimensions,ScrollView,
 } from 'react-native';
 import styles from '../styles';
+import postApi from '../api/postApi';
+import getApi from '../api/getApi';
+import global from '../global';
 import cameraLargeIC from '../../src/icon/ic-create/ic-camera-large.png';
 import closeLargeIC from '../../src/icon/ic-create/ic-close-large.png';
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
 const {width,height} = Dimensions.get('window');
 import ImagePicker from 'react-native-image-crop-picker';
 //import {getIdYoutube} from '../libs';
-
+var timeoutUpdate;
 export default class AddImgMenu extends Component {
   constructor(props){
     super(props);
@@ -20,17 +23,42 @@ export default class AddImgMenu extends Component {
       imgMenu:[],
       des_menu:{},
       title_menu:{},
+      imgMenuUpdate:[],
+      des_menu_update:{},
+      title_menu_update:{},
       txtErr:'',
-      update:true,
+      update:false,
     }
   }
   uploadSpace(){
     ImagePicker.openPicker({
       multiple: true
-    }).then(imgMenu => {
-      //console.log(imgMenu);
-      this.setState({imgMenu})
+    }).then(img => {
+      if(this.state.update){
+        img.forEach(e=>{
+          this.state.imgMenu.unshift(e);
+        })
+        this.state.imgMenuUpdate=this.state.imgMenu;
+      }else {
+        this.state.imgMenu=img;
+      }
+      this.setState(this.state)
     }).catch(e=>console.log('e'));
+  }
+  ImageUpdate(id=null,title=null,description=null){
+    timeoutUpdate = setTimeout(()=>{
+      const url = `${global.url}${'image/menu/update'}`;
+      const arr = new FormData();
+      id!==null && arr.append('id',id);
+      title!==null && arr.append('title',title);
+      description!==null && arr.append('description',description);
+      postApi(url,arr);
+    },1000);
+
+  }
+  ImageDelete(id){
+      const url = `${global.url}${'image/menu/delete/'}${id}`;
+      getApi(url);
   }
   componentWillUpdate(){
     const {img_menu} = this.props;
@@ -38,15 +66,15 @@ export default class AddImgMenu extends Component {
       let title_menu={};
       let des_menu={};
       img_menu.forEach((e,index)=>{
-        title_menu = Object.assign(title_menu,{[`${'title_'}${index}`]:e.title});
-        des_menu = Object.assign(des_menu,{[`${'des_'}${index}`]:e.description});
+        title_menu = Object.assign(title_menu,{[`${'title_'}${index}`]:e.title,[`${'id_'}${e.id}`]:e.id});
+        des_menu = Object.assign(des_menu,{[`${'des_'}${index}`]:e.description,[`${'id_'}${e.id}`]:e.id});
       })
       this.state.title_menu=title_menu;
       this.state.des_menu=des_menu;
       this.state.imgMenu=img_menu;
-      this.state.update && this.setState(this.state,()=>{
+      this.state.update===false && this.setState(this.state,()=>{
         this.props.submitImage(this.state.imgMenu,Object.entries(this.state.title_menu),Object.entries(this.state.des_menu));
-        this.setState({update:false});
+        this.setState({update:true});
       })
     }
   }
@@ -55,7 +83,8 @@ export default class AddImgMenu extends Component {
       container,headCatStyle,headContent,titleCreate,
       titleTab,titleActive,show,hide,colorWhite,titleErr,
     } = styles;
-    const {imgMenu,des_menu,title_menu,update} = this.state;
+    const {imgMenu,des_menu,title_menu,update,
+    imgMenuUpdate,des_menu_update,title_menu_update,} = this.state;
     const {lang} = this.props;
     return (
 
@@ -66,7 +95,11 @@ export default class AddImgMenu extends Component {
           <View style={headCatStyle}>
               <View style={headContent}>
                   <TouchableOpacity onPress={()=>{
-                    this.props.submitImage(imgMenu,Object.entries(title_menu),Object.entries(des_menu));
+                    if(imgMenuUpdate.length>0){
+                      this.props.submitImage(imgMenuUpdate,Object.entries(title_menu_update),Object.entries(des_menu_update));
+                    }else {
+                      this.props.submitImage(imgMenu,Object.entries(title_menu),Object.entries(des_menu));
+                    }
                     this.props.closeModal();
                   }}>
                   <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
@@ -90,12 +123,18 @@ export default class AddImgMenu extends Component {
             <View>
             {this.state.imgMenu.map((e,index)=>(
               <View key={index}>
-              <Image style={{width,height:300,resizeMode: 'cover'}} source={{isStatic:true,uri:update?`${e.path}`:`${e.url}`}} />
+              <Image style={{width,height:300,resizeMode: 'cover'}} source={{isStatic:true,uri:e.path!==undefined?`${e.path}`:`${e.url}`}} />
               <TouchableOpacity style={{position:'absolute',right:5,top:5}}
               onPress={()=>{
                 this.state.imgMenu.splice(index, 1);
                 Object.entries(this.state.title_menu).splice(index, 1);
                 Object.entries(this.state.des_menu).splice(index, 1);
+                if(update && e.url!==undefined) {
+                  this.ImageDelete(des_menu[`${'id_'}${e.id}`]);
+                  this.state.imgMenuUpdate.splice(index, 1);
+                  Object.entries(this.state.title_menu_update).splice(index, 1);
+                  Object.entries(this.state.des_menu_update).splice(index, 1);
+                }
                 this.setState(this.state)
               }}>
               <Image source={closeLargeIC} style={{width:22,height:22}}/>
@@ -106,20 +145,54 @@ export default class AddImgMenu extends Component {
                 placeholder={'Chủ đề'}
                 placeholderTextColor={'#A9BFD0'}
                 onChangeText={(text) => {
-                  this.state.title_menu = Object.assign(this.state.title_menu,{[`${'title_'}${index}`]:text})
+                  if(update && e.url!==undefined){
+                    clearTimeout(timeoutUpdate);
+                    this.ImageUpdate(des_menu[`${'id_'}${e.id}`],text,null);
+                    this.state.title_menu = Object.assign(this.state.title_menu,{[`${'title_'}${e.id}`]:text})
+                  }else {
+                    this.state.title_menu_update = Object.assign(this.state.title_menu_update,{[`${'title_'}${index}`]:text})
+                    this.state.title_menu = Object.assign(this.state.title_menu,{[`${'title_'}${index}`]:text})
+                  }
                   this.setState(this.state);
                 }}
-                value={this.state.title_menu[`${'title_'}${index}`]}
+                onBlur={()=>{
+                  if(update && e.url!==undefined){
+                    clearTimeout(timeoutUpdate);
+                    this.ImageUpdate(des_menu[`${'id_'}${e.id}`],title_menu[`${'title_'}${e.id}`],null);
+                  }
+                }}
+                onSubmitEditing={()=>{
+                  if(update && e.url!==undefined){
+                    clearTimeout(timeoutUpdate);
+                    this.ImageUpdate(des_menu[`${'id_'}${e.id}`],title_menu[`${'title_'}${e.id}`],null);
+                  }
+                }}
+                value={update?this.state.title_menu[`${'title_'}${e.id}`]:this.state.title_menu[`${'title_'}${index}`]}
                />
                <View style={{width:width-60,borderBottomWidth:1,borderColor:'#E0E8ED'}}></View>
                <TextInput underlineColorAndroid='transparent'
                  placeholder={'Viết mô tả'}
                  placeholderTextColor={'#A9BFD0'}
                  onChangeText={(text) => {
-                   this.state.des_menu = Object.assign(this.state.des_menu,{[`${'des_'}${index}`]:text})
+                   if(update && e.url!==undefined){
+                     clearTimeout(timeoutUpdate);
+                     this.ImageUpdate(des_menu[`${'id_'}${e.id}`],null,text);
+                     this.state.des_menu = Object.assign(this.state.des_menu,{[`${'des_'}${e.id}`]:text})
+                   }else {
+                     this.state.des_menu_update = Object.assign(this.state.des_menu_update,{[`${'des_'}${index}`]:text})
+                     this.state.des_menu = Object.assign(this.state.des_menu,{[`${'des_'}${index}`]:text})
+                   }
                    this.setState(this.state);
                  }}
-                 value={this.state.des_menu[`${'des_'}${index}`]}
+                 onBlur={()=>{
+                   clearTimeout(timeoutUpdate);
+                   if(update && e.url!==undefined) this.ImageUpdate(des_menu[`${'id_'}${e.id}`],null,des_menu[`${'des_'}${e.id}`]);
+                 }}
+                 onSubmitEditing={()=>{
+                   clearTimeout(timeoutUpdate);
+                   if(update && e.url!==undefined) this.ImageUpdate(des_menu[`${'id_'}${e.id}`],null,des_menu[`${'des_'}${e.id}`]);
+                 }}
+                 value={update?this.state.des_menu[`${'des_'}${e.id}`]:this.state.des_menu[`${'des_'}${index}`]}
                 />
                 </View>
               </View>

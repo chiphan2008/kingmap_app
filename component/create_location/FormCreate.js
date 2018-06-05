@@ -145,7 +145,7 @@ export default class FormCreate extends Component {
   }
 
   getContent(idContent){
-    const url = `${global.url}${'content/'}${idContent}`;
+    const url = `${global.url}${'content-update/'}${idContent}`;
     //console.log('url',url);
     getApi(url)
     .then(arrData => {
@@ -297,8 +297,8 @@ export default class FormCreate extends Component {
       }
     });
     const act = this.state.editLoc?'update-location':'create-location';
-    console.log('arr',arr);
-      //console.log('e',`${global.url}${act}`);
+    //console.log('arr',arr);
+    //console.log('e',`${global.url}${act}`);
     postApi(`${global.url}${act}`,arr).then((e)=>{
       //console.log('e',e);
       this.setState({showLoading:false,errMsg:''},()=>{
@@ -807,6 +807,7 @@ export default class FormCreate extends Component {
 
       <View style={[clockTime,this.state.showOpenTime ? show : hidden]}>
       <OpenTime
+      ListOpenTime={this.state.ListOpenTime}
       lang={this.state.lang}
       closeModal={this.setOpenTime.bind(this)} />
       </View>

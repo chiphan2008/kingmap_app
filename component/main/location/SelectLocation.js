@@ -48,7 +48,7 @@ export default class SelectLocation extends Component {
   }
 
   getDistrict(id_city){
-    console.log(`${global.url}${'districts/'}${id_city}`);
+    //console.log(`${global.url}${'districts/'}${id_city}`);
     getApi(`${global.url}${'districts/'}${id_city}`)
     .then(arrDistrict => {
       //console.log('arrDistrict',arrDistrict);

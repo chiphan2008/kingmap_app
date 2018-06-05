@@ -48,16 +48,28 @@ export default class ChooseArea extends Component {
     .catch(err => console.log(err));
   }
   componentWillUnmount(){
-    //console.log('componentWillUnmount');
     clearTimeout(timeoutRecive);
+  }
+  getName(route,id){
+    getApi(`${global.url}${route}/${id}`)
+    .then(arrData => {
+        if(route==='country') this.state.nameCountry= arrData.data[0].name;
+        if(route==='city') this.state.nameCity= arrData.data[0].name;
+        if(route==='district') this.state.nameDist= arrData.data[0].name;
+        this.setState(this.state);
+    })
+    .catch(err => console.log(err));
   }
   componentWillUpdate(){
     clearTimeout(timeoutRecive);
     const {idCountry, nameCountry,idCity, nameCity, idDist, nameDist} = this.props;
     timeoutRecive = setTimeout(()=>{
     if(idDist!=='' && idDist!==undefined){
-       console.log('!!!null',idDist);
-      this.state.update && this.setState({idCountry, nameCountry,idCity, nameCity, idDist, nameDist},()=>{
+       //console.log('!!!null',idDist);
+       this.getName('country',idCountry);
+       this.getName('city',idCity);
+       this.getName('district',idDist);
+      this.state.update && this.setState({idCountry, idCity,  idDist},()=>{
         this.setState({update:false});
         //console.log('nameDist',nameDist);
       })

@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import {
   View,Text,Modal,TouchableOpacity,Image,
-  TextInput,Dimensions,FlatList,
+  TextInput,Dimensions,FlatList,DeviceEventEmitter
 } from 'react-native';
 import Moment from 'moment';
 import styles from '../styles';
@@ -29,8 +29,12 @@ export default class ManageBuySell extends Component {
     }).catch(err => console.log(err));
   }
   componentDidMount(){
+    DeviceEventEmitter.addListener('goback', (e)=>{
+      if(e.isLogin) this.getData();
+    })
     this.getData();
   }
+
   render() {
     const {
       container,headCatStyle,headContent,titleCreate,

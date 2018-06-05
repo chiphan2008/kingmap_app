@@ -70,7 +70,7 @@ export default class HomeTab extends Component {
     };
     accessLocation();
     checkLogin().then(e=>{
-      //console.log(e);
+      console.log(e);
       if(e.id===undefined){
         this.setState({isLogin:false})
       }else {
@@ -140,12 +140,13 @@ export default class HomeTab extends Component {
        AsyncStorage.setItem('@MyLanguage:key',JSON.stringify({valueLang:value,labelLang :label})).then(()=>{
          setTimeout(() => {
              this.props.screenProps();
-         }, 800);
+         }, 500);
        });
      }
    }
 
    getCategory(lang){
+     console.log(global.url+'modules?language='+lang+'&limit=100');
      getApi(global.url+'modules?language='+lang+'&limit=100')
      .then(arrCategory => {
        //console.log('arrCategory',arrCategory);

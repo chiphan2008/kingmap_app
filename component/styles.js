@@ -51,6 +51,10 @@ module.exports = {
     position: 'absolute',
     top: 0,bottom: 0,left: 0,right: 0
   },
+  widthContentItem:{width:width-15-(width/3),flexDirection:'row',justifyContent:'space-between'},
+  widthLable:{width:(width-30)/3},
+  wrapItems:{backgroundColor:'#fff',marginBottom:1,flexDirection:'row',padding:15},
+  
   favIC:{width:19,height:18,marginRight:2},
   marRight:{marginRight:10},
   marRight5:{marginRight:5},

@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import {
   View, Text, TouchableOpacity,Dimensions,TextInput,Modal,StyleSheet,Image,
-  AsyncStorage,
+  AsyncStorage,FlatList,
 } from 'react-native';
 import global from '../../global';
 import getApi from '../../api/getApi';
@@ -98,29 +98,34 @@ export default class Collection extends Component {
             </TouchableOpacity>
           </View>
           {listColl.length>0 ?
-            <View>
+            <View style={{maxHeight:height/3}}>
             <Text style={[colorTitle,marBot]}>{`${'Thêm vào bộ sưu tập'}`.toUpperCase()}</Text>
-            {listColl.map((e,index)=>(
-              <TouchableOpacity style={[wrapItem,marBot]} key={index}
-              onLayout={()=>{
-                checkContent(idContent,e._contents).then(el=>{
-                  this.setState({checkList: Object.assign(checkList,{[e.id]:el}),has_collection:el });
-                });
-              }}
-              onPress={()=>{
-                checkContent(idContent,e._contents).then(el=>{
-                  this.setState({checkList: Object.assign(checkList,{[e.id]:!el}),has_collection:!el });
-                  if(el){
-                    this.addRemoveColl('remove',e.id)
-                  }else {
-                    this.addRemoveColl('add',e.id)
-                  }
-                });
-              }}>
-                <Image source={checkList[e.id] ? checkIC : uncheckIC} style={{width:18,height:18,marginRight:7}} />
-                <Text style={colorBlack}>{e.name} - ({e._contents.length})</Text>
-              </TouchableOpacity>
-            ))}
+
+            <FlatList
+               keyExtractor={(item,index) => index.toString()}
+               data={listColl}
+               renderItem={({item}) => (
+                 <TouchableOpacity style={[wrapItem,marBot]}
+                 onLayout={()=>{
+                   checkContent(idContent,item._contents).then(el=>{
+                     this.setState({checkList: Object.assign(checkList,{[item.id]:el}),has_collection:el });
+                   });
+                 }}
+                 onPress={()=>{
+                   checkContent(idContent,item._contents).then(el=>{
+                     this.setState({checkList: Object.assign(checkList,{[item.id]:!el}),has_collection:!el });
+                     if(el){
+                       this.addRemoveColl('remove',item.id)
+                     }else {
+                       this.addRemoveColl('add',item.id)
+                     }
+                   });
+                 }}>
+                   <Image source={checkList[item.id] ? checkIC : uncheckIC} style={{width:18,height:18,marginRight:7}} />
+                   <Text style={colorBlack}>{item.name} - ({item._contents.length})</Text>
+                 </TouchableOpacity>
+            )} />
+
             </View>
           :
             <View></View>

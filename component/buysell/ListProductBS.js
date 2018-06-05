@@ -42,6 +42,7 @@ export default class ListProductBS extends Component {
   }
 
   getData(country=null,city=null,district=null,subtype=null,skip=null){
+    this.setState({pullToRefresh:false});
     //get-list?kind=mua&raovat_type=1
     if(skip===null){
       skip=0; this.setState({page:0});
@@ -53,14 +54,17 @@ export default class ListProductBS extends Component {
     if(district!==null)  url += `${'&district='}${district}`;
     if(city!==null)  url += `${'&city='}${city}`;
     if(country!==null)  url += `${'&country='}${country}`;
-    //console.log('url',url);
+    console.log('url',url);
     getApi(url).then(arrData => {
       if(skip===0){
-        this.setState({ listData: arrData.data, isRefresh:false });
+        this.state.listData = arrData.data;
       }else {
-        if(arrData.data.length===0) this.setState({ pullToRefresh:false });
-        this.setState({ listData: this.state.listData.concat(arrData.data), isRefresh:false });
+        this.setState({ listData: this.state.listData.concat(arrData.data) });
       }
+      this.state.isRefresh=false;
+      if(arrData.data.length<20) this.state.pullToRefresh=false;
+      else this.state.pullToRefresh=true;
+      this.setState(this.state);
     })
     .catch(err => console.log(err));
   }
@@ -156,7 +160,7 @@ export default class ListProductBS extends Component {
                    renderItem={({item}) => (
                      <View style={flatlistItemCat}>
                          <TouchableOpacity onPress={()=>navigate('DetailBuySellScr',{id_raovat:item.id})}>
-                           <Image style={imgFlatItem} source={{uri:`${global.url_media}${item._images[0].link}`}} />
+                           {item._images[0]!==undefined && <Image style={imgFlatItem} source={{uri:`${global.url_media}${item._images[0].link}`}} />}
                          </TouchableOpacity>
 
                          <View style={wrapInfoOver}>

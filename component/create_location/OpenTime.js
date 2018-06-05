@@ -92,6 +92,7 @@ export default class OpenTime extends Component {
   constructor(props){
     super(props);
     const {lang} = this.props;
+    //console.log('ListOpenTime',ListOpenTime);
     this.state = {
       from_date:1,
       to_date:6,
@@ -113,12 +114,37 @@ export default class OpenTime extends Component {
       index:0,
       showClock:false,
       showDate:false,
+      update:true,
       updateFromDate:'',
       updateToDate:'',
     }
 
   }
+  componentWillUpdate(){
+    const {ListOpenTime} = this.props;
+    if(ListOpenTime.length>0 && this.state.update){
+      console.log(ListOpenTime);
+      var arr = [];
+      ListOpenTime.forEach((e,index)=>{
+        arr.push(<ListTime
+          ListDataTime={ListOpenTime}
+          openTimer={(index)=>this.openTimer(index)}
+          openFromDate={(val,index)=>this.openFromDate(val,index)}
+          openToDate={(val,index)=>this.openToDate(val,index)}
+          removeGroup={()=>this.removeGroup(index)}
+          key={index}
+          index={index}
+          lang={this.props.lang} />);
+      });
+      this.state.ListOpenTime = arr;
+      this.state.index = ListOpenTime.length-1;
+      this.state.ListDataTime = ListOpenTime;
+      this.state.update = false;
+      this.setState(this.state);
+    }
 
+    //console.log('ListOpenTime',ListOpenTime);
+  }
   addElement(){
     var {index,ListOpenTime,ListDataTime} = this.state;
     index +=1;
@@ -539,7 +565,7 @@ export class ListTime extends Component {
 
           <View style={{width:(width-60)/2}}>
           <TouchableOpacity style={[btnClock,marTop10]} onPress={()=>{this.props.openTimer(index)}}>
-            <Text numberOfLines={1} style={titleActive}>{ListDataTime[index].from_hour} - {ListDataTime[index].to_hour}</Text>
+            <Text numberOfLines={1} style={titleActive}>{ListDataTime[index].from_hour.substr(0,5)} - {ListDataTime[index].to_hour.substr(0,5)}</Text>
           </TouchableOpacity>
           </View>
 

@@ -53,8 +53,8 @@ export default class LikeLocation extends Component {
 
   getData(page=null){
     this.setState({loading:false});
-    let url = `${global.url}${'user/list-like/'}${this.state.user_profile.id}`;
-    if(page!==null) url +=`${'?skip='}${page}${'&limit=20'}`;
+    if(page===null) page=0;
+    let url = `${global.url}${'user/list-like/'}${this.state.user_profile.id}${'?skip='}${page}${'&limit=20'}`;
     //console.log(url);
     getApi(url).then(arrData => {
         this.state.listData=page!==null?this.state.listData.concat(arrData.data):arrData.data;

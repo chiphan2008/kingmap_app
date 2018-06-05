@@ -2,7 +2,8 @@
 
 import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image,
-  TouchableOpacity,TextInput,ScrollView,Alert,Modal,FlatList,Keyboard
+  TouchableOpacity,TextInput,ScrollView,Alert,Modal,FlatList,Keyboard,
+  DeviceEventEmitter,ActivityIndicator,
 } from 'react-native';
 const {height, width} = Dimensions.get('window');
 import postApi from '../api/postApi';
@@ -14,6 +15,7 @@ import AddImgProduct from './AddImgProduct';
 import ChooseCat from './ChooseCat';
 import ChooseArea from '../create_location/ChooseArea';
 
+import checkIC from '../../src/icon/ic-green/ic-check.png';
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
 import arrowNextIC from '../../src/icon/ic-arrow-next.png';
 import cameraIC from '../../src/icon/ic-create/ic-camera.png';
@@ -70,21 +72,43 @@ export default class CreateBuySell extends Component {
       this.state.name=content.name;
       this.state.price=content.price;
       this.state.raovat_type=content.raovat_type;
+      this.state.raovat_name=content._type.name;
       this.state.kind=content.kind;
       this.state.content=content.content;
       this.state.idCountry=content.country;
       this.state.idCity=content.city;
       this.state.idDist=content.district;
       this.state.arrImg=content._images;
-      let subtypes=[];
+      this.state.listKind.forEach(e=>{
+        if(e.val===content.kind) this.state.labelKind=e.name;
+      })
+      //let _subtype={};
+      //console.log('length',content._subtypes.length);
+
       content._subtypes.forEach(e=>{
-        //console.log(e.id);
-        subtypes.push(e.id);
+        this.setState({ subtype:Object.assign(this.state.subtype,{[`${e.id}`]:e.id}) });
+        //console.log('_subtype',this.state.subtype);
+
       });
-      this.state.subtype=subtypes;
+      //this.state.subtype=_subtype;
+
       this.setState(this.state);
     });
   }
+
+  delContent(id){
+    const { user_id } = this.props.navigation.state.params;
+    const arr = new FormData();
+    arr.append('user_id',user_id);
+    arr.append('id',id);
+    //console.log(arr);
+    //console.log(`${global.url}${'raovat/delete/'}`);
+    postApi(`${global.url}${'raovat/delete'}`,arr).then(arrData=>{
+      DeviceEventEmitter.emit('goback',{isLogin:true});
+      this.props.navigation.goBack();
+    });
+  }
+
   postContent(){
     this.setState({posted:true});Keyboard.dismiss();
     const {
@@ -141,7 +165,7 @@ export default class CreateBuySell extends Component {
     arr.append('content',content);
     arr.append('raovat_type',raovat_type);
     Object.entries(subtype).forEach((e)=>{
-      arr.append('subtype[]',e[1]);
+      e[1] && arr.append('subtype[]',e[1]);
     })
     arr.append('user_id',user_id);
     arr.append('kind',kind);
@@ -159,7 +183,14 @@ export default class CreateBuySell extends Component {
     console.log(`${global.url}${'raovat/'}${act}`);
     postApi(`${global.url}${'raovat/'}${act}`,arr).then((e)=>{
       if(e.code===200){
-        this.props.navigation.goBack();
+        this.setState({posted:false});
+
+        Alert.alert(this.state.lang.notify,id!==undefined?this.state.lang.update_success:this.state.lang.create_success,[
+          {text: '', style: 'cancel'},
+          {text: 'OK', onPress: () => this.props.navigation.goBack()}
+        ],
+       { cancelable: false })
+
       }else {
         this.setState({posted:false});
       }
@@ -168,7 +199,7 @@ export default class CreateBuySell extends Component {
   }
 
   render() {
-    const { user_id,name_module,lang,sub_module } = this.props.navigation.state.params;
+    const { user_id,name_module,lang,sub_module,id } = this.props.navigation.state.params;
     //console.log('user_id',user_id);
     const { navigation } = this.props;
     const { name,price,quantity,size,material,visible,content,showCat,showKind,raovat_name,posted,labelKind } = this.state;
@@ -176,7 +207,7 @@ export default class CreateBuySell extends Component {
       container,headCatStyle,headContent,titleCreate,hide,show,
       colorlbl,wrapItems,widthLable,widthContentItem,wrapCamera,
       colorErr,popoverLoc,padBuySell,overLayout,shadown,listOverService,colorText,
-
+      btnPress,colorNext,imgShare
     } = styles;
 
     return (
@@ -206,6 +237,8 @@ export default class CreateBuySell extends Component {
         <ChooseArea
         setCountry={(idCountry)=>this.setState({idCountry})}
         setCity={(idCity)=>this.setState({idCity})}
+        idCountry={this.state.idCountry}
+        idCity={this.state.idCity}
         idDist={this.state.idDist}
         setDist={(idCountry,idCity,idDist,nameCountry,nameCity,nameDist)=>{this.setState({idCountry,idCity,idDist,nameCountry,nameCity,nameDist,errArea:false})}}
         lang={lang}/>
@@ -343,13 +376,26 @@ export default class CreateBuySell extends Component {
         </View>
 
         <View style={wrapItems}>
-        <TextInput underlineColorAndroid='transparent'
-        multiline numberOfLines={6} maxHeight={100}
-        onChangeText={(content) => this.setState({content})}
-        value={content.toString()} placeholder={this.state.lang.des}
-        style={{width:width-30,textAlign:'left'}} />
+          <TextInput underlineColorAndroid='transparent'
+          multiline numberOfLines={6} maxHeight={100}
+          onChangeText={(content) => this.setState({content})}
+          value={content.toString()} placeholder={this.state.lang.des}
+          style={{width:width-30,textAlign:'left'}} />
 
         </View>
+
+
+        {id!==undefined &&
+          <View>
+          <View style={{height:15}}></View>
+            <View style={{width:width-(width/4),alignSelf:'center',marginBottom:5}}>
+              <TouchableOpacity onPress={()=>{this.delContent(id)}} style={btnPress}>
+              <Text style={colorNext}> {'Xoá tin'} </Text>
+              </TouchableOpacity>
+            </View>
+            <View style={{height:15}}></View>
+        </View>}
+
         </View>
 
       </ScrollView>
@@ -359,6 +405,9 @@ export default class CreateBuySell extends Component {
       submitImage={this.submitImage.bind(this)} />
 
       <ChooseCat visible={showCat}
+      type={this.state.raovat_type}
+      subtype={this.state.subtype}
+      labelCat={this.state.raovat_name}
       closeModal={()=>this.setState({showCat:false})}
       submitCat={(raovat_type,raovat_name,subtype)=>this.setState({raovat_type,raovat_name,subtype,errType:''})} />
 
@@ -370,9 +419,10 @@ export default class CreateBuySell extends Component {
            data={this.state.listKind}
            renderItem={({item}) => (
              <View style={listOverService}>
-             <TouchableOpacity onPress={()=>{ this.setState({showKind:false,labelKind:item.name,kind:item.val});}}
+              <TouchableOpacity onPress={()=>{ this.setState({showKind:false,labelKind:item.name,kind:item.val});}}
              style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',padding:15}}>
                   <Text style={colorText}>{item.name}</Text>
+                  <Image source={checkIC} style={[imgShare,this.state.kind===item.val ? show : hide]} />
               </TouchableOpacity>
               </View>
         )} />
@@ -382,6 +432,14 @@ export default class CreateBuySell extends Component {
 
         </TouchableOpacity>
       </Modal>
+
+      {this.state.posted &&
+      <Modal onRequestClose={() => null} transparent
+      visible={this.state.posted} >
+        <View style={{flex:1,justifyContent:'center',alignItems:'center',backgroundColor:'rgba(0,0,0,0.6)'}}>
+          <ActivityIndicator size="large" color="#d0021b" />
+        </View>
+      </Modal>}
 
       </View>
     );
@@ -432,5 +490,17 @@ const styles = StyleSheet.create({
   colorlbl :{color:'#323640',fontSize:16},
   show : { display: 'flex'},
   hide : { display: 'none'},
-
+  btnPress: {
+    padding:15,
+    borderRadius : 5,
+    minWidth: width/3,
+    borderWidth: 1,
+    borderColor : "#D0021B",
+    alignItems:'center'
+  },
+  imgShare:{width:18,height:18},
+  colorNext : {
+    color: '#D0021B',
+    textAlign: 'center',
+  },
 })

@@ -15,6 +15,8 @@ import global from '../global';
 import logoTop from '../../src/icon/ic-white/Logo-ngang.png';
 import searchIC from '../../src/icon/ic-gray/ic-search.png';
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
+import plusIC from '../../src/icon/ic-plus.png';
+import subIC from '../../src/icon/ic-sub.png';
 //import calendarIC from '../../src/icon/ic-wallet/ic-calendar.png';
 //import timeIC from '../../src/icon/ic-wallet/ic-time.png';
 import historyIC from '../../src/icon/ic-wallet/ic-history.png';
@@ -29,6 +31,8 @@ export default class MakeMoney extends Component {
     super(props);
     this.state = {
       choose_loc:global.choose_loc,
+      totalCoin:false,
+      totalLocation:false,
     }
   }
   onSelectLoc(value, label) {
@@ -52,19 +56,20 @@ export default class MakeMoney extends Component {
   }
   render() {
     const { lang,code_user,name_module,user_profile } = this.props.navigation.state.params;
-    const { navigation } = this.props;
+    const { navigate,goBack } = this.props.navigation;
     const {
       container,contentWrap,headCatStyle,headContent,titleCreate,wrapDes,
       headLocationStyle, inputSearch,wrapWhite,marTop,titleHead,titleNormal,
       imgLogoTop,imgContent,colorTitle,titleCoin,contentKcoin,btnTransfer,
     } = styles;
-
+    const {totalCoin,totalLocation} = this.state;
     return (
       <ScrollView style={container}>
-
+      {user_profile._roles!==undefined && user_profile._roles.length>0?
+      <View>
       <View style={headCatStyle}>
           <View style={headContent}>
-              <TouchableOpacity onPress={()=>navigation.goBack()}>
+              <TouchableOpacity onPress={()=>goBack()}>
               <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
               </TouchableOpacity>
                 <Image source={logoTop} style={imgLogoTop} />
@@ -76,28 +81,33 @@ export default class MakeMoney extends Component {
 
         <View style={{width:width-80,height:110,justifyContent:'center',alignItems:'center'}}>
         <Text style={titleHead}> {`${name_module}`.toUpperCase()} </Text>
-        <Text style={titleNormal}> {`${'Giúp bạn kiếm tiền mọi lúc, mọi nơi bằng một công việc đơn giản và hợp pháp'}`} </Text>
+        <Text style={titleNormal}> {`${lang.des_mm}`} </Text>
         </View>
 
         <View>
           <View style={wrapWhite}>
-            <Image source={transferIC} style={imgContent} />
-            <View style={contentKcoin}>
-              <View style={{width:width/2}}>
-                <Text style={colorTitle}>{`${'Số Kcoin bạn đang có trong ví'}`}</Text>
+
+            <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+              <View>
+                <Text numberOfLines={1} style={colorTitle}>{`${lang.total_MM}`}</Text>
+                <Text style={titleCoin}>{`${format_number(user_profile.coin)}`}</Text>
               </View>
-              <Text style={titleCoin}>{`${format_number(user_profile.coin)}`}</Text>
+              <TouchableOpacity onPress={()=>this.setState({totalCoin:!this.state.totalCoin})}>
+              <Image source={totalCoin?subIC:plusIC} style={{width:35,height:35}} />
+              </TouchableOpacity>
             </View>
           </View>
 
           <View style={wrapWhite} >
-            <Image source={receiveIC} style={imgContent} />
-            <View style={contentKcoin}>
-              <View style={{width:width/2}}>
-                <Text style={colorTitle}>{`${'Tổng Kcoin bạn kiếm đuược trong tháng này'}`}</Text>
+              <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+                <View>
+                  <Text numberOfLines={1} style={colorTitle}>{`${lang.total_location}`}</Text>
+                  <Text style={titleCoin}>{`${format_number(user_profile.coin)}`}</Text>
+                </View>
+                <TouchableOpacity onPress={()=>this.setState({totalLocation:!this.state.totalLocation})}>
+                <Image source={totalLocation?subIC:plusIC} style={{width:35,height:35}} />
+                </TouchableOpacity>
               </View>
-              <Text style={titleCoin}>{`${'500.000'}`}</Text>
-            </View>
           </View>
 
           {/*<TouchableOpacity style={wrapWhite}
@@ -108,9 +118,10 @@ export default class MakeMoney extends Component {
           </TouchableOpacity>*/}
 
           <View style={{alignItems:'center'}}>
-            <TouchableOpacity style={[marTop,btnTransfer]}>
-            <Text style={titleCreate}>{`${'Nào cùng kiếm tiền'}`.toUpperCase()}</Text>
-            <Text style={{color:'#fff'}}>{`${'(Tạo địa điểm mới thêm vào danh sách)'}`}</Text>
+            <TouchableOpacity style={[marTop,btnTransfer]}
+            onPress={()=>navigate('FormCreateScr')}>
+            <Text style={titleCreate}>{`${lang.let_mm}`.toUpperCase()}</Text>
+            <Text style={{color:'#fff'}}>{`(${lang.new_location_mm})`}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -121,6 +132,30 @@ export default class MakeMoney extends Component {
 
         </View>
         <View style={{height:height/6}}></View>
+        </View>
+        :
+        <View>
+          <View style={headCatStyle}>
+              <View style={headContent}>
+                  <TouchableOpacity onPress={()=>goBack()}>
+                  <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
+                  </TouchableOpacity>
+                    <Text style={{marginTop:5,color:'#fff'}}>{lang.subscribe_ctv.toUpperCase()}</Text>
+                  <View></View>
+              </View>
+          </View>
+          <View style={{justifyContent:'center',alignItems:'center',padding:15,height:height-95}}>
+            <View>
+            <Text style={{textAlign:'center',fontSize:20,fontWeight:'500'}}>{lang.title_ctv.toUpperCase()}</Text>
+            <Text style={{textAlign:'center',fontSize:14,marginTop:5}}>{lang.des_ctv}</Text>
+            </View>
+            <TouchableOpacity style={{marginTop:15,backgroundColor:'#d0021b',borderRadius:3,width:width-30,paddingTop:10,paddingBottom:10,alignItems:'center'}}
+            onPress={()=>navigate('CTVSubscribeScr',{id:user_profile.id,full_name:user_profile.full_name,titleScr:lang.subscribe_ctv,lang:lang.lang})}>
+              <Text style={{color:'#fff'}}>{lang.subscribe_ctv}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      }
       </ScrollView>
     );
   }
@@ -148,8 +183,8 @@ const styles = StyleSheet.create({
     width
   },
   titleCoin : {
-    fontSize: 20,
-    fontWeight:'500',
+    fontSize: 18,
+    fontWeight:'400',
     color:'#d0021b',
   },
   contentKcoin:{flexDirection:'row',justifyContent:'space-between',width:width-80,alignItems:'center'},

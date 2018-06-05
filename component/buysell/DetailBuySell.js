@@ -47,6 +47,7 @@ export default class DetailBuySell extends Component {
   }
   getData(){
     const { id_raovat } = this.props.navigation.state.params;
+    //console.log(id_raovat);
     const url = `${global.url}${'raovat/get/'}${id_raovat}`;
     //console.log(url);
     getApi(url).then(arrData => {
@@ -127,7 +128,8 @@ export default class DetailBuySell extends Component {
             <Text style={txtAddrOverCat} numberOfLines={1}>Ngày đăng: {Moment(listData.created_at).format('DD/MM/YYYY')}</Text>
           </View>
           <View style={{width:width/3}}>
-            <View style={[user_id!==listData.created_by ? show : hide]}>
+            {listData._created_by !==null &&
+              <View style={[user_id!==listData.created_by ? show : hide]}>
               <TouchableOpacity style={{backgroundColor:'#d0021b',padding:5,borderRadius:10,maxWidth:100,alignItems:'center'}}
               onPress={()=>{
                   this.requestLogin();
@@ -138,7 +140,7 @@ export default class DetailBuySell extends Component {
               }}>
               <Text style={{fontSize:16,color:'#fff',lineHeight:23}} numberOfLines={2}>Chat online</Text>
               </TouchableOpacity>
-              </View>
+            </View>}
           </View>
         </View>
         {/*<View style={{padding:15,paddingLeft:0,}}>

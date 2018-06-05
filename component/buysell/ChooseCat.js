@@ -26,6 +26,7 @@ export default class ChooseCat extends Component {
       labelCat:'Danh mục',
       idCat:'',
       showCat:false,
+      update:true,
       sub_cat:[],
       selectLang: {
         valueLang : '',
@@ -52,7 +53,18 @@ export default class ChooseCat extends Component {
     })
     .catch(err => console.log(err));
   }
-
+  componentWillUpdate(){
+    const {type,subtype,labelCat} = this.props;
+    if(this.state.update && type!==''){
+      this.getCategory(type);
+      //console.log(subtype);
+      this.state.idCat=type;
+      this.state.labelCat=labelCat;
+      this.state.checkSubCat=subtype;
+      this.state.update=false;
+      this.setState(this.state);
+    }
+  }
   componentWillMount(){
     //const { lang } = this.props.navigation.state.params;
     this.getCategory();
@@ -88,6 +100,7 @@ export default class ChooseCat extends Component {
       <View style={headCatStyle}>
           <View style={headContent}>
               <TouchableOpacity onPress={()=>{
+                //console.log(idCat,labelCat,checkSubCat);
                 this.props.submitCat(idCat,labelCat,checkSubCat);
                 this.props.closeModal();
               }}>

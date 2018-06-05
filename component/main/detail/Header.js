@@ -33,7 +33,7 @@ export default class Header extends Component {
     }
   }
   socialShare(){
-    console.log('this.props.url',this.props.url);
+    //console.log('this.props.url',this.props.url);
     const opt = Platform.OS==='ios' ?
     {
       message: this.props.title,

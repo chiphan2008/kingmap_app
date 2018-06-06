@@ -35,7 +35,7 @@ export default class MapContent extends Component {
       //const APIKEY = 'AIzaSyCUNFe8ZC0csUZzlTHRQFPp7PjiAtQ6Z0M';
       const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${destination}&mode=${mode}`;
       console.log(url);
-      getApi(url).then(e=> {
+      latitude!==undefined && getApi(url).then(e=> {
         if(e.routes[0].overview_polyline!==undefined){
           this.setState({
                   coords: this.decode(e.routes[0].overview_polyline.points) // definition below

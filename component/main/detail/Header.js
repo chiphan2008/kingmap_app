@@ -6,9 +6,8 @@ import {
   Platform,Dimensions,TouchableOpacity,
   Modal,Share,
 } from 'react-native';
-import { NavigationActions } from 'react-navigation';
+//import { NavigationActions } from 'react-navigation';
 
-//
 import global from '../../global';
 
 import arrowLeft from '../../../src/icon/ic-white/arrow-left.png';

@@ -54,7 +54,7 @@ module.exports = {
   widthContentItem:{width:width-15-(width/3),flexDirection:'row',justifyContent:'space-between'},
   widthLable:{width:(width-30)/3},
   wrapItems:{backgroundColor:'#fff',marginBottom:1,flexDirection:'row',padding:15},
-  
+
   favIC:{width:19,height:18,marginRight:2},
   marRight:{marginRight:10},
   marRight5:{marginRight:5},
@@ -403,6 +403,18 @@ module.exports = {
   wrapCreImg:{width:width-85},
   imgCamera:{width:30,height:30,borderRadius:15,backgroundColor:'#F1F1F5',alignItems:'center',justifyContent:'center'},
   colorlbl :{color:'#323640',fontSize:16},
+  wrapWhite:{
+    backgroundColor:'#fff',
+    alignItems:'center',
+    padding:15,
+    //marginBottom:5,
+    width
+  },
+  titleCoin : {
+    fontSize: 16,
+    fontWeight:'400',
+    color:'#d0021b',
+  },
   colorNumPP :{fontWeight: 'bold',color:'#2F353F'},
   // imgUp:{width: 14,height: 7,top:166,position:'absolute'},
   imgUpCreate:{width: 14,height: 7,top:166,position:'absolute'},

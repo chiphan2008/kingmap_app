@@ -32,7 +32,7 @@ import checkinIC from '../../src/icon/ic-white/ic-check-in.png';
 import {Select, Option} from "react-native-chooser";
 
 
-
+var timeoutCheckUser;
 export default class DetailScreen extends Component {
   constructor(props) {
     super(props);
@@ -140,10 +140,15 @@ export default class DetailScreen extends Component {
   refresh(){
     checkLogin().then(e=>{
       if(e.id!==undefined){
-        this.setState({user_id:e.id,ema:e.email,pwd:e.pwd,isLogin:true});
-        loginServer(e);
+        timeoutCheckUser = setTimeout(()=>{
+          this.setState({user_id:e.id,ema:e.email,pwd:e.pwd,isLogin:true});
+          loginServer(e);
+        },500)
       }
     });
+  }
+  componentWillUnMount(){
+    clearTimeout(timeoutCheckUser);
   }
   saveLike(routing){
     const {isLogin,user_id} = this.state;
@@ -335,6 +340,7 @@ export default class DetailScreen extends Component {
         hasCollection={(hasCollection)=>this.setState({hasCollection})}
         idContent={idContent}
         userId={user_id}
+        lang={lang}
         visible={this.state.collection}
         closeModal={(has_collection)=>this.setState({collection:false,scroll:true,hasCollection: has_collection ? [1] : []},()=>{
           //console.log('has_collection',has_collection);

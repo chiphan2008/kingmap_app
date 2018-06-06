@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import {
   View, Text, TouchableOpacity,Dimensions,TextInput,Modal,StyleSheet,Image,
-  AsyncStorage,FlatList,
+  AsyncStorage,FlatList,TouchableWithoutFeedback
 } from 'react-native';
 import global from '../../global';
 import getApi from '../../api/getApi';
@@ -21,6 +21,8 @@ const checkContent = async (idContent,arr) => {
   rs = arr1.includes(idContent);
   return rs;
 };
+
+var timeoutColl;
 export default class Collection extends Component {
   constructor(props){
     super(props);
@@ -29,17 +31,26 @@ export default class Collection extends Component {
       has_collection:false,
       listColl:[],
       checkList:{},
+      update:true,
+      isLoad:true,
+      page:0,
     }
     //this.getData();
   }
-  getData(){
+  getData(page=null){
+    this.setState({isLoad:false})
+    if(page===null) page=0;
     const {userId} = this.props;
-    const url =`${global.url}${'collection/get/user/'}${userId}`;
-    //console.log(url);this.props.hasCollection(checkList);
-    getApi(url).then(e=>{
-      //console.log(e.data.length);
-      this.setState({listColl:e.data})
-    });
+    const url =`${global.url}${'collection/get/user/'}${userId}${'?skip='}${page}${'&limit=20'}`;
+    //console.log(url);//this.props.hasCollection(checkList);
+    timeoutColl = setTimeout(()=>{
+      getApi(url).then(e=>{
+        this.state.listColl= page===0?e.data:this.state.listColl.concat(e.data);
+        this.state.isLoad=true;
+        if(e.data.length<20 && page>0) this.state.isLoad=false;
+        this.setState(this.state)
+      }).catch(e=>{});
+    },500);
   }
   createColl(){
     const {userId} = this.props;
@@ -52,7 +63,7 @@ export default class Collection extends Component {
         if(e.code===200){
           this.getData(); this.setState({name:''});
         }
-      });
+      }).catch(e=>{});
     }
     //
   }
@@ -69,9 +80,14 @@ export default class Collection extends Component {
       }
     });
   }
-  componentWillMount(){
-    this.getData();
-    //console.log('aaa');
+  componentWillUpdate(){
+    const {userId} = this.props;
+    if(userId!==0 && this.state.update){
+      this.setState({update:false},()=>{
+        clearTimeout(timeoutColl)
+        this.getData();
+      })
+    }
   }
   render() {
     const {
@@ -79,14 +95,15 @@ export default class Collection extends Component {
       txtInput,marBot,colorTitle,colorBlack,btnAdd,
       wrapItem,
      } = styles;
-    const { name,listColl,checkList,has_collection } = this.state;
-    const { visible,userId,idContent } = this.props;
+    const { name,listColl,checkList,has_collection,page,isLoad } = this.state;
+    const { visible,userId,idContent,lang } = this.props;
     return (
       <Modal onRequestClose={() => null} transparent visible={visible}>
-      <TouchableOpacity onLayout={()=>this.getData()} onPress={()=>this.props.closeModal(has_collection)}
+      <TouchableOpacity  onPress={()=>this.props.closeModal(has_collection)}
       style={[saveContentStyle, visible ? show : hide]}>
+        <TouchableWithoutFeedback>
         <View style={{width:width-100,borderRadius:3,backgroundColor:'#fff',padding:15,marginBottom:7}}>
-          <Text style={[colorTitle,marBot]}>{`${'Tạo mới'}`.toUpperCase()}</Text>
+          <Text style={[colorTitle,marBot]}>{`${lang.create_new}`.toUpperCase()}</Text>
 
           <View style={{flexDirection:'row',marginBottom:10,justifyContent:'space-between'}}>
             <TextInput underlineColorAndroid={'transparent'} style={txtInput}
@@ -99,11 +116,21 @@ export default class Collection extends Component {
           </View>
           {listColl.length>0 ?
             <View style={{maxHeight:height/3}}>
-            <Text style={[colorTitle,marBot]}>{`${'Thêm vào bộ sưu tập'}`.toUpperCase()}</Text>
+            <Text style={[colorTitle,marBot]}>{`${lang.add_collection}`.toUpperCase()}</Text>
 
             <FlatList
                keyExtractor={(item,index) => index.toString()}
                data={listColl}
+               shouldItemUpdate={(props,nextProps)=>{
+                 return props.item!==nextProps.item
+               }}
+               onEndReachedThreshold={0.5}
+               onEndReached={()=> {
+                 this.setState({page:page+20},()=>{
+                   isLoad && this.getData(page);
+                 })
+               }}
+               //style={{marginBottom:10}}
                renderItem={({item}) => (
                  <TouchableOpacity style={[wrapItem,marBot]}
                  onLayout={()=>{
@@ -132,6 +159,7 @@ export default class Collection extends Component {
           }
 
         </View>
+        </TouchableWithoutFeedback>
       </TouchableOpacity>
       </Modal>
     );

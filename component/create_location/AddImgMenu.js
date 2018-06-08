@@ -73,7 +73,7 @@ export default class AddImgMenu extends Component {
       this.state.des_menu=des_menu;
       this.state.imgMenu=img_menu;
       this.state.update===false && this.setState(this.state,()=>{
-        this.props.submitImage(this.state.imgMenu,Object.entries(this.state.title_menu),Object.entries(this.state.des_menu));
+        //this.props.submitImage(this.state.imgMenu,Object.entries(this.state.title_menu),Object.entries(this.state.des_menu));
         this.setState({update:true});
       })
     }

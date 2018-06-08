@@ -21,7 +21,7 @@ const loginApi = async (url,param) => {
         body: acc,
       });
     let responseJson = await response.json();
-    console.log(responseJson);
+    //console.log(responseJson);
     if(responseJson.code===200){
       encodeApi(`${global.url_node}${'person'}`,'POST',responseJson.data[0]);
       AsyncStorage.setItem('@MyAccount:key', JSON.stringify(Object.assign(responseJson.data[0],{'pwd':param.password.toString(),remember_me:param.isCheck})));

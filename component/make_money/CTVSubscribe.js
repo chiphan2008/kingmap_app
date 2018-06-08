@@ -39,6 +39,7 @@ export default class AddImageMore extends Component {
       listAgency:[],
       showLoc:false,
       posted:false,
+
     }
   }
 
@@ -58,70 +59,78 @@ export default class AddImageMore extends Component {
 
   register(){
     const {birthday,address,phone,cmnd,daily_id,lang,district} = this.state;
-    const {id} = this.props.navigation.state.params;
+    const {user_profile} = this.props.navigation.state.params;
     const day = birthday.substr(0,2);
     const month = birthday.substr(3,2);
     const year = birthday.substr(-4);
-    if(!onlyNumber(day) || !onlyNumber(month) || !onlyNumber(year) || day>31 || month>12){
+    if(birthday===''){
+      //console.log('birthday');
+      this.setState({posted:false},()=>{
+        Alert.alert(lang.notify,lang.birthday_request);
+      })
+
+    }else if(!onlyNumber(day) || !onlyNumber(month) || !onlyNumber(year) || day>31 || month>12){
+      //console.log('elsebirthday');
       this.setState({posted:false},()=>{
         Alert.alert(lang.notify,lang.birthday_format);
       })
-      return false;
-    }
-    if(address!==null && address.trim()===''){
+
+    }else if(address!==null && address.trim()===''){
+      //console.log('address');
       this.setState({posted:false},()=>{
         Alert.alert(lang.notify,lang.enter_address);
-
       })
-      return false;
-    }
 
-    if(phone!==null && phone.trim()===''){
+    }else if(phone!==null && phone.trim()===''){
+      //console.log('phone');
       this.setState({posted:false},()=>{
         Alert.alert(lang.notify,lang.enter_phone);
       })
-      return false;
-    }
-    if(cmnd!==null && cmnd.trim()===''){
+
+    }else if(cmnd!==null && cmnd.trim()===''){
+      //console.log('cmnd');
       this.setState({posted:false},()=>{
         Alert.alert(lang.notify,lang.enter_cmnd);
-
       })
-      return false;
-    }
-    if(district===''){
+
+    }else if(district===''){
+      //console.log('district');
       this.setState({posted:false},()=>{
         Alert.alert(lang.notify,lang.plz_choose_area);
       })
-      return false;
-    }
-    if(daily_id==='' && daily_id===false){
+
+    }else if(daily_id==='' || daily_id===false){
+      //console.log('daily_id');
       this.setState({posted:false},()=>{
         Alert.alert(lang.notify,lang.plz_choose_agency);
       })
-      return false;
+    }else {
+      const url = `${global.url}${'user/register-ctv'}${'?lang='}${lang.lang}`;
+      const arr = new FormData();
+      arr.append('id',user_profile.id);
+      arr.append('birthday',`${year}-${month}-${day}`);
+      arr.append('address',address);
+      arr.append('phone',phone);
+      arr.append('cmnd',cmnd);
+      arr.append('daily_id',daily_id);
+      //console.log(url);
+      //console.log(arr);
+      this.state.posted && postApi(url,arr).then((e)=>{
+        if(e.code===200){
+          //loginServer(user_profile);
+          this.setState({posted:false},()=>{
+            Alert.alert(lang.notify,e.data,[
+              {text: '', style: 'cancel'},
+              {text: 'OK', onPress: () => this.props.navigation.navigate('MainScr')}
+            ],
+           { cancelable: false })
+          });
+        }else {
+          Alert.alert(lang.notify,e.message);
+        }
+      }).catch(e=>{});
     }
 
-    const url = `${global.url}${'user/register-ctv  '}`;
-    const arr = new FormData();
-    arr.append('id',id);
-    arr.append('birthday',`${year}-${month}-${day}`);
-    arr.append('address',address);
-    arr.append('phone',phone);
-    arr.append('cmnd',cmnd);
-    arr.append('daily_id',daily_id);
-    //console.log(url);
-    //console.log(arr);
-    this.state.posted && postApi(url,arr).then((e)=>{
-      if(e.code===200){
-        this.setState({posted:false},()=>{
-          Alert.alert(lang.notify,e.data);
-        });
-      }else {
-        Alert.alert(lang.notify,e.message);
-      }
-
-    });
   }
 
   saveLocation(){
@@ -143,7 +152,7 @@ export default class AddImageMore extends Component {
       popoverLoc,padCreate,overLayout,shadown,imgShare
     } = styles;
     const {navigate,goBack} = this.props.navigation;
-    const {titleScr,full_name} = this.props.navigation.state.params;
+    const {titleScr,user_profile} = this.props.navigation.state.params;
     const {birthday,address,phone,cmnd,nameKV,district,listAgency,daily_id} = this.state;
     return (
         <ScrollView>
@@ -163,7 +172,7 @@ export default class AddImageMore extends Component {
               <Text style={colorlbl}>{this.state.lang.name} </Text>
             </View>
             <View style={widthContentItem}>
-              <Text>{full_name}</Text>
+              <Text>{user_profile.full_name}</Text>
             </View>
           </View>
 
@@ -209,7 +218,7 @@ export default class AddImageMore extends Component {
             <View style={widthContentItem}>
               <View>
               <TextInput underlineColorAndroid='transparent'
-              onSubmitEditing={(event) => {}} maxLength={11}
+              onSubmitEditing={(event) => {}} maxLength={11} keyboardType={'numeric'}
               placeholder={'------'} style={{width:width-15-(width/3),padding:0}}
               onChangeText={(phone) => {if(onlyNumber(phone) || phone==='') this.setState({phone})}}
               value={phone.toString()}
@@ -226,7 +235,7 @@ export default class AddImageMore extends Component {
             <View style={widthContentItem}>
               <View>
               <TextInput underlineColorAndroid='transparent'
-              onSubmitEditing={(event) => {}} maxLength={12}
+              onSubmitEditing={(event) => {}} maxLength={12} keyboardType={'numeric'}
               placeholder={'------'} style={{width:width-15-(width/3),padding:0}}
               onChangeText={(cmnd) => {if(onlyNumber(cmnd) || cmnd==='') this.setState({cmnd})}}
               value={cmnd.toString()}
@@ -257,7 +266,13 @@ export default class AddImageMore extends Component {
             data={listAgency}
             keyExtractor={(item,index) => index.toString()}
             renderItem={({item,index}) =>(
-              <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
+              <TouchableOpacity onPress={()=>{
+                if(daily_id===item.id){
+                  this.setState({daily_id:!item.id})
+                }else {
+                  this.setState({daily_id:item.id})
+                }
+              }} style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
                   <View style={{flexDirection:'row',paddingBottom:15}}>
                       <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:50,marginRight:10,borderRadius:25}} />
                       <View style={{width:width-110}}>
@@ -265,16 +280,10 @@ export default class AddImageMore extends Component {
                         <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.address}`}</Text>
                       </View>
                   </View>
-                  <TouchableOpacity onPress={()=>{
-                    if(daily_id===item.id){
-                      this.setState({daily_id:!item.id})
-                    }else {
-                      this.setState({daily_id:item.id})
-                    }
-                  }}>
+                  <View>
                     <Image source={daily_id===item.id?checkIC:uncheckIC} style={imgShare} />
-                 </TouchableOpacity>
-                </View>
+                 </View>
+                </TouchableOpacity>
             )} />
             </View>
            </View>}
@@ -306,6 +315,7 @@ export default class AddImageMore extends Component {
             <ActivityIndicator size="large" color="#d0021b" />
           </View>
         </Modal>}
+        <View style={{height:15}}></View>
       </ScrollView>
     );
   }

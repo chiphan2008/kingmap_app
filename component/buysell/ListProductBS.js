@@ -164,7 +164,7 @@ export default class ListProductBS extends Component {
                          </TouchableOpacity>
 
                          <View style={wrapInfoOver}>
-                           <TouchableOpacity onPress={()=>navigate('DetailBuySellScr')} >
+                           <TouchableOpacity onPress={()=>navigate('DetailBuySellScr',{id_raovat:item.id})} >
                                <Text style={txtTitleOverCat} numberOfLines={2}>{item.name}</Text>
                            </TouchableOpacity>
 

@@ -7,6 +7,7 @@ import RNSettings from 'react-native-settings';
 //import SvgUri from 'react-native-svg-uri';
 const {height, width} = Dimensions.get('window');
 
+import loginApi from '../../api/loginApi';
 import getApi from '../../api/getApi';
 import getLanguage from '../../api/getLanguage';
 import accessLocation from '../../api/accessLocation';
@@ -70,12 +71,20 @@ export default class HomeTab extends Component {
     };
     accessLocation();
     checkLogin().then(e=>{
-      //console.log(e);
+
       if(e.id===undefined){
         this.setState({isLogin:false})
       }else {
         loginServer(e);
-        this.setState({user_profile:e,user_id:e.id,avatar:e.avatar,code_user:e.phone,isLogin:true});
+        console.log(e);
+        const params = {username:e.email,password:e.pwd};
+        var _this = this;
+        _this.setState({user_profile:e,user_id:e.id,avatar:e.avatar,code_user:e.phone,isLogin:true});
+
+        // loginApi(`${global.url}${'login'}`,params).then(el=>{
+        //   console.log(el.data[0]);
+        //   _this.setState({user_profile:el.data[0],user_id:e.id,avatar:e.avatar,code_user:e.phone,isLogin:true});
+        // }).catch(err=>{});
       }
     })
 
@@ -84,6 +93,7 @@ export default class HomeTab extends Component {
     Keyboard.dismiss();
     arrLang = [{name:'VIE',v:'vn'},{name:'ENG',v:'en'}];
   }
+
 
   findLoc(){
 

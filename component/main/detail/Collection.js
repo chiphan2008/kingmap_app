@@ -61,7 +61,9 @@ export default class Collection extends Component {
       arr.append('name',name);
       postApi(`${global.url}${'collection/create'}`,arr).then((e)=>{
         if(e.code===200){
-          this.getData(); this.setState({name:''});
+           this.setState({name:'',page:0},()=>{
+             this.getData();
+           });
         }
       }).catch(e=>{});
     }
@@ -76,7 +78,7 @@ export default class Collection extends Component {
     arr.append('collection_id',collection_id);
     postApi(`${global.url}${'collection/'}${route}`,arr).then((e)=>{
       if(e.code===200){
-        this.getData();
+        //this.getData();
       }
     });
   }
@@ -117,13 +119,13 @@ export default class Collection extends Component {
           {listColl.length>0 ?
             <View style={{maxHeight:height/3}}>
             <Text style={[colorTitle,marBot]}>{`${lang.add_collection}`.toUpperCase()}</Text>
-
             <FlatList
                keyExtractor={(item,index) => index.toString()}
                data={listColl}
                shouldItemUpdate={(props,nextProps)=>{
                  return props.item!==nextProps.item
                }}
+               extraData={this.state}
                onEndReachedThreshold={0.5}
                onEndReached={()=> {
                  this.setState({page:page+20},()=>{

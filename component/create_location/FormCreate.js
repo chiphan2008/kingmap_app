@@ -202,6 +202,9 @@ export default class FormCreate extends Component {
   }
 
   confirmPostData(){
+    //console.log('this.state.title_space',this.state.title_space);
+    //console.log('this.state.des_space',this.state.des_space);
+    //return;
     //console.log('confirmPostData1',this.state.hasSubCat);
     if(this.state.hasSubCat===0){this.setState({errMsg:this.state.lang.enter_classify});return false;}
     //console.log('confirmPostData2');
@@ -270,6 +273,7 @@ export default class FormCreate extends Component {
         name: `${index}_image_space.jpg`,
         type: `${e.mime}`
       });
+
       let title_space = this.state.title_space[index]===undefined ? '':this.state.title_space[index][1];
       let des_space = this.state.des_space[index]===undefined ? '':this.state.des_space[index][1];
       e.path!==undefined && arr.append(`title_space[]`, title_space);
@@ -282,6 +286,7 @@ export default class FormCreate extends Component {
         name: `${index}_image_menu.jpg`,
         type: `${e.mime}`
       });
+
       let title_menu = this.state.title_menu[index]===undefined ? '':this.state.title_menu[index][1];
       let des_menu = this.state.des_menu[index]===undefined ? '':this.state.des_menu[index][1];
       e.path!==undefined && arr.append(`title_menu[]`, title_menu);
@@ -749,7 +754,9 @@ export default class FormCreate extends Component {
 
 
           <AddImgSpace
-          submitImage={(img_space,title_space,des_space)=>{this.setState({img_space,title_space,des_space})}}
+          submitImage={(img_space,title_space,des_space)=>{
+            //console.log(img_space,title_space,des_space);
+            this.setState({img_space,title_space,des_space})}}
           visible={showImgSpace}
           img_space={this.state.img_space}
           lang={this.state.lang}
@@ -757,7 +764,9 @@ export default class FormCreate extends Component {
           closeModal={()=>this.setState({showImgSpace:false})} />
 
           <AddImgMenu
-          submitImage={(img_menu,title_menu,des_menu)=>{this.setState({img_menu,title_menu,des_menu})}}
+          submitImage={(img_menu,title_menu,des_menu)=>{
+            //console.log(img_menu,title_menu,des_menu);
+            this.setState({img_menu,title_menu,des_menu})}}
           visible={showImgMenu}
           img_menu={this.state.img_menu}
           lang={this.state.lang}

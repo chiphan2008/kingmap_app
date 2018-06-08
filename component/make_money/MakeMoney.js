@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image,
-  TextInput, TouchableOpacity,
+  TextInput, TouchableOpacity,Modal,Alert,
   ScrollView,FlatList
 } from 'react-native';
 import Moment from 'moment';
@@ -20,6 +20,12 @@ import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
 import plusIC from '../../src/icon/ic-plus.png';
 import subIC from '../../src/icon/ic-sub.png';
 import filterIC from '../../src/icon/ic-filter.png';
+import likeIC from '../../src/icon/ic-like.png';
+import favoriteIcon from '../../src/icon/ic-favorite.png';
+import arrowNextIC from '../../src/icon/ic-arrow-next.png';
+import checkIC from '../../src/icon/ic-create/ic-check.png';
+//import loginApi from '../api/loginApi';
+
 //import calendarIC from '../../src/icon/ic-wallet/ic-calendar.png';
 //import timeIC from '../../src/icon/ic-wallet/ic-time.png';
 import historyIC from '../../src/icon/ic-wallet/ic-history.png';
@@ -29,81 +35,118 @@ import transferIC from '../../src/icon/ic-wallet/ic-transfer.png';
 import withdrawIC from '../../src/icon/ic-wallet/ic-withdraw.png';
 import {format_number,checkUrl} from '../libs';
 
+var com;
 export default class MakeMoney extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      choose_loc:global.choose_loc,
       showCoin:false,
       showLoc:false,
       showCTV:false,
+      showArea:false,
+      listDistrict:{},
+      labelArea:'',
       valCTV:'',
       valLoc:'',
       listAgency:[],
       listLoc:[],
       listData:{},
-      statics:[
-        {name:'AAA',value:5000},
-        {name:'BBB',value:5000},
-        {name:'CCC',value:5000},
-      ],
+      itemChoose:{},
+      assign:false,
+      isAgency:false,
     }
     this.getStatic();
   }
-  onSelectLoc(value, label) {
-    const { navigate } = this.props.navigation;
-    const { lang,code_user } = this.props.navigation.state.params;
-    navigate('DetailScr',{
-      idContent:value,lat:0,lng:0,curLoc:{latitude:10.8142,longitude:106.6438,},lang
-    });
-  }
-  callData(code){
-    getApi(`${global.url}${'list-location?code='}${code}`)
-    .then(arrLoc => {
-      //console.log('arrLoc',arrLoc);
-        this.setState({ listLoc: arrLoc.data });
-    }).catch(err => console.log(err));
-  }
-  searchAgency(keyword){
+
+
+  searchContent(route,keyword){
     const { user_profile } = this.props.navigation.state.params;
     const arr = new FormData();
-    arr.append('daily_id',user_profile.id);
+    user_profile._roles!==undefined && user_profile._roles.forEach(e=>{
+      if(e.machine_name==='cong_tac_vien') arr.append('ctv_id',user_profile.id);
+      if(e.machine_name==='tong_dai_ly') {arr.append('daily_id',user_profile.id);isAgency=true}
+    })
     arr.append('keyword',keyword);
-    postApi(`${global.url}${'static/search-ctv'}`,arr).then(arr => {
-        this.setState({ listAgency:arr.data,valCTV:'' });
+    //console.log(`${global.url}${'static/search-'}${route}`);
+    //console.log(arr);
+    postApi(`${global.url}${'static/search-'}${route}`,arr).then(arr => {
+      if(route==='ctv'){
+        this.state.listAgency=arr.data;
+        this.state.valCTV='';
+      }else {
+        this.state.listLoc=arr.data;
+        this.state.valLoc='';
+      }
+        this.setState(this.state);
     }).catch(err => console.log(err));
   }
   getStatic(){
     const { user_profile } = this.props.navigation.state.params;
     const month = Moment().format('MM');
     const year = Moment().format('YYYY');
+    let isAgency=false;
     const arr = new FormData();
-    user_profile._roles.forEach(e=>{
+    user_profile._roles!==undefined &&  user_profile._roles.forEach(e=>{
       if(e.machine_name==='cong_tac_vien') arr.append('ctv_id',user_profile.id);
-      if(e.machine_name==='tong_dai_ly') arr.append('daily_id',user_profile.id);
+      if(e.machine_name==='tong_dai_ly') {arr.append('daily_id',user_profile.id);isAgency=true}
     })
     arr.append('month',month);
     arr.append('year',year);
     //console.log(arr);
     postApi(`${global.url}${'static'}`,arr)
     .then(arr => {
-        this.setState({ listData:arr.data });
+        this.setState({ listData:arr.data,isAgency });
     }).catch(err => console.log(err));
   }
-  componentWillMount(){
-    const { code_user } = this.props.navigation.state.params;
+
+  assignFunc = () => {
+    const { lang } = this.props.navigation.state.params;
+    const {listDistrict,itemChoose} = this.state;
+
+    if(itemChoose.id===undefined){
+      Alert.alert(lang.notify,lang.choose_ctv);
+    }else if(Object.entries(listDistrict).length===0){
+      Alert.alert(lang.notify,lang.plz_choose_area);
+    }else {
+      const arr = new FormData();
+      arr.append('id',itemChoose.id);
+      Object.entries(listDistrict).forEach(e=>{
+        arr.append('district[]',e[1]);
+      })
+      //console.log(arr);
+      //console.log(`${global.url}${'static/area-ctv'}`);
+      postApi(`${global.url}${'static/area-ctv'}`,arr)
+      .then(e => {
+        if(e.code===200){
+          Alert.alert(lang.notify,e.data,[
+            {text: '', style: 'cancel'},
+            {text: 'OK', onPress: () => this.setState({ listAgency:[],valCTV:'',assign:false})}
+          ],
+         { cancelable: false })
+       }else {
+         Alert.alert(lang.notify,e.message)
+       }
+      }).catch(err => console.log(err));
+    }
   }
   render() {
     const { lang,code_user,name_module,user_profile } = this.props.navigation.state.params;
+    console.log(user_profile);
     const { navigate,goBack } = this.props.navigation;
     const {
       container,contentWrap,headCatStyle,headContent,titleCreate,wrapDes,
-      headLocationStyle, inputSearch,wrapWhite,marTop,titleHead,titleNormal,
+      headLocationStyle, inputSearch,wrapWhite,marTop,titleHead,titleNormal,wrapSetting,
       imgLogoTop,imgContent,colorTitle,titleCoin,contentKcoin,btnTransfer,colorlbl,
+      popoverLoc,padBuySell,overLayout,shadown,listOverService,imgShare,show,hide,
     } = styles;
 
-    const {showCoin,showLoc,showCTV,listData,listAgency} = this.state;
+    const {
+      itemChoose,showCoin,showLoc,showCTV,showArea,listData,
+      listAgency,listLoc,isAgency,assign,listDistrict,labelArea,} = this.state;
+    const _this = this;
+    //console.log(user_profile);
     return (
+      <View>
       <ScrollView style={container}>
       {user_profile._roles!==undefined && user_profile._roles.length>0?
       <View>
@@ -146,7 +189,7 @@ export default class MakeMoney extends Component {
                renderItem={({item,index}) =>(
                  <View style={{marginTop:5,width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                    <Text style={{color:'#2F3C51'}}>{item.name}</Text>
-                   <Text style={{color:'#5782A4'}}>{item.value}</Text>
+                   <Text style={{color:'#5782A4'}}>{format_number(item.value)}</Text>
                 </View>
                )} />}
 
@@ -166,19 +209,50 @@ export default class MakeMoney extends Component {
               {showLoc && <View style={{paddingTop:10,marginTop:10,borderColor:'#E0E8ED',borderTopWidth:1}}>
                   <TextInput underlineColorAndroid='transparent'
                   style={{width:width-30,backgroundColor:'#EDEDED',borderRadius:3,padding:5}}
-                  onSubmitEditing={() => {}}
+                  onSubmitEditing={() => {
+                    if (this.state.valLoc.trim()!=='') {
+                      this.searchContent('content',this.state.valLoc);
+                    }
+                  }}
                   onChangeText={(valLoc) => this.setState({valLoc})}
                   value={this.state.valLoc} />
 
                   <TouchableOpacity style={{position:'absolute',top:20,right:5}}
                   onPress={()=>{
                     if (this.state.valLoc.trim()!=='') {
-
+                      this.searchContent('content',this.state.valLoc);
                     }
                   }}>
                     <Image style={{width:16,height:16,}} source={searchIC} />
                   </TouchableOpacity>
               </View>}
+
+              {showLoc && listLoc.length>0 &&
+              <FlatList
+               extraData={this.state}
+               data={listLoc}
+               style={{marginTop:15,maxHeight:height/3}}
+               keyExtractor={(item,index) => index.toString()}
+               renderItem={({item,index}) =>(
+                   <TouchableOpacity
+                   onPress={()=>{navigate('CTVDetailScr',{lang,content_id:item.id,name:item.name,address:`${item.address}, ${item._district.name}, ${item._city.name}`,
+                   avatar:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`})}}
+                   style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
+                       <View style={{flexDirection:'row',paddingBottom:15}}>
+                           <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:70,height:60,marginRight:10}} />
+                           <View style={{width:width-110,justifyContent:'space-between'}}>
+                             <Text numberOfLines={1} style={colorlbl}>{item.name}</Text>
+                             <Text numberOfLines={1} style={{color:'#6791AF',fontSize:12}}>{`${item.address}, ${item._district.name}, ${item._city.name}`}</Text>
+                             <View style={{flexDirection:'row',alignItems:'center'}}>
+                              <Image source={likeIC} style={{width:18,height:15,marginRight:5}} />
+                              <Text>{item.like} | </Text>
+                              <Image source={favoriteIcon} style={{width:16,height:16,marginRight:5}} />
+                              <Text>{item.vote}</Text>
+                             </View>
+                           </View>
+                       </View>
+                   </TouchableOpacity>
+               )} />}
 
           </View>}
 
@@ -198,7 +272,7 @@ export default class MakeMoney extends Component {
                   style={{width:width-30,backgroundColor:'#EDEDED',borderRadius:3,padding:5}}
                   onSubmitEditing={() => {
                     if (this.state.valCTV.trim()!=='') {
-                      this.searchAgency(this.state.valCTV);
+                      this.searchContent('ctv',this.state.valCTV);
                     }
                   }}
                   onChangeText={(valCTV) => this.setState({valCTV})}
@@ -207,16 +281,17 @@ export default class MakeMoney extends Component {
                   <TouchableOpacity style={{position:'absolute',top:20,right:5}}
                   onPress={()=>{
                     if (this.state.valCTV.trim()!=='') {
-                      this.searchAgency(this.state.valCTV);
+                      this.searchContent('ctv',this.state.valCTV);
                     }
                   }}>
                     <Image style={{width:16,height:16,}} source={searchIC} />
                   </TouchableOpacity>
 
+                  {showCTV && listAgency.length>0 &&
                   <FlatList
                    extraData={this.state}
                    data={listAgency}
-                   style={{marginTop:15,maxHeight:height/3,minHeight:20}}
+                   style={{marginTop:15,maxHeight:height/3}}
                    keyExtractor={(item,index) => index.toString()}
                    renderItem={({item,index}) =>(
                      <TouchableOpacity
@@ -232,31 +307,34 @@ export default class MakeMoney extends Component {
                          </View>
 
                        </TouchableOpacity>
-                   )} />
+                   )} />}
 
               </View>}
 
           </View>}
 
 
-          <View style={wrapWhite}>
+          {isAgency &&
+            <TouchableOpacity style={wrapWhite} onPress={()=>{
+              this.setState({assign:true,listAgency:[],valCTV:''});
+            }}>
               <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                 <Text numberOfLines={1} style={colorTitle}>{`${lang.assign}`}</Text>
                 <Image source={filterIC} style={{width:35,height:35}} />
               </View>
-          </View>
+          </TouchableOpacity>}
 
-          <View style={{alignItems:'center'}}>
+          {!isAgency && <View style={{alignItems:'center'}}>
             <TouchableOpacity style={[marTop,btnTransfer]}
             onPress={()=>navigate('ChooseCatScr',{lang:lang.lang})}>
             <Text style={titleCreate}>{`${lang.let_mm}`.toUpperCase()}</Text>
             <Text style={{color:'#fff'}}>{`(${lang.new_location_mm})`}</Text>
             </TouchableOpacity>
-          </View>
+          </View>}
         </View>
 
         <View style={[marTop,wrapDes]}>
-        <Text style={{color:'#6587A8',fontSize:16,lineHeight:28}}>{`${'Lưu ý : \n- Các địa điểm cần cập nhật mỗi tuần 1 lần để người dùng biết là địa điểm còn đang hoạt động.\n- Sau 03 tháng, điạ điểm nào không có các tương tác gì khác ngoài tìm kiếm thông tin thì các nhân viên quản lý địa điểm có trách nhiệm tiếp cận địa điểm để hai bên cùng hoạt động hiệu quả.\n- Sau 02 năm, các địa điểm của bạn sẽ tự động thoát ra khoải danh sách quản lý của bạn. \n\nVậy nên, bạn hay cố gắng tương tác nhiều với các địa điểm mà bạn đang quản lý trực tiếp.'}`}</Text>
+        <Text style={{color:'#6587A8',fontSize:16,lineHeight:28}}>{`${'Lưu ý : \n- Các địa điểm cần cập nhật mỗi tuần 1 lần để người dùng biết là địa điểm còn đang hoạt động.\n- Sau 03 tháng, điạ điểm nào không có các tương tác gì khác ngoài tìm kiếm thông tin thì các nhân viên quản lý địa điểm có trách nhiệm tiếp cận địa điểm để hai bên cùng hoạt động hiệu quả.\n- Sau 02 năm, các địa điểm của bạn sẽ tự động thoát ra khỏi danh sách quản lý của bạn. \n\nVậy nên, bạn hay cố gắng tương tác nhiều với các địa điểm mà bạn đang quản lý trực tiếp.'}`}</Text>
         </View>
 
         </View>
@@ -279,13 +357,127 @@ export default class MakeMoney extends Component {
             <Text style={{textAlign:'center',fontSize:14,marginTop:5}}>{lang.des_ctv}</Text>
             </View>
             <TouchableOpacity style={{marginTop:15,backgroundColor:'#d0021b',borderRadius:3,width:width-30,paddingTop:10,paddingBottom:10,alignItems:'center'}}
-            onPress={()=>navigate('CTVSubscribeScr',{id:user_profile.id,full_name:user_profile.full_name,titleScr:lang.subscribe_ctv,lang:lang.lang})}>
+            onPress={()=>navigate('CTVSubscribeScr',{user_profile,titleScr:lang.subscribe_ctv,lang:lang.lang})}>
               <Text style={{color:'#fff'}}>{lang.subscribe_ctv}</Text>
             </TouchableOpacity>
           </View>
         </View>
       }
+
       </ScrollView>
+
+      {assign &&
+        <View style={wrapSetting}>
+        <ScrollView>
+          <View style={headCatStyle}>
+              <View style={headContent}>
+                  <TouchableOpacity onPress={()=>{this.setState({
+                    assign:false,listAgency:[],valCTV:''
+                  })}}>
+                  <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
+                  </TouchableOpacity>
+                    <Text style={{marginTop:5,color:'#fff'}}>{lang.assign.toUpperCase()}</Text>
+                  <View></View>
+              </View>
+          </View>
+
+          <View style={wrapWhite} >
+              <View>
+              <Text numberOfLines={1} style={colorTitle}>{`${lang.choose_coll}`}</Text>
+              </View>
+              <View style={{paddingTop:10,marginTop:10,borderColor:'#E0E8ED',borderTopWidth:1}}>
+                  <TextInput underlineColorAndroid='transparent'
+                  style={{width:width-30,backgroundColor:'#EDEDED',borderRadius:3,padding:5}}
+                  onSubmitEditing={() => {
+                    if (this.state.valCTV.trim()!=='') {
+                      this.searchContent('ctv',this.state.valCTV);
+                    }
+                  }}
+                  onChangeText={(valCTV) => this.setState({valCTV})}
+                  value={this.state.valCTV} />
+
+                  <TouchableOpacity style={{position:'absolute',top:20,right:5}}
+                  onPress={()=>{
+                    if (this.state.valCTV.trim()!=='') {
+                      this.searchContent('ctv',this.state.valCTV);
+                    }
+                  }}>
+                    <Image style={{width:16,height:16,}} source={searchIC} />
+                  </TouchableOpacity>
+              </View>
+              {listAgency.length>0 &&
+              <FlatList
+               extraData={this.state}
+               data={listAgency}
+               style={{marginTop:15,maxHeight:height/4}}
+               keyExtractor={(item,index) => index.toString()}
+               renderItem={({item,index}) =>(
+                 <TouchableOpacity onPress={()=>{this.setState({itemChoose:item,listAgency:[]})}}
+                 style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
+                     <View style={{flexDirection:'row',paddingBottom:15}}>
+                         <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:50,marginRight:10,borderRadius:25}} />
+                         <View style={{width:width-90}}>
+                           <Text numberOfLines={1} style={colorlbl}>{item.full_name}</Text>
+                           <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.address}`}</Text>
+                         </View>
+                     </View>
+                  </TouchableOpacity>
+               )} />}
+          </View>
+          {itemChoose.avatar!==undefined &&
+            <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center',marginTop:15}}>
+              <View style={{flexDirection:'row',paddingBottom:15}}>
+                  <Image source={{uri:checkUrl(itemChoose.avatar) ? itemChoose.avatar : `${global.url_media}${itemChoose.avatar}`}} style={{width:50,height:50,marginRight:10,borderRadius:25}} />
+                  <View style={{width:width-90}}>
+                    <Text numberOfLines={1} style={colorlbl}>{itemChoose.full_name}</Text>
+                    <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${itemChoose.address}`}</Text>
+                  </View>
+              </View>
+           </View>}
+           <View style={wrapWhite} >
+               <View>
+               <Text numberOfLines={1} style={colorTitle}>{`${lang.choose_area}`}</Text>
+               </View>
+               <View style={{paddingTop:10,marginTop:10,borderColor:'#E0E8ED',borderTopWidth:1}}></View>
+               <TouchableOpacity style={{flexDirection:'row',justifyContent:'space-between'}}
+               onPress={()=>this.setState({showArea:true})}>
+               <Text numberOfLines={1} style={colorTitle}>{`${lang.area}`}</Text>
+               <Image source={arrowNextIC} style={{width:18,height:18}}/>
+               </TouchableOpacity>
+          </View>
+
+          <View style={{alignItems:'center'}}>
+            <TouchableOpacity onPress={()=>{this.assignFunc()}} style={[marTop,btnTransfer]} >
+            <Text style={{color:'#fff'}}>{`${lang.assign}`}</Text>
+            </TouchableOpacity>
+          </View>
+
+        </ScrollView>
+        </View>
+      }
+
+      {showArea && listData.area!==undefined &&
+        <Modal onRequestClose={() => null} transparent visible={showArea}>
+        <TouchableOpacity onPress={()=>this.setState({showArea:false})} style={[popoverLoc,padBuySell]}>
+        <View style={[overLayout,shadown]}>
+          <FlatList
+             keyExtractor={(item,index) => index.toString()}
+             extraData={this.state}
+             data={listData.area}
+             renderItem={({item}) => (
+               <View style={listOverService}>
+                <TouchableOpacity onPress={()=>{ this.setState({labelArea:item.name,
+                  listDistrict:Object.assign(listDistrict,{[item.id]:item.id}) });}}
+               style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',padding:15}}>
+                    <Text style={colorTitle}>{item.name}</Text>
+                    <Image source={checkIC} style={[imgShare,listDistrict[item.id]===item.id ? show : hide]} />
+                </TouchableOpacity>
+                </View>
+           )} />
+        </View>
+        </TouchableOpacity>
+      </Modal>}
+      </View>
     );
   }
 }
@@ -294,7 +486,33 @@ const styles = StyleSheet.create({
   container: {
     width,
     height,
+    backgroundColor:'#E9E9EF'
   },
+  listOverService:{
+      borderBottomColor:'#EEEDEE',
+      borderBottomWidth:1,
+  },
+  shadown:{
+    shadowOffset:{  width: 1,  height: 1,  },
+    shadowColor: '#999',
+    shadowOpacity: .5,
+  },
+  overLayout:{
+    backgroundColor:'#fff',width: width-20,borderRadius:6,overflow:'hidden',top:7,
+    maxHeight:Platform.OS ==='ios' ? 350 : 380,
+  },
+  padBuySell:{ paddingTop: 120},
+  popoverLoc : {
+    alignItems:'center',
+    position:'absolute',
+    width,height,
+    backgroundColor:'rgba(0,0,0,0.7)',
+    zIndex:999,
+  },
+  imgShare : {
+      width: 16,height: 16,
+  },
+  wrapSetting: {width,height,backgroundColor:'#F1F2F5',position:'absolute',zIndex:99,top:0,left:0},
   btnTransfer:{width:width-40,alignItems:'center',justifyContent:'center',backgroundColor:'#d0021b',padding:10,borderRadius:5},
   titleHead:{fontSize:20,fontWeight:'bold',color:'#2F353F'},
   titleNormal:{fontSize:15,color:'#2F353F',marginTop:5,lineHeight:22,textAlign:'center'},
@@ -306,11 +524,12 @@ const styles = StyleSheet.create({
   marTop:{marginTop:20},
   wrapWhite:{
     backgroundColor:'#fff',
-    alignItems:'center',
+    //alignItems:'center',
     padding:15,
     marginBottom:5,
     width
   },
+
   titleCoin : {
     fontSize: 18,
     fontWeight:'400',
@@ -366,7 +585,8 @@ const styles = StyleSheet.create({
   optionListStyleCity : {
     top: Platform.OS === 'ios' ? -97 : -176,
   },
-
+  show : { display: 'flex',},
+  hide : { display: 'none'},
   headLocationStyle : {
       backgroundColor: '#D0021B',paddingTop: Platform.OS==='ios' ? 25 : 10, alignItems: 'center',height: 75,
       position:'relative',zIndex:5,

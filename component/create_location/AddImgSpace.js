@@ -75,7 +75,7 @@ export default class AddImgSpace extends Component {
       this.state.des_space=des_space;
       this.state.imgSpace=img_space;
       this.state.update===false && this.setState(this.state,()=>{
-        this.props.submitImage(this.state.imgSpace,Object.entries(this.state.title_space),Object.entries(this.state.des_space));
+        //this.props.submitImage(this.state.imgSpace,Object.entries(this.state.title_space),Object.entries(this.state.des_space));
         this.setState({update:true});
       })
     }

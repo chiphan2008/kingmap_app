@@ -9,7 +9,7 @@ const loginServer = async (param) => {
     //console.log(`${global.url}${'check-login'}`,);
     getApi(`${global.url}${'check-login'}`).then(arr => {
       //console.log('arr.data.length',arr.data.length);
-      if(arr.data.length===0){
+      if(arr.data.length===0 || arr.data._roles.length===0){
         if(param.id_google!==null){
           //console.log('gooApi');
           gooApi(`${global.url}${'login-google'}`,param);

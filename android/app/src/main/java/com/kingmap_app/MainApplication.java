@@ -3,8 +3,8 @@ package com.kingmap_app;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 import co.apptailor.googlesignin.RNGoogleSigninPackage;
+import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 import com.magus.fblogin.FacebookLoginPackage;
 import com.horcrux.svg.SvgPackage;
 import com.airbnb.android.react.maps.MapsPackage;
@@ -32,8 +32,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNGoogleSigninPackage(),
             new ReactNativePushNotificationPackage(),
-          new RNGoogleSigninPackage(),
           new FacebookLoginPackage(),
           new SvgPackage(),
           new PickerPackage(),

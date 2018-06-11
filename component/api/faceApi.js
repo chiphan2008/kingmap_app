@@ -17,7 +17,7 @@ const faceApi = async (url,param) => {
     acc.append('email',param.email);
     if(param.name!==undefined) acc.append('full_name',param.name);
     if(param.picture!==undefined) acc.append('avatar',param.picture.data.url);
-    //console.log('acc',acc);
+    //console.log('param.picture.data.url',param);
     let response = await fetch(url, {
         method: 'POST',
         headers: {

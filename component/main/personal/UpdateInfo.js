@@ -24,7 +24,7 @@ import locationIC from '../../../src/icon/ic-create/ic-location.png';
 import descriptionIC from '../../../src/icon/ic-create/ic-description.png';
 import sortDownIC from '../../../src/icon/ic-sort-down.png';
 const {width,height} = Dimensions.get('window');
-import {hasNumber} from '../../libs';
+import {hasNumber,checkUrl} from '../../libs';
 
 
 export default class UpdateInfo extends Component {
@@ -74,7 +74,7 @@ export default class UpdateInfo extends Component {
         email:e.email,
         address:e.address,
         description:e.description,
-        avatar:`${global.url_media}/${e.avatar}`,
+        avatar:checkUrl(e.avatar)?e.avatar:`${global.url_media}/${e.avatar}`,
         pwd:e.pwd,
         errMsg:'',
       });
@@ -163,7 +163,7 @@ export default class UpdateInfo extends Component {
     const {
       wrapper,headCatStyle,headContent,titleCreate,
       titleTab,titleActive,listCreate,widthLblCre,
-      imgInfo,wrapInputCreImg,marTop,colorErr,btnInfo,btnYInfo,colorTitle,
+      imgInfo,wrapInputCreImg,marTop,colorErr,btnInfo,btnYInfo,colourTitle,colorTitle,
       wrapBtnInfo,wrapSelect,show,hide,posDay,posMonth,posYear,widthDay,widthYear,
     } = styles;
     const {lang} = this.props.navigation.state.params;
@@ -220,7 +220,7 @@ export default class UpdateInfo extends Component {
                 onPress={()=>{
                   this.setState({disable:showDay,showDay:!showDay,showMonth:false,showYear:false})
                 }}>
-                    <Text style={colorTitle}>{this.state.dDay}</Text>
+                    <Text style={colourTitle}>{this.state.dDay}</Text>
                     <Image source={sortDownIC} style={{width:12,height:12}} />
                 </TouchableOpacity>
                 <Text> / </Text>
@@ -228,7 +228,7 @@ export default class UpdateInfo extends Component {
                 <TouchableOpacity style={btnInfo}
                 onPress={()=>{this.setState({showDay:false,disable:showMonth,showMonth:!showMonth,showYear:false});
                 }}>
-                    <Text style={colorTitle}>{this.state.mDay}</Text>
+                    <Text style={colourTitle}>{this.state.mDay}</Text>
                     <Image source={sortDownIC} style={{width:12,height:12}} />
                 </TouchableOpacity>
                 <Text> / </Text>
@@ -236,7 +236,7 @@ export default class UpdateInfo extends Component {
                 <TouchableOpacity style={btnYInfo}
                 onPress={()=>{this.setState({showDay:false,showMonth:false,disable:showYear,showYear:!showYear});
                 }}>
-                    <Text style={colorTitle}>{this.state.yDay}</Text>
+                    <Text style={colourTitle}>{this.state.yDay}</Text>
                     <Image source={sortDownIC} style={{width:12,height:12}} />
                 </TouchableOpacity>
 
@@ -247,39 +247,45 @@ export default class UpdateInfo extends Component {
          </View>
 
 
-         {showDay && <View style={[wrapSelect,posDay,widthDay,wrapBtnInfo]}>
-         <ScrollView style={[showDay ? show : hide]}>
+         {showDay && <View style={[wrapSelect,posDay,wrapBtnInfo]}>
+         <ScrollView>
+         <View style={widthDay}>
          {Array(listDay).fill().map((_, i) => {
            i=i+1; i = i<10 ? `0${i}` : i;
            return (
              <TouchableOpacity key={i} onPress={()=>this.setState({dDay:i,showDay:false,disable:true})}>
-                <Text style={colorTitle}>{i}</Text>
+                <Text style={colourTitle}>{i}</Text>
             </TouchableOpacity>
          )})}
+         </View>
          </ScrollView>
          </View>}
 
-         {showMonth && <View style={[wrapSelect,posMonth,widthDay,wrapBtnInfo]}>
+         {showMonth && <View style={[wrapSelect,wrapBtnInfo,posMonth]}>
          <ScrollView>
+         <View style={widthDay}>
          {Array(listMonth).fill().map((_, i) => {
            i=i+1; i = i<10 ? `0${i}` : i;
            return (
              <TouchableOpacity key={i} onPress={()=>this.setState({mDay:i,showMonth:false,disable:true})}>
-                <Text style={colorTitle}>{i}</Text>
+                <Text style={colourTitle}>{i}</Text>
             </TouchableOpacity>
          )})}
+         </View>
          </ScrollView>
          </View>}
 
-         {showYear && <View style={[wrapSelect,posYear,widthYear,wrapBtnInfo]}>
+         {showYear && <View style={[wrapSelect,posYear,wrapBtnInfo]}>
          <ScrollView>
+         <View style={widthYear}>
          {Array(100).fill().map((_, i) => {
            i=listYear-i;
            return (
              <TouchableOpacity key={i} onPress={()=>this.setState({yDay:i,showYear:false,disable:true})}>
-                <Text style={colorTitle}>{i}</Text>
+                <Text style={colourTitle}>{i}</Text>
             </TouchableOpacity>
          )})}
+         </View>
          </ScrollView>
          </View>}
 

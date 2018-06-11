@@ -4,12 +4,14 @@ import getApi from '../api/getApi';
 import loginApi from '../api/loginApi';
 import gooApi from '../api/gooApi';
 
-const loginServer = async (param) => {
+const loginServer = async (param,reqLoc=null) => {
   try {
     //console.log(`${global.url}${'check-login'}`,);
     getApi(`${global.url}${'check-login'}`).then(arr => {
-      //console.log('arr.data.length',arr.data.length);
-      if(arr.data.length===0 || arr.data._roles.length===0){
+      //console.log('arr.data.length',arr.data);
+
+      if(arr.data.length===0 || reqLoc!==null){
+        //console.log('aaa');
         if(param.id_google!==null){
           //console.log('gooApi');
           gooApi(`${global.url}${'login-google'}`,param);

@@ -76,7 +76,7 @@ export default class HomeTab extends Component {
         this.setState({isLogin:false})
       }else {
         loginServer(e);
-        console.log(e);
+        //console.log(e);
         const params = {username:e.email,password:e.pwd};
         var _this = this;
         _this.setState({user_profile:e,user_id:e.id,avatar:e.avatar,code_user:e.phone,isLogin:true});
@@ -165,8 +165,7 @@ export default class HomeTab extends Component {
              this.getListStatus();
            });
        }, 100);}
-     })
-     .catch(err => console.log(err));
+     }).catch(err => console.log(err));
    }
    getListStatus(){
      getApi(global.url+'get-static')
@@ -322,6 +321,7 @@ export default class HomeTab extends Component {
                           style={{position:'absolute',alignItems:'center',top:pos.y,left :pos.x,overflow: 'visible'}}
                           onPress={() => {
                             this.requestLogin();
+                            loginServer(this.state.user_profile,'reqLog');
                             if(this.state.isLogin){
                               navigate('MakeMoneyScr',{user_profile,icon:`${global.url_media}${e.image}`,name_module:e.name,lang:this.state.lang}) }}
                             }

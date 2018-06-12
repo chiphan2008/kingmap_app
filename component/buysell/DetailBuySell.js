@@ -7,6 +7,7 @@ import {
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import Moment from 'moment';
+import {format_number} from '../libs';
 
 import checkLogin from '../api/checkLogin';
 import loginServer from '../api/loginServer';
@@ -87,7 +88,7 @@ export default class DetailBuySell extends Component {
     } = styles;
     const { navigate,goBack } = this.props.navigation;
     const { listData,activeSlide,zoom,isLogin,user_id } = this.state;
-    console.log('listData',listData);
+    //console.log('listData',listData);
     return (
       <View style={container}>
 
@@ -124,7 +125,7 @@ export default class DetailBuySell extends Component {
         <Text style={{fontSize:18,fontWeight:'bold',color:'#000',lineHeight:25}} numberOfLines={2}>{listData.name}</Text>
         <View style={{flexDirection:'row',alignItems:'center'}}>
           <View style={{width:width-(width/3)}}>
-            <Text style={{fontSize:16,fontWeight:'bold',color:'#d0021b',lineHeight:23}} numberOfLines={1}>{listData.price}đ</Text>
+            <Text style={{fontSize:16,fontWeight:'bold',color:'#d0021b',lineHeight:23}} numberOfLines={1}>{format_number(listData.price)}đ</Text>
             <Text style={txtAddrOverCat} numberOfLines={1}>Ngày đăng: {Moment(listData.created_at).format('DD/MM/YYYY')}</Text>
           </View>
           <View style={{width:width/3}}>

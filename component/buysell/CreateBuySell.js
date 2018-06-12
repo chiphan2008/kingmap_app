@@ -269,7 +269,7 @@ export default class CreateBuySell extends Component {
           <View style={widthContentItem}>
             <View>
             <TextInput underlineColorAndroid='transparent'
-            onSubmitEditing={(event) => {}}
+            onSubmitEditing={(event) => {}} keyboardType={'numeric'}
             placeholder={'------'} style={{width:width-15-(width/3),padding:0}}
             onChangeText={(price) =>{if(price==='' || (onlyNumber(price) && price.substr(0,1)>0) ) this.setState({price})}}
             value={price.toString()} maxLength={9}

@@ -187,7 +187,7 @@ export default class HomeTab extends Component {
     //console.log('this.props',this.props);
     const {height, width} = Dimensions.get('window');
     const {navigate} = this.props.navigation;
-    const {listStatus,user_profile} = this.state;
+    const {listStatus,user_profile,curLoc} = this.state;
     //console.log("this.props.Hometab=",util.inspect(this.state.listCategory,false,null));
     const {
       container, bgImg,colorlbl,flexRow,

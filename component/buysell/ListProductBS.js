@@ -20,6 +20,7 @@ import favoriteIC from '../../src/icon/ic-favorite.png';
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
 import sortDownIC from '../../src/icon/ic-sort-down.png';
 import upDD from '../../src/icon/ic-white/ic-dropdown_up.png';
+import {format_number} from '../libs';
 
 export default class ListProductBS extends Component {
   constructor(props) {
@@ -54,7 +55,7 @@ export default class ListProductBS extends Component {
     if(district!==null)  url += `${'&district='}${district}`;
     if(city!==null)  url += `${'&city='}${city}`;
     if(country!==null)  url += `${'&country='}${country}`;
-    console.log('url',url);
+    //console.log('url',url);
     getApi(url).then(arrData => {
       if(skip===0){
         this.state.listData = arrData.data;
@@ -169,7 +170,7 @@ export default class ListProductBS extends Component {
                            </TouchableOpacity>
 
                            <View>
-                           <Text style={{color:'#d0021b',fontWeight:'bold'}} numberOfLines={1}>{item.price}đ</Text>
+                           <Text style={{color:'#d0021b',fontWeight:'bold'}} numberOfLines={1}>{format_number(item.price)}đ</Text>
                            <Text style={txtAddrOverCat} numberOfLines={1}>Ngày đăng: {Moment(item.date_post).format('DD/MM/YYYY')}</Text>
 
                            </View>

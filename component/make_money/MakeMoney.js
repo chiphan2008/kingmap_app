@@ -28,6 +28,8 @@ import arrowNextIC from '../../src/icon/ic-arrow-next.png';
 import checkIC from '../../src/icon/ic-check.png';
 import uncheckIC from '../../src/icon/ic-uncheck.png';
 import removeIC from '../../src/icon/ic-create/ic-remove.png';
+import lockIC from '../../src/icon/ic-lock.png';
+import unlockIC from '../../src/icon/ic-unlock.png';
 
 //import loginApi from '../api/loginApi';
 
@@ -64,6 +66,7 @@ export default class MakeMoney extends Component {
       isAgency:false,
       isPend:false,
       user_profile:{},
+      lockCTV:{},
     }
     const { user_profile } = this.props.navigation.state.params;
     loginServer(user_profile,'fgdjk')
@@ -130,13 +133,14 @@ export default class MakeMoney extends Component {
       {text: lang.confirm, onPress: () => this.delColl(id)}
     ],{ cancelable: false })
   }
+
   delColl(id){
     const { user_profile } = this.props.navigation.state.params;
     const arr = new FormData();
     arr.append('daily_id',user_profile.id);
     arr.append('ctv_id',id);
     postApi(`${global.url}${'static/remove-ctv'}`,arr).then(() => {
-      this.searchContent(route,this.state.kw);
+      this.searchContent('ctv',this.state.kw);
     } ).catch(err => console.log(err));
   }
   getListPending(){
@@ -165,6 +169,16 @@ export default class MakeMoney extends Component {
     postApi(`${global.url}${'static/'}${route}${'-ctv'}`,arr).then(e => {
         this.getStatic();
         if(e.code===200)Alert.alert(lang.notify,e.data)
+    }).catch(err => console.log(err));
+  }
+  stopCTV(id,active){
+    const { user_profile,lang } = this.props.navigation.state.params;
+    const arr = new FormData();
+    const route=active===0?'unlock':'lock';
+    arr.append('daily_id',user_profile.id);
+    arr.append('ctv_id[]',id);
+    postApi(`${global.url}${'static/'}${route}${'-ctv'}`,arr).then(e => {
+        this.searchContent('ctv',this.state.kw);
     }).catch(err => console.log(err));
   }
 
@@ -220,7 +234,7 @@ export default class MakeMoney extends Component {
     } = styles;
 
     const {
-      itemChoose,showCoin,showLoc,showCTV,showArea,listData,
+      itemChoose,showCoin,showLoc,showCTV,showArea,listData,lockCTV,
       listAgency,listLoc,isAgency,assign,listDistrict,labelArea,ListPend,suggestPend} = this.state;
     const _this = this;
     //console.log(user_profile);
@@ -280,7 +294,7 @@ export default class MakeMoney extends Component {
                   <Text numberOfLines={1} style={colorTitle}>{`${lang.total_location}`}</Text>
                   <Text style={titleCoin}>{`${format_number(listData.count_location)}`}</Text>
                 </View>
-                <TouchableOpacity onPress={()=>this.setState({showLoc:!this.state.showLoc})}>
+                <TouchableOpacity onPress={()=>this.setState({showLoc:!this.state.showLoc,listLoc:[]})}>
                 <Image source={showLoc?subIC:plusIC} style={{width:35,height:35}} />
                 </TouchableOpacity>
               </View>
@@ -341,7 +355,7 @@ export default class MakeMoney extends Component {
                   <Text numberOfLines={1} style={colorTitle}>{`${lang.total_coll}`}</Text>
                   <Text style={titleCoin}>{`${format_number(listData.count_ctv)}`}</Text>
                 </View>
-                <TouchableOpacity onPress={()=>this.setState({showCTV:!this.state.showCTV})}>
+                <TouchableOpacity onPress={()=>this.setState({showCTV:!this.state.showCTV,listAgency:[]})}>
                 <Image source={showCTV?subIC:plusIC} style={{width:35,height:35}} />
                 </TouchableOpacity>
               </View>
@@ -379,10 +393,15 @@ export default class MakeMoney extends Component {
                      style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
                          <View style={{flexDirection:'row',paddingBottom:15,alignItems:'center'}}>
                              <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:50,marginRight:10,borderRadius:25}} />
-                             <View style={{width:width-110}}>
+                             <View style={{width:width-142}}>
                                <Text numberOfLines={1} style={colorlbl}>{item.full_name}</Text>
                                <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.address}`}</Text>
                              </View>
+                             <TouchableOpacity onPress={()=>{
+                               this.stopCTV(item.id,item.role_active)
+                             }}>
+                             <Image source={item.role_active===0?unlockIC:lockIC} style={{width:22,height:22,marginRight:7}} />
+                             </TouchableOpacity>
                              <TouchableOpacity onPress={()=>{this.confirmdDelColl(item.id)}}>
                              <Image source={removeIC} style={{width:20,height:20}} />
                              </TouchableOpacity>

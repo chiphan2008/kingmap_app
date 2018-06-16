@@ -7,22 +7,28 @@ import {
   TouchableWithoutFeedback
 } from 'react-native';
 import Moment from 'moment';
+import ImagePicker from 'react-native-image-crop-picker';
 import {checkUrl,onlyNumber} from '../libs';
 import styles from '../styles';
 import global from '../global';
 import postApi from '../api/postApi';
 import getApi from '../api/getApi';
+import loginServer from '../api/loginServer';
+import checkLogin from '../api/checkLogin';
 import checkLocation from '../api/checkLocation';
 import SelectLocation from '../main/location/SelectLocation';
 
 import lang_vn from '../lang/vn/language';
 import lang_en from '../lang/en/language';
+import cameraLargeIC from '../../src/icon/ic-create/ic-camera-large.png';
+import cameraIC from '../../src/icon/ic-create/ic-camera.png';
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
 import closeIC from '../../src/icon/ic-create/ic-close.png';
 import arrowNextIC from '../../src/icon/ic-arrow-next.png';
 import uncheckIC from '../../src/icon/ic-uncheck.png';
 import checkIC from '../../src/icon/ic-check.png';
 import sortDownIC from '../../src/icon/ic-sort-down.png';
+import selectedIC from '../../src/icon/ic-create/ic-selected.png';
 
 
 const {width,height} = Dimensions.get('window');
@@ -46,11 +52,18 @@ export default class AddImageMore extends Component {
       showDay:false,
       showMonth:false,
       showYear:false,
+      showCMND:false,
       dDay:'',dMonth:'',dYear:'',
+      cmnd_image_front:{},
+      cmnd_image_back:{},
     }
+    checkLogin().then(e=>{
+      e.temp_daily_code!=='' && this.props.navigation.navigate('MainScr');
+    })
   }
   componentWillMount(){
     const {user_profile} = this.props.navigation.state.params;
+    //console.log(user_profile);
     let strday;
     if(user_profile.birthday===null || user_profile.birthday===undefined){
       strday = String(Moment(new Date()).format('YYYY-MM-DD')).split('-') ;
@@ -63,6 +76,7 @@ export default class AddImageMore extends Component {
       dYear:strday[0],
       phone:user_profile.phone,
       address:user_profile.address,
+      cmnd:user_profile.cmnd,
     })
   }
   getlistAgency(){
@@ -103,7 +117,19 @@ export default class AddImageMore extends Component {
       this.setState({posted:false},()=>{
         Alert.alert(lang.notify,lang.enter_cmnd);
       })
-
+    }else if (this.state.cmnd_image_front.path===undefined && this.state.cmnd_image_back.path===undefined) {
+      this.setState({posted:false},()=>{
+        Alert.alert(lang.notify,lang.add_cmnd);
+      })
+    
+    }else if (this.state.cmnd_image_front.path===undefined) {
+      this.setState({posted:false},()=>{
+        Alert.alert(lang.notify,lang.add_front_cmnd);
+      })
+    }else if (this.state.cmnd_image_back.path===undefined) {
+      this.setState({posted:false},()=>{
+        Alert.alert(lang.notify,lang.add_back_cmnd);
+      })
     }else if(district===''){
       //console.log('district');
       this.setState({posted:false},()=>{
@@ -124,15 +150,26 @@ export default class AddImageMore extends Component {
       arr.append('phone',phone);
       arr.append('cmnd',cmnd);
       arr.append('daily_id',daily_id);
+      this.state.cmnd_image_front.path!==undefined && arr.append(`cmnd_image_front`, {
+        uri:`${this.state.cmnd_image_front.path}`,
+        name: `cmnd_image_front.jpg`,
+        type: `${this.state.cmnd_image_front.mime}`
+      });
+      this.state.cmnd_image_back.path!==undefined &&  arr.append(`cmnd_image_back`, {
+        uri:`${this.state.cmnd_image_back.path}`,
+        name: `cmnd_image_back.jpg`,
+        type: `${this.state.cmnd_image_back.mime}`
+      });
       //console.log(url);
       //console.log(arr);
       this.state.posted && postApi(url,arr).then((e)=>{
         if(e.code===200){
           //loginServer(user_profile);
+          loginServer(user_profile,'reqLog');
           this.setState({posted:false},()=>{
             Alert.alert(lang.notify,e.data,[
               {text: '', style: 'cancel'},
-              {text: 'OK', onPress: () => this.props.navigation.navigate('MainScr')}
+              {text: 'OK', onPress: () => {this.props.navigation.navigate('MainScr')}}
             ],
            { cancelable: false })
           });
@@ -144,6 +181,18 @@ export default class AddImageMore extends Component {
       }).catch(e=>{});
     }
 
+  }
+  uploadCMND(route){
+    ImagePicker.openPicker({
+      cropping: false
+    }).then(image =>{
+      //console.log(image);
+      if(route==='front'){
+        this.setState({cmnd_image_front:image});
+      }else {
+        this.setState({cmnd_image_back:image});
+      }
+    }).catch(e=>console.log('e'));
   }
 
   saveLocation(){
@@ -162,13 +211,14 @@ export default class AddImageMore extends Component {
     const {
       container,headCatStyle,headContent,titleCreate,wrapInputCreImg,
       wrapItems,widthLable,colorlbl,widthContentItem,show,hide,colorErr,
-      popoverLoc,padCreate,overLayout,shadown,imgShare,btnYInfo,btnInfo,
+      popoverLoc,padCreate,overLayout,shadown,imgShare,btnYInfo,btnInfo,imgCamera,
       wrapSelect,posDayCTV,posMonthCTV,posYearCTV,widthYear,wrapBtnInfo,widthDay,colourTitle
     } = styles;
     const {navigate,goBack} = this.props.navigation;
     const {titleScr,user_profile} = this.props.navigation.state.params;
     const {birthday,address,phone,cmnd,nameKV,district,listAgency,daily_id,
-    showDay,showMonth,showYear,dDay,dMonth,dYear} = this.state;
+    showDay,showMonth,showYear,dDay,dMonth,dYear,showCMND,
+    cmnd_image_back,cmnd_image_front} = this.state;
     return (
         <ScrollView>
         <TouchableWithoutFeedback onPress={()=>this.setState({showDay:false,showMonth:false,showYear:false,})}>
@@ -322,6 +372,21 @@ export default class AddImageMore extends Component {
           </View>
 
           <TouchableOpacity style={wrapItems}
+          onPress={()=>this.setState({showCMND:true})}>
+              <View style={{width:width-70,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+                <Text style={colorlbl}>{this.state.lang.cmnd_image}</Text>
+             </View>
+
+             <View style={{flexDirection:'row',alignItems:'center'}}>
+               <Image source={selectedIC} style={[imgShare,cmnd_image_back.path!==undefined&&cmnd_image_front.path!==undefined ? show : hide]}/>
+               <View style={imgCamera}>
+                 <Image source={cameraIC} style={imgShare}/>
+               </View>
+             </View>
+
+           </TouchableOpacity>
+
+          <TouchableOpacity style={wrapItems}
           onPress={()=>this.setState({showLoc:true})}>
               <View style={{width:width-40,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                 <Text style={colorlbl}>{this.state.lang.choose_area}</Text>
@@ -384,6 +449,51 @@ export default class AddImageMore extends Component {
               saveLocation={this.saveLocation.bind(this)} />
           </View>
           </TouchableOpacity>
+        </Modal>
+
+        <Modal onRequestClose={() => null} transparent visible={this.state.showCMND}>
+        <ScrollView style={container}>
+          <View style={headCatStyle}>
+              <View style={headContent}>
+                  <Text style={titleCreate}>   </Text>
+                    <Text style={titleCreate}> {this.state.lang.cmnd_image.toUpperCase()} </Text>
+                <TouchableOpacity onPress={()=>this.setState({showCMND:false})}>
+                {/*<Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />*/}
+                <Text style={titleCreate}> {this.state.lang.done} </Text>
+                </TouchableOpacity>
+              </View>
+          </View>
+
+          <View style={{justifyContent:'center',alignItems:'center',backgroundColor:'#FFFEFF',padding:50,marginBottom:5,borderColor:'#ECEEF3',borderBottomWidth:1}}>
+            <TouchableOpacity
+            onPress={()=>this.uploadCMND('front')}>
+            <Image source={cameraLargeIC} style={{width:60,height:60,marginBottom:10}}/>
+            </TouchableOpacity>
+            <Text style={{fontSize:20}}>{this.state.lang.cmnd_image_front}</Text>
+          </View>
+
+          <View style={{height:5}}></View>
+          {cmnd_image_front.path!==undefined &&
+            <Image style={{width,height:300,resizeMode: 'cover'}}
+          source={{isStatic:true,uri:cmnd_image_front.path!==undefined?`${cmnd_image_front.path}`:`${''}`}} />
+          }
+          <View style={{height:5}}></View>
+
+          <View style={{justifyContent:'center',alignItems:'center',backgroundColor:'#FFFEFF',padding:50,marginBottom:5,borderColor:'#ECEEF3',borderBottomWidth:1}}>
+            <TouchableOpacity
+            onPress={()=>this.uploadCMND('back')}>
+            <Image source={cameraLargeIC} style={{width:60,height:60,marginBottom:10}}/>
+            </TouchableOpacity>
+            <Text style={{fontSize:20}}>{this.state.lang.cmnd_image_back}</Text>
+          </View>
+          <View style={{height:5}}></View>
+          {cmnd_image_back.path!==undefined &&
+            <Image style={{width,height:300,resizeMode: 'cover'}}
+          source={{isStatic:true,uri:cmnd_image_back.path!==undefined?`${cmnd_image_back.path}`:`${''}`}} />
+          }
+          <View style={{height:5}}></View>
+
+          </ScrollView>
         </Modal>
         {this.state.posted &&
         <Modal onRequestClose={() => null} transparent

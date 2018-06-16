@@ -182,7 +182,7 @@ export default class HomeTab extends Component {
        result.y = Math.round(Math.sin(angle * Math.PI / 180) * distance + y);
        return result;
    }
-
+  
   render() {
     //console.log('this.props',this.props);
     const {height, width} = Dimensions.get('window');
@@ -321,7 +321,7 @@ export default class HomeTab extends Component {
                           style={{position:'absolute',alignItems:'center',top:pos.y,left :pos.x,overflow: 'visible'}}
                           onPress={() => {
                             this.requestLogin();
-                            loginServer(this.state.user_profile,'reqLog');
+
                             if(this.state.isLogin){
                               navigate('MakeMoneyScr',{user_profile,icon:`${global.url_media}${e.image}`,name_module:e.name,lang:this.state.lang}) }}
                             }

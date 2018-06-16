@@ -8,7 +8,6 @@ import {
 } from 'react-native';
 const {height, width} = Dimensions.get('window');
 
-
 import global from '../global';
 import getApi from '../api/getApi';
 import loginServer from '../api/loginServer';
@@ -27,7 +26,6 @@ import lang_vn from '../lang/vn/language';
 import lang_en from '../lang/en/language';
 
 import checkinIC from '../../src/icon/ic-white/ic-check-in.png';
-
 
 import {Select, Option} from "react-native-chooser";
 
@@ -79,9 +77,11 @@ export default class DetailScreen extends Component {
 
   getContent(idContent){
     const {latitude,longitude} = this.state.curLoc;
+    const {update} =this.props.navigation.state.params;
     //console.log(latitude,longitude);
     //if(latlng===undefined) latlng='10.7818513,106.6769368';
-    const url = `${global.url}${'content/'}${idContent}${'?location='}${latitude},${longitude}`;
+    const act = update!==undefined?'content-update':'content';
+    const url = `${global.url}${act}/${idContent}${'?location='}${latitude},${longitude}`;
     //console.log('url',url);
     getApi(url)
     .then(arrData => {

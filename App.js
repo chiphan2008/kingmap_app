@@ -42,6 +42,7 @@ import ListCategory from './component/main/home/ListCategory';
 
 import HomeTab from './component/main/home/HomeTab';
 import MakeMoney from './component/make_money/MakeMoney';
+import CTVApprove from './component/make_money/CTVApprove';
 import CTVDetail from './component/make_money/CTVDetail';
 import CTVSubscribe from './component/make_money/CTVSubscribe';
 import Wallet from './component/make_money/Wallet';
@@ -228,6 +229,7 @@ export default class App extends Component {
         screen: RootTabs,
       },
       MakeMoneyScr: { screen: MakeMoney },
+      CTVApproveScr: { screen: CTVApprove },
       CTVDetailScr: { screen: CTVDetail },
       CTVSubscribeScr: { screen: CTVSubscribe },
       WalletScr: { screen: Wallet },

@@ -3,7 +3,8 @@
 import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image,
   TextInput, TouchableOpacity,Modal,Alert,
-  ScrollView,FlatList
+  ScrollView,FlatList,TouchableWithoutFeedback,
+  DeviceEventEmitter
 } from 'react-native';
 import Moment from 'moment';
 const {height, width} = Dimensions.get('window');
@@ -58,7 +59,9 @@ export default class MakeMoney extends Component {
       valLoc:'',
       listAgency:[],
       ListPend:[],
+      ListLocPend:[],
       suggestPend:{},
+      suggestLoc:{},
       listLoc:[],
       listData:{},
       itemChoose:{},
@@ -73,21 +76,24 @@ export default class MakeMoney extends Component {
     user_profile.temp_daily_code==='' && this.getStatic();
   }
 
-
-  searchContent(route,keyword){
+  searchContent(route,keyword,moderation=null){
     const { user_profile } = this.props.navigation.state.params;
     const arr = new FormData();
     user_profile._roles!==undefined && user_profile._roles.forEach(e=>{
       if(e.machine_name==='cong_tac_vien') arr.append('ctv_id',user_profile.id);
       if(e.machine_name==='tong_dai_ly') {arr.append('daily_id',user_profile.id);isAgency=true}
     })
-    arr.append('keyword',keyword);
-
+    if(moderation!==null){
+      arr.append('moderation','request_publish');
+    }else {
+      arr.append('keyword',keyword);
+    }
     //console.log(`${global.url}${'static/search-'}${route}`);
     //console.log(arr);
     postApi(`${global.url}${'static/search-'}${route}`,arr).then(e => {
-
-      if(route==='ctv'){
+      if (moderation!==null) {
+          this.state.ListLocPend=e.data;
+      }else if(route==='ctv'){
         this.state.listAgency=e.data;
         this.state.valCTV='';
         this.state.kw=keyword;
@@ -116,14 +122,15 @@ export default class MakeMoney extends Component {
       user_profile._roles.length>0 && postApi(`${global.url}${'static'}`,arr).then(e => {
       //console.log('e.data',e.data);
         this.setState({ listData:e.data,isAgency },()=>{
-          isAgency && this.getListPending();
+          if(isAgency){
+            this.getListPending();
+            this.searchContent('content','','fgkjdf');
+          }
         });
       }).catch(err => console.log(err));
     }else {
       this.setState({isPend:true})
     }
-
-
 
   }
   confirmdDelColl(id){
@@ -147,30 +154,51 @@ export default class MakeMoney extends Component {
     const { user_profile } = this.props.navigation.state.params;
     const arr = new FormData();
     arr.append('daily_id',user_profile.id);
-    //console.log(arr);
     //console.log(`${global.url}${'static/search-ctv-pending'}`);
     postApi(`${global.url}${'static/search-ctv-pending'}`,arr)
     .then(e => {
-      console.log('e.data',e.data);
+      //console.log('e.data',e.data);
         this.setState({ ListPend:e.data });
     }).catch(err => console.log(err));
   }
   requestCTV(route){
     const { user_profile,lang } = this.props.navigation.state.params;
-    if(Object.entries(this.state.suggestPend).length===0){
-      Alert(lang.notify,lang.choose_ctv);
-      return false;
-    }
+    let state=false;
     const arr = new FormData();
     arr.append('daily_id',user_profile.id);
     Object.entries(this.state.suggestPend).forEach(e=>{
-      arr.append('ctv_id[]',e[1]);
+      if(e[1]!==false){arr.append('ctv_id[]',e[1]);state=true;}
     })
-    postApi(`${global.url}${'static/'}${route}${'-ctv'}`,arr).then(e => {
+    if(!state){
+      Alert.alert(lang.notify,lang.choose_ctv);
+      return false;
+    }
+    state && postApi(`${global.url}${'static/'}${route}${'-ctv'}`,arr).then(e => {
         this.getStatic();
         if(e.code===200)Alert.alert(lang.notify,e.data)
     }).catch(err => console.log(err));
   }
+
+  requestLoc(route){
+    const { user_profile,lang } = this.props.navigation.state.params;
+    let state=false;
+
+    const arr = new FormData();
+    arr.append('daily_id',user_profile.id);
+    Object.entries(this.state.suggestLoc).forEach(e=>{
+      if(e[1]!==false){arr.append('content_id[]',e[1]);state=true;}
+    })
+
+    if(!state){
+      Alert.alert(lang.notify,lang.choose_loc);
+      return false;
+    }
+    state &&  postApi(`${global.url}${'static/'}${route}${'-content'}`,arr).then(e => {
+        this.getStatic();
+        if(e.code===200)Alert.alert(lang.notify,e.data)
+    }).catch(err => console.log(err));
+  }
+
   stopCTV(id,active){
     const { user_profile,lang } = this.props.navigation.state.params;
     const arr = new FormData();
@@ -194,7 +222,7 @@ export default class MakeMoney extends Component {
       const arr = new FormData();
       arr.append('id',itemChoose.id);
       Object.entries(listDistrict).forEach(e=>{
-        arr.append('district[]',e[1]);
+        e[1]!==false && arr.append('district[]',e[1]);
       })
       //console.log(arr);
       //console.log(`${global.url}${'static/area-ctv'}`);
@@ -203,7 +231,7 @@ export default class MakeMoney extends Component {
         if(e.code===200){
           Alert.alert(lang.notify,e.data,[
             {text: '', style: 'cancel'},
-            {text: 'OK', onPress: () => this.setState({ listAgency:[],valCTV:'',assign:false})}
+            {text: 'OK', onPress: () => this.setState({ itemChoose:{},listAgency:[],valCTV:'',assign:false})}
           ],{ cancelable: false })
        }else {
          Alert.alert(lang.notify,e.message)
@@ -222,6 +250,11 @@ export default class MakeMoney extends Component {
     //},2000)
 
   }
+  componentDidMount(){
+    DeviceEventEmitter.addListener('gobackCTV', (e)=>{
+      if(e.isLogin) this.getListPending();
+    })
+  }
   render() {
     const { lang,code_user,name_module,user_profile } = this.props.navigation.state.params;
     //console.log(user_profile);
@@ -235,7 +268,9 @@ export default class MakeMoney extends Component {
 
     const {
       itemChoose,showCoin,showLoc,showCTV,showArea,listData,lockCTV,
-      listAgency,listLoc,isAgency,assign,listDistrict,labelArea,ListPend,suggestPend} = this.state;
+      listAgency,listLoc,isAgency,assign,listDistrict,labelArea,ListPend,suggestPend,
+      ListLocPend,suggestLoc
+    } = this.state;
     const _this = this;
     //console.log(user_profile);
     return (
@@ -268,9 +303,10 @@ export default class MakeMoney extends Component {
                 <Text numberOfLines={1} style={colorTitle}>{`${lang.total_MM}`}</Text>
                 <Text style={titleCoin}>{`${format_number(listData.total)}`}</Text>
               </View>
-              <TouchableOpacity onPress={()=>this.setState({showCoin:!this.state.showCoin})}>
+              {listData.total>0 &&
+                <TouchableOpacity onPress={()=>this.setState({showCoin:!this.state.showCoin})}>
                 <Image source={showCoin?subIC:plusIC} style={{width:35,height:35}} />
-              </TouchableOpacity>
+              </TouchableOpacity>}
             </View>
 
             {showCoin &&
@@ -294,9 +330,9 @@ export default class MakeMoney extends Component {
                   <Text numberOfLines={1} style={colorTitle}>{`${lang.total_location}`}</Text>
                   <Text style={titleCoin}>{`${format_number(listData.count_location)}`}</Text>
                 </View>
-                <TouchableOpacity onPress={()=>this.setState({showLoc:!this.state.showLoc,listLoc:[]})}>
+                {listData.count_location>0 && <TouchableOpacity onPress={()=>this.setState({showLoc:!this.state.showLoc,listLoc:[]})}>
                 <Image source={showLoc?subIC:plusIC} style={{width:35,height:35}} />
-                </TouchableOpacity>
+                </TouchableOpacity>}
               </View>
 
               {showLoc && <View style={{paddingTop:10,marginTop:10,borderColor:'#E0E8ED',borderTopWidth:1}}>
@@ -355,9 +391,9 @@ export default class MakeMoney extends Component {
                   <Text numberOfLines={1} style={colorTitle}>{`${lang.total_coll}`}</Text>
                   <Text style={titleCoin}>{`${format_number(listData.count_ctv)}`}</Text>
                 </View>
-                <TouchableOpacity onPress={()=>this.setState({showCTV:!this.state.showCTV,listAgency:[]})}>
+                {listData.count_ctv>0 && <TouchableOpacity onPress={()=>this.setState({showCTV:!this.state.showCTV,listAgency:[]})}>
                 <Image source={showCTV?subIC:plusIC} style={{width:35,height:35}} />
-                </TouchableOpacity>
+                </TouchableOpacity>}
               </View>
 
               {showCTV && <View style={{paddingTop:10,marginTop:10,borderColor:'#E0E8ED',borderTopWidth:1}}>
@@ -417,10 +453,7 @@ export default class MakeMoney extends Component {
 
           {isAgency &&
             <TouchableOpacity style={wrapWhite} onPress={()=>{
-              checkLogin().then(e=>{
-                e.temp_daily_code!=='' && this.setState({assign:true,listAgency:[],valCTV:''});
-              })
-
+              this.setState({assign:true,listAgency:[],valCTV:''});
             }}>
               <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                 <Text numberOfLines={1} style={colorTitle}>{`${lang.assign}`}</Text>
@@ -428,14 +461,63 @@ export default class MakeMoney extends Component {
               </View>
           </TouchableOpacity>}
 
-          {isAgency &&
+          {isAgency && ListLocPend.length>0 &&
+            <View style={wrapWhite}>
+              <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+                <Text numberOfLines={1} style={colorTitle}>{`${lang.pending_location}`}</Text>
+                {/*<Image source={filterIC} style={{width:35,height:35}} />*/}
+              </View>
+                  <FlatList
+                   extraData={this.state}
+                   data={ListLocPend}
+                   style={{marginTop:15,maxHeight:height/3}}
+                   keyExtractor={(item,index) => index.toString()}
+                   renderItem={({item,index}) =>(
+                     <TouchableOpacity style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}
+                     onPress={()=>{
+                       navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,lang:lang.lang,update:true})
+                     }}>
+                         <View style={{flexDirection:'row',paddingBottom:15}}>
+                             <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:50,marginRight:10,borderRadius:25}} />
+                             <View style={{width:width-110}}>
+                               <Text numberOfLines={1} style={colorlbl}>{item.name}</Text>
+                               <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.address}, ${item._district.name}, ${item._city.name}`}</Text>
+                             </View>
+                         </View>
+                        <TouchableOpacity onPress={()=>{
+                          if(suggestLoc[item.id]){
+                            this.state.suggestLoc = Object.assign(this.state.suggestLoc,{[item.id]:!item.id});
+                          }else{
+                            this.state.suggestLoc = Object.assign(this.state.suggestLoc,{[item.id]:item.id});
+                          }
+                          this.setState(this.state);
+                        }}>
+                        <Image source={suggestLoc[item.id]?checkIC:uncheckIC} style={{width:20,height:20}} />
+                        </TouchableOpacity>
+                    </TouchableOpacity>
+                   )} />
+                   <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center',marginTop:20}}>
+                       <TouchableOpacity style={{alignItems:'center',padding:7,borderWidth:1,borderRadius:4,borderColor:'#d0021b',minWidth:width/3}}
+                       onPress={()=>{this.requestLoc('reject')}}>
+                         <Text style={{color:'#d0021b',fontSize:16}}>{`${lang.reject}`}</Text>
+                       </TouchableOpacity>
+                       <TouchableOpacity style={{alignItems:'center',padding:7,borderRadius:4,backgroundColor:'#d0021b',marginLeft:10,minWidth:width/3}}
+                       onPress={()=>{this.requestLoc('publish')}}>
+                         <Text style={{color:'#fff',fontSize:16}}>{`${lang.display}`}</Text>
+                       </TouchableOpacity>
+                   </View>
+
+
+          </View>}
+
+
+          {isAgency && ListPend.length>0 &&
             <View style={wrapWhite}>
               <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                 <Text numberOfLines={1} style={colorTitle}>{`${lang.pending_collaborators}`}</Text>
                 {/*<Image source={filterIC} style={{width:35,height:35}} />*/}
               </View>
-              {ListPend.length>0 &&
-                <View>
+
                   <FlatList
                    extraData={this.state}
                    data={ListPend}
@@ -443,14 +525,7 @@ export default class MakeMoney extends Component {
                    keyExtractor={(item,index) => index.toString()}
                    renderItem={({item,index}) =>(
                      <TouchableOpacity style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}
-                     onPress={()=>{
-                       if(suggestPend[item.id]){
-                         this.state.suggestPend = Object.assign(this.state.suggestPend,{[item.id]:!item.id});
-                       }else {
-                         this.state.suggestPend = Object.assign(this.state.suggestPend,{[item.id]:item.id});
-                       }
-                       this.setState(this.state);
-                     }}>
+                     onPress={()=>{ navigate('CTVApproveScr',{lang,el:item,daily_id:user_profile.id}) }}>
                          <View style={{flexDirection:'row',paddingBottom:15}}>
                              <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:50,marginRight:10,borderRadius:25}} />
                              <View style={{width:width-110}}>
@@ -458,7 +533,16 @@ export default class MakeMoney extends Component {
                                <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.address}`}</Text>
                              </View>
                          </View>
-                    <Image source={suggestPend[item.id]?checkIC:uncheckIC} style={{width:20,height:20}} />
+                      <TouchableOpacity onPress={()=>{
+                        if(suggestPend[item.id]){
+                          this.state.suggestPend = Object.assign(this.state.suggestPend,{[item.id]:!item.id});
+                        }else {
+                          this.state.suggestPend = Object.assign(this.state.suggestPend,{[item.id]:item.id});
+                        }
+                        this.setState(this.state);
+                      }}>
+                      <Image source={suggestPend[item.id]?checkIC:uncheckIC} style={{width:20,height:20}} />
+                      </TouchableOpacity>
                     </TouchableOpacity>
                    )} />
 
@@ -473,12 +557,17 @@ export default class MakeMoney extends Component {
                        </TouchableOpacity>
                    </View>
 
-                 </View>}
+
           </View>}
 
           {!isAgency && <View style={{alignItems:'center'}}>
             <TouchableOpacity style={[marTop,btnTransfer]}
-            onPress={()=>navigate('ChooseCatScr',{lang:lang.lang})}>
+            onPress={()=>{
+              checkLogin().then(e=>{
+                if(e.temp_daily_code!=='')navigate('MainScr');
+                else navigate('ChooseCatScr',{lang:lang.lang})
+              })
+              }}>
             <Text style={titleCreate}>{`${lang.let_mm}`.toUpperCase()}</Text>
             <Text style={{color:'#fff'}}>{`(${lang.new_location_mm})`}</Text>
             </TouchableOpacity>
@@ -486,7 +575,7 @@ export default class MakeMoney extends Component {
         </View>
 
         <View style={[marTop,wrapDes]}>
-        <Text style={{color:'#6587A8',fontSize:16,lineHeight:28}}>{`${'Lưu ý : \n- Các địa điểm cần cập nhật mỗi tuần 1 lần để người dùng biết là địa điểm còn đang hoạt động.\n- Sau 03 tháng, điạ điểm nào không có các tương tác gì khác ngoài tìm kiếm thông tin thì các nhân viên quản lý địa điểm có trách nhiệm tiếp cận địa điểm để hai bên cùng hoạt động hiệu quả.\n- Sau 02 năm, các địa điểm của bạn sẽ tự động thoát ra khỏi danh sách quản lý của bạn. \n\nVậy nên, bạn hay cố gắng tương tác nhiều với các địa điểm mà bạn đang quản lý trực tiếp.'}`}</Text>
+        <Text style={{color:'#6587A8',fontSize:16,lineHeight:28}}>{`${'Lưu ý : \n- Các địa điểm cần cập nhật mỗi tuần 1 lần để người dùng biết là địa điểm còn đang hoạt động.\n- Sau 03 tháng, điạ điểm nào không có các tương tác gì khác ngoài tìm kiếm thông tin thì các nhân viên quản lý địa điểm có trách nhiệm tiếp cận địa điểm để hai bên cùng hoạt động hiệu quả.\n- Sau 02 năm, các địa điểm của bạn sẽ tự động thoát ra khỏi danh sách quản lý của bạn. \n\nVậy nên, bạn hãy cố gắng tương tác nhiều với các địa điểm mà bạn đang quản lý trực tiếp.'}`}</Text>
         </View>
 
         </View>
@@ -626,8 +715,15 @@ export default class MakeMoney extends Component {
              data={listData.area}
              renderItem={({item}) => (
                <View style={listOverService}>
-                <TouchableOpacity onPress={()=>{ this.setState({labelArea:item.name,
-                  listDistrict:Object.assign(listDistrict,{[item.id]:item.id}) });}}
+                <TouchableOpacity onPress={()=>{
+                  this.state.labelArea=item.name;
+                  if(listDistrict[item.id]){
+                    this.state.listDistrict=Object.assign(listDistrict,{[item.id]:!item.id});
+                  }else {
+                    this.state.listDistrict=Object.assign(listDistrict,{[item.id]:item.id});
+                  }
+                  this.setState(this.state);
+                }}
                style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',padding:15}}>
                     <Text style={colorTitle}>{item.name}</Text>
                     <Image source={checkIC} style={[imgShare,listDistrict[item.id]===item.id ? show : hide]} />

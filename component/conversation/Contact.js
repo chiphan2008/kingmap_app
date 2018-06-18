@@ -23,13 +23,19 @@ export default class Contact extends Component {
     this.getData();
   }
 
-  getData(){
+  getData(page=null){
     const { user_id } = this.props.navigation.state.params;
-    const url = `${global.url_node}${'except-person/'}${user_id}`;
+    if(page===null) page=0;
+    const url = `${global.url_node}${'except-person/'}${user_id}${'?skip='}${page}${'&limit=20'}`;
     console.log(url);
     getEncodeApi(url).then(e=>{
       //console.log('e',e.data);
-      this.setState({listData:e.data})
+      if(page===0){
+        this.state.listData=e.data;
+      }else {
+        this.state.listData.concat(e.data);
+      }
+      this.setState(this.state)
     })
   }
   addFriend(id,name,urlhinh){

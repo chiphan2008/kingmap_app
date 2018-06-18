@@ -150,9 +150,10 @@ export default class Messenger extends Component {
         </View>
         </ScrollView>
 
-        <View style={[wrapShowType, showType && user_id!==myID ? show : hide]}>
+        {showType && user_id!==myID &&
+        <View style={wrapShowType}>
           <Text style={{fontSize:12,fontStyle:'italic',color:'#fff'}}>{name} đang nhập ...</Text>
-        </View>
+        </View>}
 
         <View style={bottomSend}>
         <TextInput
@@ -209,7 +210,7 @@ export class ListMsg extends Component {
     return(
       <View>
       <View style={{height: checkID!==0 && checkID!==data.user_id && formatDate(checkDate)===formatDate(data.create_at) ? 20 : 0}}></View>
-      {data.message!==undefined ?
+      {data.message!==undefined && data.create_at!==undefined  ?
         <View style={{paddingLeft:10,paddingRight:10,marginBottom:7}}>
           <View style={[wrapDatePaging,formatDate(checkDate)!==formatDate(data.create_at) ? show :hide ]}>
             <View style={{borderRadius:10,backgroundColor:'#C5C4CE',padding:3,paddingLeft:5,paddingRight:5}}>

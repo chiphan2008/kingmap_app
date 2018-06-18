@@ -52,6 +52,8 @@ export default class MakeMoney extends Component {
       showLoc:false,
       showCTV:false,
       showArea:false,
+      showListLocPend:false,
+      showListCTVPend:false,
       listDistrict:{},
       labelArea:'',
       valCTV:'',
@@ -78,6 +80,8 @@ export default class MakeMoney extends Component {
 
   searchContent(route,keyword,moderation=null){
     const { user_profile } = this.props.navigation.state.params;
+    let url = `${global.url}${'static/search-'}${route}`;
+    //console.log(url);
     const arr = new FormData();
     user_profile._roles!==undefined && user_profile._roles.forEach(e=>{
       if(e.machine_name==='cong_tac_vien') arr.append('ctv_id',user_profile.id);
@@ -90,7 +94,7 @@ export default class MakeMoney extends Component {
     }
     //console.log(`${global.url}${'static/search-'}${route}`);
     //console.log(arr);
-    postApi(`${global.url}${'static/search-'}${route}`,arr).then(e => {
+    postApi(url,arr).then(e => {
       if (moderation!==null) {
           this.state.ListLocPend=e.data;
       }else if(route==='ctv'){
@@ -251,9 +255,9 @@ export default class MakeMoney extends Component {
 
   }
   componentDidMount(){
-    DeviceEventEmitter.addListener('gobackCTV', (e)=>{
-      if(e.isLogin) this.getListPending();
-    })
+    // DeviceEventEmitter.addListener('gobackCTV', (e)=>{
+    //   if(e.isLogin) this.getListPending();
+    // })
   }
   render() {
     const { lang,code_user,name_module,user_profile } = this.props.navigation.state.params;
@@ -269,7 +273,7 @@ export default class MakeMoney extends Component {
     const {
       itemChoose,showCoin,showLoc,showCTV,showArea,listData,lockCTV,
       listAgency,listLoc,isAgency,assign,listDistrict,labelArea,ListPend,suggestPend,
-      ListLocPend,suggestLoc
+      ListLocPend,suggestLoc,showListLocPend,showListCTVPend,
     } = this.state;
     const _this = this;
     //console.log(user_profile);
@@ -356,33 +360,6 @@ export default class MakeMoney extends Component {
                   </TouchableOpacity>
               </View>}
 
-              {showLoc && listLoc.length>0 &&
-              <FlatList
-               extraData={this.state}
-               data={listLoc}
-               style={{marginTop:15,maxHeight:height/3}}
-               keyExtractor={(item,index) => index.toString()}
-               renderItem={({item,index}) =>(
-                   <TouchableOpacity
-                   onPress={()=>{navigate('CTVDetailScr',{lang,content_id:item.id,name:item.name,address:`${item.address}, ${item._district.name}, ${item._city.name}`,
-                   avatar:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`})}}
-                   style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
-                       <View style={{flexDirection:'row',paddingBottom:15}}>
-                           <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:70,height:60,marginRight:10}} />
-                           <View style={{width:width-110,justifyContent:'space-between'}}>
-                             <Text numberOfLines={1} style={colorlbl}>{item.name}</Text>
-                             <Text numberOfLines={1} style={{color:'#6791AF',fontSize:12}}>{`${item.address}, ${item._district.name}, ${item._city.name}`}</Text>
-                             <View style={{flexDirection:'row',alignItems:'center'}}>
-                              <Image source={likeIC} style={{width:18,height:15,marginRight:5}} />
-                              <Text>{item.like} | </Text>
-                              <Image source={favoriteIcon} style={{width:16,height:16,marginRight:5}} />
-                              <Text>{item.vote}</Text>
-                             </View>
-                           </View>
-                       </View>
-                   </TouchableOpacity>
-               )} />}
-
           </View>}
 
           {listData.count_ctv!==undefined && <View style={wrapWhite} >
@@ -416,36 +393,6 @@ export default class MakeMoney extends Component {
                     <Image style={{width:16,height:16,}} source={searchIC} />
                   </TouchableOpacity>
 
-                  {showCTV && listAgency.length>0 &&
-                  <FlatList
-                   extraData={this.state}
-                   data={listAgency}
-                   style={{marginTop:15,maxHeight:height/3}}
-                   keyExtractor={(item,index) => index.toString()}
-                   renderItem={({item,index}) =>(
-                     <TouchableOpacity
-                     onPress={()=>{navigate('CTVDetailScr',{lang,ctv_id:item.id,name:item.full_name,address:item.address,
-                     avatar:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`})}}
-                     style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
-                         <View style={{flexDirection:'row',paddingBottom:15,alignItems:'center'}}>
-                             <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:50,marginRight:10,borderRadius:25}} />
-                             <View style={{width:width-142}}>
-                               <Text numberOfLines={1} style={colorlbl}>{item.full_name}</Text>
-                               <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.address}`}</Text>
-                             </View>
-                             <TouchableOpacity onPress={()=>{
-                               this.stopCTV(item.id,item.role_active)
-                             }}>
-                             <Image source={item.role_active===0?unlockIC:lockIC} style={{width:22,height:22,marginRight:7}} />
-                             </TouchableOpacity>
-                             <TouchableOpacity onPress={()=>{this.confirmdDelColl(item.id)}}>
-                             <Image source={removeIC} style={{width:20,height:20}} />
-                             </TouchableOpacity>
-                         </View>
-
-                       </TouchableOpacity>
-                   )} />}
-
               </View>}
 
           </View>}
@@ -462,103 +409,23 @@ export default class MakeMoney extends Component {
           </TouchableOpacity>}
 
           {isAgency && ListLocPend.length>0 &&
-            <View style={wrapWhite}>
+            <TouchableOpacity style={wrapWhite}
+            onPress={()=>{this.setState({showListLocPend:true})}}>
               <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                 <Text numberOfLines={1} style={colorTitle}>{`${lang.pending_location}`}</Text>
-                {/*<Image source={filterIC} style={{width:35,height:35}} />*/}
               </View>
-                  <FlatList
-                   extraData={this.state}
-                   data={ListLocPend}
-                   style={{marginTop:15,maxHeight:height/3}}
-                   keyExtractor={(item,index) => index.toString()}
-                   renderItem={({item,index}) =>(
-                     <TouchableOpacity style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}
-                     onPress={()=>{
-                       navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,lang:lang.lang,update:true})
-                     }}>
-                         <View style={{flexDirection:'row',paddingBottom:15}}>
-                             <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:50,marginRight:10,borderRadius:25}} />
-                             <View style={{width:width-110}}>
-                               <Text numberOfLines={1} style={colorlbl}>{item.name}</Text>
-                               <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.address}, ${item._district.name}, ${item._city.name}`}</Text>
-                             </View>
-                         </View>
-                        <TouchableOpacity onPress={()=>{
-                          if(suggestLoc[item.id]){
-                            this.state.suggestLoc = Object.assign(this.state.suggestLoc,{[item.id]:!item.id});
-                          }else{
-                            this.state.suggestLoc = Object.assign(this.state.suggestLoc,{[item.id]:item.id});
-                          }
-                          this.setState(this.state);
-                        }}>
-                        <Image source={suggestLoc[item.id]?checkIC:uncheckIC} style={{width:20,height:20}} />
-                        </TouchableOpacity>
-                    </TouchableOpacity>
-                   )} />
-                   <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center',marginTop:20}}>
-                       <TouchableOpacity style={{alignItems:'center',padding:7,borderWidth:1,borderRadius:4,borderColor:'#d0021b',minWidth:width/3}}
-                       onPress={()=>{this.requestLoc('reject')}}>
-                         <Text style={{color:'#d0021b',fontSize:16}}>{`${lang.reject}`}</Text>
-                       </TouchableOpacity>
-                       <TouchableOpacity style={{alignItems:'center',padding:7,borderRadius:4,backgroundColor:'#d0021b',marginLeft:10,minWidth:width/3}}
-                       onPress={()=>{this.requestLoc('publish')}}>
-                         <Text style={{color:'#fff',fontSize:16}}>{`${lang.display}`}</Text>
-                       </TouchableOpacity>
-                   </View>
-
-
-          </View>}
+          </TouchableOpacity>}
 
 
           {isAgency && ListPend.length>0 &&
-            <View style={wrapWhite}>
+            <TouchableOpacity style={wrapWhite} onPress={()=>{
+              this.setState({showListCTVPend:true});
+            }}>
               <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                 <Text numberOfLines={1} style={colorTitle}>{`${lang.pending_collaborators}`}</Text>
                 {/*<Image source={filterIC} style={{width:35,height:35}} />*/}
               </View>
-
-                  <FlatList
-                   extraData={this.state}
-                   data={ListPend}
-                   style={{marginTop:15,maxHeight:height/3}}
-                   keyExtractor={(item,index) => index.toString()}
-                   renderItem={({item,index}) =>(
-                     <TouchableOpacity style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}
-                     onPress={()=>{ navigate('CTVApproveScr',{lang,el:item,daily_id:user_profile.id}) }}>
-                         <View style={{flexDirection:'row',paddingBottom:15}}>
-                             <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:50,marginRight:10,borderRadius:25}} />
-                             <View style={{width:width-110}}>
-                               <Text numberOfLines={1} style={colorlbl}>{item.full_name}</Text>
-                               <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.address}`}</Text>
-                             </View>
-                         </View>
-                      <TouchableOpacity onPress={()=>{
-                        if(suggestPend[item.id]){
-                          this.state.suggestPend = Object.assign(this.state.suggestPend,{[item.id]:!item.id});
-                        }else {
-                          this.state.suggestPend = Object.assign(this.state.suggestPend,{[item.id]:item.id});
-                        }
-                        this.setState(this.state);
-                      }}>
-                      <Image source={suggestPend[item.id]?checkIC:uncheckIC} style={{width:20,height:20}} />
-                      </TouchableOpacity>
-                    </TouchableOpacity>
-                   )} />
-
-                   <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center',marginTop:20}}>
-                       <TouchableOpacity style={{alignItems:'center',padding:7,borderWidth:1,borderRadius:4,borderColor:'#d0021b',minWidth:width/3}}
-                       onPress={()=>{this.requestCTV('decline')}}>
-                         <Text style={{color:'#d0021b',fontSize:16}}>{`${lang.reject}`}</Text>
-                       </TouchableOpacity>
-                       <TouchableOpacity style={{alignItems:'center',padding:7,borderRadius:4,backgroundColor:'#d0021b',marginLeft:10,minWidth:width/3}}
-                       onPress={()=>{this.requestCTV('accept')}}>
-                         <Text style={{color:'#fff',fontSize:16}}>{`${lang.accept}`}</Text>
-                       </TouchableOpacity>
-                   </View>
-
-
-          </View>}
+          </TouchableOpacity>}
 
           {!isAgency && <View style={{alignItems:'center'}}>
             <TouchableOpacity style={[marTop,btnTransfer]}
@@ -704,6 +571,172 @@ export default class MakeMoney extends Component {
         </ScrollView>
         </View>
       }
+
+      {showCTV && listAgency.length>0 &&
+        <View style={{position:'absolute'}}>
+        <TouchableOpacity onPress={()=>this.setState({showCTV:false,listAgency:[]})} style={[popoverLoc,padBuySell]}>
+        <View style={[overLayout,shadown]}>
+        <FlatList
+         extraData={this.state}
+         data={listAgency}
+         style={{marginTop:15,maxHeight:height/3}}
+         keyExtractor={(item,index) => index.toString()}
+         renderItem={({item,index}) =>(
+           <TouchableOpacity
+           onPress={()=>{navigate('CTVDetailScr',{lang,ctv_id:item.id,name:item.full_name,address:item.address,
+           avatar:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`})}}
+           style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
+               <View style={{flexDirection:'row',paddingBottom:15,alignItems:'center'}}>
+                   <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:50,marginRight:10,borderRadius:25}} />
+                   <View style={{width:width-142}}>
+                     <Text numberOfLines={1} style={colorlbl}>{item.full_name}</Text>
+                     <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.address}`}</Text>
+                   </View>
+                   <TouchableOpacity onPress={()=>{
+                     this.stopCTV(item.id,item.role_active)
+                   }}>
+                   <Image source={item.role_active===0?unlockIC:lockIC} style={{width:22,height:22,marginRight:7}} />
+                   </TouchableOpacity>
+                   <TouchableOpacity onPress={()=>{this.confirmdDelColl(item.id)}}>
+                   <Image source={removeIC} style={{width:20,height:20}} />
+                   </TouchableOpacity>
+               </View>
+
+             </TouchableOpacity>
+         )} />
+         </View>
+       </TouchableOpacity>
+     </View>}
+
+      {showLoc && listLoc.length>0 &&
+        <View style={{position:'absolute'}}>
+        <TouchableOpacity onPress={()=>this.setState({showLoc:false,listLoc:[]})} style={[popoverLoc,padBuySell]}>
+        <View style={[overLayout,shadown]}>
+          <FlatList
+           extraData={this.state}
+           data={listLoc}
+           style={{padding:15,marginTop:15,marginBottom:15,maxHeight:height/2}}
+           keyExtractor={(item,index) => index.toString()}
+           renderItem={({item,index}) =>(
+               <TouchableOpacity
+               onPress={()=>{navigate('CTVDetailScr',{lang,content_id:item.id,name:item.name,address:`${item.address}, ${item._district.name}, ${item._city.name}`,
+               avatar:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`})}}
+               style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
+                   <View style={{flexDirection:'row',paddingBottom:15}}>
+                       <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:70,height:60,marginRight:10}} />
+                       <View style={{width:width-110,justifyContent:'space-between'}}>
+                         <Text numberOfLines={1} style={colorlbl}>{item.name}</Text>
+                         <Text numberOfLines={1} style={{color:'#6791AF',fontSize:12}}>{`${item.address}, ${item._district.name}, ${item._city.name}`}</Text>
+                         <View style={{flexDirection:'row',alignItems:'center'}}>
+                          <Image source={likeIC} style={{width:18,height:15,marginRight:5}} />
+                          <Text>{item.like} | </Text>
+                          <Image source={favoriteIcon} style={{width:16,height:16,marginRight:5}} />
+                          <Text>{item.vote}</Text>
+                         </View>
+                       </View>
+                   </View>
+               </TouchableOpacity>
+           )} />
+           </View>
+         </TouchableOpacity>
+       </View>}
+
+      {showListLocPend &&
+        <View style={{position:'absolute'}}>
+        <TouchableOpacity onPress={()=>this.setState({showListLocPend:false})} style={[popoverLoc,padBuySell]}>
+        <View style={[overLayout,shadown]}>
+            <FlatList
+             extraData={this.state}
+             data={ListLocPend}
+             // onEndReachedThreshold={0.5}
+             // onEndReached={() => this.onRefresh()}
+             style={{padding:15,marginTop:15,marginBottom:15,}}
+             keyExtractor={(item,index) => index.toString()}
+             renderItem={({item,index}) =>(
+               <TouchableOpacity style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}
+               onPress={()=>{
+                 navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,lang:lang.lang,update:true})
+               }}>
+                   <View style={{flexDirection:'row',paddingBottom:15}}>
+                       <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:50,marginRight:10,borderRadius:25}} />
+                       <View style={{width:width-110}}>
+                         <Text numberOfLines={1} style={colorlbl}>{item.name}</Text>
+                         <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.address}, ${item._district.name}, ${item._city.name}`}</Text>
+                       </View>
+                   </View>
+                  <TouchableOpacity onPress={()=>{
+                    if(suggestLoc[item.id]){
+                      this.state.suggestLoc = Object.assign(this.state.suggestLoc,{[item.id]:!item.id});
+                    }else{
+                      this.state.suggestLoc = Object.assign(this.state.suggestLoc,{[item.id]:item.id});
+                    }
+                    this.setState(this.state);
+                  }}>
+                  <Image source={suggestLoc[item.id]?checkIC:uncheckIC} style={{width:20,height:20}} />
+                  </TouchableOpacity>
+              </TouchableOpacity>
+             )} />
+             {ListLocPend.length>0 &&
+               <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center',paddingTop:15,paddingBottom:15}}>
+                 <TouchableOpacity style={{alignItems:'center',padding:7,borderWidth:1,borderRadius:4,borderColor:'#d0021b',minWidth:width/3}}
+                 onPress={()=>{this.requestLoc('reject')}}>
+                   <Text style={{color:'#d0021b',fontSize:16}}>{`${lang.reject}`}</Text>
+                 </TouchableOpacity>
+                 <TouchableOpacity style={{alignItems:'center',padding:7,borderRadius:4,backgroundColor:'#d0021b',marginLeft:10,minWidth:width/3}}
+                 onPress={()=>{this.requestLoc('publish')}}>
+                   <Text style={{color:'#fff',fontSize:16}}>{`${lang.display}`}</Text>
+                 </TouchableOpacity>
+             </View>}
+        </View>
+      </TouchableOpacity>
+    </View>}
+
+    {showListCTVPend &&
+      <View style={{position:'absolute'}}>
+      <TouchableOpacity onPress={()=>this.setState({showListCTVPend:false})} style={[popoverLoc,padBuySell]}>
+      <View style={[overLayout,shadown]}>
+      <FlatList
+       extraData={this.state}
+       data={ListPend}
+       style={{padding:15,marginTop:15,marginBottom:15,}}
+       keyExtractor={(item,index) => index.toString()}
+       renderItem={({item,index}) =>(
+         <TouchableOpacity style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}
+         onPress={()=>{ navigate('CTVApproveScr',{lang,el:item,daily_id:user_profile.id}) }}>
+             <View style={{flexDirection:'row',paddingBottom:15}}>
+                 <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:50,marginRight:10,borderRadius:25}} />
+                 <View style={{width:width-110}}>
+                   <Text numberOfLines={1} style={colorlbl}>{item.full_name}</Text>
+                   <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.address}`}</Text>
+                 </View>
+             </View>
+          <TouchableOpacity onPress={()=>{
+            if(suggestPend[item.id]){
+              this.state.suggestPend = Object.assign(this.state.suggestPend,{[item.id]:!item.id});
+            }else {
+              this.state.suggestPend = Object.assign(this.state.suggestPend,{[item.id]:item.id});
+            }
+            this.setState(this.state);
+          }}>
+          <Image source={suggestPend[item.id]?checkIC:uncheckIC} style={{width:20,height:20}} />
+          </TouchableOpacity>
+        </TouchableOpacity>
+       )} />
+
+       {ListPend.length>0 &&
+         <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center',paddingTop:15,paddingBottom:15}}>
+           <TouchableOpacity style={{alignItems:'center',padding:7,borderWidth:1,borderRadius:4,borderColor:'#d0021b',minWidth:width/3}}
+           onPress={()=>{this.requestCTV('decline')}}>
+             <Text style={{color:'#d0021b',fontSize:16}}>{`${lang.reject}`}</Text>
+           </TouchableOpacity>
+           <TouchableOpacity style={{alignItems:'center',padding:7,borderRadius:4,backgroundColor:'#d0021b',marginLeft:10,minWidth:width/3}}
+           onPress={()=>{this.requestCTV('accept')}}>
+             <Text style={{color:'#fff',fontSize:16}}>{`${lang.accept}`}</Text>
+           </TouchableOpacity>
+       </View>}
+      </View>
+    </TouchableOpacity>
+  </View>}
 
       {showArea && listData.area!==undefined &&
         <Modal onRequestClose={() => null} transparent visible={showArea}>

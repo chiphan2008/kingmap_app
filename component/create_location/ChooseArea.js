@@ -9,6 +9,7 @@ import global from '../global';
 import getApi from '../api/getApi';
 import upDD from '../../src/icon/ic-white/ic-dropdown_up.png';
 import checkLocation from '../api/checkLocation';
+import checkLogin from '../api/checkLogin';
 
 var timeoutRecive;
 export default class ChooseArea extends Component {
@@ -19,33 +20,44 @@ export default class ChooseArea extends Component {
       idCity:'',nameCity:'',listCity:[],showCity:false,
       idDist:'',nameDist:'Quận/Huyện',listDist:[],showDist:false,
       update:true,
+      ctv_id:'',
     }
     checkLocation().then(e=>{
       this.setState({idCountry:e.idCountry, nameCountry:e.nameCountry,idCity:e.idCity, nameCity:e.nameCity,})
     });
+    checkLogin().then(el=>{
+      if(el._roles!==undefined){
+        el._roles.length>0 && el._roles.forEach(e=>{
+          if(e.machine_name==='cong_tac_vien')
+          this.setState({ctv_id:el.id});
+        })
+      }
+    })
   }
   getCountry(){
-    getApi(`${global.url}${'countries'}`)
-    .then(arrData => {
+    let url = `${global.url}${'countries'}`;
+    if(this.state.ctv_id!=='') url += `${'?ctv_id='}${this.state.ctv_id}`;
+    console.log(url);
+    getApi(url).then(arrData => {
         this.setState({ listCountry:arrData.data });
-    })
-    .catch(err => console.log(err));
+    }).catch(err => console.log(err));
   }
   getCity(id){
-    getApi(`${global.url}${'cities/'}${id}`)
-    .then(arrData => {
-
+    let url = `${global.url}${'cities/'}${id}`;
+    if(this.state.ctv_id!=='') url += `${'?ctv_id='}${this.state.ctv_id}`;
+    console.log(url);
+    getApi(url).then(arrData => {
         this.setState({ listCity:arrData.data });
-    })
-    .catch(err => console.log(err));
+    }).catch(err => console.log(err));
     //this.getDist();
   }
   getDist(id){
-    getApi(`${global.url}${'districts/'}${id}`)
-    .then(arrData => {
+    let url = `${global.url}${'districts/'}${id}`;
+    if(this.state.ctv_id!=='') url += `${'?ctv_id='}${this.state.ctv_id}`;
+    console.log(url);
+    getApi(url).then(arrData => {
         this.setState({ listDist:arrData.data });
-    })
-    .catch(err => console.log(err));
+    }).catch(err => console.log(err));
   }
   componentWillUnmount(){
     clearTimeout(timeoutRecive);

@@ -62,13 +62,13 @@ export default class ListLocPer extends Component {
   }
 
   getData(page=null){
-    this.setState({loading:false});
     if(page===null) page=0;
     let url = `${global.url}${'user/list-location/'}${this.state.user_profile.id}${'?skip='}${page}${'&limit=20'}`;
-    console.log(url);
+    //console.log(url);
     getApi(url).then(arrData => {
-        this.state.listData=page!==null?this.state.listData.concat(arrData.data):arrData.data;
-        this.state.loading=arrData.data.length<20?false:true;
+        this.state.listData=page!==0?this.state.listData.concat(arrData.data):arrData.data;
+        this.state.page = page===0 ? 20 : page+20;
+        this.state.loading = arrData.data.length<20?false:true;
         this.setState(this.state);
     })
     .catch(err => console.log(err));
@@ -138,8 +138,7 @@ export default class ListLocPer extends Component {
          onEndReachedThreshold={0.5}
          onEndReached={() => {
            if(loading){
-             this.state.page +=20;
-             this.setState(this.state,()=>{
+             this.setState({loading:false},()=>{
                this.getData(this.state.page);
              });
            }

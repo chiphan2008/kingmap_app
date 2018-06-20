@@ -38,16 +38,15 @@ export default class Collection extends Component {
     //this.getData();
   }
   getData(page=null){
-    this.setState({isLoad:false})
     if(page===null) page=0;
     const {userId} = this.props;
     const url =`${global.url}${'collection/get/user/'}${userId}${'?skip='}${page}${'&limit=20'}`;
     console.log(url);//this.props.hasCollection(checkList);
     timeoutColl = setTimeout(()=>{
       getApi(url).then(e=>{
-        this.state.listColl= page===0?e.data:this.state.listColl.concat(e.data);
-        this.state.isLoad=true;
-        if(e.data.length<20 && page>0) this.state.isLoad=false;
+        this.state.listColl= page===0? e.data : this.state.listColl.concat(e.data);
+        this.state.page = page===0 ? 20 : page+20;
+        this.state.isLoad=e.data.length<20?false:true;
         this.setState(this.state)
       }).catch(e=>{});
     },500);
@@ -106,7 +105,6 @@ export default class Collection extends Component {
         <TouchableWithoutFeedback>
         <View style={{width:width-100,borderRadius:3,backgroundColor:'#fff',padding:15,marginBottom:7}}>
           <Text style={[colorTitle,marBot]}>{`${lang.create_new}`.toUpperCase()}</Text>
-
           <View style={{flexDirection:'row',marginBottom:10,justifyContent:'space-between'}}>
             <TextInput underlineColorAndroid={'transparent'} style={txtInput}
             value={name} onChangeText={(name)=>this.setState({name})}
@@ -128,9 +126,11 @@ export default class Collection extends Component {
                extraData={this.state}
                onEndReachedThreshold={0.5}
                onEndReached={()=> {
-                 this.setState({page:page+20},()=>{
-                   isLoad && this.getData(page);
-                 })
+                 if(isLoad){
+                   this.setState({isLoad:false},()=>{
+                     this.getData(page);
+                   })
+                 }
                }}
                //style={{marginBottom:10}}
                renderItem={({item}) => (

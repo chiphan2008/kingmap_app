@@ -42,7 +42,7 @@ export default class Collection extends Component {
     if(page===null) page=0;
     const {userId} = this.props;
     const url =`${global.url}${'collection/get/user/'}${userId}${'?skip='}${page}${'&limit=20'}`;
-    //console.log(url);//this.props.hasCollection(checkList);
+    console.log(url);//this.props.hasCollection(checkList);
     timeoutColl = setTimeout(()=>{
       getApi(url).then(e=>{
         this.state.listColl= page===0?e.data:this.state.listColl.concat(e.data);

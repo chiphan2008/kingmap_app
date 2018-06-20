@@ -47,6 +47,7 @@ var com;
 export default class MakeMoney extends Component {
   constructor(props) {
     super(props);
+    const { _roles,api_roles,temp_daily_code } = this.props.navigation.state.params.user_profile;
     this.state = {
       showCoin:false,
       showLoc:false,
@@ -68,36 +69,53 @@ export default class MakeMoney extends Component {
       listData:{},
       itemChoose:{},
       assign:false,
-      isAgency:false,
-      isPend:false,
+      isNormal: _roles.length===0?true:false,
+      isAgency: api_roles!==null && api_roles.tong_dai_ly!==undefined?true:false,
+      isCeo: api_roles!==null && api_roles.ceo!==undefined?true:false,
+      isCTV: api_roles!==null && api_roles.cong_tac_vien!==undefined?true:false,
+      isPend: temp_daily_code===''?false:true,
       user_profile:{},
-      lockCTV:{},
+      loadMore:true,
+      page:0,
+      index_ctv_pending:'',
     }
-    const { user_profile } = this.props.navigation.state.params;
-    loginServer(user_profile,'fgdjk')
-    user_profile.temp_daily_code==='' && this.getStatic();
+    loginServer(this.props.navigation.state.params.user_profile,'fgdjk')
+     temp_daily_code==='' && this.getStatic();
   }
-
-  searchContent(route,keyword,moderation=null){
+    searchContentPending(page=null){
     const { user_profile } = this.props.navigation.state.params;
-    let url = `${global.url}${'static/search-'}${route}`;
-    //console.log(url);
+    if(page===null) page=0;
+    let url = `${global.url}${'static/search-content'}`;
     const arr = new FormData();
     user_profile._roles!==undefined && user_profile._roles.forEach(e=>{
       if(e.machine_name==='cong_tac_vien') arr.append('ctv_id',user_profile.id);
-      if(e.machine_name==='tong_dai_ly') {arr.append('daily_id',user_profile.id);isAgency=true}
+      if(e.machine_name==='tong_dai_ly') {arr.append('daily_id',user_profile.id);}
     })
-    if(moderation!==null){
-      arr.append('moderation','request_publish');
-    }else {
-      arr.append('keyword',keyword);
-    }
-    //console.log(`${global.url}${'static/search-'}${route}`);
+    arr.append('moderation','request_publish');
+    arr.append('skip',page);
+    arr.append('limit',20);
+    //console.log(url);
     //console.log(arr);
     postApi(url,arr).then(e => {
-      if (moderation!==null) {
-          this.state.ListLocPend=e.data;
-      }else if(route==='ctv'){
+      this.state.ListLocPend=page===0?e.data:this.state.ListLocPend.concat(e.data);
+      this.state.page =page===0?20:this.state.page+20;
+      this.state.loadMore =e.data.length===20?true:false;
+      this.setState(this.state);
+    }).catch(err => console.log(err));
+  }
+  searchContent(route,keyword){
+    const { user_profile } = this.props.navigation.state.params;
+    let url = `${global.url}${'static/search-'}${route}`;
+    const arr = new FormData();
+    user_profile._roles!==undefined && user_profile._roles.forEach(e=>{
+      if(e.machine_name==='cong_tac_vien') arr.append('ctv_id',user_profile.id);
+      if(e.machine_name==='tong_dai_ly') {arr.append('daily_id',user_profile.id);}
+    })
+    arr.append('keyword',keyword);
+    console.log(`${global.url}${'static/search-'}${route}`);
+    //console.log(arr);
+    postApi(url,arr).then(e => {
+      if(route==='ctv'){
         this.state.listAgency=e.data;
         this.state.valCTV='';
         this.state.kw=keyword;
@@ -105,7 +123,9 @@ export default class MakeMoney extends Component {
         this.state.listLoc=e.data;
         this.state.valLoc='';
       }
-        this.setState(this.state);
+        this.setState(this.state,()=>{
+          //console.log(this.state.listAgency);
+        });
     }).catch(err => console.log(err));
   }
   getStatic(){
@@ -113,22 +133,27 @@ export default class MakeMoney extends Component {
     if(user_profile.temp_daily_code===''){
       const month = Moment().format('MM');
       const year = Moment().format('YYYY');
-      let isAgency=false;
+      //let isCeo=false,isAgency=false,isCTV=false,isNormal=true;
       const arr = new FormData();
       //console.log(user_profile);
       user_profile._roles!==undefined &&  user_profile._roles.forEach(e=>{
-        if(e.machine_name==='cong_tac_vien') arr.append('ctv_id',user_profile.id);
-        if(e.machine_name==='tong_dai_ly') {arr.append('daily_id',user_profile.id);isAgency=true}
+        if(e.machine_name==='cong_tac_vien') {
+          arr.append('ctv_id',user_profile.id);
+        }
+        if(e.machine_name==='tong_dai_ly') {
+          arr.append('daily_id',user_profile.id);
+        }
       })
       arr.append('month',month);
       arr.append('year',year);
       //console.log(arr);
       user_profile._roles.length>0 && postApi(`${global.url}${'static'}`,arr).then(e => {
       //console.log('e.data',e.data);
-        this.setState({ listData:e.data,isAgency },()=>{
-          if(isAgency){
+        this.setState({ listData:e.data },()=>{
+          if(this.state.isAgency){
             this.getListPending();
-            this.searchContent('content','','fgkjdf');
+            this.searchContentPending();
+            //this.searchContent('ctv','');
           }
         });
       }).catch(err => console.log(err));
@@ -165,7 +190,7 @@ export default class MakeMoney extends Component {
         this.setState({ ListPend:e.data });
     }).catch(err => console.log(err));
   }
-  requestCTV(route){
+  requestCTV(route,item=null){
     const { user_profile,lang } = this.props.navigation.state.params;
     let state=false;
     const arr = new FormData();
@@ -178,8 +203,19 @@ export default class MakeMoney extends Component {
       return false;
     }
     state && postApi(`${global.url}${'static/'}${route}${'-ctv'}`,arr).then(e => {
-        this.getStatic();
-        if(e.code===200)Alert.alert(lang.notify,e.data)
+        if(e.code===200)Alert.alert(lang.notify,e.data,[
+          {text: '', style: 'cancel'},
+          {text: 'Ok', onPress: () => {
+            this.state.showListCTVPend=false;
+            if(Object.entries(this.state.suggestPend).length===1 && item!==null){
+              this.state.assign=true;
+              this.state.itemChoose=item;
+            }
+            this.setState(this.state,()=>{
+              this.getListPending();
+            })
+          }}
+        ],{ cancelable: false })
     }).catch(err => console.log(err));
   }
 
@@ -209,8 +245,16 @@ export default class MakeMoney extends Component {
     const route=active===0?'unlock':'lock';
     arr.append('daily_id',user_profile.id);
     arr.append('ctv_id[]',id);
+    //console.log(`${global.url}${'static/'}${route}${'-ctv'}`);
+    //console.log(arr);
     postApi(`${global.url}${'static/'}${route}${'-ctv'}`,arr).then(e => {
-        this.searchContent('ctv',this.state.kw);
+      if(e.code===200){
+        Alert.alert(lang.notify,e.data,[
+          {text: '', style: 'cancel'},
+          {text: 'OK', onPress: () => this.searchContent('ctv',this.state.kw)}
+        ],{ cancelable: false })
+     }
+
     }).catch(err => console.log(err));
   }
 
@@ -246,18 +290,23 @@ export default class MakeMoney extends Component {
   componentWillMount(){
     //setTimeout(()=>{
       const { user_profile } = this.props.navigation.state.params;
-
       checkLogin().then(e=>{
         if(user_profile._roles.length!==e._roles.length) this.props.navigation.navigate('MainScr');
         e.temp_daily_code!=='' && this.setState({isPend:true})
       })
     //},2000)
-
   }
   componentDidMount(){
-    // DeviceEventEmitter.addListener('gobackCTV', (e)=>{
-    //   if(e.isLogin) this.getListPending();
-    // })
+    DeviceEventEmitter.addListener('gobackCTV', (e)=>{
+      if(e.isLogin) {
+        this.state.showListCTVPend=false;
+        if(e.ctv!==undefined){this.state.assign=true;
+        this.state.itemChoose=e.ctv;}
+        this.setState(this.state,()=>{
+          this.getListPending();
+        })
+      }
+    })
   }
   render() {
     const { lang,code_user,name_module,user_profile } = this.props.navigation.state.params;
@@ -271,16 +320,47 @@ export default class MakeMoney extends Component {
     } = styles;
 
     const {
-      itemChoose,showCoin,showLoc,showCTV,showArea,listData,lockCTV,
-      listAgency,listLoc,isAgency,assign,listDistrict,labelArea,ListPend,suggestPend,
-      ListLocPend,suggestLoc,showListLocPend,showListCTVPend,
+      itemChoose,showCoin,showLoc,showCTV,showArea,listData,index_ctv_pending,
+      listAgency,listLoc,isAgency,isNormal,isCTV,assign,listDistrict,labelArea,ListPend,suggestPend,
+      ListLocPend,suggestLoc,showListLocPend,showListCTVPend,loadMore,page,
     } = this.state;
     const _this = this;
     //console.log(user_profile);
     return (
       <View>
       <ScrollView style={container}>
-      {user_profile._roles!==undefined && user_profile._roles.length>0?
+      {isNormal &&
+        <View>
+          <View style={headCatStyle}>
+              <View style={headContent}>
+                  <TouchableOpacity onPress={()=>goBack()}>
+                  <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
+                  </TouchableOpacity>
+                    <Text style={{marginTop:5,color:'#fff'}}>{lang.subscribe_ctv.toUpperCase()}</Text>
+                  <View></View>
+              </View>
+          </View>
+            {this.state.isPend===false && isNormal &&
+            <View style={{justifyContent:'center',alignItems:'center',padding:15,height:height-95}}>
+            <View>
+            <Text style={{textAlign:'center',fontSize:20,fontWeight:'500',color:'#000'}}>{lang.title_ctv.toUpperCase()}</Text>
+            <Text style={{textAlign:'center',fontSize:14,marginTop:5}}>{lang.des_ctv}</Text>
+            </View>
+            <TouchableOpacity style={{marginTop:15,backgroundColor:'#d0021b',borderRadius:3,width:width-30,paddingTop:10,paddingBottom:10,alignItems:'center'}}
+            onPress={()=>navigate('CTVSubscribeScr',{user_profile,titleScr:lang.subscribe_ctv,lang:lang.lang})}>
+              <Text style={{color:'#fff'}}>{lang.subscribe_ctv}</Text>
+            </TouchableOpacity>
+            </View>}
+            {this.state.isPend && isNormal &&
+              <View style={{justifyContent:'center',alignItems:'center',padding:15,height:height-95}}>
+              <Text style={{textAlign:'center',fontSize:20,fontWeight:'400',color:'#000'}}>{lang.plz_approve}</Text>
+              </View>
+              }
+
+        </View>
+      }
+
+      {(isCTV || isAgency) &&
       <View>
       <View style={headCatStyle}>
           <View style={headContent}>
@@ -412,7 +492,7 @@ export default class MakeMoney extends Component {
             <TouchableOpacity style={wrapWhite}
             onPress={()=>{this.setState({showListLocPend:true})}}>
               <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-                <Text numberOfLines={1} style={colorTitle}>{`${lang.pending_location}`}</Text>
+                <Text numberOfLines={1} style={colorTitle}>{`${lang.pending_location} (${listData.count_location_pending})`}</Text>
               </View>
           </TouchableOpacity>}
 
@@ -422,7 +502,7 @@ export default class MakeMoney extends Component {
               this.setState({showListCTVPend:true});
             }}>
               <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-                <Text numberOfLines={1} style={colorTitle}>{`${lang.pending_collaborators}`}</Text>
+                <Text numberOfLines={1} style={colorTitle}>{`${lang.pending_collaborators} (${listData.count_ctv_pending})`}</Text>
                 {/*<Image source={filterIC} style={{width:35,height:35}} />*/}
               </View>
           </TouchableOpacity>}
@@ -431,7 +511,9 @@ export default class MakeMoney extends Component {
             <TouchableOpacity style={[marTop,btnTransfer]}
             onPress={()=>{
               checkLogin().then(e=>{
-                if(e.temp_daily_code!=='')navigate('MainScr');
+                //console.log(e);
+                loginServer(e,'cxv')
+                if(e.temp_daily_code!=='' || e._roles.length===0)navigate('MainScr');
                 else navigate('ChooseCatScr',{lang:lang.lang})
               })
               }}>
@@ -448,36 +530,7 @@ export default class MakeMoney extends Component {
         </View>
         <View style={{height:height/6}}></View>
         </View>
-        :
-        <View>
-          <View style={headCatStyle}>
-              <View style={headContent}>
-                  <TouchableOpacity onPress={()=>goBack()}>
-                  <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
-                  </TouchableOpacity>
-                    <Text style={{marginTop:5,color:'#fff'}}>{lang.subscribe_ctv.toUpperCase()}</Text>
-                  <View></View>
-              </View>
-          </View>
 
-            {this.state.isPend ?
-              <View style={{justifyContent:'center',alignItems:'center',padding:15,height:height-95}}>
-              <Text style={{textAlign:'center',fontSize:20,fontWeight:'400'}}>{lang.plz_approve}</Text>
-              </View>
-              :
-              <View style={{justifyContent:'center',alignItems:'center',padding:15,height:height-95}}>
-              <View>
-              <Text style={{textAlign:'center',fontSize:20,fontWeight:'500'}}>{lang.title_ctv.toUpperCase()}</Text>
-              <Text style={{textAlign:'center',fontSize:14,marginTop:5}}>{lang.des_ctv}</Text>
-              </View>
-              <TouchableOpacity style={{marginTop:15,backgroundColor:'#d0021b',borderRadius:3,width:width-30,paddingTop:10,paddingBottom:10,alignItems:'center'}}
-              onPress={()=>navigate('CTVSubscribeScr',{user_profile,titleScr:lang.subscribe_ctv,lang:lang.lang})}>
-                <Text style={{color:'#fff'}}>{lang.subscribe_ctv}</Text>
-              </TouchableOpacity>
-              </View>
-            }
-
-        </View>
       }
 
       </ScrollView>
@@ -593,6 +646,7 @@ export default class MakeMoney extends Component {
                      <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.address}`}</Text>
                    </View>
                    <TouchableOpacity onPress={()=>{
+                     console.log(item.role_active);
                      this.stopCTV(item.id,item.role_active)
                    }}>
                    <Image source={item.role_active===0?unlockIC:lockIC} style={{width:22,height:22,marginRight:7}} />
@@ -624,7 +678,7 @@ export default class MakeMoney extends Component {
                style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
                    <View style={{flexDirection:'row',paddingBottom:15}}>
                        <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:70,height:60,marginRight:10}} />
-                       <View style={{width:width-110,justifyContent:'space-between'}}>
+                       <View style={{width:width-130,justifyContent:'space-between'}}>
                          <Text numberOfLines={1} style={colorlbl}>{item.name}</Text>
                          <Text numberOfLines={1} style={{color:'#6791AF',fontSize:12}}>{`${item.address}, ${item._district.name}, ${item._city.name}`}</Text>
                          <View style={{flexDirection:'row',alignItems:'center'}}>
@@ -641,15 +695,19 @@ export default class MakeMoney extends Component {
          </TouchableOpacity>
        </View>}
 
-      {showListLocPend &&
+      {showListLocPend && ListLocPend.length>0 &&
         <View style={{position:'absolute'}}>
-        <TouchableOpacity onPress={()=>this.setState({showListLocPend:false})} style={[popoverLoc,padBuySell]}>
+        <TouchableOpacity onPress={()=>this.setState({showListLocPend:false},()=>{this.searchContentPending()})} style={[popoverLoc,padBuySell]}>
         <View style={[overLayout,shadown]}>
             <FlatList
              extraData={this.state}
              data={ListLocPend}
-             // onEndReachedThreshold={0.5}
-             // onEndReached={() => this.onRefresh()}
+             onEndReachedThreshold={0.5}
+             onEndReached={() => {
+               if(loadMore) this.setState({loadMore:false},()=>{
+                 this.searchContentPending(page)
+               });
+             }}
              style={{padding:15,marginTop:15,marginBottom:15,}}
              keyExtractor={(item,index) => index.toString()}
              renderItem={({item,index}) =>(
@@ -659,7 +717,7 @@ export default class MakeMoney extends Component {
                }}>
                    <View style={{flexDirection:'row',paddingBottom:15}}>
                        <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:50,marginRight:10,borderRadius:25}} />
-                       <View style={{width:width-110}}>
+                       <View style={{width:width-130}}>
                          <Text numberOfLines={1} style={colorlbl}>{item.name}</Text>
                          <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.address}, ${item._district.name}, ${item._city.name}`}</Text>
                        </View>
@@ -691,7 +749,7 @@ export default class MakeMoney extends Component {
       </TouchableOpacity>
     </View>}
 
-    {showListCTVPend &&
+    {showListCTVPend && ListPend.length>0 &&
       <View style={{position:'absolute'}}>
       <TouchableOpacity onPress={()=>this.setState({showListCTVPend:false})} style={[popoverLoc,padBuySell]}>
       <View style={[overLayout,shadown]}>
@@ -705,7 +763,7 @@ export default class MakeMoney extends Component {
          onPress={()=>{ navigate('CTVApproveScr',{lang,el:item,daily_id:user_profile.id}) }}>
              <View style={{flexDirection:'row',paddingBottom:15}}>
                  <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:50,marginRight:10,borderRadius:25}} />
-                 <View style={{width:width-110}}>
+                 <View style={{width:width-130}}>
                    <Text numberOfLines={1} style={colorlbl}>{item.full_name}</Text>
                    <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.address}`}</Text>
                  </View>
@@ -714,6 +772,7 @@ export default class MakeMoney extends Component {
             if(suggestPend[item.id]){
               this.state.suggestPend = Object.assign(this.state.suggestPend,{[item.id]:!item.id});
             }else {
+              this.state.index_ctv_pending=index;
               this.state.suggestPend = Object.assign(this.state.suggestPend,{[item.id]:item.id});
             }
             this.setState(this.state);
@@ -730,7 +789,7 @@ export default class MakeMoney extends Component {
              <Text style={{color:'#d0021b',fontSize:16}}>{`${lang.reject}`}</Text>
            </TouchableOpacity>
            <TouchableOpacity style={{alignItems:'center',padding:7,borderRadius:4,backgroundColor:'#d0021b',marginLeft:10,minWidth:width/3}}
-           onPress={()=>{this.requestCTV('accept')}}>
+           onPress={()=>{this.requestCTV('accept',ListPend[index_ctv_pending])}}>
              <Text style={{color:'#fff',fontSize:16}}>{`${lang.accept}`}</Text>
            </TouchableOpacity>
        </View>}

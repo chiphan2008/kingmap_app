@@ -161,7 +161,6 @@ export default class FormCreate extends Component {
         serv_items.push(obj);
       })
       arrData.data.service_content.forEach(e=>{
-        //console.log(e);
         this.setState({checkService: Object.assign(this.state.checkService,{[e]:e.toString()})});
       })
       content._category_items.forEach(e=>{
@@ -315,11 +314,12 @@ export default class FormCreate extends Component {
             ],
            { cancelable: false })
           }else {
-            Alert.alert(this.state.lang.notify,this.state.lang.create_success,[
-              {text: '', style: 'cancel'},
-              {text: 'OK', onPress: () => this.setState({idContent:e.data.content.id,showUpdate:true})}
-            ],
-           {cancelable: false });
+            this.setState({idContent:e.data.content.id,showUpdate:true})
+           //  Alert.alert(this.state.lang.notify,this.state.lang.create_success,[
+           //    {text: '', style: 'cancel'},
+           //    {text: 'OK', onPress: () => this.setState({idContent:e.data.content.id,showUpdate:true})}
+           //  ],
+           // {cancelable: false });
           }
 
         }else {
@@ -356,7 +356,7 @@ export default class FormCreate extends Component {
     //if(nameCountry.trim()!=='' && nameCountry.trim()!==undefined) {params += nameCountry;}
     //console.log('params',params);
     let url = `${'https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyCCCOoPlN2D-mfrYEMWkz-eN7MZnOsnZ44&sensor=true&address='}${params}`;
-    console.log(url);
+    //console.log(url);
     getApi(url).then(e=>{
 
       let arrDataAddr = e.results[0].address_components;
@@ -825,7 +825,16 @@ export default class FormCreate extends Component {
             <View style={[overLayout,pad10]}>
               <View style={pad10}></View>
               <View style={{alignItems:'center',padding:15}}>
-              <Text style={{color:'#6587A8',fontSize:17,textAlign:'center'}}>{`${this.state.lang.update_more}`}</Text>
+              {/*<Image source={selectedIC} style={imgShare}/>*/}
+              <Text style={{color:'#6587A8',fontSize:17,textAlign:'center'}}>
+              {`${this.state.lang.create_success}`.toUpperCase()}
+              </Text>
+              <Text style={{color:'#6587A8',fontSize:17,textAlign:'center',fontStyle:'italic'}}>
+              {`${'\n'}${this.state.lang.approve_location}${'\n\n'}`}
+              </Text>
+              <Text style={{color:'#6587A8',fontSize:17,textAlign:'center'}}>
+              {`${this.state.lang.update_more}`}
+              </Text>
               </View>
               <View style={{flexDirection:'row',alignItems:'center',marginTop:20}}>
                   <TouchableOpacity style={{alignItems:'center',padding:7,borderWidth:1,borderRadius:4,borderColor:'#d0021b',minWidth:width/3}}

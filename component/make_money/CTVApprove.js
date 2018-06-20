@@ -27,7 +27,7 @@ export default class CTVApprove extends Component {
   }
 
   requestCTV(route,id){
-    const { daily_id,lang } = this.props.navigation.state.params;
+    const { daily_id,lang,el } = this.props.navigation.state.params;
     const arr = new FormData();
     arr.append('daily_id',daily_id);
     arr.append('ctv_id[]',id)
@@ -36,7 +36,8 @@ export default class CTVApprove extends Component {
         Alert.alert(lang.notify,e.data,[
           {text: '', style: 'cancel'},
           {text: 'Ok', onPress: () => {
-            DeviceEventEmitter.emit('gobackCTV',  {isLogin:true})
+            const obj = route==='accept'?{isLogin:true,ctv:el}:{isLogin:true}
+            DeviceEventEmitter.emit('gobackCTV',obj)
             this.props.navigation.goBack()
           }}
         ],{ cancelable: false })

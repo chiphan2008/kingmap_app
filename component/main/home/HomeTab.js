@@ -182,7 +182,7 @@ export default class HomeTab extends Component {
        result.y = Math.round(Math.sin(angle * Math.PI / 180) * distance + y);
        return result;
    }
-  
+
   render() {
     //console.log('this.props',this.props);
     const {height, width} = Dimensions.get('window');
@@ -255,7 +255,8 @@ export default class HomeTab extends Component {
                 const x=118;const y=120;const distance=140;
                 let angle = (360/(this.state.listCategory.length-1));
                 let pos = this.findNewPoint(x, y, angle, distance);
-                switch (e.alias) {
+                //console.log(e);
+                switch (e.machine_name) {
 
                   case 'ads':
                       angle *= index-i;
@@ -275,7 +276,7 @@ export default class HomeTab extends Component {
                         <Text style={labelCat}>{e.name}</Text>
                       </TouchableOpacity>);
                         break;
-                  case 'rao-vat':
+                  case 'rao_vat':
                       angle *= index-i;
                       pos = this.findNewPoint(x, y, angle, distance);
                       return (<TouchableOpacity
@@ -313,7 +314,7 @@ export default class HomeTab extends Component {
                       </TouchableOpacity>);
                         break;
 
-                  case 'make-money':
+                  case 'make_money':
                       angle *= index-i;
                       pos = this.findNewPoint(x, y, angle, distance);
                       return (<TouchableOpacity
@@ -331,7 +332,7 @@ export default class HomeTab extends Component {
                         <Text style={labelCat}>{e.name}</Text>
                       </TouchableOpacity>);
                         break;
-                case 'wallet':
+                case 'vi':
                     angle *= index-i;
                     pos = this.findNewPoint(x, y, angle, distance);
                     return (<TouchableOpacity
@@ -346,7 +347,7 @@ export default class HomeTab extends Component {
 
                         </TouchableOpacity>);
                       break;
-                  case 'location':
+                  case 'dia_diem':
                       i=1;
                       return (
                     <TouchableOpacity

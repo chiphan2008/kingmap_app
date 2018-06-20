@@ -15,6 +15,7 @@ import likeFullIcon from '../../../src/icon/ic-like-full.png';
 import onlineIC from '../../../src/icon/ic-green/ic-online.png';
 import locationDarkIC from '../../../src/icon/ic-blue/ic-location-dark.png';
 import phoneIC from '../../../src/icon/ic-blue/ic-phone.png';
+import emailIC from '../../../src/icon/ic-blue/ic-mail.png';
 import priceIC from '../../../src/icon/ic-blue/ic-price.png';
 import timeIC from '../../../src/icon/ic-blue/ic-time.png';
 const {width,height} = Dimensions.get('window');
@@ -68,6 +69,16 @@ export default class Content extends Component {
           <Text numberOfLines={2} style={[colorContent,width30]}>{`${listContent.address}${', '}${listContent._district.name}${', '}${listContent._city.name}`}</Text>
         </View>
         {/*listContent.open_time*/}
+        {/*listContent.phone!=='' &&
+        <View style={rowFlex}>
+          <Image style={[imgContentIC,marRight]} source={phoneIC} />
+          <Text style={colorContent}>{`${listContent.phone}`}</Text>
+        </View>}
+        {listContent.email!=='' &&
+        <View style={rowFlex}>
+          <Image style={{width:16,height:12,marginTop:2,marginRight:10}} source={emailIC} />
+          <Text style={colorContent}>{`${listContent.email}`}</Text>
+        </View>*/}
         <View style={rowFlex}>
           <Image style={[imgContentIC,marRight]} source={timeIC} />
           <View>
@@ -76,10 +87,9 @@ export default class Content extends Component {
           ))}
           </View>
         </View>
-
         <View style={rowFlex}>
-          <Image style={[imgContentIC,marRight]} source={priceIC} />
-          <Text style={colorContent}>{`${format_number(listContent.price_from)}${' - '}${format_number(listContent.price_to)} ${listContent.currency}`}</Text>
+          {/*<Image style={[imgContentIC,marRight]} source={priceIC} />*/}
+          <Text numberOfLines={5} style={[colorContent,width30]}>{`${listContent.description}`}</Text>
         </View>
 
 

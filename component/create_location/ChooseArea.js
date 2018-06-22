@@ -21,22 +21,20 @@ export default class ChooseArea extends Component {
       idDist:'',nameDist:'Quận/Huyện',listDist:[],showDist:false,
       update:true,
       ctv_id:'',
+      daily_id:'',
     }
     checkLocation().then(e=>{
       this.setState({idCountry:e.idCountry, nameCountry:e.nameCountry,idCity:e.idCity, nameCity:e.nameCity,})
     });
     checkLogin().then(el=>{
-      if(el._roles!==undefined){
-        el._roles.length>0 && el._roles.forEach(e=>{
-          if(e.machine_name==='cong_tac_vien')
-          this.setState({ctv_id:el.id});
-        })
-      }
+      el.api_roles.tong_dai_ly!==undefined && this.setState({daily_id:el.id});
+      el.api_roles.cong_tac_vien!==undefined && this.setState({ctv_id:el.id});
     })
   }
   getCountry(){
     let url = `${global.url}${'countries'}`;
     if(this.state.ctv_id!=='') url += `${'?ctv_id='}${this.state.ctv_id}`;
+    if(this.state.daily_id!=='') url += `${'?daily_id='}${this.state.daily_id}`;
     console.log(url);
     getApi(url).then(arrData => {
         this.setState({ listCountry:arrData.data });
@@ -45,7 +43,8 @@ export default class ChooseArea extends Component {
   getCity(id){
     let url = `${global.url}${'cities/'}${id}`;
     if(this.state.ctv_id!=='') url += `${'?ctv_id='}${this.state.ctv_id}`;
-    console.log(url);
+    if(this.state.daily_id!=='') url += `${'?daily_id='}${this.state.daily_id}`;
+    //console.log(url);
     getApi(url).then(arrData => {
         this.setState({ listCity:arrData.data });
     }).catch(err => console.log(err));
@@ -54,7 +53,8 @@ export default class ChooseArea extends Component {
   getDist(id){
     let url = `${global.url}${'districts/'}${id}`;
     if(this.state.ctv_id!=='') url += `${'?ctv_id='}${this.state.ctv_id}`;
-    console.log(url);
+    if(this.state.daily_id!=='') url += `${'?daily_id='}${this.state.daily_id}`;
+    //console.log(url);
     getApi(url).then(arrData => {
         this.setState({ listDist:arrData.data });
     }).catch(err => console.log(err));

@@ -1,7 +1,7 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import {Platform, View, Text, StyleSheet, Dimensions, Image, TextInput,ScrollView,
+import {Platform, View, Text, StyleSheet, Dimensions, Image, TextInput,ScrollView,Alert,
   TouchableOpacity,PermissionsAndroid, AsyncStorage, Modal,Keyboard,YellowBox } from 'react-native';
 import RNSettings from 'react-native-settings';
 //import SvgUri from 'react-native-svg-uri';
@@ -68,10 +68,10 @@ export default class HomeTab extends Component {
       curLoc:{},
       user_profile:{},
       valSearch:'',
+
     };
     accessLocation();
     checkLogin().then(e=>{
-
       if(e.id===undefined){
         this.setState({isLogin:false})
       }else {
@@ -79,6 +79,7 @@ export default class HomeTab extends Component {
         //console.log(e);
         const params = {username:e.email,password:e.pwd};
         var _this = this;
+        //let approve_acc_ctv = e.api_roles.cong_tac_vien!==undefined && e.api_roles.active===0?true:false;
         _this.setState({user_profile:e,user_id:e.id,avatar:e.avatar,code_user:e.phone,isLogin:true});
 
         // loginApi(`${global.url}${'login'}`,params).then(el=>{
@@ -94,9 +95,7 @@ export default class HomeTab extends Component {
     arrLang = [{name:'VIE',v:'vn'},{name:'ENG',v:'en'}];
   }
 
-
   findLoc(){
-
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const {latitude,longitude} = position.coords;
@@ -183,6 +182,18 @@ export default class HomeTab extends Component {
        return result;
    }
 
+   gotoCreate = () => {
+     checkLogin().then(e=>{
+
+       if(e.temp_daily_code!==''){
+         Alert.alert(this.state.lang.notify,this.state.lang.approve_ctv);
+       }else if(e.count_area===0){
+         Alert.alert(this.state.lang.notify,this.state.lang.approve_area_ctv);
+       }else if(e.api_roles.cong_tac_vien!==undefined && e.api_roles.cong_tac_vien.active===0){
+         Alert.alert(this.state.lang.notify,this.state.lang.approve_acc_ctv);
+       }else {this.props.navigation.navigate('ChooseCatScr',{lang:this.state.lang.lang}) }
+     })
+   }
   render() {
     //console.log('this.props',this.props);
     const {height, width} = Dimensions.get('window');
@@ -386,31 +397,28 @@ export default class HomeTab extends Component {
         onPress={()=>{
           this.requestLogin();
           if(this.state.isLogin){
-            this.setState({showCreate:!this.state.showCreate,showInfo:false,showShare:false});
+            this.setState({showCreate:!this.state.showCreate,showInfo:false,showShare:false},()=>{
+              loginServer(this.state.user_profile,'cxv');
+            });
           }
         }}
         style={plusStyle}>
             <Image source={plusIC} style={[imgPlusStyle, this.state.showCreate===false ? show : hide]} />
         </TouchableOpacity>
 
-        <Modal
-        onRequestClose={() => null}
-        transparent
-        visible={this.state.showCreate}>
-        <TouchableOpacity
-        onPress={()=>this.setState({showCreate:!this.state.showCreate})}
+        <Modal onRequestClose={() => null} transparent visible={this.state.showCreate}>
+        <TouchableOpacity onPress={()=>this.setState({showCreate:!this.state.showCreate})}
          style={popoverCreate}>
             <TouchableOpacity
             onPress={()=>{
-              this.setState({showCreate:false});
-              navigate('ChooseCatScr',{lang:this.state.lang.lang});
+              this.setState({showCreate:false},()=>{
+                this.gotoCreate();
+              });
             }}
             style={itemCreate}>
               <Text style={colorlbl}>{this.state.lang.create_location}</Text>
             </TouchableOpacity>
-        <TouchableOpacity
-        onPress={()=>this.setState({showCreate:!this.state.showCreate})}
-        >
+        <TouchableOpacity onPress={()=>this.setState({showCreate:!this.state.showCreate})} >
             <Image source={this.state.showCreate===false ? plusIC : closeIC} style={imgPlusStyle} />
         </TouchableOpacity>
         </TouchableOpacity>
@@ -421,7 +429,7 @@ export default class HomeTab extends Component {
 
         <View style={flexRow}>
             <Image style={[imgShare,imgMargin]} source={locationDD} />
-            <Text style={colorTextPP}><Text style={colorWhite}>{format_number(listStatus.countContent)}k</Text></Text>
+            <Text style={colorTextPP}><Text style={colorWhite}>{format_number(listStatus.countContent)}</Text></Text>
         </View>
         <View style={flexRow}>
             <Image style={[imgShare,imgMargin]} source={onlineDD} />
@@ -429,15 +437,15 @@ export default class HomeTab extends Component {
         </View>
         <View style={flexRow}>
             <Image style={[imgShare,imgMargin]} source={checkDD} />
-            <Text style={colorTextPP}><Text style={colorWhite}>{format_number(listStatus.newContent)}k</Text></Text>
+            <Text style={colorTextPP}><Text style={colorWhite}>{format_number(listStatus.newContent)}</Text></Text>
         </View>
         <View style={flexRow}>
             <Image style={[imgShare,imgMargin]} source={likeDD} />
-            <Text style={colorTextPP}><Text style={colorWhite}>{format_number(listStatus.countLike)}k</Text></Text>
+            <Text style={colorTextPP}><Text style={colorWhite}>{format_number(listStatus.countLike)}</Text></Text>
         </View>
         <View style={flexRow}>
             <Image style={[imgShare,imgMargin]} source={socialDD} />
-            <Text style={colorTextPP}><Text style={colorWhite}>{format_number(listStatus.countShare)}k</Text></Text>
+            <Text style={colorTextPP}><Text style={colorWhite}>{format_number(listStatus.countShare)}</Text></Text>
         </View>
         <View style={flexRow}>
             <Image style={[imgShare,imgMargin]} source={userDD} />

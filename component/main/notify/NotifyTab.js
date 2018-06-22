@@ -5,6 +5,7 @@ import {
   Platform, View, Text, StyleSheet, Dimensions, Image, TextInput, TouchableOpacity,
 FlatList} from 'react-native';
 import Moment from 'moment';
+import PushNotification from 'react-native-push-notification';
 const {height, width} = Dimensions.get('window');
 
 import getApi from '../../api/getApi';
@@ -23,7 +24,6 @@ import logoTop from '../../../src/icon/ic-white/Logo-ngang.png';
 import searchIC from '../../../src/icon/ic-gray/ic-search.png';
 import infoIC from '../../../src/icon/ic-white/ic-analysis.png';
 import socialIC from '../../../src/icon/ic-white/ic-social.png';
-
 
 export default class NotifyTab extends Component {
   constructor(props) {
@@ -63,6 +63,22 @@ export default class NotifyTab extends Component {
         this.setState({ listNoti: arrData.data });
     })
     .catch(err => console.log(err));
+  }
+
+  componentDidMount(){
+    PushNotification.configure({
+        onNotification: function(notification) {
+            console.log( 'NOTIFICATION:', notification );
+            //notification.finish(PushNotificationIOS.FetchResult.NoData);
+        },
+    });
+  }
+
+  componentWillUpdate(){
+    // PushNotification.localNotificationSchedule({
+    //   message: "My Notification Message", // (required)
+    //   date: new Date(Date.now() + (3 * 1000)) // in 60 secs
+    // });
   }
   render() {
     const {navigate} = this.props.navigation;

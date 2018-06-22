@@ -19,6 +19,7 @@ import closeIC from '../../src/icon/ic-white/ic-close.png';
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
 import checkIC from '../../src/icon/ic-check.png';
 import uncheckIC from '../../src/icon/ic-uncheck.png';
+import LogoHome from '../../src/icon/ic-home/Logo-home.png';
 
 const {width,height} = Dimensions.get('window');
 import ImagePicker from 'react-native-image-crop-picker';
@@ -472,7 +473,8 @@ export default class UpdateMore extends Component {
                   <Image source={closeIC} style={[imgShare]} />
                 </TouchableOpacity>*/}
                 <View style={[overLayout,pad10]}>
-                <Text numberOfLines={1} style={colorlbl}>{lang.add_branch}</Text>
+                <Image source={LogoHome} style={{height:45,width:45,marginBottom:10}} />
+                <Text numberOfLines={1} style={{color:'#2A2D37',fontSize:17}}>{lang.add_branch.toUpperCase()}</Text>
                 <FlatList
                    extraData={this.state}
                    style={{marginTop:15,width:width-30,paddingBottom:15,paddingLeft:5,paddingRight:5,}}

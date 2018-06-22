@@ -74,9 +74,9 @@ export default class AddImageMore extends Component {
       dDay:strday[2],
       dMonth:strday[1],
       dYear:strday[0],
-      phone:user_profile.phone,
-      address:user_profile.address,
-      cmnd:user_profile.cmnd,
+      phone:user_profile.phone===null?'':user_profile.phone,
+      address:user_profile.address===null?'':user_profile.address,
+      cmnd:user_profile.cmnd===null?'':user_profile.cmnd,
     })
   }
   getlistAgency(){
@@ -121,7 +121,7 @@ export default class AddImageMore extends Component {
       this.setState({posted:false},()=>{
         Alert.alert(lang.notify,lang.add_cmnd);
       })
-    
+
     }else if (this.state.cmnd_image_front.path===undefined) {
       this.setState({posted:false},()=>{
         Alert.alert(lang.notify,lang.add_front_cmnd);

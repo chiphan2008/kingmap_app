@@ -56,6 +56,7 @@ import descriptionIC from '../../src/icon/ic-create/ic-description.png';
 import keywordsIC from '../../src/icon/ic-create/ic-keywords.png';
 import codeIC from '../../src/icon/ic-create/ic-code.png';
 import selectedIC from '../../src/icon/ic-create/ic-selected.png';
+import LogoHome from '../../src/icon/ic-home/Logo-home.png';
 
 import {hasNumber,getIndex,strtoarray,isEmail,checkSVG,checkKeyword} from '../libs';
 
@@ -411,9 +412,9 @@ export default class FormCreate extends Component {
             <View style={widthLblCre}>
             <Image source={cateLocationIC} style={imgInfo} />
             </View>
+            <Text style={colorErr}>{'(*)'}</Text>
               <View style={{paddingLeft:15,flexDirection:'row'}}>
                 <Text style={colorlbl}>{this.state.lang.classify}</Text>
-                <Text style={colorErr}>{' *'}</Text>
               </View>
           </View>
           <View style={{flexDirection:'row',alignItems:'center'}}>
@@ -450,10 +451,11 @@ export default class FormCreate extends Component {
           <View style={widthLblCre}>
           <Image source={nameLocationIC} style={imgInfo} />
           </View>
+          <Text style={colorErr}>{'(*)'}</Text>
           <TextInput underlineColorAndroid='transparent'
             returnKeyType = {"next"} autoFocus = {true}
             onSubmitEditing={(event) => {this.refs.Address.focus();}}
-            placeholder={`${this.state.lang.name_location}${' *'}`} style={wrapInputCreImg}
+            placeholder={`${this.state.lang.name_location}`} style={wrapInputCreImg}
             onChangeText={(txtName) => this.setState({txtName})}
             value={this.state.txtName}
            />
@@ -468,6 +470,7 @@ export default class FormCreate extends Component {
           <View style={widthLblCre}>
           <Image source={locationIC} style={imgInfo} />
           </View>
+          <Text style={colorErr}>{'(*)'}</Text>
           <TextInput underlineColorAndroid='transparent'
           onChangeText={(txtAddress) => { this.setState({txtAddress}) } }
           value={`${this.state.txtAddress}`} ref='Address' returnKeyType = {"next"}
@@ -478,7 +481,7 @@ export default class FormCreate extends Component {
             }
           }}
           onSubmitEditing={(event) => {  this.refs.Des.focus(); clearTimeout(timeoutLatLng);this.getLatLng();  }}
-          placeholder={`${this.state.lang.address}${' *'}`} style={wrapInputCreImg} />
+          placeholder={`${this.state.lang.address}`} style={wrapInputCreImg} />
           <View style={{width:15}}>
           <TouchableOpacity style={this.state.txtAddress!=='' ? show : hide}
           onPress={()=>{this.setState({txtAddress:'',lat:'Lat 0.0',lng:'Lng 0.0',})}}>
@@ -493,9 +496,10 @@ export default class FormCreate extends Component {
             <View style={widthLblCre}>
               <Image source={timeIC} style={imgInfo} />
             </View>
+            <Text style={colorErr}>{'(*)'}</Text>
             <View style={{paddingLeft:15,flexDirection:'row'}}>
               <Text style={colorlbl}>{this.state.lang.open_time}</Text>
-              <Text style={colorErr}>{' *'}</Text>
+              <Text style={colorErr}></Text>
               </View>
           </View>
           <View style={{flexDirection:'row'}}>
@@ -526,8 +530,8 @@ export default class FormCreate extends Component {
 
         <View style={{padding:15,flexDirection:'row',justifyContent:'space-between'}}>
           <View style={{flexDirection:'row'}}>
+            <Text style={colorErr}>{' (*) '}</Text>
             <Text style={colorlbl}>{this.state.lang.choose_area}</Text>
-            <Text style={colorErr}>{' *'}</Text>
           </View>
         <View style={this.state.errArea ? show : hide}>
             <Text style={colorErr}>{this.state.lang.plz_choose_area}</Text>
@@ -625,7 +629,7 @@ export default class FormCreate extends Component {
           <View style={widthLblCre}>
             <Image source={keywordsIC} style={imgInfo} />
           </View>
-
+          <Text style={colorErr}>{'(*)'}</Text>
           <TextInput underlineColorAndroid='transparent' autoCorrect={false}
           multiline numberOfLines={4} maxHeight={65}
           onChangeText={(text) => {
@@ -651,7 +655,7 @@ export default class FormCreate extends Component {
           }}
 
           value={this.state.txtKW} ref='KW' returnKeyType = {"done"}
-          placeholder={`${this.state.lang.keyword}${' (*)'}`} style={wrapInputCreImg} />
+          placeholder={`${this.state.lang.keyword}`} style={wrapInputCreImg} />
 
           <View style={{width:15}}>
             <TouchableOpacity style={this.state.txtKW!=='' ? show : hide} onPress={()=>{this.setState({txtKW:''})}}>
@@ -684,10 +688,10 @@ export default class FormCreate extends Component {
               <View style={widthLblCre}>
                 <Image source={avatarIC} style={imgInfo} />
               </View>
+              <Text style={colorErr}>{' (*)'}</Text>
               <View style={{paddingLeft:15,flexDirection:'row',alignItems:'center'}}>
                 <Image source={{isStatic:true,uri:`${this.state.imgAvatar.path}`}} style={[imgInfo,marRight,this.state.imgAvatar.path!==undefined ? show : hide]}/>
                 <Text style={colorlbl}>{this.state.lang.avatar}</Text>
-                <Text style={colorErr}>{' *'}</Text>
               </View>
             </View>
           <View style={{flexDirection:'row',alignItems:'center'}}>
@@ -823,16 +827,19 @@ export default class FormCreate extends Component {
       {this.state.showUpdate &&
         <View style={[popoverLoc,centerVer]}>
             <View style={[overLayout,pad10]}>
+            <Image source={LogoHome} style={{width:45,height:45,zIndex:9999999,position:'absolute',top:10,right:(width/2)-30}}/>
               <View style={pad10}></View>
               <View style={{alignItems:'center',padding:15}}>
-              {/*<Image source={selectedIC} style={imgShare}/>*/}
+              <View style={{flexDirection:'row',paddingTop:20}}>
+              <Image source={selectedIC} style={{width:22,height:22}}/>
               <Text style={{color:'#6587A8',fontSize:17,textAlign:'center'}}>
-              {`${this.state.lang.create_success}`.toUpperCase()}
+               {` ${this.state.lang.create_success}`.toUpperCase()}
               </Text>
-              <Text style={{color:'#6587A8',fontSize:17,textAlign:'center',fontStyle:'italic'}}>
-              {`${'\n'}${this.state.lang.approve_location}${'\n\n'}`}
+              </View>
+              <Text style={{color:'#6587A8',fontSize:15,textAlign:'center',fontStyle:'italic'}}>
+              {`${this.state.lang.approve_location}${'\n\n'}`}
               </Text>
-              <Text style={{color:'#6587A8',fontSize:17,textAlign:'center'}}>
+              <Text style={{color:'#6587A8',fontSize:16,textAlign:'center',fontWeight:'500'}}>
               {`${this.state.lang.update_more}`}
               </Text>
               </View>

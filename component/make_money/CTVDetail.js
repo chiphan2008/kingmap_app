@@ -25,16 +25,18 @@ export default class CTVDetail extends Component {
     this.getStatic();
   }
   getStatic(){
-    const {ctv_id,content_id} = this.props.navigation.state.params;
+    const {daily_id,ctv_id,content_id,lang} = this.props.navigation.state.params;
     const month = Moment().format('MM');
     const year = Moment().format('YYYY');
     const arr = new FormData();
-    ctv_id!==undefined && arr.append('ctv_id',ctv_id);
+    ctv_id!=='' && arr.append('ctv_id',ctv_id);
+    daily_id!=='' && arr.append('daily_id',daily_id);
     content_id!==undefined && arr.append('content_id',content_id);
     arr.append('month',month);
     arr.append('year',year);
     //console.log(arr);
-    postApi(`${global.url}${'static'}`,arr)
+    //console.log(`${global.url}${'static'}`);
+    postApi(`${global.url}${'static'}${'?lang='}${lang.lang}`,arr)
     .then(arr => {
         this.setState({ listData:arr.data });
     }).catch(err => console.log(err));
@@ -70,7 +72,7 @@ export default class CTVDetail extends Component {
               </View>
             </View>
 
-              {ctv_id!==undefined && <View>
+              {content_id===undefined && <View>
                   <View style={wrapWhite}>
                     <View style={{width:width-30}}>
                       <Text numberOfLines={1} style={colorTitle}>{`${lang.area_charge}`}</Text>

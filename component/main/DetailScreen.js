@@ -12,6 +12,7 @@ import global from '../global';
 import getApi from '../api/getApi';
 import loginServer from '../api/loginServer';
 import checkLogin from '../api/checkLogin';
+import getLocationByIP from '../api/getLocationByIP';
 
 import Collection from './detail/Collection';
 import Header from './detail/Header';
@@ -72,6 +73,7 @@ export default class DetailScreen extends Component {
       isLogin:false,
     }
     this.refresh();
+    if(curLoc===undefined) this.findLoc();
   }
 
 
@@ -147,6 +149,27 @@ export default class DetailScreen extends Component {
       }
     });
   }
+  findLoc(){
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const {latitude,longitude} = position.coords;
+          this.setState({curLoc:{
+            latitude,longitude
+          }});
+      },
+      (error) => {
+        getLocationByIP().then((e) => {
+          const {latitude,longitude} = e;
+            this.setState({curLoc:{
+              latitude,longitude
+            }});
+
+        });
+      },
+      { timeout: 5000,maximumAge: 60000 },
+    );
+   }
+
   componentWillUnMount(){
     clearTimeout(timeoutCheckUser);
   }

@@ -31,7 +31,6 @@ import uncheckIC from '../../src/icon/ic-uncheck.png';
 import removeIC from '../../src/icon/ic-create/ic-remove.png';
 import lockIC from '../../src/icon/ic-lock.png';
 import unlockIC from '../../src/icon/ic-unlock.png';
-
 //import loginApi from '../api/loginApi';
 
 //import calendarIC from '../../src/icon/ic-wallet/ic-calendar.png';
@@ -503,7 +502,7 @@ export default class MakeMoney extends Component {
               </View>
           </TouchableOpacity>}
 
-          {isAgency && ListLocPend.length>0 &&
+          {isAgency &&
             <TouchableOpacity style={wrapWhite}
             onPress={()=>{this.setState({showListLocPend:true})}}>
               <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
@@ -512,7 +511,7 @@ export default class MakeMoney extends Component {
           </TouchableOpacity>}
 
 
-          {isAgency && ListPend.length>0 &&
+          {isAgency && 
             <TouchableOpacity style={wrapWhite} onPress={()=>{
               this.setState({showListCTVPend:true});
             }}>

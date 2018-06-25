@@ -111,7 +111,7 @@ export default class FormCreate extends Component {
       title_menu:[],
       errArea:false,
       errMsg:'',
-      id_ctv:'',
+      ma_dinh_danh:'',
       idCountry:'',idCity:'',idDist:'',
       nameCountry:'',nameCity:'',nameDist:'',
       isLogin:false,
@@ -127,7 +127,7 @@ export default class FormCreate extends Component {
       if(e.id===undefined){
         this.setState({isLogin:false})
       }else {
-        this.setState({user_profile:e,id_ctv:e.id_ctv,isLogin:true});
+        this.setState({user_profile:e,ma_dinh_danh:e.ma_dinh_danh,isLogin:true});
       }
     })
     //BackHandler.addEventListener('hardwareBackPress', ()=>this.setState({showSubCat:false}));
@@ -266,7 +266,7 @@ export default class FormCreate extends Component {
 
     arr.append('description',this.state.txtDes);
     // //arr.append('code_invite',this.state.txtCode);
-    arr.append('id_ctv',this.state.id_ctv);
+    arr.append('ma_dinh_danh',this.state.ma_dinh_danh);
     this.state.img_space.length>0 && this.state.img_space.forEach((e,index)=>{
       e.path!==undefined &&  arr.append(`image_space[]`, {
         uri:`${e.path}`,

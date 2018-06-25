@@ -15,20 +15,24 @@
       },
       "oauth_client": [
         {
-          "client_id": "278965524140-n3tmlud2iumud45j6vemg8sqj36qtvh4.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.kingmap_app",
-            "certificate_hash": "1018d8af1c7c5480a77ad34e3ce68bf02724b134"
-          }
+          "client_id": "278965524140-kdfddo63ljd1ljp06mp61ljgpnad9sj0.apps.googleusercontent.com",
+          "client_type": 3
         },
         {
-          "client_id": "278965524140-mlabiu68vda23ho9ir920433q3fjca3j.apps.googleusercontent.com",
+          "client_id": "278965524140-3l80mj8re5j47antihuh7mpeki2vmdhd.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.kingmap_app",
             "certificate_hash": "c3bc4843a41e23460d0c4a29cace9b8029d09477"
           }
+        },
+        {
+          "client_id": "278965524140-f9pqq5qt8hq5nljro3tlgevo7bf4sgom.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "278965524140-82uj4m1efe2b41jq9cnb79rumg8hh6i7.apps.googleusercontent.com",
+          "client_type": 3
         },
         {
           "client_id": "278965524140-kdfddo63ljd1ljp06mp61ljgpnad9sj0.apps.googleusercontent.com",
@@ -50,14 +54,6 @@
             {
               "client_id": "278965524140-kdfddo63ljd1ljp06mp61ljgpnad9sj0.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "278965524140-npl5pvrlnkh302hagt7lr648msoui2fc.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "org.reactjs.native.example.kingmap-app",
-                "app_store_id": "6553"
-              }
             }
           ]
         },

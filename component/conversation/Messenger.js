@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image,
   TouchableOpacity,TextInput,ScrollView,Keyboard,
+  KeyboardAvoidingView
 } from 'react-native';
 const {height, width} = Dimensions.get('window');
 import io from 'socket.io-client/dist/socket.io.js';
@@ -125,7 +126,14 @@ export default class Messenger extends Component {
     } = styles;
 
     return (
-      <View style={container}>
+      <KeyboardAvoidingView style={container} keyboardVerticalOffset={-500} behavior="padding" enabled>
+        <ScrollView
+        onContentSizeChange={(contentWidth, contentHeight)=>{
+            this.scrollView.scrollToEnd({animated: false});
+        }}
+        ref={(scrollView) => { this.scrollView = scrollView }}
+        scrollEnabled
+        >
         <View style={headCatStyle}>
             <View style={headContent}>
                 <TouchableOpacity onPress={()=>{
@@ -138,13 +146,6 @@ export default class Messenger extends Component {
             </View>
         </View>
 
-        <ScrollView
-        onContentSizeChange={(contentWidth, contentHeight)=>{
-            this.scrollView.scrollToEnd({animated: false});
-        }}
-        ref={(scrollView) => { this.scrollView = scrollView }}
-        scrollEnabled
-        >
         <View style={{width,marginTop: 70,marginBottom:Platform.OS==='ios' ? 70 :90}}>
           {index_item>1 ? listData : <View key={0}></View>}
         </View>
@@ -189,7 +190,7 @@ export default class Messenger extends Component {
 
         </View>
 
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 }
@@ -214,7 +215,7 @@ export class ListMsg extends Component {
         <View style={{paddingLeft:10,paddingRight:10,marginBottom:7}}>
           <View style={[wrapDatePaging,formatDate(checkDate)!==formatDate(data.create_at) ? show :hide ]}>
             <View style={{borderRadius:10,backgroundColor:'#C5C4CE',padding:3,paddingLeft:5,paddingRight:5}}>
-            <Text style={{color:'#fff',fontSize:12}}>{Moment(data.create_at).add(12, 'hours').format('DD/MM/YYYY')}</Text>
+            <Text style={{color:'#fff',fontSize:12}}>{Moment(data.create_at).format('DD/MM/YYYY')}</Text>
             </View>
             <View style={lineDate}></View>
           </View>
@@ -251,7 +252,7 @@ const styles = StyleSheet.create({
   container: {
     width,
     height,
-    alignSelf: 'stretch',
+    //alignSelf: 'stretch',
   },
   colorItemName:{color:'#606B85',fontSize:13},
   wrapShowType:{position:'absolute', zIndex:98,bottom:Platform.OS==='ios' ? 50 : 75,backgroundColor:'rgba(179, 181, 183, 0.45)',padding:10,paddingTop:5,paddingBottom:5,},
@@ -304,7 +305,7 @@ const styles = StyleSheet.create({
   wrapItems:{flexDirection:'row',width,alignItems:'center',padding:15,backgroundColor:'#fff',marginBottom:1},
   headCatStyle : {
     backgroundColor: '#D0021B',paddingTop: Platform.OS==='ios' ? 30 : 20, alignItems: 'center',height: 65,
-    position:'relative',zIndex:5,
+    position:'absolute',zIndex:9999,width,alignSelf:'flex-start'
   },
   txtInput:{
     borderRadius:3,

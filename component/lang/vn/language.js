@@ -39,7 +39,7 @@ module.exports = {
   total_coll:'Tổng số CTV',
   choose_coll:'Chọn CTV',
   selected_coll:'CTV đã chọn',
-  approve_area_ctv:'Tài khoản của bạn chưa được cấp quyền hoạt động. Vui lòng liên hệ TĐL để biết thêm thông tin.',
+  approve_area_ctv:'Tài khoản của bạn chưa được phân khu vực hoạt động. Vui lòng liên hệ TĐL để biết thêm thông tin.',
   approve_acc_ctv:'Tài khoản của bạn đang tạm khoá. Vui lòng liên hệ TĐL để biết thêm thông tin.',
   approve_ctv:'Tài khoản của bạn đang chờ duyệt. Vui lòng quay lại sau.',
   discount:'Khuyến mãi',

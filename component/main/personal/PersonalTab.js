@@ -6,6 +6,7 @@ import {
   Dimensions, Image, TextInput, TouchableOpacity,
   AsyncStorage,DeviceEventEmitter} from 'react-native';
 const {height, width} = Dimensions.get('window');
+import {GoogleSignin} from 'react-native-google-signin';
 
 //import UpdateInfo from './UpdateInfo';
 //import Setting from './Setting';
@@ -82,6 +83,7 @@ export default class PersonalTab extends Component {
   }
   logoutUser(){
     const {user_profile} = this.state;
+    GoogleSignin.signOut().catch(e=>{});
     getApi(`${global.url}${'logout'}`);
     AsyncStorage.removeItem('@MyAccount:key');
     AsyncStorage.setItem('@MyAccount:key', JSON.stringify({

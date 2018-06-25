@@ -47,7 +47,7 @@ module.exports = {
   choose_area:'Choose area',
   choose_ctv:'Please select a collaborator',
   selected_coll:'Collaborator selected',
-  approve_area_ctv:'Your account is inactive. Please contact the general agent for more information.',
+  approve_area_ctv:'Your account has not been zoned. Please contact the general agent for more information.',
   approve_acc_ctv:'Your account was locked. Please contact the general agent for more information.',
   approve_ctv:'Your account is pending. Please come back later.',
   cmnd_image:'ID image',

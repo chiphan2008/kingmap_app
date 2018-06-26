@@ -25,17 +25,18 @@ export default class CTVDetail extends Component {
     this.getStatic();
   }
   getStatic(){
-    const {daily_id,ctv_id,content_id,lang} = this.props.navigation.state.params;
+    const {ceo_id,daily_id,ctv_id,content_id,lang} = this.props.navigation.state.params;
     const month = Moment().format('MM');
     const year = Moment().format('YYYY');
     const arr = new FormData();
     ctv_id!=='' && arr.append('ctv_id',ctv_id);
     daily_id!=='' && arr.append('daily_id',daily_id);
+    //ceo_id!=='' && arr.append('ceo_id',ceo_id);
     content_id!==undefined && arr.append('content_id',content_id);
     arr.append('month',month);
     arr.append('year',year);
-    //console.log(arr);
-    //console.log(`${global.url}${'static'}`);
+    console.log(arr);
+    console.log(`${global.url}${'static'}${'?lang='}${lang.lang}`);
     postApi(`${global.url}${'static'}${'?lang='}${lang.lang}`,arr)
     .then(arr => {
         this.setState({ listData:arr.data });
@@ -109,8 +110,9 @@ export default class CTVDetail extends Component {
                  </View>
 
 
-
         </View>
+        <View style={{height:15}}></View>
+
         </ScrollView>
     );
   }

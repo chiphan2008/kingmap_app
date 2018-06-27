@@ -4,7 +4,7 @@ import global from '../global';
 const encodeApi = async (url,method,param) => {
   try {
     //console.log('url,method,param',url,method,param);
-    let formBody = `${'id='}${param.id}&${'name='}${param.full_name}&${'urlhinh='}${param.avatar}`;
+    let formBody = `${'id='}${param.id}&${'name='}${param.full_name}&${'urlhinh='}${param.avatar}&${'email='}${param.email}&${'phone='}${param.phone}`;
 
     let params = {
         method:method,

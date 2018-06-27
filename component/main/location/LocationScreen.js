@@ -32,9 +32,10 @@ export default class LocationScreen extends Component {
   }
 
   getCategory(lang){
+    //console.log(global.url+'categories?language='+lang+'&limit=100');
     getApi(global.url+'categories?language='+lang+'&limit=100')
     .then(arrCategory => {
-      //console.log('arrCategory',arrCategory.data);
+      //console.log('arrCategory1',arrCategory);
       timeoutCat = setTimeout(()=>{
         this.setState({ listCategory: arrCategory.data });
       },1000)

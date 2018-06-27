@@ -30,6 +30,7 @@ import {hasNumber,checkUrl} from '../../libs';
 export default class UpdateInfo extends Component {
   constructor(props){
     super(props);
+    
     this.state = {
       full_name:'',
       dDay:'',

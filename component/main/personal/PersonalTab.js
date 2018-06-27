@@ -72,9 +72,10 @@ export default class PersonalTab extends Component {
     });
   }
   getUser(id){
+    console.log(`${global.url}${'user/get-static/'}${id}`);
     getApi(`${global.url}${'user/get-static/'}${id}`)
     .then(arrData => {
-        //console.log(arrData);
+        console.log(arrData);
         timeoutUser = setTimeout(()=>{
           this.setState({ countEntry: arrData.data });
         },2000)

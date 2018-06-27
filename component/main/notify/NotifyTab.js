@@ -3,9 +3,10 @@
 import React, { Component } from 'react';
 import {
   Platform, View, Text, StyleSheet, Dimensions, Image, TextInput, TouchableOpacity,
-FlatList} from 'react-native';
+FlatList,AppState} from 'react-native';
 import Moment from 'moment';
 import PushNotification from 'react-native-push-notification';
+import Pusher from 'pusher-js/react-native';
 const {height, width} = Dimensions.get('window');
 
 import getApi from '../../api/getApi';
@@ -25,6 +26,17 @@ import searchIC from '../../../src/icon/ic-gray/ic-search.png';
 import infoIC from '../../../src/icon/ic-white/ic-analysis.png';
 import socialIC from '../../../src/icon/ic-white/ic-social.png';
 
+const socket = new Pusher("cccc47e9fa4d58585b38", {
+  cluster: "ap1",
+  activityTimeout : 30000,
+  pongTimeout : 30000
+});
+console.ignoredYellowBox = [
+    'Setting a timer'
+]
+
+const channelNews = socket.subscribe('get-new-notifi-0');
+var NotiTimeout,countNoti,channelUserAll,channelUser;
 export default class NotifyTab extends Component {
   constructor(props) {
     super(props);
@@ -35,7 +47,7 @@ export default class NotifyTab extends Component {
       isLogin:false,
       curLoc:{},
       listNoti:[],
-
+      //appState: AppState.currentState,
     };
     //this.getLoc();
     getLanguage().then((e) =>{
@@ -48,6 +60,8 @@ export default class NotifyTab extends Component {
       if(e.id===undefined){
         this.setState({isLogin:false})
       }else {
+        channelUserAll = socket.subscribe('get-new-notifi-all');
+        channelUser = socket.subscribe(`${'get-new-notifi-'}${e.id}`);
         this.setState({isLogin:true});
         loginServer(e);
       }
@@ -66,19 +80,73 @@ export default class NotifyTab extends Component {
   }
 
   componentDidMount(){
-    PushNotification.configure({
-        onNotification: function(notification) {
-            console.log( 'NOTIFICATION:', notification );
-            //notification.finish(PushNotificationIOS.FetchResult.NoData);
-        },
-    });
+
+      PushNotification.configure({
+          onNotification: function(notification) {
+              console.log( 'NOTIFICATION:', notification );
+              //notification.finish(PushNotificationIOS.FetchResult.NoData);
+          },
+      });
+      AppState.addEventListener('change', (nextAppState)=>{
+        //alert('nextAppState.toString()');
+
+        //alert(nextAppState.toString());
+      });
+  }
+  componentWillUnmount() {
+    AppState.removeEventListener('change');
   }
 
   componentWillUpdate(){
-    // PushNotification.localNotificationSchedule({
-    //   message: "My Notification Message", // (required)
-    //   date: new Date(Date.now() + (3 * 1000)) // in 60 secs
+    //clearTimeout(NotiTimeout);
+    //console.log('componentWillUpdate');
+
+      countNoti = 0;
+      channelNews.bind(`${'App\\Events\\getNotifi'}`, function(data) {
+        //console.log(data);
+        countNoti += 1;
+        if(countNoti === 3){
+          const {title,contentText} = data.data;
+          PushNotification.localNotificationSchedule({
+            data:data.data,
+            title,
+            message: contentText,
+            date: new Date(Date.now()) // in 60 secs  + (3 * 1000)
+          });
+          countNoti=0;
+        }
+      });
+      this.state.isLogin && channelUserAll.bind(`${'App\\Events\\getNotifi'}`,function(data) {
+        //console.log(data);
+        const {title,contentText} = data.data;
+          PushNotification.localNotificationSchedule({
+            data:data.data,
+            title,
+            message: contentText,
+            date: new Date(Date.now()) // in 60 secs  + (3 * 1000)
+          });
+      });
+
+      this.state.isLogin && channelUser.bind(`${'App\\Events\\getNotifi'}`,function(data) {
+        //console.log(data);
+        const {title,contentText} = data.data;
+          PushNotification.localNotificationSchedule({
+            data:data.data,
+            title,
+            message: contentText,
+            date: new Date(Date.now()) // in 60 secs  + (3 * 1000)
+          });
+      });
+
+    // channelNews.bind(`${'App\\Events\\getNotifi'}`, function(data) {
+    //   console.log('data.message',data);
+    //   PushNotification.localNotificationSchedule({
+    //     message: data.message, // (required)
+    //     //date: new Date(Date.now() + (3 * 1000)) // in 60 secs
+    //   });
     // });
+    // console.log('channelNews',channelNews);
+
   }
   render() {
     const {navigate} = this.props.navigation;

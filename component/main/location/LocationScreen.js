@@ -47,7 +47,7 @@ export default class LocationScreen extends Component {
   componentWillMount(){
     getLanguage().then((e) => {
       clearTimeout(timeoutCat);
-      console.log(e.valueLang);
+      //console.log(e.valueLang);
       this.getCategory(e.valueLang);
       this.setState({selectLang: {
         valueLang : e.valueLang,

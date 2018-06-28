@@ -403,7 +403,7 @@ module.exports = {
   itemKV:{width:(width-50)/3,backgroundColor:'#2E3B51',borderRadius:3,padding:10},
   txtKV:{color:'#fff',alignSelf:'center'},
   widthLblCre:{width: Platform.OS==='ios' ? 20 : 30,alignItems:'center'},
-  wrapInputCreImg:{width:width-95,padding:0,fontSize:16,paddingLeft: Platform.OS==='ios' ? 10 : 15,paddingRight:15},
+  wrapInputCreImg:{width:width-95,fontSize:16,paddingLeft: Platform.OS==='ios' ? 10 : 15,paddingRight:15},
   wrapCreImg:{width:width-85},
   imgCamera:{width:30,height:30,borderRadius:15,backgroundColor:'#F1F1F5',alignItems:'center',justifyContent:'center'},
   colorlbl :{color:'#323640',fontSize:16},

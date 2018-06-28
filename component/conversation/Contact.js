@@ -5,11 +5,13 @@ import {Platform, View, Text, StyleSheet, Dimensions, Image,
   TouchableOpacity,FlatList,
 } from 'react-native';
 const {height, width} = Dimensions.get('window');
+import Moment from 'moment';
 import getEncodeApi from '../api/getEncodeApi';
 import postEncodeApi from '../api/postEncodeApi';
 import global from '../global';
 import ListChat from './ListChat';
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
+import onlineIC from '../../src/icon/ic-green/ic-online.png';
 import {checkUrl} from '../libs';
 
 export default class Contact extends Component {
@@ -91,7 +93,11 @@ export default class Contact extends Component {
                <View style={wrapItems}>
                <TouchableOpacity style={{flexDirection:'row',alignItems:'center',width:width-105}}
                onPress={()=>navigation.navigate('MessengerScr',{user_id,yf_id:item.id,yf_avatar:item.urlhinh,name:item.name,port_connect:user_id<item.id ? `${user_id}_${item.id}` : `${item.id}_${user_id}`})}>
+                  <View>
                  <Image source={{uri: checkUrl(item.urlhinh) ? `${item.urlhinh}` : `${global.url_media}/${item.urlhinh}`}} style={{width:50,height:50,borderRadius:25,marginRight:7}} />
+                 {Moment(item.online_at).diff(item.offline_at, 'minutes')>=0 &&
+                 <Image source={onlineIC} style={{width:10,height:10,position:'absolute',right:10,top:40}} />}
+                 </View>
                  <Text style={colorName}>{item.name}</Text>
                </TouchableOpacity>
 

@@ -25,7 +25,7 @@ const loginApi = async (url,param) => {
     //console.log(responseJson);
     if(responseJson.code===200){
       getEncodeApi(`${global.url_node}${'person/'}${responseJson.data[0].id}`).then(e=>{
-        if(e.active===undefined) encodeApi(`${global.url_node}${'person/add'}`,'POST',responseJson.data[0]);
+        if(e.data===undefined) encodeApi(`${global.url_node}${'person/add'}`,'POST',responseJson.data[0]);
         else encodeApi(`${global.url_node}${'person/update'}`,'POST',responseJson.data[0]);
       })
       AsyncStorage.setItem('@MyAccount:key', JSON.stringify(Object.assign(responseJson.data[0],{'pwd':param.password.toString(),remember_me:param.isCheck})));

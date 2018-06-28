@@ -7,6 +7,7 @@ export function getIndex(element,id){
   return element.key==id;
 }
 
+
 export function calcAngle(str){
   var h = parseInt(str.substr(0,2));
   var m = parseInt(str.substr(-2));

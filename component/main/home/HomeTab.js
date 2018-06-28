@@ -155,7 +155,7 @@ export default class HomeTab extends Component {
    }
 
    getCategory(lang){
-     console.log(global.url+'modules?language='+lang+'&limit=100');
+     //console.log(global.url+'modules?language='+lang+'&limit=100');
      getApi(global.url+'modules?language='+lang+'&limit=100')
      .then(arrCategory => {
        //console.log('arrCategory',arrCategory);

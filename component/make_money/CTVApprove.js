@@ -31,7 +31,7 @@ export default class CTVApprove extends Component {
     const arr = new FormData();
     arr.append('daily_id',daily_id);
     arr.append('ctv_id[]',id)
-    postApi(`${global.url}${'static/'}${route}${'-ctv'}`,arr).then(e => {
+    postApi(`${global.url}${'static/'}${route}${'-ctv'}${'?lang='}${lang.lang}`,arr).then(e => {
         if(e.code===200)
         Alert.alert(lang.notify,e.data,[
           {text: '', style: 'cancel'},

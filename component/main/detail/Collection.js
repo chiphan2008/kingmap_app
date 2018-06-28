@@ -10,6 +10,7 @@ import getApi from '../../api/getApi';
 import postApi from '../../api/postApi';
 import uncheckIC from '../../../src/icon/ic-uncheck.png';
 import checkIC from '../../../src/icon/ic-check.png';
+//import {checkObjectID} from '../../libs';
 const {width,height} = Dimensions.get('window');
 
 const checkContent = async (idContent,arr) => {
@@ -19,6 +20,16 @@ const checkContent = async (idContent,arr) => {
      await arr1.push(item.id);
   });
   rs = arr1.includes(idContent);
+  return rs;
+};
+
+const checkObjectID = async (arr) => {
+  let arr1=[];
+  //if(arr.length===0) return false;
+  Object.entries(arr).forEach(async (item) => {
+     await arr1.push(item[1]);
+  });
+  rs = arr1.includes(true);
   return rs;
 };
 
@@ -41,7 +52,7 @@ export default class Collection extends Component {
     if(page===null) page=0;
     const {userId} = this.props;
     const url =`${global.url}${'collection/get/user/'}${userId}${'?skip='}${page}${'&limit=20'}`;
-    console.log(url);//this.props.hasCollection(checkList);
+    //console.log(url);//this.props.hasCollection(checkList);
     timeoutColl = setTimeout(()=>{
       getApi(url).then(e=>{
         this.state.listColl= page===0? e.data : this.state.listColl.concat(e.data);
@@ -100,7 +111,17 @@ export default class Collection extends Component {
     const { visible,userId,idContent,lang } = this.props;
     return (
       <Modal onRequestClose={() => null} transparent visible={visible}>
-      <TouchableOpacity  onPress={()=>this.props.closeModal(has_collection)}
+      <TouchableOpacity  onPress={()=>{
+        this.setState({name:'',page:0,isLoad:true,listColl:[]},()=>{
+
+          this.getData();
+          checkObjectID(checkList).then(e=>{
+            //console.log(e);
+            this.props.closeModal(e)
+          })
+
+        });
+      }}
       style={[saveContentStyle, visible ? show : hide]}>
         <TouchableWithoutFeedback>
         <View style={{width:width-100,borderRadius:3,backgroundColor:'#fff',padding:15,marginBottom:7}}>
@@ -137,21 +158,27 @@ export default class Collection extends Component {
                  <TouchableOpacity style={[wrapItem,marBot]}
                  onLayout={()=>{
                    checkContent(idContent,item._contents).then(el=>{
-                     this.setState({checkList: Object.assign(checkList,{[item.id]:el}),has_collection:el });
+                     this.setState({checkList: Object.assign(checkList,{[item.id]:el,[`${'count-'}${item.id}`]:item._contents.length}),has_collection:el?has_collection+1:has_collection },
+                     ()=>{}
+                   );
                    });
                  }}
                  onPress={()=>{
-                   checkContent(idContent,item._contents).then(el=>{
-                     this.setState({checkList: Object.assign(checkList,{[item.id]:!el}),has_collection:!el });
-                     if(el){
-                       this.addRemoveColl('remove',item.id)
-                     }else {
-                       this.addRemoveColl('add',item.id)
-                     }
-                   });
+                   let count = checkList[`${'count-'}${item.id}`];
+                   if(checkList[item.id]){
+                     this.setState({
+                       checkList: Object.assign(checkList,{[item.id]:false,[`${'count-'}${item.id}`]:count-1}),
+                     });
+                     this.addRemoveColl('remove',item.id)
+                   }else {
+                     this.setState({
+                       checkList: Object.assign(checkList,{[item.id]:true,[`${'count-'}${item.id}`]:count+1}),
+                     });
+                     this.addRemoveColl('add',item.id)
+                   }
                  }}>
                    <Image source={checkList[item.id] ? checkIC : uncheckIC} style={{width:18,height:18,marginRight:7}} />
-                   <Text style={colorBlack}>{item.name} - ({item._contents.length})</Text>
+                   <Text style={colorBlack}>{item.name} - ({checkList[`${'count-'}${item.id}`]})</Text>
                  </TouchableOpacity>
             )} />
 

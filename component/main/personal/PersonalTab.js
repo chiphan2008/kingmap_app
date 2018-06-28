@@ -7,7 +7,7 @@ import {
   AsyncStorage,DeviceEventEmitter} from 'react-native';
 const {height, width} = Dimensions.get('window');
 import {GoogleSignin} from 'react-native-google-signin';
-
+import encodeApi from '../../api/encodeApi';
 //import UpdateInfo from './UpdateInfo';
 //import Setting from './Setting';
 //import Collection from './Collection';
@@ -43,7 +43,6 @@ export default class PersonalTab extends Component {
     this.state = {
       lang : lang_vn,
       isLogin : false,
-
       curLoc:{},
       countEntry:{},
       user_profile:{},
@@ -75,7 +74,7 @@ export default class PersonalTab extends Component {
     console.log(`${global.url}${'user/get-static/'}${id}`);
     getApi(`${global.url}${'user/get-static/'}${id}`)
     .then(arrData => {
-        console.log(arrData);
+        //console.log(arrData);
         timeoutUser = setTimeout(()=>{
           this.setState({ countEntry: arrData.data });
         },2000)
@@ -85,13 +84,14 @@ export default class PersonalTab extends Component {
   logoutUser(){
     const {user_profile} = this.state;
     GoogleSignin.signOut().catch(e=>{});
+    encodeApi(`${global.url_node}${'person/offline'}`,'POST',user_profile);
     getApi(`${global.url}${'logout'}`);
     AsyncStorage.removeItem('@MyAccount:key');
     AsyncStorage.setItem('@MyAccount:key', JSON.stringify({
       remember_me:user_profile.remember_me,
       email:user_profile.remember_me ? user_profile.email : '',
       pwd:user_profile.remember_me ? user_profile.pwd : ''}))
-    this.props.navigation.navigate('MainScr');
+    .then(()=>this.props.navigation.navigate('MainScr'));
   }
 
   getLoc(){
@@ -203,7 +203,7 @@ export default class PersonalTab extends Component {
                 <View style={borderItemInfoPer}></View>
             </View>
 
-            <View>
+            {/*<View>
               <View style={[rowItem]}>
                 <Image source={plusWhiteIC} style={imgIconPerInfo} />
                 <TouchableOpacity style={padPerInfo}>
@@ -259,7 +259,7 @@ export default class PersonalTab extends Component {
           <TouchableOpacity style={padPerInfo}>
           <Text style={titlePer}>Cung cấp phần mềm quản lý doanh nghiệp</Text>
           </TouchableOpacity>
-        </View>
+        </View>*/}
 
 
       </View>

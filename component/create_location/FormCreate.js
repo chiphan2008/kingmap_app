@@ -302,8 +302,8 @@ export default class FormCreate extends Component {
       }
     });
     const act = this.state.editLoc?'update-location':'create-location';
-    //console.log('arr',arr);
-    //console.log('e',`${global.url}${act}`);
+    // console.log('arr',arr);
+    // console.log('e',`${global.url}${act}`);
     postApi(`${global.url}${act}`,arr).then((e)=>{
       //console.log('e',e);
       this.setState({showLoading:false,errMsg:''},()=>{

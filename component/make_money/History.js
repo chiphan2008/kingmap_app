@@ -8,7 +8,6 @@ import {Platform, View, Text, StyleSheet, Dimensions, Image,
 const {height, width} = Dimensions.get('window');
 
 //import styles from '../styles';
-import getApi from '../api/getApi';
 import global from '../global';
 
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';

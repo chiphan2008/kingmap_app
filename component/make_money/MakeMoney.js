@@ -11,7 +11,6 @@ const {height, width} = Dimensions.get('window');
 import {Select, Option} from "react-native-chooser";
 
 //import styles from '../styles';
-import getApi from '../api/getApi';
 import postApi from '../api/postApi';
 import global from '../global';
 import checkLogin from '../api/checkLogin';
@@ -50,7 +49,9 @@ export default class MakeMoney extends Component {
     this.state = {
       showCoin:false,
       showLoc:false,
+      showLocPop:false,
       showCTV:false,
+      showCTVPop:false,
       showArea:false,
       showListLocPend:false,
       showListCTVPend:false,
@@ -78,6 +79,7 @@ export default class MakeMoney extends Component {
       page:0,
       index_ctv_pending:'',
       static_notes:'',
+      noData:'',
     }
     loginServer(this.props.navigation.state.params.user_profile,'fgdjk')
     temp_daily_code==='' && this.getStatic();
@@ -105,7 +107,7 @@ export default class MakeMoney extends Component {
     }).catch(err => console.log(err));
   }
   searchContent(route,keyword){
-    const { user_profile } = this.props.navigation.state.params;
+    const { user_profile,lang } = this.props.navigation.state.params;
     const {isCTV,isAgency,isCeo} = this.state;
     let url = `${global.url}${'static/'}${route}`;
     const arr = new FormData();
@@ -116,13 +118,16 @@ export default class MakeMoney extends Component {
     // console.log(`${global.url}${'static/'}${route}`);
     // console.log(arr);
     postApi(url,arr).then(e => {
+      this.state.noData = e.data.length>0?'':lang.not_found;
       if(route==='search-content'){
         this.state.listLoc=e.data;
         this.state.valLoc='';
+        this.state.showLocPop=true;
       }else {
         this.state.listAgency=e.data;
         this.state.valCTV='';
         this.state.kw=keyword;
+        this.state.showCTVPop=true;
       }
         this.setState(this.state);
     }).catch(err => console.log(err));
@@ -334,7 +339,7 @@ export default class MakeMoney extends Component {
     } = styles;
 
     const {
-      itemChoose,showCoin,showLoc,showCTV,showArea,listData,index_ctv_pending,
+      itemChoose,showCoin,showLoc,showLocPop,showCTV,showCTVPop,showArea,listData,index_ctv_pending,noData,
       listAgency,listLoc,isCeo,isAgency,isNormal,isCTV,assign,listDistrict,labelArea,ListPend,suggestPend,
       ListLocPend,suggestLoc,showListLocPend,showListCTVPend,loadMore,page,static_notes
     } = this.state;
@@ -428,7 +433,7 @@ export default class MakeMoney extends Component {
                   <Text numberOfLines={1} style={colorTitle}>{`${lang.total_location}`}</Text>
                   <Text style={titleCoin}>{`${format_number(listData.count_location)}`}</Text>
                 </View>
-                {listData.count_location>0 && <TouchableOpacity onPress={()=>this.setState({showLoc:!this.state.showLoc,listLoc:[]})}>
+                {listData.count_location>0 && <TouchableOpacity onPress={()=>this.setState({showLoc:!this.state.showLoc,listLoc:[],noData:''})}>
                 <Image source={showLoc?subIC:plusIC} style={{width:35,height:35}} />
                 </TouchableOpacity>}
               </View>
@@ -641,15 +646,17 @@ export default class MakeMoney extends Component {
         </View>
       }
 
-      {showCTV && listAgency.length>0 &&
-        <View style={{position:'absolute'}}>
-        <TouchableOpacity onPress={()=>this.setState({showCTV:false,listAgency:[]})} style={[popoverLoc,padBuySell]}>
-        <TouchableWithoutFeedback>
+      {showCTVPop &&
+        <View style={[popoverLoc]}>
+        <TouchableOpacity onPress={()=>this.setState({showCTVPop:false,listAgency:[],noData:''})}
+        style={{justifyContent:'center',alignSelf:'center',flex:1}}>
+        <TouchableWithoutFeedback style={{justifyContent:'center'}}>
         <View style={[overLayout,shadown]}>
         <FlatList
          extraData={this.state}
          data={listAgency}
-         style={{marginTop:15,maxHeight:height/3}}
+         ListEmptyComponent={<Text style={{color:'#000',fontSize:16}}>{noData}</Text>}
+         style={{padding:15,marginTop:10,marginBottom:10,maxHeight:height/2}}
          keyExtractor={(item,index) => index.toString()}
          renderItem={({item,index}) =>(
            <TouchableOpacity
@@ -659,7 +666,7 @@ export default class MakeMoney extends Component {
            style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
                <View style={{flexDirection:'row',paddingBottom:15,alignItems:'center'}}>
                    <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:50,marginRight:10,borderRadius:25}} />
-                   <View style={{width:width-142}}>
+                   <View style={{width:width-162}}>
                      <Text numberOfLines={1} style={colorlbl}>{item.full_name}</Text>
                      <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.address}`}</Text>
                    </View>
@@ -683,15 +690,16 @@ export default class MakeMoney extends Component {
        </TouchableOpacity>
      </View>}
 
-      {showLoc && listLoc.length>0 &&
-        <View style={{position:'absolute'}}>
-        <TouchableOpacity onPress={()=>this.setState({showLoc:false,listLoc:[]})} style={[popoverLoc,padBuySell]}>
+      {showLocPop &&
+        <View style={[popoverLoc]}>
+        <TouchableOpacity onPress={()=>this.setState({showLocPop:false,listLoc:[],noData:''})} style={{justifyContent:'center',alignItems:'center',flex:1}}>
         <TouchableWithoutFeedback>
         <View style={[overLayout,shadown]}>
           <FlatList
            extraData={this.state}
            data={listLoc}
-           style={{padding:15,marginTop:15,marginBottom:15,maxHeight:height/2}}
+           ListEmptyComponent={<Text style={{color:'#000',fontSize:16}}>{noData}</Text>}
+           style={{padding:15,marginTop:10,marginBottom:10,maxHeight:height/2}}
            keyExtractor={(item,index) => index.toString()}
            renderItem={({item,index}) =>(
                <TouchableOpacity
@@ -704,20 +712,34 @@ export default class MakeMoney extends Component {
                        <View style={{width:width-130,justifyContent:'space-between'}}>
                          <Text numberOfLines={1} style={colorlbl}>{item.name}</Text>
                          <Text numberOfLines={1} style={{color:'#6791AF',fontSize:12}}>{`${item.address}, ${item._district.name}, ${item._city.name}`}</Text>
-                         <View style={{flexDirection:'row',alignItems:'center'}}>
-                          <Image source={likeIC} style={{width:18,height:15,marginRight:5}} />
-                          <Text>{item.like} | </Text>
-                          <Image source={favoriteIcon} style={{width:16,height:16,marginRight:5}} />
-                          <Text>{item.vote}</Text>
-                         </View>
+                         <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
+                             <View style={{flexDirection:'row',alignItems:'center'}}>
+                              <Image source={likeIC} style={{width:18,height:15,marginRight:5}} />
+                              <Text>{item.like} | </Text>
+                              <Image source={favoriteIcon} style={{width:16,height:16,marginRight:5}} />
+                              <Text>{item.vote}</Text>
+                             </View>
+                             {item.moderation==='publish' &&
+                             <View style={{flexDirection:'row',alignItems:'center'}}>
+                             <View style={{marginTop:1,width:10,height:10,borderRadius:5,backgroundColor:'#5cb85c',marginLeft:5,marginRight:5}}></View>
+                             <Text>{lang.active}</Text></View>}
+                             {item.moderation==='request_publish' &&
+                             <View style={{flexDirection:'row',alignItems:'center'}}>
+                             <View style={{marginTop:1,width:10,height:10,borderRadius:5,backgroundColor:'#d0021b',marginLeft:5,marginRight:5}}></View>
+                             <Text>{lang.wait_approve}</Text></View>}
+                             {item.moderation==='un_publish' &&
+                             <View style={{flexDirection:'row',alignItems:'center'}}>
+                             <View style={{marginTop:1,width:10,height:10,borderRadius:5,backgroundColor:'#f5be23',marginLeft:5,marginRight:5}}></View>
+                             <Text>{lang.close}</Text></View>}
+                          </View>
                        </View>
                    </View>
                </TouchableOpacity>
            )} />
            </View>
            </TouchableWithoutFeedback>
-         </TouchableOpacity>
-       </View>}
+           </TouchableOpacity>
+         </View>}
 
       {showListLocPend && ListLocPend.length>0 &&
         <View style={{position:'absolute'}}>

@@ -9,7 +9,6 @@ const {height, width} = Dimensions.get('window');
 import {Select, Option} from "react-native-chooser";
 
 //import styles from '../styles';
-import getApi from '../api/getApi';
 import global from '../global';
 
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';

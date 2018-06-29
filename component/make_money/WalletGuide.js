@@ -19,20 +19,25 @@ export default class WalletGuide extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      choose_loc:global.choose_loc,
-      showCode:false,
+      content:'',
     }
   }
-
+  getData = () => {
+    const {lang} = this.props.navigation.state.params;
+    getApi(`${global.url}${'check-login?block_text='}${'nap_tien_vao_vi'}${'&lang='}${lang.lang}`)
+    .then(data => {
+        this.setState({ content:data.block_text.nap_tien_vao_vi });
+    }).catch(err => console.log(err));
+  }
+  componentWillMount(){
+    this.getData();
+  }
 
   render() {
     const { lang,title,code_user } = this.props.navigation.state.params;
     const {
       container,contentWrap,headCatStyle,headContent,titleCreate,
-      headLocationStyle, inputSearch,wrapWhite,marTop,titleKcoin,
-      selectBox,marRight,blueColor,imgCalendar,
-      imgInfo,imgShare,colorTitle,wrapContent,wrapInput,btnTransfer,btnFinish,
-      popoverLoc,overLayout,shadown,txtAlign,txtInput,titleVer,
+      wrapWhite,colorTitle,
     } = styles;
 
     return (
@@ -52,7 +57,7 @@ export default class WalletGuide extends Component {
           <View style={wrapWhite}>
 
             <Text style={colorTitle}>
-            {`${'Thật dễ dàng với Ví KingMap nếu bạn muốn nạp tiền vào ví \n\n- Bạn có thể “nhờ” chủ tài khoản khác chuyển tiền vào Ví KingMap của bạn và ...gửi lại tiền mặt cho họ. \n- Bạn tới các cửa hàng có giảm giá và mua bán ở đó, bạn vừa có lợi khi mua được hàng giá rẻ lại có thể “nhờ” người bán hàng chuyển dùm số tiền được giảm giá vào Ví KingMap của bạn. Một tiện ích bất ngờ và cực kỳ độc đáo. \n- Bạn có thể mua thẻ cào KingMap ở hầu hết các cửa hàng tiện ích và các đại lý điện thoại trên cả nước. \n- Bạn có thể chuyển tiền vào Ví KingMap từ tài khoản Internet banking của bạn \n- Bạn có thể nạp tiền từ thẻ tín dụng của bạn. \n- Bạn có thể ra ngân hàng gần nhất nạp tiền mặt.'}`}
+            {`${this.state.content}`}
             </Text>
           </View>
 

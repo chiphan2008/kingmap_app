@@ -12,7 +12,6 @@ import {checkUrl,onlyNumber} from '../libs';
 import styles from '../styles';
 import global from '../global';
 import postApi from '../api/postApi';
-import getApi from '../api/getApi';
 import loginServer from '../api/loginServer';
 import checkLogin from '../api/checkLogin';
 import checkLocation from '../api/checkLocation';

@@ -32,7 +32,7 @@ export default class MapContent extends Component {
       const {distance} = this.props;
       if(this.state.direct===destination) return;
       this.setState({direct:this.props.region.latlng})
-      //const APIKEY = 'AIzaSyCUNFe8ZC0csUZzlTHRQFPp7PjiAtQ6Z0M';
+      //const APIKEY = 'AIzaSyCCCOoPlN2D-mfrYEMWkz-eN7MZnOsnZ44';
       const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${destination}&mode=${mode}`;
       console.log(url);
       latitude!==undefined && getApi(url).then(e=> {

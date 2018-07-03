@@ -89,23 +89,42 @@ export default class LoginScreen extends Component {
     //     })
     // })
   }
-
-  loginFB(){
+  loginFBIOS(token){
+    fetch('https://graph.facebook.com/v2.5/me?fields=email,name,picture&access_token=' + token)
+        .then((response) => response.json())
+        .then((profile) => {
+          console.log(profile);
+          this.loginFB(profile);
+        }).catch(() => {})
+  }
+  loginFB(profile){
+    faceApi(`${global.url}${'login-facebook'}`,profile).then(e =>{
+      //console.log(e);
+      if(e.code===200){
+        this.props.navigation.navigate('MainScr');
+      }else{
+        this.setState({errMsg:e.message})
+      }
+    });
+  }
+  checkLoginFB(){
     var _this=this;
-    FBLoginManager.setLoginBehavior(LoginBehavior[Platform.OS]); // defaults to Native
-    FBLoginManager.loginWithPermissions(["email","user_friends"], function(error, data){
-      if(error) return;
-      const profile = JSON.parse(data.profile);
-      //console.log(profile.picture.data.url);
-      if(profile.email===undefined || profile.email==='') return;
-      faceApi(`${global.url}${'login-facebook'}`,profile).then(e =>{
-        if(e.code===200){
-          _this.props.navigation.navigate('MainScr');
-        }else{
-          _this.setState({errMsg:e.message})
+    FBLoginManager.logout((error, data)=>{
+      FBLoginManager.setLoginBehavior(LoginBehavior[Platform.OS]); // defaults to Native
+      FBLoginManager.loginWithPermissions(["email","user_friends"], function(error, data){
+        if(error) return;
+        //console.log('data',data);
+        if(Platform.OS !=='ios'){
+          const profile = JSON.parse(data.profile);//credentials
+          if(profile.email===undefined || profile.email==='') return;
+          _this.loginFB(profile);
+        }else {
+          _this.loginFBIOS(data.credentials.token);
         }
+
       })
     })
+
 
   }
 
@@ -133,8 +152,11 @@ export default class LoginScreen extends Component {
       }
     }).catch(err=>{});
   }
-
+  componentDidMount(){
+    //FBLogin.logout()
+  }
   componentWillMount(){
+
     GoogleSignin.hasPlayServices({ autoResolve: true }).then(() => {
     // play services are available. can now configure library
     })
@@ -203,7 +225,7 @@ export default class LoginScreen extends Component {
               <Text style={[btn,colorPress]}>{`${lang.login}`.toUpperCase()}</Text>
               </TouchableOpacity>
               <View style={[btnWrapSoci,mrgTop]}>
-                  <TouchableOpacity onPress={()=>this.loginFB()}>
+                  <TouchableOpacity onPress={()=>this.checkLoginFB()}>
                   <Image style={imgSoci} source={FacebookColor} />
                   </TouchableOpacity>
 

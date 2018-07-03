@@ -115,8 +115,8 @@ export default class MakeMoney extends Component {
     isAgency && arr.append('daily_id',user_profile.id);
     // isCeo && arr.append('ceo_id',user_profile.id);
     arr.append('keyword',keyword);
-    // console.log(`${global.url}${'static/'}${route}`);
-    // console.log(arr);
+    //console.log(`${global.url}${'static/'}${route}`);
+    //console.log(arr);
     postApi(url,arr).then(e => {
       this.state.noData = e.data.length>0?'':lang.not_found;
       if(route==='search-content'){
@@ -146,9 +146,10 @@ export default class MakeMoney extends Component {
       isCeo && arr.append('ceo_id',user_profile.id);
       arr.append('month',month);
       arr.append('year',year);
-      //console.log(arr);
+      console.log(`${global.url}${'static'}${'?block_text=luu_y_make_money&lang='}${lang.lang}`);
+      console.log(arr);
       user_profile._roles.length>0 && postApi(`${global.url}${'static'}${'?block_text=luu_y_make_money&lang='}${lang.lang}`,arr).then(e => {
-      //console.log('e.data',e.data);
+      console.log('e.data',e.data);
       this.state.static_notes=e.block_text.luu_y_make_money
       this.state.listData=e.data;
         this.setState(this.state,()=>{
@@ -309,6 +310,7 @@ export default class MakeMoney extends Component {
     //setTimeout(()=>{
       const { user_profile } = this.props.navigation.state.params;
       checkLogin().then(e=>{
+        console.log(e);
         if(user_profile._roles.length!==e._roles.length) this.props.navigation.navigate('MainScr');
         e.temp_daily_code!=='' && this.setState({isPend:true})
       })

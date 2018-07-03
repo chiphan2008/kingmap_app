@@ -16,8 +16,8 @@ const faceApi = async (url,param) => {
       acc.append('id_facebook', param.id_facebook);
     }
     acc.append('email',param.email);
-    if(param.name!==undefined) acc.append('full_name',param.name);
-    if(param.picture!==undefined) acc.append('avatar',param.picture.data.url);
+    param.name!==undefined && acc.append('full_name',param.name);
+    param.picture!==undefined && acc.append('avatar',param.picture.data.url);
     //console.log('param.picture.data.url',param);
     let response = await fetch(url, {
         method: 'POST',
@@ -34,7 +34,7 @@ const faceApi = async (url,param) => {
         if(e.data===undefined) encodeApi(`${global.url_node}${'person/add'}`,'POST',responseJson.data[0]);
         else encodeApi(`${global.url_node}${'person/update'}`,'POST',responseJson.data[0]);
       })
-      AsyncStorage.setItem('@MyAccount:key', JSON.stringify(responseJson.data[0]));
+      AsyncStorage.setItem('@MyAccount:key', JSON.stringify( Object.assign(responseJson.data[0],{login_type:'fac'}) ));
     }
     return responseJson;
   } catch (error) {

@@ -39,7 +39,7 @@ module.exports = {
   your_comment:'Bình luận của bạn ...',
   add_branch:'Thêm địa điểm cùng hệ thống',
   branch:'Chi nhánh',
-  assign:'Giao việc',
+  assign:'Phân quyền',
   total_agency:'Tổng số TĐL',
   total_coll:'Tổng số CTV',
   choose_coll:'Chọn CTV',

@@ -35,7 +35,8 @@ const gooApi = async (url,param) => {
         if(e.data===undefined) encodeApi(`${global.url_node}${'person/add'}`,'POST',responseJson.data[0]);
         else encodeApi(`${global.url_node}${'person/update'}`,'POST',responseJson.data[0]);
       })
-      AsyncStorage.setItem('@MyAccount:key', JSON.stringify(responseJson.data[0]));
+      AsyncStorage.setItem('@MyAccount:key', JSON.stringify( Object.assign(responseJson.data[0],{login_type:'goo'}) ));
+
     }
     return responseJson;
   } catch (error) {

@@ -3,6 +3,7 @@ import global from '../global';
 import getApi from '../api/getApi';
 import loginApi from '../api/loginApi';
 import gooApi from '../api/gooApi';
+import faceApi from '../api/faceApi';
 
 const loginServer = async (param,reqLoc=null) => {
   try {
@@ -11,10 +12,11 @@ const loginServer = async (param,reqLoc=null) => {
       //console.log('arr.data.length',arr.data);
 
       if(arr.data.length===0 || reqLoc!==null){
-        //console.log('aaa');
-        if(param.id_google!==null){
-          //console.log('gooApi');
+        //console.log('aaa',param.login_type);
+        if(param.login_type==='goo'){
           gooApi(`${global.url}${'login-google'}`,param);
+        }else if (param.login_type==='fac') {
+          faceApi(`${global.url}${'login-facebook'}`,param);
         }else {
           const params = {username:param.email,password:param.pwd};
           loginApi(`${global.url}${'login'}`,params);

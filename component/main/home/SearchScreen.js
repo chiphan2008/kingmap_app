@@ -222,7 +222,9 @@ export default class SearchScreen extends Component {
 
            },
            (error) => {
+             //console.log('getLocationByIP');
             getLocationByIP().then(e=>{
+              //console.log('edsfdsfds',e);
               const {latitude,longitude} = e;
               //this.getPosition(latitude,longitude);
               this.setState({

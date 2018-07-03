@@ -36,6 +36,7 @@
 		2D16E6881FA4F8E400B85C8A /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D16E6891FA4F8E400B85C8A /* libReact.a */; };
 		2DCD954D1E0B4F2C00145EB5 /* kingmap_appTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* kingmap_appTests.m */; };
 		3CCFAE434ECD489CB2737AEF /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D949D6ECBEB0458AB31B709C /* AddressBook.framework */; };
+		3F7E89C520EB6857009D2FDA /* libRCTFBLogin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7679006A207606EE00471E5E /* libRCTFBLogin.a */; };
 		3FD056FA20BD057000CA29CE /* libRCTPushNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FD056DC20BD053900CA29CE /* libRCTPushNotification.a */; };
 		465AAF75FF0546A893F22517 /* libRCTFBLogin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3951C27EB2E41CEBFED28BC /* libRCTFBLogin.a */; };
 		4C000A4970CE45889701170F /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 25BEBA22A19A42B7B654F0ED /* SystemConfiguration.framework */; };
@@ -517,6 +518,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3FD056FA20BD057000CA29CE /* libRCTPushNotification.a in Frameworks */,
+				3F7E89C520EB6857009D2FDA /* libRCTFBLogin.a in Frameworks */,
 				ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */,
 				5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */,
 				146834051AC3E58100842450 /* libReact.a in Frameworks */,
@@ -998,7 +1000,8 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = UJ6LZX59R3;
+						DevelopmentTeam = HS2W7D8CT5;
+						ProvisioningStyle = Automatic;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -1665,13 +1668,15 @@
 			baseConfigurationReference = A980EBE79AF5E22675406140 /* Pods-kingmap_app.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = UJ6LZX59R3;
+				DEVELOPMENT_TEAM = HS2W7D8CT5;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
-					"$(SRCROOT)/../node_modules/react-native-facebook-login/FacebookSDK",
+					"$(SRCROOT)/../node_modules/react-native-facebook-login/FacebookSDK/**",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1700,7 +1705,11 @@
 					"$(inherited)",
 					"-lc++",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.kingmapvn.kingmapapp;
 				PRODUCT_NAME = kingmap_app;
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -1710,12 +1719,14 @@
 			baseConfigurationReference = 486295906C7F79A50E681084 /* Pods-kingmap_app.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = UJ6LZX59R3;
+				DEVELOPMENT_TEAM = HS2W7D8CT5;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
-					"$(SRCROOT)/../node_modules/react-native-facebook-login/FacebookSDK",
+					"$(SRCROOT)/../node_modules/react-native-facebook-login/FacebookSDK/**",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1744,7 +1755,11 @@
 					"$(inherited)",
 					"-lc++",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.kingmapvn.kingmapapp;
 				PRODUCT_NAME = kingmap_app;
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;

@@ -181,6 +181,7 @@ export default class ListLocation extends Component {
         })
       },
       (error) => {
+        //console.log('getLocationByIP');
         getLocationByIP().then(e=>{
           const {latitude,longitude} = e;
           const {id_sub,id_serv,isRefresh} = this.state;

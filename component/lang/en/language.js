@@ -137,7 +137,7 @@ module.exports = {
   enter_avatar:'Choose avatar',
   logout:'Logout',
   save:'Save',
-  assign:'Assign',
+  assign:'Grant rights',
   total_agency:'Total agency',
   total_coll:'Total collaboration',
   choose_coll:'Choose collaboration',

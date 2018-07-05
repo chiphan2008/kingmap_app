@@ -36,8 +36,8 @@ export default class ChooseArea extends Component {
   getCountry(){
     let url = `${global.url}${'countries'}`;
     if(this.state.ctv_id!=='') url += `${'?ctv_id='}${this.state.ctv_id}`;
-    if(this.state.daily_id!=='') url += `${'?daily_id='}${this.state.daily_id}`;
-    console.log(url);
+
+    //console.log(url);
     getApi(url).then(arrData => {
         this.setState({ listCountry:arrData.data });
     }).catch(err => console.log(err));
@@ -45,7 +45,7 @@ export default class ChooseArea extends Component {
   getCity(id){
     let url = `${global.url}${'cities/'}${id}`;
     if(this.state.ctv_id!=='') url += `${'?ctv_id='}${this.state.ctv_id}`;
-    if(this.state.daily_id!=='') url += `${'?daily_id='}${this.state.daily_id}`;
+
     //console.log(url);
     getApi(url).then(arrData => {
         this.setState({ listCity:arrData.data });
@@ -55,7 +55,7 @@ export default class ChooseArea extends Component {
   getDist(id){
     let url = `${global.url}${'districts/'}${id}`;
     if(this.state.ctv_id!=='') url += `${'?ctv_id='}${this.state.ctv_id}`;
-    if(this.state.daily_id!=='') url += `${'?daily_id='}${this.state.daily_id}`;
+
     //console.log(url);
     getApi(url).then(arrData => {
         this.setState({ listDist:arrData.data });

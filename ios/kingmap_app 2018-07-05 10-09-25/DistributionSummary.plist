@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>kingmap_app.ipa</key>
+	<array>
+		<dict>
+			<key>architectures</key>
+			<array>
+				<string>armv7</string>
+				<string>arm64</string>
+			</array>
+			<key>certificate</key>
+			<dict>
+				<key>SHA1</key>
+				<string>53E65894896DDDC5CDFD66B7B4B68BB9977DBEC4</string>
+				<key>dateExpires</key>
+				<string>7/3/19</string>
+				<key>type</key>
+				<string>iOS Distribution</string>
+			</dict>
+			<key>embeddedBinaries</key>
+			<array>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>armv7</string>
+						<string>arm64</string>
+					</array>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>53E65894896DDDC5CDFD66B7B4B68BB9977DBEC4</string>
+						<key>dateExpires</key>
+						<string>7/3/19</string>
+						<key>type</key>
+						<string>iOS Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>QBImagePicker.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>HS2W7D8CT5</string>
+						<key>name</key>
+						<string>KINGMAP LONGLONG COMPANY LIMITED</string>
+					</dict>
+				</dict>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>armv7</string>
+						<string>arm64</string>
+					</array>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>53E65894896DDDC5CDFD66B7B4B68BB9977DBEC4</string>
+						<key>dateExpires</key>
+						<string>7/3/19</string>
+						<key>type</key>
+						<string>iOS Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>RSKImageCropper.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>HS2W7D8CT5</string>
+						<key>name</key>
+						<string>KINGMAP LONGLONG COMPANY LIMITED</string>
+					</dict>
+				</dict>
+			</array>
+			<key>entitlements</key>
+			<dict>
+				<key>application-identifier</key>
+				<string>HS2W7D8CT5.com.kingmapvn.kingmapapp</string>
+				<key>com.apple.developer.team-identifier</key>
+				<string>HS2W7D8CT5</string>
+				<key>get-task-allow</key>
+				<false/>
+				<key>keychain-access-groups</key>
+				<array>
+					<string>HS2W7D8CT5.com.kingmapvn.kingmapapp</string>
+				</array>
+			</dict>
+			<key>name</key>
+			<string>kingmap_app.app</string>
+			<key>profile</key>
+			<dict>
+				<key>UUID</key>
+				<string>a1669abd-42f8-4110-b8d4-90ebe794620c</string>
+				<key>name</key>
+				<string>iOS Team Ad Hoc Provisioning Profile: com.kingmapvn.kingmapapp</string>
+			</dict>
+			<key>team</key>
+			<dict>
+				<key>id</key>
+				<string>HS2W7D8CT5</string>
+				<key>name</key>
+				<string>KINGMAP LONGLONG COMPANY LIMITED</string>
+			</dict>
+		</dict>
+	</array>
+</dict>
+</plist>

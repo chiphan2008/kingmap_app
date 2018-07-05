@@ -54,6 +54,7 @@ module.exports = {
   widthContentItem:{width:width-15-(width/3),flexDirection:'row',justifyContent:'space-between'},
   widthLable:{width:(width-30)/3},
   wrapItems:{backgroundColor:'#fff',marginBottom:1,flexDirection:'row',padding:15},
+  btnTransfer:{width:width-40,alignItems:'center',justifyContent:'center',backgroundColor:'#d0021b',padding:10,borderRadius:5},
 
   favIC:{width:19,height:18,marginRight:2},
   marRight:{marginRight:10},
@@ -418,7 +419,7 @@ module.exports = {
   colorlbl :{color:'#323640',fontSize:16},
   wrapWhite:{
     backgroundColor:'#fff',
-    alignItems:'center',
+    //alignItems:'center',
     padding:15,
     //marginBottom:5,
     width

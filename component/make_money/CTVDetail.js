@@ -2,27 +2,42 @@
 
 import React, { Component } from 'react';
 import {
-  View,Text,TouchableOpacity,Image,
-  TextInput,Dimensions,ScrollView,FlatList
+  View,Text,TouchableOpacity,Image,Modal,
+  TextInput,Dimensions,ScrollView,FlatList,
+  TouchableWithoutFeedback
 } from 'react-native';
 import Moment from 'moment';
 import {format_number} from '../libs';
 import styles from '../styles';
 import global from '../global';
 import postApi from '../api/postApi';
+import getApi from '../api/getApi';
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
 import logoTop from '../../src/icon/ic-white/Logo-ngang.png';
+import checkIC from '../../src/icon/ic-check.png';
+import plusIC from '../../src/icon/ic-plus.png';
+
 const {width,height} = Dimensions.get('window');
 
 export default class CTVDetail extends Component {
   constructor(props){
     super(props);
     this.state={
-      listData:{}
+      listData:{},
+      showArea:false,
+      content:'',
     }
   }
   componentWillMount(){
     this.getStatic();
+    this.getContent();
+  }
+  getContent(){
+    const {daily_id,ctv_id,content_id,lang} = this.props.navigation.state.params;
+    const userId = daily_id!==''?daily_id:ctv_id;
+    getApi(`${global.url}${'static/giaoviec/'}${userId}${'?lang='}${lang.lang}`).then(arr => {
+        this.setState({ content:arr.data[0].content===null?'':arr.data[0].content });
+    }).catch(err => console.log(err));
   }
   getStatic(){
     const {ceo_id,daily_id,ctv_id,content_id,lang} = this.props.navigation.state.params;
@@ -35,8 +50,7 @@ export default class CTVDetail extends Component {
     content_id!==undefined && arr.append('content_id',content_id);
     arr.append('month',month);
     arr.append('year',year);
-    console.log(arr);
-    console.log(`${global.url}${'static'}${'?lang='}${lang.lang}`);
+
     postApi(`${global.url}${'static'}${'?lang='}${lang.lang}`,arr)
     .then(arr => {
         this.setState({ listData:arr.data });
@@ -45,9 +59,10 @@ export default class CTVDetail extends Component {
   render() {
     const {
       container,headCatStyle,headContent,titleCreate,
-      imgLogoTop,colorlbl,wrapWhite,titleCoin,colorTitle
+      imgLogoTop,colorlbl,wrapWhite,titleCoin,colorTitle,
+      popoverLoc,overLayout,shadown,listOverService,imgShare
     } = styles;
-    const {listData} = this.state;
+    const {listData,showArea,content} = this.state;
     const {goBack} = this.props.navigation;
     const {avatar,name,address,lang,ctv_id,content_id} = this.props.navigation.state.params;
     return (
@@ -75,16 +90,28 @@ export default class CTVDetail extends Component {
 
               {content_id===undefined && <View>
                   <View style={wrapWhite}>
-                    <View style={{width:width-30}}>
-                      <Text numberOfLines={1} style={colorTitle}>{`${lang.area_charge}`}</Text>
-                      {listData.area!==undefined && listData.area.length>0 && listData.area.map(e=>{
-                        return(<Text key={e.id.toString()} style={titleCoin}>{e.name}</Text>)
-                      })}
+                    <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+                      <View>
+                        <Text numberOfLines={1} style={colorTitle}>{`${lang.area_charge}`}</Text>
+                        <Text style={titleCoin}>{listData.area!==undefined && format_number(listData.area.length)}</Text>
+                      </View>
+                      <TouchableOpacity onPress={()=>{
+                        listData.area.length>0 &&
+                        this.setState({showArea:true})}}>
+                      <Image source={plusIC} style={{width:35,height:35}} />
+                      </TouchableOpacity>
                     </View>
                   </View>
                   <View style={{height:5}}></View>
                   </View> }
 
+                 <View style={wrapWhite}>
+                   <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+                     <Text numberOfLines={1} style={colorTitle}>{`${lang.total_MM}`}</Text>
+                     <Text style={titleCoin}>{`${format_number(listData.total)}`}</Text>
+                   </View>
+                 </View>
+                 <View style={{height:5}}></View>
                  {listData.static!==undefined && listData.static.length>0 &&
                    <View style={wrapWhite}>
                      <View style={{height:5}}></View>
@@ -100,18 +127,46 @@ export default class CTVDetail extends Component {
                        </View>
                       )} />
                  </View>}
-                 <View style={{height:5}}></View>
-
-                 <View style={wrapWhite}>
-                   <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-                     <Text numberOfLines={1} style={colorTitle}>{`${lang.total_MM}`}</Text>
-                     <Text style={titleCoin}>{`${format_number(listData.total)}`}</Text>
-                   </View>
-                 </View>
-
 
         </View>
+
+        {content_id===undefined &&
+          <View>
+          <View style={{height:5}}></View>
+          <View style={wrapWhite} >
+              <View>
+              <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${lang.assign_work}`}:</Text>
+              <Text style={{color:'#2F353F',fontSize:16,lineHeight:22}}>{content}</Text>
+              </View>
+         </View>
+        </View>}
+
         <View style={{height:15}}></View>
+
+        {showArea &&
+        <Modal onRequestClose={() => null} transparent visible={showArea} >
+        <View style={popoverLoc}>
+        <TouchableOpacity
+        onPress={()=>this.setState({showArea:false})} style={{justifyContent:'center',alignItems:'center',flex:1}}>
+        <TouchableWithoutFeedback>
+        <View style={[overLayout,shadown]}>
+          <FlatList
+             keyExtractor={(item,index) => index.toString()}
+             extraData={this.state}
+             data={listData.area}
+             renderItem={({item}) => (
+               <View style={listOverService}>
+                <View style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',padding:15}}>
+                    <Text style={colorTitle}>{item.name}</Text>
+                    <Image source={checkIC} style={[imgShare]} />
+                </View>
+                </View>
+           )} />
+           </View>
+        </TouchableWithoutFeedback>
+        </TouchableOpacity>
+        </View>
+      </Modal>}
 
         </ScrollView>
     );

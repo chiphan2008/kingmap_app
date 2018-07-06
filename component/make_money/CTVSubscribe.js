@@ -25,7 +25,7 @@ import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
 import closeIC from '../../src/icon/ic-create/ic-close.png';
 import arrowNextIC from '../../src/icon/ic-arrow-next.png';
 import uncheckIC from '../../src/icon/ic-uncheck.png';
-import checkIC from '../../src/icon/ic-check.png';
+import checkIC from '../../src/icon/ic-create/ic-check.png';
 import sortDownIC from '../../src/icon/ic-sort-down.png';
 import selectedIC from '../../src/icon/ic-create/ic-selected.png';
 
@@ -420,7 +420,7 @@ export default class AddImageMore extends Component {
                         <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.address}`}</Text>
                       </View>
                   </View>
-                  <View>
+                  <View style={{justifyContent: 'center', alignItems: 'center'}}>
                     <Image source={daily_id===item.id?checkIC:uncheckIC} style={imgShare} />
                  </View>
                 </TouchableOpacity>
@@ -454,21 +454,24 @@ export default class AddImageMore extends Component {
         <ScrollView style={container}>
           <View style={headCatStyle}>
               <View style={headContent}>
-                  <Text style={titleCreate}>   </Text>
-                    <Text style={titleCreate}> {this.state.lang.cmnd_image.toUpperCase()} </Text>
+                  <Text style={[titleCreate, {width: width * 0.33}]}>   </Text>
+                  <Text style={[titleCreate, {width: width * 0.33}]}> {this.state.lang.cmnd_image.toUpperCase()} </Text>
+                    
                 <TouchableOpacity onPress={()=>this.setState({showCMND:false})}>
                 {/*<Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />*/}
-                <Text style={titleCreate}> {this.state.lang.done} </Text>
+                <Text style={[titleCreate, {width: width * 0.33, left: 50}]}> {this.state.lang.done} </Text>
                 </TouchableOpacity>
               </View>
           </View>
-
+          <View style={{height:15}}></View>
+          <View style={{margin: 8}}><Text style={{fontWeight: '300', color: '#2F78AC'}}>{this.state.lang.cmnd_image_front.toUpperCase()}</Text></View>
+          <View style={{height:15}}></View>
           <View style={{justifyContent:'center',alignItems:'center',backgroundColor:'#FFFEFF',padding:50,marginBottom:5,borderColor:'#ECEEF3',borderBottomWidth:1}}>
             <TouchableOpacity
             onPress={()=>this.uploadCMND('front')}>
             <Image source={cameraLargeIC} style={{width:60,height:60,marginBottom:10}}/>
             </TouchableOpacity>
-            <Text style={{fontSize:20}}>{this.state.lang.cmnd_image_front}</Text>
+            <Text style={{fontSize:18}}>{this.state.lang.upload_image.toUpperCase()}</Text>
           </View>
 
           <View style={{height:5}}></View>
@@ -476,14 +479,15 @@ export default class AddImageMore extends Component {
             <Image style={{width,height:300,resizeMode: 'cover'}}
           source={{isStatic:true,uri:cmnd_image_front.path!==undefined?`${cmnd_image_front.path}`:`${''}`}} />
           }
-          <View style={{height:5}}></View>
-
+          <View style={{height:15}}></View>
+          <View style={{margin: 8}}><Text style={{fontWeight: '300', color: '#2F78AC'}}>{this.state.lang.cmnd_image_back.toUpperCase()}</Text></View>
+          <View style={{height:15}}></View>
           <View style={{justifyContent:'center',alignItems:'center',backgroundColor:'#FFFEFF',padding:50,marginBottom:5,borderColor:'#ECEEF3',borderBottomWidth:1}}>
             <TouchableOpacity
             onPress={()=>this.uploadCMND('back')}>
             <Image source={cameraLargeIC} style={{width:60,height:60,marginBottom:10}}/>
             </TouchableOpacity>
-            <Text style={{fontSize:20}}>{this.state.lang.cmnd_image_back}</Text>
+            <Text style={{fontSize:18}}>{this.state.lang.upload_image.toUpperCase()}</Text> 
           </View>
           <View style={{height:5}}></View>
           {cmnd_image_back.path!==undefined &&

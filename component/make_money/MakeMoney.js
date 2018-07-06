@@ -26,7 +26,7 @@ import filterIC from '../../src/icon/ic-filter.png';
 import likeIC from '../../src/icon/ic-like.png';
 import favoriteIcon from '../../src/icon/ic-favorite.png';
 import arrowNextIC from '../../src/icon/ic-arrow-next.png';
-import checkIC from '../../src/icon/ic-check.png';
+import checkIC from '../../src/icon/ic-create/ic-check.png';
 import uncheckIC from '../../src/icon/ic-uncheck.png';
 import removeIC from '../../src/icon/ic-create/ic-remove.png';
 import lockIC from '../../src/icon/ic-lock.png';
@@ -358,19 +358,19 @@ export default class MakeMoney extends Component {
                   <TouchableOpacity onPress={()=>goBack()}>
                   <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                   </TouchableOpacity>
-                    <Text style={{marginTop:5,color:'#fff'}}>{lang.subscribe_ctv.toUpperCase()}</Text>
+                    <Text style={{marginTop:5,color:'#fff', fontWeight: 'bold', fontSize: 17}}>{lang.subscribe_ctv.toUpperCase()}</Text>
                   <View></View>
               </View>
           </View>
             {this.state.isPend===false && isNormal &&
             <View style={{justifyContent:'center',alignItems:'center',padding:15,height:height-95}}>
             <View>
-            <Text style={{textAlign:'center',fontSize:20,fontWeight:'500',color:'#000'}}>{lang.title_ctv.toUpperCase()}</Text>
-            <Text style={{textAlign:'center',fontSize:14,marginTop:5}}>{lang.des_ctv}</Text>
+              <Text numberOfLines={2} style={{textAlign:'center',fontSize:20,fontWeight:'500',color:'#000'}}>{lang.title_ctv.toUpperCase()}</Text>
+              <Text style={{textAlign:'center',fontSize:14,marginTop:5}}>{lang.des_ctv}</Text>
             </View>
             <TouchableOpacity style={{marginTop:15,backgroundColor:'#d0021b',borderRadius:3,width:width-30,paddingTop:10,paddingBottom:10,alignItems:'center'}}
             onPress={()=>navigate('CTVSubscribeScr',{user_profile,titleScr:lang.subscribe_ctv,lang:lang.lang})}>
-              <Text style={{color:'#fff'}}>{lang.subscribe_ctv}</Text>
+              <Text style={{color:'#fff', fontSize: 12, fontWeight: '300'}}>{lang.subscribe_ctv}</Text>
             </TouchableOpacity>
             </View>}
             {this.state.isPend && isNormal &&
@@ -407,7 +407,7 @@ export default class MakeMoney extends Component {
             <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
               <View>
                 <Text numberOfLines={1} style={colorTitle}>{isCeo?`${lang.this_revenus}`:`${lang.total_MM}`}</Text>
-                <Text style={titleCoin}>{`${format_number(listData.total)}`}</Text>
+                <Text style={titleCoin}>{`${listData.total ? format_number(listData.total) : 0}`}</Text>
               </View>
               <TouchableOpacity onPress={()=>{
                 listData.total>0 && this.setState({showCoin:!this.state.showCoin})
@@ -425,7 +425,7 @@ export default class MakeMoney extends Component {
                renderItem={({item,index}) =>(
                  <View style={{marginTop:5,width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                    <Text style={{color:'#2F3C51'}}>{item.name}</Text>
-                   <Text style={{color:'#5782A4'}}>{format_number(item.value)}</Text>
+                   <Text style={{color:'#5782A4'}}>{item.value ? format_number(item.value) : 0}</Text>
                 </View>
                )} />}
 
@@ -435,7 +435,7 @@ export default class MakeMoney extends Component {
               <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                 <View>
                   <Text numberOfLines={1} style={colorTitle}>{`${lang.total_location}`}</Text>
-                  <Text style={titleCoin}>{`${format_number(listData.count_location)}`}</Text>
+                  <Text style={titleCoin}>{`${listData.count_location ? format_number(listData.count_location) : 0}`}</Text>
                 </View>
                 <TouchableOpacity onPress={()=>{listData.count_location>0 && this.setState({showLoc:!this.state.showLoc,listLoc:[],noData:''})}}>
                 <Image source={showLoc?subIC:plusIC} style={{width:35,height:35}} />
@@ -469,7 +469,7 @@ export default class MakeMoney extends Component {
               <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                 <View>
                   <Text numberOfLines={1} style={colorTitle}>{isCeo?`${lang.total_agency}`:`${lang.total_coll}`}</Text>
-                  <Text style={titleCoin}>{isCeo?`${format_number(listData.count_daily)}`:`${format_number(listData.count_ctv)}`}</Text>
+                  <Text style={titleCoin}>{isCeo?`${listData.count_daily ? format_number(listData.count_daily) : 0}`:`${listData.count_ctv ? format_number(listData.count_ctv) : 0}`}</Text>
                 </View>
 
                   <TouchableOpacity onPress={()=>{
@@ -522,7 +522,7 @@ export default class MakeMoney extends Component {
               <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
               <View>
                 <Text numberOfLines={1} style={colorTitle}>{`${lang.pending_location}`}</Text>
-                <Text style={titleCoin}>{`${listData.count_location_pending}`}</Text>
+                <Text style={titleCoin}>{`${listData.count_location_pending ? listData.count_location_pending : 0}`}</Text>
               </View>
               <TouchableOpacity onPress={()=>{this.setState({showListLocPend:true})}}>
               <Image source={plusIC} style={{width:35,height:35}} />
@@ -536,7 +536,7 @@ export default class MakeMoney extends Component {
               <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                 <View>
                 <Text numberOfLines={1} style={colorTitle}>{`${lang.pending_collaborators}`}</Text>
-                <Text style={titleCoin}>{`${listData.count_ctv_pending}`}</Text>
+                <Text style={titleCoin}>{`${listData.count_ctv_pending ? listData.count_ctv_pending : 0}`}</Text>
                 </View>
                 <TouchableOpacity onPress={()=>{this.setState({showListCTVPend:true})}}>
                 <Image source={plusIC} style={{width:35,height:35}} />
@@ -571,11 +571,11 @@ export default class MakeMoney extends Component {
         closeModal={()=>this.setState({
           showCTVPop:false,assign:false,listAgency:[],valCTV:'',itemChoose:{},listDistrict:{}
         })}
-        hidePopup={()=>this.setState({listAgency:[],noData:''})}
+        hidePopup={()=>this.setState({listAgency:[]})}
         userId={user_profile.id}
-        itemChoose={itemChoose}
+        itemChoose={itemChoose} noData={noData}
         chooseDist={(listDistrict)=>this.setState({listDistrict})}
-        lang={lang} isCeo={isCeo} listAgency={listAgency} noData={noData}
+        lang={lang} isCeo={isCeo} listAgency={listAgency}
         showKV={()=>this.setState({showArea:true})}
         searchContent={(route,keyword)=>{this.searchContent(route,keyword)}}
         chooseUser={(item)=>this.setState({itemChoose:item,listAgency:[]})}

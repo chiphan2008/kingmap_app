@@ -12,6 +12,11 @@ import upDD from '../../src/icon/ic-white/ic-dropdown_up.png';
 import checkLocation from '../api/checkLocation';
 import checkLogin from '../api/checkLogin';
 import checkIC from '../../src/icon/ic-check.png';
+import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
+import arrowNextIC from '../../src/icon/ic-arrow-next.png';
+import arrowbottomIC from '../../src/icon/ic-arrowbottom.png';
+import nextIC from '../../src/icon/ic-next.png';
+import prevIC from '../../src/icon/ic-prev.png';
 
 var timeoutRecive;
 export default class ChooseArea extends Component {
@@ -21,7 +26,7 @@ export default class ChooseArea extends Component {
       idCountry:'',nameCountry:'',listCountry:[],showCountry:false,
       idCity:'',nameCity:'',listCity:[],showCity:false,chooseCity:{},
       idDist:'',nameDist:'Quận/Huyện',listDist:[],showDist:false,
-      update:true,ctv_id:'',daily_id:'',chooseDist:{},
+      update:true,ctv_id:'',daily_id:'',chooseDist:{},showListDist:{},
     }
     checkLocation().then(e=>{
       this.setState({
@@ -36,41 +41,42 @@ export default class ChooseArea extends Component {
         el.api_roles.cong_tac_vien!==undefined && this.setState({ctv_id:el.id});
       }
     })
+    this.getCountry();
   }
   getCountry(){
     const {_area} = this.props.itemChoose;
+
+    if(_area!==undefined){
+      this.state.idCountry=_area.country[0];
+      let lCity={},lDist={};
+      _area.city.forEach(e=>{
+        lCity= Object.assign(lCity,{[e]:e});
+      });
+      _area.district.forEach(e=>{
+        lDist= Object.assign(lDist,{[e]:e})
+      });
+      this.state.chooseCity=lCity;
+      this.state.chooseDist=lDist;
+    }
     let url = `${global.url}${'countries'}`;
     //if(this.state.ctv_id!=='') url += `${'?ctv_id='}${this.state.ctv_id}`;
     //console.log(url);
     getApi(url).then(arrData => {
+        this.state.showCountry=true;
         this.state.listCountry=arrData.data;
-        if(_area!==undefined){
-          this.state.idCountry=_area.country[0];
-        }
         this.setState(this.state);
     }).catch(err => console.log(err));
   }
   getCity(id){
-    const {_area} = this.props.itemChoose;
     let url = `${global.url}${'cities/'}${id}`;
-    //if(this.state.ctv_id!=='') url += `${'?ctv_id='}${this.state.ctv_id}`;
-
-    //console.log(url);
     getApi(url).then(arrData => {
       this.state.listCity=arrData.data;
-      if(_area!==undefined){
-        let lCity={};
-        _area.city.forEach(e=>{
-          lCity= Object.assign(lCity,{[e]:e})
-        });
-        this.state.chooseCity=lCity;
-      }
       this.setState(this.state);
     }).catch(err => console.log(err));
     //this.getDist();
   }
   getDist(){
-    const {_area} = this.props.itemChoose;
+    //const {_area} = this.props.itemChoose;
     let url = `${global.url}${'static/district'}`;
     //if(this.state.ctv_id!=='') url += `${'?ctv_id='}${this.state.ctv_id}`;
     const arr = new FormData();
@@ -81,192 +87,169 @@ export default class ChooseArea extends Component {
     //console.log(arr);
     postApi(url,arr).then(arrData => {
       this.state.listDist=arrData.data;
-      if(_area!==undefined){
-        let lDist={};
-        _area.district.forEach(e=>{
-          lDist= Object.assign(lDist,{[e]:e})
-        });
-        this.state.chooseDist=lDist;
-      }
+      this.state.showListDist=this.state.chooseCity;
       this.setState(this.state);
     }).catch(err => console.log(err));
   }
   componentWillUnmount(){
     clearTimeout(timeoutRecive);
   }
-  getName(route,id){
-    getApi(`${global.url}${route}/${id}`)
-    .then(arrData => {
-        if(route==='country') this.state.nameCountry= arrData.data[0].name;
-        if(route==='city') this.state.nameCity= arrData.data[0].name;
-        if(route==='district') this.state.nameDist= arrData.data[0].name;
-        this.setState(this.state);
-    })
-    .catch(err => console.log(err));
-  }
-  // componentWillUpdate(){
-  //   clearTimeout(timeoutRecive);
-  //   const {_area} = this.props.itemChoose;
-  //   timeoutRecive = setTimeout(()=>{
-  //   if(_area!==undefined){
-  //      this.getName('country',idCountry);
-  //      this.getName('city',idCity);
-  //      this.getName('district',idDist);
-  //     this.state.update && this.setState({idCountry, idCity,  idDist},()=>{
-  //       this.setState({update:false});
-  //       //console.log('nameDist',nameDist);
-  //     })
-  //   }else {
-  //       //console.log('null');
-  //       this.state.update && checkLocation().then(e=>{
-  //         //console.log(e);
-  //         this.setState({idCountry:e.idCountry, nameCountry:e.nameCountry,idCity:e.idCity, nameCity:e.nameCity,},()=>{
-  //           this.setState({update:false});
-  //         })
-  //       });
-  //   }
-  // },500)
+  // getName(route,id){
+  //   getApi(`${global.url}${route}/${id}`)
+  //   .then(arrData => {
+  //       if(route==='country') this.state.nameCountry= arrData.data[0].name;
+  //       if(route==='city') this.state.nameCity= arrData.data[0].name;
+  //       if(route==='district') this.state.nameDist= arrData.data[0].name;
+  //       this.setState(this.state);
+  //   })
+  //   .catch(err => console.log(err));
   // }
+
 
   render() {
     const {
-      listCreate,itemKV,txtKV,popoverLoc,padCreate,imgUpCreate,imgUpLoc,overLayout,shadown,
-      colorlbl,listOverService,imgUpInfo,txtNextItem
+      container,headCatStyle,headContent,
+      listAdd,titleCreate,colorlbl,imgShare
     } = styles;
-    const { lang } = this.props;
-    const {listCity,chooseCity,chooseDist,idCountry,nameCountry,nameCity,nameDist} = this.state;
+    const { lang,visible,itemChoose } = this.props;
+    const {
+      listCity,chooseCity,chooseDist,listDist,idCountry,nameCountry,nameCity,nameDist,listCountry,
+      showCountry,showCity,showDist,showListDist,
+    } = this.state;
+    //console.log(itemChoose)
     return (
       <View>
-      <View style={listCreate}>
-          <TouchableOpacity
-          onPress={()=>{ this.setState({ showCountry:true });this.getCountry() }}
-          style={itemKV}>
-            <Text numberOfLines={1} style={txtKV}>{nameCountry!=='' && nameCountry!==undefined ?nameCountry:this.state.nameCountry}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-          onPress={()=>{this.setState({ showCity:true });this.getCity(this.state.idCountry)}}
-          style={itemKV}>
-            <Text numberOfLines={1} style={txtKV}>{nameCity!=='' && nameCity!==undefined ?nameCity:this.state.nameCity}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-          onPress={()=>{this.setState({ showDist:true }); this.getDist()}}
-          style={itemKV}>
-            <Text numberOfLines={1} style={txtKV}>{nameDist!=='' && nameDist!==undefined ?nameDist:this.state.nameDist}</Text>
-          </TouchableOpacity>
-
-          <Modal onRequestClose={() => null} transparent visible={this.state.showCountry}>
-          <TouchableOpacity
-          onPress={()=>this.setState({ showCountry:false }) }
-          style={[popoverLoc,padCreate]}>
-          {/*<Image style={[imgUpCreate,imgUpLoc]} source={upDD} />*/}
-              <View style={[overLayout,shadown]}>
-              <FlatList
-                 extraData={this.state}
-                 keyExtractor={(item, index) => index.toString()}
-                 data={this.state.listCountry}
-                 renderItem={({item}) => (
-                <View  style={listOverService}>
-                <TouchableOpacity
-                    onPress={()=>{
-                      this.setState({
-                      idCountry:item.id,nameCountry:item.name,showCountry:false,
-                      idCity:'', nameCity:lang.city,idDist:'',nameDist:lang.district,
-                     })}}
-                    style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',padding:15}} >
-                     <Text style={colorlbl}>{item.name}</Text>
-                     {idCountry===item.id && <Image source={checkIC} style={{width:18,height:18}}/>}
-                 </TouchableOpacity>
-                </View>
-              )} />
+      <Modal
+      onRequestClose={()=>null} transparent animationType={'slide'}
+      visible={visible}
+      >
+        <View style={container}>
+          <View style={headCatStyle}>
+              <View style={headContent}>
+                  <TouchableOpacity onPress={()=>{this.props.closeModal()}}>
+                  <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
+                  </TouchableOpacity>
+                  <Text style={titleCreate}> {lang.choose_area} </Text>
+                  <View></View>
               </View>
-          </TouchableOpacity>
-          </Modal>
-
-          <Modal onRequestClose={() => null} transparent visible={this.state.showCity}>
-          <TouchableOpacity
-          onPress={()=>this.setState({ showCity:false }) }
-          style={[popoverLoc,padCreate]}>
-          {/*<Image style={[imgUpCreate]} source={upDD} />*/}
-              <View style={[overLayout,shadown]}>
-              <FlatList
-                 extraData={this.state}
-                 keyExtractor={(item, index) => index.toString()}
-                 data={this.state.listCity}
-                 renderItem={({item}) => (
-                <View  style={listOverService}>
-                <TouchableOpacity
-                    onPress={()=>{
-
-                      this.state.idCity=item.id;
-                      //this.state.nameCity=item.name;
-                      this.state.idDist='';
-                      this.state.nameDist=lang.district;
-                      if(chooseCity[item.id]){
-                        this.state.chooseCity= Object.assign(chooseCity,{[item.id]:!item.id});
-                      }else {
-                        this.state.chooseCity= Object.assign(chooseCity,{[item.id]:item.id});
-                      }
-                      this.setState(this.state);
-                    }}
-                    style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',padding:15}} >
-                     <Text style={colorlbl}>{item.name}</Text>
-                     {chooseCity[item.id] && <Image source={checkIC} style={{width:18,height:18}}/>}
-                 </TouchableOpacity>
-                </View>
-              )} />
-              </View>
-          </TouchableOpacity>
-          </Modal>
-
-          <Modal onRequestClose={() => null} transparent visible={this.state.showDist}>
-          <View style={popoverLoc}>
-          <TouchableOpacity
-          onPress={()=>{this.setState({ showDist:false });}}
-          style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-          {/*<Image style={[imgUpCreate,imgUpInfo]} source={upDD} />*/}
-          <TouchableWithoutFeedback>
-              <View style={[overLayout,shadown]}>
-              <FlatList
-                 extraData={this.state}
-                 keyExtractor={(item, index) => index.toString()}
-                 data={this.state.listDist}
-                 renderItem={({item}) => (
-                   <View>
-                     <View style={listOverService}>
-                        <View style={{padding:15}}>
-                          <Text style={txtNextItem}>{item.city.name}</Text>
-                        </View>
-                     </View>
-                        {item.districts.map(e=>{
-                          return (<View key={e.id} style={listOverService}>
-                              <TouchableOpacity
-                                  onPress={()=>{
-                                      //this.state.idDist = e.id;
-                                      //this.state.nameDist = e.name;
-                                    if(chooseDist[e.id]){
-                                      this.state.chooseDist= Object.assign(chooseDist,{[e.id]:!e.id});
-                                    }else {
-                                      this.state.chooseDist= Object.assign(chooseDist,{[e.id]:e.id});
-                                    }
-                                    this.setState(this.state,()=>{
-                                      this.props.setDist(chooseDist);
-                                    });
-                                  }}
-                                  style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',padding:15}} >
-                                   <Text style={colorlbl}>{e.name}</Text>
-                                   {chooseDist[e.id] && <Image source={checkIC} style={{width:18,height:18}}/>}
-                               </TouchableOpacity>
-                         </View>)
-                        })}
-                  </View>
-              )} />
-              </View>
-              </TouchableWithoutFeedback>
-          </TouchableOpacity>
           </View>
-          </Modal>
 
-      </View>
+          {showCountry && <FlatList
+             extraData={this.state}
+             data={listCountry}
+             renderItem={({item}) =>(
+               <TouchableOpacity onPress={()=>{
+                 this.state.idCountry=item.id;
+                 this.state.showCountry=false;
+                 this.state.showCity=true;
+                 this.setState(this.state,()=>this.getCity(item.id))
+               }}
+               style={listAdd}>
+                 <Text style={colorlbl}>{item.name}</Text>
+                 <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
+                 {idCountry===item.id && <Image source={checkIC} style={[imgShare]} />}
+                 <Image source={arrowNextIC} style={[imgShare]} />
+                 </View>
+               </TouchableOpacity>
+             )}
+             keyExtractor={item => item.id.toString()}
+           />}
+
+           {showCity &&
+             <View>
+             <TouchableOpacity onPress={()=>{
+               this.state.showCity = false;
+               this.state.showDist = true;
+               this.setState(this.state,()=>this.getDist());
+             }} style={[listAdd,{justifyContent:'flex-start',alignItems:'center'}]}>
+               <Text style={{color:'#6791AF',fontSize:16}}>
+               {lang.name_dist}
+               </Text>
+               <Image source={nextIC} style={{width:20,height:20}} />
+             </TouchableOpacity>
+             <FlatList
+              extraData={this.state}
+              data={listCity}
+              style={{paddingBottom:55}}
+              renderItem={({item}) =>(
+                <TouchableOpacity onPress={()=>{
+                  if(chooseCity[item.id]){
+                    this.state.chooseCity = Object.assign(this.state.chooseCity,{[item.id]:!item.id});
+                  }else {
+                    this.state.chooseCity = Object.assign(this.state.chooseCity,{[item.id]:item.id});
+                  }
+                  this.setState(this.state)
+                }} style={listAdd}>
+                  <Text style={colorlbl}>{item.name}</Text>
+                  <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
+                  {chooseCity[item.id] && <Image source={checkIC} style={[imgShare]} />}
+                  <Image source={arrowNextIC} style={[imgShare]} />
+                  </View>
+                </TouchableOpacity>
+              )}
+              keyExtractor={item => item.id.toString()}
+            />
+            </View>
+          }
+
+          {showDist &&
+            <View>
+            <TouchableOpacity onPress={()=>{
+              this.state.showCity = true;
+              this.state.showDist = false;
+              this.setState(this.state)
+            }} style={[listAdd,{justifyContent:'flex-start',alignItems:'center'}]}>
+            <Image source={prevIC} style={{width:20,height:20}} />
+              <Text style={{color:'#6791AF',fontSize:16}}>
+              {lang.back}
+              </Text>
+
+            </TouchableOpacity>
+            <FlatList
+             extraData={this.state}
+             data={listDist}
+             style={{paddingBottom:55}}
+             renderItem={({item}) =>(
+               <View>
+                   <TouchableOpacity style={[listAdd]}
+                   onPress={()=>{
+
+                     if(showListDist[item.city.id]){
+                       this.state.showListDist = Object.assign(this.state.showListDist,{[item.city.id]:!item.city.id});
+                     }else {
+                       this.state.showListDist = Object.assign(this.state.showListDist,{[item.city.id]:item.city.id});
+                     }
+                     this.setState(this.state)
+                   }}
+                   >
+                    <Text style={colorlbl}>{item.city.name}</Text>
+                    <Image source={showListDist[item.city.id]?arrowbottomIC:arrowNextIC} style={[imgShare]} />
+                  </TouchableOpacity>
+                  {showListDist[item.city.id] && item.districts.map(e=>(<TouchableOpacity key={e.id} onPress={()=>{
+                    if(chooseDist[e.id]){
+                      this.state.chooseDist = Object.assign(this.state.chooseDist,{[e.id]:!e.id});
+                    }else {
+                      this.state.chooseDist = Object.assign(this.state.chooseDist,{[e.id]:e.id});
+                    }
+                    this.setState(this.state,()=>this.props.chooseDist(chooseDist));
+                  }} style={listAdd}>
+                    <Text style={colorlbl}>{e.name}</Text>
+                    <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
+                    {chooseDist[e.id] && <Image source={checkIC} style={[imgShare]} />}
+
+                    </View>
+                  </TouchableOpacity>))}
+
+               </View>
+             )}
+             keyExtractor={item => item.city.id.toString()}
+           />
+           </View>
+         }
+
+           <View style={{height:5}}></View>
+        </View>
+        </Modal>
       </View>
     );
   }

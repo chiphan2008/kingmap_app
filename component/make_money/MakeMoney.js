@@ -571,11 +571,11 @@ export default class MakeMoney extends Component {
         closeModal={()=>this.setState({
           showCTVPop:false,assign:false,listAgency:[],valCTV:'',itemChoose:{},listDistrict:{}
         })}
-        hidePopup={()=>this.setState({listAgency:[]})}
+        hidePopup={()=>this.setState({listAgency:[],noData:''})}
         userId={user_profile.id}
         itemChoose={itemChoose}
         chooseDist={(listDistrict)=>this.setState({listDistrict})}
-        lang={lang} isCeo={isCeo} listAgency={listAgency}
+        lang={lang} isCeo={isCeo} listAgency={listAgency} noData={noData}
         showKV={()=>this.setState({showArea:true})}
         searchContent={(route,keyword)=>{this.searchContent(route,keyword)}}
         chooseUser={(item)=>this.setState({itemChoose:item,listAgency:[]})}

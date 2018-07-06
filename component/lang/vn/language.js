@@ -1,5 +1,9 @@
 
 module.exports = {
+  countries:'Quốc gia',
+  cities:'Tỉnh thành',
+  districts:'Quận huyện',
+  back:'Quay lại',
   home:'Trang chủ',
   personal:'Cá nhân',
   notify:'Thông báo',
@@ -68,6 +72,7 @@ module.exports = {
   create_prom:'Tạo khuyến mãi',
   create_ads:'Tạo quảng cáo',
   choose_area:'Chọn khu vực',
+  name_dist:'Quận/Huyện',
   plz_approve:'Vui lòng chờ phê duyệt cộng tác viên',
   choose_ctv:'Vui lòng chọn cộng tác viên',
   cmnd_image:'Hình CMND',

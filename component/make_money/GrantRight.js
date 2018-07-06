@@ -29,8 +29,10 @@ export default class GrantRight extends Component {
       idCountry:'',idCity:'',idDist:'',
       chooseDist:{},
       listUser:[],
+      showArea:false,
       showAddCTV:false,
       itemCTVChoose:{},
+      noDataUser:'',
     }
   }
   postContent(){
@@ -52,9 +54,10 @@ export default class GrantRight extends Component {
     const arr = new FormData();
     itemChoose.id!==undefined && arr.append('daily_id',itemChoose.id);
     arr.append('keyword',keyword);
-  
+
     postApi(url,arr).then(e => {
       //console.log(e);
+        if(e.data.length===0) {this.state.noDataUser = lang.not_found;}
         this.state.listUser=e.data;
         this.state.valCTV='';
         this.setState(this.state);
@@ -88,7 +91,7 @@ export default class GrantRight extends Component {
   getContent(){
     const {itemChoose,lang} = this.props;
     getApi(`${global.url}${'static/giaoviec/'}${itemChoose.id}${'?lang='}${lang.lang}`).then(arr => {
-        this.setState({ desWork:arr.data[0].content===null?'':arr.data[0].content });
+        this.setState({ desWork:(arr.data===null || arr.data[0].content===null)?'':arr.data[0].content });
     }).catch(err => console.log(err));
   }
   alertChooseAgency(){
@@ -101,8 +104,8 @@ export default class GrantRight extends Component {
       wrapWhite,colorTitle,marTop,btnTransfer,colorlbl,
       overLayout,shadown,popoverLoc,padBuySell
     } = styles;
-    const {valCTV,valTDL,desWork,showAddCTV,listUser,itemCTVChoose} = this.state;
-    const { lang,isCeo,listAgency,itemChoose } = this.props;
+    const {valCTV,valTDL,desWork,showAddCTV,listUser,itemCTVChoose,noDataUser,showArea} = this.state;
+    const { lang,isCeo,listAgency,itemChoose,noData } = this.props;
     return (
       <View style={wrapSetting}>
       <ScrollView>
@@ -160,31 +163,34 @@ export default class GrantRight extends Component {
             </View>
          </View>}
 
-        {isCeo ?
-          <View>
-              <View style={wrapWhite} >
-                 <Text numberOfLines={1} style={colorTitle}>{`${lang.choose_area}`}</Text>
-                <View style={{borderColor:'#E0E8ED',borderTopWidth:1}}></View>
-               </View>
-             <ChooseArea
-             setDist={(listDist)=>{this.props.chooseDist(listDist)}}
-             itemChoose={itemChoose}
-             lang={lang}
-             />
-         </View>
-          :
-          <View style={wrapWhite} >
-            <View>
-            <Text numberOfLines={1} style={colorTitle}>{`${lang.choose_area}`}</Text>
-            </View>
-            <View style={{paddingTop:10,marginTop:10,borderColor:'#E0E8ED',borderTopWidth:1}}></View>
-            <TouchableOpacity style={{flexDirection:'row',justifyContent:'space-between'}}
-           onPress={()=>this.props.showKV()}>
-           <Text numberOfLines={1} style={colorTitle}>{`${lang.area}`}</Text>
-           <Image source={arrowNextIC} style={{width:18,height:18}}/>
-           </TouchableOpacity>
+         <View style={wrapWhite} >
+           <View>
+           <Text numberOfLines={1} style={colorTitle}>{`${lang.choose_area}`}</Text>
+           </View>
+           <View style={{paddingTop:10,marginTop:10,borderColor:'#E0E8ED',borderTopWidth:1}}></View>
+           <TouchableOpacity style={{flexDirection:'row',justifyContent:'space-between'}}
+          onPress={()=>{
+            if(!isCeo){
+              this.props.showKV();
+            }else {
+              if(itemChoose.id===undefined){
+                this.alertChooseAgency();
+              }else {
+                this.setState({showArea:true});
+              }
+            }
+          }}>
+          <Text numberOfLines={1} style={colorTitle}>{`${lang.area}`}</Text>
+          <Image source={arrowNextIC} style={{width:18,height:18}}/>
+          </TouchableOpacity>
        </View>
-        }
+       {isCeo &&
+         <ChooseArea
+         visible={showArea} lang={lang} itemChoose={itemChoose}
+         closeModal={()=>this.setState({showArea:false})}
+         chooseDist={(listDist)=>this.props.chooseDist(listDist)}
+         />
+       }
         {isCeo && <View>
           <View style={{height:5}}></View>
           <View style={wrapWhite}>
@@ -243,9 +249,9 @@ export default class GrantRight extends Component {
 
       </ScrollView>
 
-      {listUser.length>0 &&
+      {(listUser.length>0 || noDataUser!=='') &&
         <View style={{position:'absolute'}}>
-        <TouchableOpacity onPress={()=>this.setState({listUser:[]})}
+        <TouchableOpacity onPress={()=>this.setState({listUser:[],noDataUser:''})}
         style={[popoverLoc,padBuySell]}>
         <TouchableWithoutFeedback >
             <View style={[overLayout,shadown]}>
@@ -258,6 +264,7 @@ export default class GrantRight extends Component {
              //     this.searchContentPending(page)
              //   });
              // }}
+             ListEmptyComponent={<Text style={{color:'#000',fontSize:16}}>{noDataUser}</Text>}
              style={{padding:15,marginTop:15,marginBottom:15,}}
              keyExtractor={(item,index) => index.toString()}
              renderItem={({item,index}) =>(
@@ -281,7 +288,7 @@ export default class GrantRight extends Component {
                 </TouchableOpacity>
              )} />
              {listUser.length>0 &&
-               <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center',paddingTop:15,paddingBottom:15}}>
+               <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center',paddingBottom:15}}>
                  <TouchableOpacity style={{alignItems:'center',padding:7,borderRadius:4,backgroundColor:'#d0021b',marginLeft:10,minWidth:width/3}}
                  onPress={()=>{this.addCTV()}}>
                    <Text style={{color:'#fff',fontSize:16}}>{`${lang.add_coll}`}</Text>
@@ -292,19 +299,25 @@ export default class GrantRight extends Component {
       </TouchableOpacity>
     </View>}
 
-      {listAgency.length>0 &&
+      {(listAgency.length>0 || noData!=='') &&
       <TouchableOpacity onPress={()=>this.props.hidePopup()}
       style={{position:'absolute',width,height,justifyContent:'center',alignItems:'center',backgroundColor:'rgba(0,0,0,0.7)'}}>
       <TouchableWithoutFeedback>
+      <View style={{
+        width:width-30,
+        maxHeight:listAgency.length>4? 80*4:60*(listAgency.length+1),
+        backgroundColor:'#fff',
+        padding:15,borderRadius:5
+      }}>
        <FlatList
        extraData={this.state}
        data={listAgency}
-       style={{width:width-30,marginTop:15,maxHeight:height/2,backgroundColor:'#fff',padding:15,borderRadius:5}}
+       ListEmptyComponent={<Text style={{color:'#000',fontSize:16}}>{noData}</Text>}
        keyExtractor={(item,index) => index.toString()}
        renderItem={({item,index}) =>(
          <TouchableOpacity onPress={()=>{this.props.chooseUser(item)}}
          style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
-             <View style={{flexDirection:'row',paddingBottom:15}}>
+             <View style={{flexDirection:'row',marginBottom:(listAgency.length-1)===index?0:15}}>
                  <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:50,marginRight:10,borderRadius:25}} />
                  <View style={{width:width-120}}>
                    <Text numberOfLines={1} style={colorlbl}>{item.full_name}</Text>
@@ -313,8 +326,10 @@ export default class GrantRight extends Component {
              </View>
           </TouchableOpacity>
        )} />
+       </View>
        </TouchableWithoutFeedback>
-       </TouchableOpacity>}
+       </TouchableOpacity>
+     }
 
       </View>
     );

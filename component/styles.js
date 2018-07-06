@@ -255,7 +255,7 @@ module.exports = {
   wrapContent :{
     alignItems:'center',
     justifyContent:'center',
-    width: width*0.85,
+    width,
     height:Platform.OS==='ios' ? height-200 : height-200
   },
   labelCat :{

@@ -264,7 +264,7 @@ export default class HomeTab extends Component {
         <View style={{alignItems: 'center', justifyContent: 'center', marginTop: 15}}>
             <Text numberOfLines={2} style={{fontSize: 21, fontWeight: 'bold', color: '#2e3c52'}}>{slogan ? slogan : ''}</Text>
         </View>
-        <View style={[wrapContent, {marginTop: -65}]}>
+        <View style={[wrapContent, {marginTop: -65,width:0.85*width}]}>
             <View style={square}>
             {
 

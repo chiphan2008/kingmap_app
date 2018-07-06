@@ -1,5 +1,9 @@
 
 module.exports = {
+  countries:'Countries',
+  cities:'Cities',
+  districts:'Districts',
+  back:'Back',
   home:'Home',
   personal:'Personal',
   notify:'Notification',
@@ -52,6 +56,7 @@ module.exports = {
   enter_des:'Enter description',
   assign_work:'Assigned work',
   choose_area:'Choose area',
+  name_dist:'District',
   choose_ctv:'Please select a collaborator',
   selected_coll:'Collaborator selected',
   choose_agency:'Please select a agency',

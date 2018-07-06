@@ -214,13 +214,17 @@ module.exports = {
       width: 65,height: 65,marginBottom:10,
   },
   square:{
-    width:300,
-    height:360,
+    width:240,
+    height:240,
     alignItems:'center',
     justifyContent:'center',
   },
   wrapCircle:{
-    position:'absolute',flex:1,alignItems:'center',
+    // position:'absolute',
+    flex:1,
+    alignItems:'center',
+    justifyContent:'center',
+    marginLeft: 60
   },
   rowItem:{flexDirection: 'row',alignItems:'center'},
   flexRow: {
@@ -234,7 +238,7 @@ module.exports = {
   },
 
   marTop:{marginTop: 15},
-  logoCenter:{top:120},
+  logoCenter:{top:50},
   btnPress: {
     padding:15,
     borderRadius : 5,
@@ -249,10 +253,10 @@ module.exports = {
     textAlign: 'center',
   },
   wrapContent :{
-    //flexDirection:'row',
     alignItems:'center',
     justifyContent:'center',
-    width,height:Platform.OS==='ios' ? height-200 : height-230
+    width: width*0.85,
+    height:Platform.OS==='ios' ? height-200 : height-200
   },
   labelCat :{
     backgroundColor:'transparent',textAlign:'center',//position:'absolute',top:70,zIndex:999

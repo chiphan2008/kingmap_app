@@ -68,6 +68,7 @@ export default class HomeTab extends Component {
       curLoc:{},
       user_profile:{},
       valSearch:'',
+      slogan:'',
 
     };
     accessLocation();
@@ -156,11 +157,11 @@ export default class HomeTab extends Component {
 
    getCategory(lang){
      //console.log(global.url+'modules?language='+lang+'&limit=100');
-     getApi(global.url+'modules?language='+lang+'&limit=100')
+     getApi(global.url+'modules?language='+lang+'&limit=100&block_text=slogan_home')
      .then(arrCategory => {
        //console.log('arrCategory',arrCategory);
        if(arrCategory!==undefined){setTimeout(() => {
-           this.setState({ listCategory: arrCategory.data },()=>{
+           this.setState({ listCategory: arrCategory.data,slogan:arrCategory.block_text.slogan_home },()=>{
              this.getListStatus();
            });
        }, 100);}
@@ -201,7 +202,7 @@ export default class HomeTab extends Component {
     //console.log('this.props',this.props);
     const {height, width} = Dimensions.get('window');
     const {navigate} = this.props.navigation;
-    const {listStatus,user_profile,curLoc} = this.state;
+    const {listStatus,user_profile,curLoc, slogan} = this.state;
     //console.log("this.props.Hometab=",util.inspect(this.state.listCategory,false,null));
     const {
       container, bgImg,colorlbl,flexRow,
@@ -260,8 +261,10 @@ export default class HomeTab extends Component {
         </View>
 
         <ScrollView>
-        <View style={wrapContent}>
-
+        <View style={{alignItems: 'center', justifyContent: 'center', marginTop: 15}}>
+            <Text numberOfLines={2} style={{fontSize: 21, fontWeight: 'bold', color: '#2e3c52'}}>{slogan ? slogan : ''}</Text>
+        </View>
+        <View style={[wrapContent, {marginTop: -65}]}>
             <View style={square}>
             {
 

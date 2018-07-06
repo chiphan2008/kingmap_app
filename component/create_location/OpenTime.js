@@ -92,13 +92,13 @@ export default class OpenTime extends Component {
   constructor(props){
     super(props);
     const {lang} = this.props;
-    //console.log('ListOpenTime',ListOpenTime);
+    console.log('lang',lang);
     this.state = {
       from_date:1,
       to_date:6,
       from_hour:'10:00',
       to_hour:'17:00',
-      opt_date: lang.lang==='vn'?opt_date_vn:opt_date_en,
+      opt_date: lang.lang ==='vn'? opt_date_vn : opt_date_en,
 
       ListDataTime:[{
           from_date:1,
@@ -287,7 +287,7 @@ export default class OpenTime extends Component {
     } = styles;
     const { lang } = this.props;
     const {updateFromDate,updateToDate,from_date, to_date, from_hour, to_hour,opt_date,ListOpenTime,showClock,showDate,ListDataTime,index_clock} = this.state;
-    //console.log('ListOpenTime',ListOpenTime.length);
+    //console.log('ListDataTime',ListDataTime);
     return (
 
       <View style={container}>
@@ -427,7 +427,8 @@ export class Clock extends Component {
       // angleLength:calcAngle(to_hour),
       apmFrom:parseInt(from_hour.substr(0,2))>12?true:false,
       apmTo:parseInt(to_hour.substr(0,2))>12?true:false,
-      startAngle,angleLength,
+      startAngle:parseInt(startAngle),
+      angleLength:parseInt(angleLength),
       opt_date: lang.lang==='vn'?opt_date_vn:opt_date_en,
     }
   }
@@ -498,7 +499,7 @@ export class Clock extends Component {
       </View>
 
         {showClock && <CircularSlider
-          startAngle={startAngle}
+            startAngle={startAngle}
           angleLength={angleLength}
           onUpdate={this.onUpdate}
           segments={5}
@@ -520,6 +521,7 @@ export class Clock extends Component {
 export class ListTime extends Component {
   constructor(props){
     super(props);
+    const {lang} = this.props;
     this.state = {
       startAngle: Math.PI * 10/6,
       angleLength: Math.PI * 7/6,
@@ -527,7 +529,7 @@ export class ListTime extends Component {
       to_date:6,
       from_hour:'10:00',
       to_hour:'17:00',
-      opt_date: opt_date_vn,
+      opt_date: lang.lang === 'vn' ? opt_date_vn : opt_date_en,
     }
   }
   static propTypes = {

@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import {
   View,Text,Modal,TouchableOpacity,Image,Alert,
   TextInput,Dimensions,ScrollView,FlatList,ActivityIndicator,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,Platform
 } from 'react-native';
 import Moment from 'moment';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -165,13 +165,20 @@ export default class AddImageMore extends Component {
         if(e.code===200){
           //loginServer(user_profile);
           loginServer(user_profile,'reqLog');
-          this.setState({posted:false},()=>{
+          this.setState({posted:false});
+          if(this.state.posted===false){
+            Platform.OS==='ios' ?
+            setTimeout(()=>{
+              Alert.alert(lang.notify,e.data,[
+                {text: 'OK', onPress: () => {this.props.navigation.navigate('MainScr')}}
+              ])
+            },3000)
+            :
             Alert.alert(lang.notify,e.data,[
               {text: '', style: 'cancel'},
               {text: 'OK', onPress: () => {this.props.navigation.navigate('MainScr')}}
-            ],
-           { cancelable: false })
-          });
+            ],{ cancelable: false })
+          }
         }else {
           this.setState({posted:false},()=>{
             Alert.alert(lang.notify,e.message);
@@ -456,10 +463,10 @@ export default class AddImageMore extends Component {
               <View style={headContent}>
                   <Text style={[titleCreate, {width: width * 0.33}]}>   </Text>
                   <Text style={[titleCreate, {width: width * 0.33}]}> {this.state.lang.cmnd_image.toUpperCase()} </Text>
-                    
+
                 <TouchableOpacity onPress={()=>this.setState({showCMND:false})}>
                 {/*<Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />*/}
-                <Text style={[titleCreate, {width: width * 0.33, left: 50}]}> {this.state.lang.done} </Text>
+                <Text style={[titleCreate, {width: width * 0.33, left: Platform.OS==='ios'? 35: 50}]}> {this.state.lang.done} </Text>
                 </TouchableOpacity>
               </View>
           </View>
@@ -487,7 +494,7 @@ export default class AddImageMore extends Component {
             onPress={()=>this.uploadCMND('back')}>
             <Image source={cameraLargeIC} style={{width:60,height:60,marginBottom:10}}/>
             </TouchableOpacity>
-            <Text style={{fontSize:18}}>{this.state.lang.upload_image.toUpperCase()}</Text> 
+            <Text style={{fontSize:18}}>{this.state.lang.upload_image.toUpperCase()}</Text>
           </View>
           <View style={{height:5}}></View>
           {cmnd_image_back.path!==undefined &&
@@ -501,9 +508,9 @@ export default class AddImageMore extends Component {
         {this.state.posted &&
         <Modal onRequestClose={() => null} transparent
         visible={this.state.posted} >
-          <View style={{flex:1,justifyContent:'center',alignItems:'center',backgroundColor:'rgba(0,0,0,0.6)'}}>
+          {this.state.posted && <View style={{flex:1,justifyContent:'center',alignItems:'center',backgroundColor:'rgba(0,0,0,0.6)'}}>
             <ActivityIndicator size="large" color="#d0021b" />
-          </View>
+          </View>}
         </Modal>}
         <View style={{height:15}}></View>
       </ScrollView>

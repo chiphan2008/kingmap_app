@@ -309,11 +309,16 @@ export default class FormCreate extends Component {
       this.setState({showLoading:false,errMsg:''},()=>{
         if(e.code===200){
           if(this.state.editLoc){
+            Platform.OS==='android' ?
             Alert.alert(this.state.lang.notify,this.state.lang.update_success,[
               {text: '', style: 'cancel'},
               {text: 'OK', onPress: () => this.props.navigation.goBack()}
             ],
            { cancelable: false })
+           :
+           Alert.alert(this.state.lang.notify,this.state.lang.update_success,[
+             {text: 'OK', onPress: () => this.props.navigation.goBack()}
+           ])
           }else {
             this.setState({idContent:e.data.content.id,showUpdate:true})
            //  Alert.alert(this.state.lang.notify,this.state.lang.create_success,[
@@ -401,7 +406,7 @@ export default class FormCreate extends Component {
               </TouchableOpacity>
               <Text style={titleCreate}> {idContent===undefined? this.state.lang.create_location:  this.state.lang.edit_location} </Text>
               <TouchableOpacity onPress={()=>this.confirmPostData()}>
-                <Text style={titleCreate}>{this.state.lang.done}</Text>
+                <Text style={[titleCreate,{paddingRight:10}]}>{this.state.lang.done}</Text>
               </TouchableOpacity>
           </View>
       </View>

@@ -189,7 +189,7 @@ export default class HomeTab extends Component {
        //dang cho duyet
        if(e.temp_daily_code!==''){
          Alert.alert(this.state.lang.notify,this.state.lang.approve_ctv);
-       }else if(e.count_area===0 && e.api_roles.cong_tac_vien!==undefined ){
+       }else if(e.count_area===0 && e.api_roles!==null && e.api_roles.cong_tac_vien!==undefined ){
          //chua phan kv
          Alert.alert(this.state.lang.notify,this.state.lang.approve_area_ctv);
        }else if(e.api_roles!==null && e.api_roles.cong_tac_vien!==undefined && e.api_roles.cong_tac_vien.active===0){
@@ -262,13 +262,13 @@ export default class HomeTab extends Component {
 
 
         <View style={wrapContent}>
-        <View style={{alignItems: 'center', justifyContent: 'center', position:'relative',top:-60}}>
+        <View style={{alignItems: 'center', justifyContent: 'center', position:'relative',top:(width/10)<60?-60:-(width/10)}}>
             <Text numberOfLines={1} style={{fontSize: 21, fontWeight: 'bold', color: '#2e3c52'}}>{slogan ? slogan : ''}</Text>
         </View>
             <View style={square}>
             {
               this.state.listCategory.map((e,index)=>{
-                const x=(width/10)<60?(width/4):(width/10);const y=70;const distance=120;
+                const x=(width/10)<60?(width/4):(width/10);const y=70;const distance=(width/10)<60?120:140;
                 let angle = (360/(this.state.listCategory.length-1));
                 let pos = this.findNewPoint(x, y, angle, distance);
                 //console.log(e);

@@ -399,12 +399,16 @@ export default class ListLocation extends Component {
               <FlatList
                      ref="listPro"
                      onScroll={(e) => {
-                       if(e.nativeEvent.velocity.y < 0 ){
-                         this.setState({scrollToTop: false});
-                       }else {
-                         this.setState({scrollToTop: true});
+                       console.log('e.nativeEvent',e.nativeEvent);
+                       if(e.nativeEvent.contentOffset!==undefined){
+                         if(e.nativeEvent.contentOffset.y > 0 ){
+                           this.state.scrollToTop===false && this.setState({scrollToTop: true});
+                         }else {
+                           this.setState({scrollToTop: false});
+                         }
                        }
-                       //
+
+
                      }}
                      style={{marginBottom:Platform.OS==='ios' ? 130 : 150}}
                      ListEmptyComponent={<Text>{noData==='' ? `${'Loading ...'}` : noData }</Text> }

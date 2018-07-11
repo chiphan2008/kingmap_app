@@ -73,7 +73,7 @@ export default class LoginScreen extends Component {
             }
       })
     }).catch((err) => {
-      alert(err.toString())
+      //alert(err.toString())
   //console.log('WRONG SIGNIN', err);
 }).done();
     //   this.getGoogleID().then((user) => {
@@ -186,9 +186,9 @@ export default class LoginScreen extends Component {
       <View style={container}>
         <Image source={bgMap} style={bgImg} />
         <ScrollView>
-        <TouchableOpacity style={{position:'absolute',top:15,right:15,zIndex:9}}
+        <TouchableOpacity style={{position:'absolute',top:Platform.OS==='ios'?25:15,right:15,zIndex:9}}
         onPress={()=>goBack()}>
-        <Image source={closeIC} style={{width:20,height:20}} />
+        <Image source={closeIC} style={{width:25,height:25}} />
         </TouchableOpacity>
         <View style={contentWrap}>
               <View></View>

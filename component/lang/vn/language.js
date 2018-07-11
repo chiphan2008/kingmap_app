@@ -13,7 +13,7 @@ module.exports = {
   wait_approve:'Chờ duyệt',
   this_revenus:'Doanh thu tháng này',
   total_MM:'Tổng số tiền kiếm được',
-  total_location:'Tổng địa điểm',
+  total_location:'Tổng số địa điểm',
   let_mm:'Nào cùng kiếm tiền',
   new_location_mm:'Tạo địa điểm mới thêm vào danh sách',
   add_collection:'Thêm vào bộ sưu tập',

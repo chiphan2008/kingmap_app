@@ -198,7 +198,7 @@ export default class ChangeOwner extends Component {
             extraData={this.state}
             data={listContent}
             ListEmptyComponent={<Text>{noData!=='' ? noData : '' }</Text> }
-            keyExtractor={(item,index) => index}
+            keyExtractor={(item,index) => index.toString()}
             renderItem={({item,index}) =>(
               <TouchableOpacity onPress={()=>{this.chooseLoc(item.id,item,index,'kfd')}} style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
                   <View style={{flexDirection:'row',maxWidth:width-50}}>

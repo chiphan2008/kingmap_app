@@ -101,7 +101,7 @@ export default class LocationScreen extends Component {
                      </TouchableOpacity>
                    )}
                    keyExtractor={item => item.id}
-                   style={{marginBottom:Platform.OS==='ios' ? 55 : 165,}}
+                   style={{marginBottom:Platform.OS==='ios' ? 130 : 165,}}
                  />
                  </View>
             </View>

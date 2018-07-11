@@ -1,4 +1,5 @@
 import Intl from 'intl';
+import {AsyncStorage} from 'react-native';
 import 'intl/locale-data/jsonp/en';
 import lang_en from './lang/en/user/language';
 import lang_vn from './lang/vn/user/language';
@@ -7,6 +8,13 @@ export function getIndex(element,id){
   return element.key==id;
 }
 
+export async function CheckTF(obj){
+  let arr = [];
+  Object.entries(obj).forEach(async (e)=>{
+    await arr.push(e[1]);
+  })
+  return arr.includes(true);;
+}
 
 export function calcAngle(str){
   var h = parseInt(str.substr(0,2));

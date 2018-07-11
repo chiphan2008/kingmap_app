@@ -213,15 +213,24 @@ module.exports = {
   imgContent : {
       width: 65,height: 65,marginBottom:10,
   },
+  wrapContent :{
+    alignItems:'center',
+    justifyContent:'center',
+    width,
+    height:Platform.OS==='ios' ? height-192 : height-222,
+    marginTop:10,
+  },
   square:{
     width:240,
     height:240,
     alignItems:'center',
     justifyContent:'center',
+    //borderWidth:1
   },
+  logoCenter:{top:20},
   wrapCircle:{
     // position:'absolute',
-    flex:1,
+    //flex:1,
     alignItems:'center',
     justifyContent:'center',
     marginLeft: 60
@@ -238,7 +247,7 @@ module.exports = {
   },
 
   marTop:{marginTop: 15},
-  logoCenter:{top:50},
+
   btnPress: {
     padding:15,
     borderRadius : 5,
@@ -252,12 +261,7 @@ module.exports = {
     color: '#D0021B',
     textAlign: 'center',
   },
-  wrapContent :{
-    alignItems:'center',
-    justifyContent:'center',
-    width,
-    height:Platform.OS==='ios' ? height-200 : height-200
-  },
+
   labelCat :{
     backgroundColor:'transparent',textAlign:'center',//position:'absolute',top:70,zIndex:999
   },

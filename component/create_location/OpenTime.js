@@ -81,7 +81,7 @@ const opt_date_vn = [
 const opt_date_en = [
   {name:'Mon',val:1},
   {name:'Tue',val:2},
-  {name:'Wen',val:3},
+  {name:'Wed',val:3},
   {name:'Thu',val:4},
   {name:'Fri',val:5},
   {name:'Sat',val:6},

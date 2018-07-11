@@ -6,12 +6,14 @@ import {
   Platform,Dimensions,TouchableOpacity,Modal
 } from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+
 import logoMap from '../../../src/icon/Logo-map.png';
 import normalScreenIC from '../../../src/icon/ic-normal-screen.png';
 import fullScreenIC from '../../../src/icon/ic-full-screen.png';
 
-import global from '../../../component/global';
-import getApi from '../../../component/api/getApi';
+import getLocationByIP from '../../api/getLocationByIP';
+import global from '../../global';
+import getApi from '../../api/getApi';
 
 const {width,height} = Dimensions.get('window');
 export default class MapContent extends Component {
@@ -21,11 +23,15 @@ export default class MapContent extends Component {
       coords:[],
       showFullScreen:false,
       direct:this.props.region,
+      curLoc:{},
     }
   }
   getDirection(){
       //console.log('this.props.region.latlng',this.props.region.latlng);
       const {latitude,longitude} = this.props.curLoc;
+      if(latitude===undefined){
+        const {latitude,longitude} = this.state.curLoc;
+      }
       const mode = 'driving'; // 'walking';
       const origin = `${latitude},${longitude}`;
       const destination = this.props.region.latlng;
@@ -50,15 +56,37 @@ export default class MapContent extends Component {
       a=null,h=0,i=0;do a=t.charCodeAt(u++)-63,i|=(31&a)<<h,h+=5;while(a>=32);n=1&i?~(i>>1):i>>1,h=i=0;do a=t.charCodeAt(u++)-63,i|=(31&a)<<h,h+=5;
       while(a>=32);o=1&i?~(i>>1):i>>1,l+=n,r+=o,d.push([l/c,r/c])}return d=d.map(function(t){return{latitude:t[0],longitude:t[1]}})
   }
+  findLoc(){
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const {latitude,longitude} = position.coords;
+          this.setState({curLoc:{
+            latitude,longitude
+          }});
+      },
+      (error) => {
+        getLocationByIP().then((e) => {
+          const {latitude,longitude} = e;
+            this.setState({curLoc:{
+              latitude,longitude
+            }});
 
+        });
+      },
+      { timeout: 5000,maximumAge: 60000 },
+    );
+   }
 
   render() {
     const { curLoc,region,distance,lang } = this.props;
     const {showFullScreen,direct} = this.state;
+    console.log(curLoc);
     //console.log('lang',lang);
     //console.log('region',region.latlng);
     //console.log('curLoc',curLoc.latitude,curLoc.longitude);
     return (
+      <View>
+    {curLoc.latitude!==undefined ?
     <View style={{width,height:height/2}} >
       {region.latitude!==undefined &&
         <MapView
@@ -129,6 +157,10 @@ export default class MapContent extends Component {
           </TouchableOpacity>
         </Modal>
       </View>
+      :
+      <View onLayout={()=>this.findLoc()}></View>
+    }
+    </View>
     );
   }
 }

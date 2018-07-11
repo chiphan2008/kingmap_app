@@ -2,7 +2,8 @@
 
 import React, { Component } from 'react';
 import {
-  View,Text,Image,TouchableOpacity,Modal,FlatList,TouchableWithoutFeedback
+  View,Text,Image,TouchableOpacity,Modal,FlatList,TouchableWithoutFeedback,
+  Alert,Dimensions,
 } from 'react-native';
 import styles from '../styles';
 import global from '../global';
@@ -11,14 +12,16 @@ import postApi from '../api/postApi';
 import upDD from '../../src/icon/ic-white/ic-dropdown_up.png';
 import checkLocation from '../api/checkLocation';
 import checkLogin from '../api/checkLogin';
-import checkIC from '../../src/icon/ic-check.png';
+import checkIC from '../../src/icon/ic-create/ic-check.png';
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
 import arrowNextIC from '../../src/icon/ic-arrow-next.png';
 import arrowbottomIC from '../../src/icon/ic-arrowbottom.png';
 import nextIC from '../../src/icon/ic-next.png';
 import prevIC from '../../src/icon/ic-prev.png';
-
+import {CheckTF} from '../libs';
+const {height, width} = Dimensions.get('window');
 var timeoutRecive;
+
 export default class ChooseArea extends Component {
   constructor(props){
     super(props);
@@ -32,7 +35,7 @@ export default class ChooseArea extends Component {
       this.setState({
         idCountry:e.idCountry, nameCountry:e.nameCountry,
         idCity:e.idCity, nameCity:e.nameCity,
-        chooseCity: Object.assign(this.state.chooseCity,{[e.idCity]:e.idCity})
+        chooseCity: Object.assign(this.state.chooseCity,{[e.idCity]:true})
       })
     });
     checkLogin().then(el=>{
@@ -43,33 +46,34 @@ export default class ChooseArea extends Component {
     })
     this.getCountry();
   }
-  getCountry(){
-    const {_area} = this.props.itemChoose;
 
-    if(_area!==undefined){
-      this.state.idCountry=_area.country[0];
-      let lCity={},lDist={};
-      _area.city.forEach(e=>{
-        lCity= Object.assign(lCity,{[e]:e});
-      });
-      _area.district.forEach(e=>{
-        lDist= Object.assign(lDist,{[e]:e})
-      });
-      this.state.chooseCity=lCity;
-      this.state.chooseDist=lDist;
-    }
+  getStateChoose(){
+    const {_area} = this.props.itemChoose;
+    this.state.idCountry=_area.country[0];
+    this.setState(this.state);
+  }
+  getCountry(){
+
     let url = `${global.url}${'countries'}`;
     //if(this.state.ctv_id!=='') url += `${'?ctv_id='}${this.state.ctv_id}`;
     //console.log(url);
     getApi(url).then(arrData => {
+        this.state.chooseCity={};
         this.state.showCountry=true;
         this.state.listCountry=arrData.data;
         this.setState(this.state);
     }).catch(err => console.log(err));
   }
   getCity(id){
+    const {_area} = this.props.itemChoose;
     let url = `${global.url}${'cities/'}${id}`;
     getApi(url).then(arrData => {
+      if(_area!==undefined){
+        arrData.data.forEach(item=>{
+          _area.city.includes(item.id) &&  this.setState({ chooseCity:Object.assign(this.state.chooseCity,{[item.id]:true}) })
+        })
+      }
+      this.state.chooseDist={};
       this.state.listCity=arrData.data;
       this.setState(this.state);
     }).catch(err => console.log(err));
@@ -78,16 +82,16 @@ export default class ChooseArea extends Component {
   getDist(){
     //const {_area} = this.props.itemChoose;
     let url = `${global.url}${'static/district'}`;
-    //if(this.state.ctv_id!=='') url += `${'?ctv_id='}${this.state.ctv_id}`;
     const arr = new FormData();
     Object.entries(this.state.chooseCity).forEach(e=>{
-      e[1] && arr.append('city[]',e[1]);
+      e[1] && arr.append('city[]',e[0]);
     })
     //console.log(url);
-    //console.log(arr);
+    //console.log(arr);chooseDist
     postApi(url,arr).then(arrData => {
+      this.state.chooseDist = {};
       this.state.listDist=arrData.data;
-      this.state.showListDist=this.state.chooseCity;
+      //this.state.showListDist=this.state.chooseCity;
       this.setState(this.state);
     }).catch(err => console.log(err));
   }
@@ -112,6 +116,7 @@ export default class ChooseArea extends Component {
       listAdd,titleCreate,colorlbl,imgShare
     } = styles;
     const { lang,visible,itemChoose } = this.props;
+    //console.log('itemChoose',itemChoose);
     const {
       listCity,chooseCity,chooseDist,listDist,idCountry,nameCountry,nameCity,nameDist,listCountry,
       showCountry,showCity,showDist,showListDist,
@@ -123,10 +128,14 @@ export default class ChooseArea extends Component {
       onRequestClose={()=>null} transparent animationType={'slide'}
       visible={visible}
       >
-        <View style={container}>
+        <View style={container} onLayout={()=>{
+          itemChoose._area!==undefined && this.getStateChoose();
+        }}>
           <View style={headCatStyle}>
               <View style={headContent}>
-                  <TouchableOpacity onPress={()=>{this.props.closeModal()}}>
+                  <TouchableOpacity onPress={()=>this.setState({showDist:false,showCity:false,showCountry:true},()=>{
+                    this.props.closeModal();
+                  })}>
                   <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                   </TouchableOpacity>
                   <Text style={titleCreate}> {lang.choose_area} </Text>
@@ -158,9 +167,17 @@ export default class ChooseArea extends Component {
            {showCity &&
              <View>
              <TouchableOpacity onPress={()=>{
-               this.state.showCity = false;
-               this.state.showDist = true;
-               this.setState(this.state,()=>this.getDist());
+               CheckTF(this.state.chooseCity).then(e=>{
+                 if(e){
+                   this.state.showCity = false;
+                   this.state.showDist = true;
+                   this.state.chooseDist={};
+                   this.setState(this.state,()=>this.getDist());
+                 }else {
+                   Alert.alert(lang.notify,lang.plz_choose_dist);
+                 }
+               })
+
              }} style={[listAdd,{justifyContent:'flex-start',alignItems:'center'}]}>
                <Text style={{color:'#6791AF',fontSize:16}}>
                {lang.name_dist}
@@ -170,20 +187,19 @@ export default class ChooseArea extends Component {
              <FlatList
               extraData={this.state}
               data={listCity}
-              style={{paddingBottom:55}}
+              style={{paddingBottom:55,height:height-140}}
               renderItem={({item}) =>(
                 <TouchableOpacity onPress={()=>{
                   if(chooseCity[item.id]){
-                    this.state.chooseCity = Object.assign(this.state.chooseCity,{[item.id]:!item.id});
+                    this.state.chooseCity = Object.assign(this.state.chooseCity,{[item.id]:false});
                   }else {
-                    this.state.chooseCity = Object.assign(this.state.chooseCity,{[item.id]:item.id});
+                    this.state.chooseCity = Object.assign(this.state.chooseCity,{[item.id]:true});
                   }
                   this.setState(this.state)
                 }} style={listAdd}>
                   <Text style={colorlbl}>{item.name}</Text>
                   <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
                   {chooseCity[item.id] && <Image source={checkIC} style={[imgShare]} />}
-                  <Image source={arrowNextIC} style={[imgShare]} />
                   </View>
                 </TouchableOpacity>
               )}
@@ -197,27 +213,33 @@ export default class ChooseArea extends Component {
             <TouchableOpacity onPress={()=>{
               this.state.showCity = true;
               this.state.showDist = false;
-              this.setState(this.state)
+              this.setState(this.state,()=>{
+                this.props.chooseDist(chooseDist)
+              })
             }} style={[listAdd,{justifyContent:'flex-start',alignItems:'center'}]}>
             <Image source={prevIC} style={{width:20,height:20}} />
               <Text style={{color:'#6791AF',fontSize:16}}>
               {lang.back}
               </Text>
-
             </TouchableOpacity>
             <FlatList
              extraData={this.state}
              data={listDist}
-             style={{paddingBottom:55}}
+             style={{paddingBottom:55,height:height-140}}
              renderItem={({item}) =>(
                <View>
-                   <TouchableOpacity style={[listAdd]}
+                   <TouchableOpacity style={[listAdd]} onLayout={()=>{
+                     item.districts.map(e=>{
+                       itemChoose._area.district.includes(e.id) && this.setState({
+                         chooseDist:Object.assign(this.state.chooseDist,{[e.id]:e.id})
+                        })
+                     })
+                   }}
                    onPress={()=>{
-
                      if(showListDist[item.city.id]){
-                       this.state.showListDist = Object.assign(this.state.showListDist,{[item.city.id]:!item.city.id});
+                       this.state.showListDist = Object.assign(this.state.showListDist,{[item.city.id]:false});
                      }else {
-                       this.state.showListDist = Object.assign(this.state.showListDist,{[item.city.id]:item.city.id});
+                       this.state.showListDist = Object.assign(this.state.showListDist,{[item.city.id]:true});
                      }
                      this.setState(this.state)
                    }}
@@ -225,7 +247,8 @@ export default class ChooseArea extends Component {
                     <Text style={colorlbl}>{item.city.name}</Text>
                     <Image source={showListDist[item.city.id]?arrowbottomIC:arrowNextIC} style={[imgShare]} />
                   </TouchableOpacity>
-                  {showListDist[item.city.id] && item.districts.map(e=>(<TouchableOpacity key={e.id} onPress={()=>{
+                  {item.districts.map(e=>(
+                    showListDist[item.city.id] && <TouchableOpacity  key={e.id} onPress={()=>{
                     if(chooseDist[e.id]){
                       this.state.chooseDist = Object.assign(this.state.chooseDist,{[e.id]:!e.id});
                     }else {
@@ -238,7 +261,7 @@ export default class ChooseArea extends Component {
                     {chooseDist[e.id] && <Image source={checkIC} style={[imgShare]} />}
 
                     </View>
-                  </TouchableOpacity>))}
+                  </TouchableOpacity>) )}
 
                </View>
              )}

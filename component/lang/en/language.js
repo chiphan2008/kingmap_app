@@ -72,6 +72,7 @@ module.exports = {
   add_back_cmnd:'Please add image from back ID',
   plz_approve:'Please wait approve collaborator',
   plz_choose_area:'Please choose area',
+  plz_choose_dist:'Please choose district ',
   plz_choose_cat:'Please choose category',
   info_general:'General information',
   change_owner:'Change owner',

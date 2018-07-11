@@ -14,7 +14,7 @@ import postApi from '../api/postApi';
 import getApi from '../api/getApi';
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
 import logoTop from '../../src/icon/ic-white/Logo-ngang.png';
-import checkIC from '../../src/icon/ic-check.png';
+import checkIC from '../../src/icon/ic-create/ic-check.png';
 import plusIC from '../../src/icon/ic-plus.png';
 
 const {width,height} = Dimensions.get('window');
@@ -92,7 +92,7 @@ export default class CTVDetail extends Component {
                   <View style={wrapWhite}>
                     <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                       <View>
-                        <Text numberOfLines={1} style={colorTitle}>{`${lang.area_charge}`}</Text>
+                        <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14}]}>{`${lang.area_charge}`}</Text>
                         <Text style={titleCoin}>{listData.area!==undefined && format_number(listData.area.length)}</Text>
                       </View>
                       <TouchableOpacity onPress={()=>{
@@ -107,7 +107,7 @@ export default class CTVDetail extends Component {
 
                  <View style={wrapWhite}>
                    <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-                     <Text numberOfLines={1} style={colorTitle}>{`${lang.total_MM}`}</Text>
+                     <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14}]}>{`${lang.total_MM}`}</Text>
                      <Text style={titleCoin}>{`${format_number(listData.total)}`}</Text>
                    </View>
                  </View>
@@ -122,7 +122,7 @@ export default class CTVDetail extends Component {
                       keyExtractor={(item,index) => index.toString()}
                       renderItem={({item,index}) =>(
                         <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginBottom:5}}>
-                          <Text style={{color:'#2F3C51'}}>{item.name}</Text>
+                          <Text style={{color:'#2F3C51',fontWeight:'500'}}>{item.name}</Text>
                           <Text style={{color:'#5782A4'}}>{format_number(item.value)}</Text>
                        </View>
                       )} />
@@ -135,7 +135,7 @@ export default class CTVDetail extends Component {
           <View style={{height:5}}></View>
           <View style={wrapWhite} >
               <View>
-              <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${lang.assign_work}`}:</Text>
+              <Text numberOfLines={1} style={{color:'#6791AF', fontWeight: '500'}}>{`${lang.assign_work}`}:</Text>
               <Text style={{color:'#2F353F',fontSize:16,lineHeight:22}}>{content}</Text>
               </View>
          </View>

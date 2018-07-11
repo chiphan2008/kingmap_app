@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image,
-  TextInput, TouchableOpacity,ScrollView,Modal,FlatList,AsyncStorage,
+  TextInput, TouchableOpacity,ScrollView,Modal,FlatList,
   BackHandler,Alert,ActivityIndicator,
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';

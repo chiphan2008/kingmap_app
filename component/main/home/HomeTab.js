@@ -185,7 +185,7 @@ export default class HomeTab extends Component {
 
    gotoCreate = () => {
      checkLogin().then(e=>{
-       console.log(e);
+       //console.log(e);
        //dang cho duyet
        if(e.temp_daily_code!==''){
          Alert.alert(this.state.lang.notify,this.state.lang.approve_ctv);
@@ -260,16 +260,15 @@ export default class HomeTab extends Component {
           </TouchableOpacity>
         </View>
 
-        <ScrollView>
-        <View style={{alignItems: 'center', justifyContent: 'center', marginTop: 15}}>
-            <Text numberOfLines={2} style={{fontSize: 21, fontWeight: 'bold', color: '#2e3c52'}}>{slogan ? slogan : ''}</Text>
+
+        <View style={wrapContent}>
+        <View style={{alignItems: 'center', justifyContent: 'center', position:'relative',top:-60}}>
+            <Text numberOfLines={1} style={{fontSize: 21, fontWeight: 'bold', color: '#2e3c52'}}>{slogan ? slogan : ''}</Text>
         </View>
-        <View style={[wrapContent, {marginTop: -65,width:0.85*width}]}>
             <View style={square}>
             {
-
               this.state.listCategory.map((e,index)=>{
-                const x=118;const y=120;const distance=140;
+                const x=(width/10)<60?(width/4):(width/10);const y=70;const distance=120;
                 let angle = (360/(this.state.listCategory.length-1));
                 let pos = this.findNewPoint(x, y, angle, distance);
                 //console.log(e);
@@ -288,7 +287,7 @@ export default class HomeTab extends Component {
                             }
                           }}
                           >
-                          {/*<Text style={labelNum}>(25)</Text>*/}
+                          {/*<Text style={labelNum}>{width/10}</Text>*/}
                         <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                         <Text style={labelCat}>{e.name}</Text>
                       </TouchableOpacity>);
@@ -369,7 +368,7 @@ export default class HomeTab extends Component {
                       return (
                     <TouchableOpacity
                       key={e.id}
-                      style={[wrapCircle,logoCenter]}
+                      //style={[wrapCircle,logoCenter]}
                       onPress={() => navigate('OtherCatScr',{name_module:e.name,lang:this.state.lang}) }
                       >
                       {/*<Text style={labelNum}>(25)</Text>*/}
@@ -397,7 +396,7 @@ export default class HomeTab extends Component {
 
             </View>
         </View>
-        </ScrollView>
+
 
         <TouchableOpacity
         onPress={()=>{
@@ -431,8 +430,8 @@ export default class HomeTab extends Component {
         </Modal>
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false}
-        style={{width,backgroundColor:'#2e3c52',paddingRight:10,paddingLeft:5}}>
-
+        style={{width,backgroundColor:'#2e3c52',alignSelf:'center',maxHeight:30,position:'absolute',bottom:0}}>
+        <View style={{paddingLeft:5,paddingRight:5,justifyContent:'center',flexDirection:'row'}}>
         <View style={flexRow}>
             <Image style={[imgShare,imgMargin]} source={locationDD} />
             <Text style={colorTextPP}><Text style={colorWhite}>{format_number(listStatus.countContent)}</Text></Text>
@@ -457,7 +456,7 @@ export default class HomeTab extends Component {
             <Image style={[imgShare,imgMargin]} source={userDD} />
             <Text style={colorTextPP}><Text style={colorWhite}>{format_number(listStatus.countUser)}</Text></Text>
         </View>
-
+        </View>
        </ScrollView>
 
       </View>

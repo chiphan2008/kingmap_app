@@ -16,7 +16,7 @@ import getApi from '../api/getApi';
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
 import searchIC from '../../src/icon/ic-gray/ic-search.png';
 import arrowNextIC from '../../src/icon/ic-arrow-next.png';
-import checkIC from '../../src/icon/ic-check.png';
+import checkIC from '../../src/icon/ic-create/ic-check.png';
 const {width,height} = Dimensions.get('window');
 
 export default class GrantRight extends Component {
@@ -44,7 +44,7 @@ export default class GrantRight extends Component {
       arr.append('to_client',itemChoose.id);
       arr.append('content',desWork);
       postApi(`${global.url}${'static/giaoviec'}${'?lang='}${lang.lang}`,arr)
-      .then(e=>{console.log(e);});
+      .then(e=>{});
     }
     this.props.assignFunc();
   }
@@ -75,7 +75,8 @@ export default class GrantRight extends Component {
       Object.entries(itemCTVChoose).forEach(e=>{
         e[1] && arr.append('ctv_id[]',e[1]);
       })
-
+      // console.log(url);
+      // console.log(arr);
       postApi(url,arr).then(e => {
         //console.log(e);
         this.state.listUser=[];
@@ -114,14 +115,14 @@ export default class GrantRight extends Component {
                 <TouchableOpacity onPress={()=>{this.props.closeModal()}}>
                 <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                 </TouchableOpacity>
-                  <Text style={{marginTop:5,color:'#fff'}}>{lang.assign.toUpperCase()}</Text>
+                  <Text style={{marginTop:5,color:'#fff', fontWeight: '600'}}>{lang.assign.toUpperCase()}</Text>
                 <View></View>
             </View>
         </View>
 
         <View style={wrapWhite} >
             <View>
-            <Text numberOfLines={1} style={colorTitle}>{isCeo?`${lang.choose_agency}`:`${lang.choose_coll}`}</Text>
+            <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14}]}>{isCeo?`${lang.choose_agency}`:`${lang.choose_coll}`}</Text>
             </View>
             <View style={{paddingTop:10,marginTop:10,borderColor:'#E0E8ED',borderTopWidth:1}}>
                 <TextInput underlineColorAndroid='transparent'
@@ -151,7 +152,7 @@ export default class GrantRight extends Component {
         </View>
         {itemChoose.avatar!==undefined &&
           <View onLayout={()=>{this.getContent()}}>
-          <Text numberOfLines={1} style={{color:'#6791AF',paddingLeft:15,marginTop:10}}>{isCeo?`${lang.selected_agency}`.toUpperCase():`${lang.selected_coll}`.toUpperCase()}</Text>
+          <Text numberOfLines={1} style={{color:'#6791AF',paddingLeft:15,marginTop:10, fontWeight: '500'}}>{isCeo?`${lang.selected_agency}`.toUpperCase():`${lang.selected_coll}`.toUpperCase()}</Text>
           <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center',marginTop:15}}>
             <View style={{flexDirection:'row',paddingBottom:15}}>
                 <Image source={{uri:checkUrl(itemChoose.avatar) ? itemChoose.avatar : `${global.url_media}${itemChoose.avatar}`}} style={{width:50,height:50,marginRight:10,borderRadius:25}} />
@@ -165,7 +166,7 @@ export default class GrantRight extends Component {
 
          <View style={wrapWhite} >
            <View>
-           <Text numberOfLines={1} style={colorTitle}>{`${lang.choose_area}`}</Text>
+           <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14}]}>{`${lang.choose_area}`}</Text>
            </View>
            <View style={{paddingTop:10,marginTop:10,borderColor:'#E0E8ED',borderTopWidth:1}}></View>
            <TouchableOpacity style={{flexDirection:'row',justifyContent:'space-between'}}
@@ -180,7 +181,7 @@ export default class GrantRight extends Component {
               }
             }
           }}>
-          <Text numberOfLines={1} style={colorTitle}>{`${lang.area}`}</Text>
+          <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14}]}>{`${lang.area}`}</Text>
           <Image source={arrowNextIC} style={{width:18,height:18}}/>
           </TouchableOpacity>
        </View>
@@ -188,7 +189,9 @@ export default class GrantRight extends Component {
          <ChooseArea
          visible={showArea} lang={lang} itemChoose={itemChoose}
          closeModal={()=>this.setState({showArea:false})}
-         chooseDist={(listDist)=>this.props.chooseDist(listDist)}
+         chooseDist={(listDist)=>{
+           console.log('listDist',listDist);
+           this.props.chooseDist(listDist)}}
          />
        }
         {isCeo && <View>
@@ -202,7 +205,7 @@ export default class GrantRight extends Component {
                 this.setState({showAddCTV:!showAddCTV})
               }
             }}>
-               <Text numberOfLines={1} style={colorTitle}>{`${lang.add_coll}`}</Text>
+               <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14}]}>{`${lang.add_coll}`}</Text>
                <Image source={arrowNextIC} style={{width:18,height:18}}/>
            </TouchableOpacity>
              {showAddCTV && <View style={{paddingTop:10,marginTop:10,borderColor:'#E0E8ED',borderTopWidth:1}}>
@@ -231,7 +234,7 @@ export default class GrantRight extends Component {
         <View style={{height:5}}></View>
         <View style={wrapWhite} >
             <View>
-            <Text numberOfLines={1} style={colorTitle}>{`${lang.des_work}`}</Text>
+            <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14}]}>{`${lang.des_work}`}</Text>
             </View>
             <TextInput underlineColorAndroid='transparent'
             maxHeight={65} multiline numberOfLines={4}
@@ -243,7 +246,7 @@ export default class GrantRight extends Component {
 
         <View style={{alignItems:'center',marginTop:10,marginBottom:height/3}}>
           <TouchableOpacity onPress={()=>{this.postContent()}} style={[marTop,btnTransfer]} >
-          <Text style={{color:'#fff'}}>{`${lang.assign}`}</Text>
+          <Text style={{color:'#fff', fontWeight: '500'}}>{`${lang.assign}`}</Text>
           </TouchableOpacity>
         </View>
 
@@ -265,7 +268,7 @@ export default class GrantRight extends Component {
              //   });
              // }}
              ListEmptyComponent={<Text style={{color:'#000',fontSize:16}}>{noDataUser}</Text>}
-             style={{padding:15,marginTop:15,marginBottom:15,}}
+             style={{paddingLeft:15,paddingRight:15,marginTop:15}}
              keyExtractor={(item,index) => index.toString()}
              renderItem={({item,index}) =>(
                <TouchableOpacity onPress={()=>{
@@ -277,7 +280,7 @@ export default class GrantRight extends Component {
                  this.setState(this.state);
                }}
                style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-                   <View style={{flexDirection:'row',paddingBottom:15,width:width-110}}>
+                   <View style={{flexDirection:'row',paddingBottom:13,width:width-110}}>
                        <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:50,marginRight:10,borderRadius:25}} />
                        <View style={{width:width-120}}>
                          <Text numberOfLines={1} style={colorlbl}>{item.full_name}</Text>
@@ -305,7 +308,7 @@ export default class GrantRight extends Component {
       <TouchableWithoutFeedback>
       <View style={{
         width:width-30,
-        maxHeight:listAgency.length>4? 80*4:60*(listAgency.length+1),
+        maxHeight:listAgency.length>4? 69*4:60*(listAgency.length+1),
         backgroundColor:'#fff',
         padding:15,borderRadius:5
       }}>

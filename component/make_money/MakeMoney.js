@@ -280,12 +280,16 @@ export default class MakeMoney extends Component {
     //console.log(arr);
     postApi(`${global.url}${'static/'}${route}${'-ctv'}${'?lang='}${lang.lang}`,arr).then(e => {
       if(e.code===200){
+        Platform.OS==='android' ?
         Alert.alert(lang.notify,e.data,[
           {text: '', style: 'cancel'},
           {text: 'OK', onPress: () => this.searchContent('search-ctv',this.state.kw)}
         ],{ cancelable: false })
+       :
+       Alert.alert(this.state.lang.notify,this.state.lang.update_success,[
+         {text: 'OK', onPress: () => this.searchContent('search-ctv',this.state.kw)}
+       ])
      }
-
     }).catch(err => console.log(err));
   }
 

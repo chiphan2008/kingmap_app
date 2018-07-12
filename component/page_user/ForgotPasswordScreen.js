@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import { Platform, View, Text, Image, Alert,
   StyleSheet, Dimensions, TextInput,Keyboard,ScrollView,
-  TouchableOpacity, } from 'react-native';
+  TouchableOpacity,TouchableWithoutFeedback } from 'react-native';
 //import { CheckBox } from 'react-native-elements';
 import bgMap from '../../src/icon/bg-map.png';
 import lang_en from '../lang/en/user/language';
@@ -72,6 +72,7 @@ export default class ForgotPasswordScreen extends Component {
     return (
       <View style={container}>
       <Image source={bgMap} style={bgImg} />
+      <TouchableWithoutFeedback onPress={()=>{Keyboard.dismiss()}}>
       <ScrollView>
         <View style={contentWrap}>
               <TouchableOpacity style={{position:'absolute',top:15,right:15,zIndex:9}}
@@ -104,6 +105,7 @@ export default class ForgotPasswordScreen extends Component {
 
         </View>
         </ScrollView>
+        </TouchableWithoutFeedback>
       </View>
     );
   }

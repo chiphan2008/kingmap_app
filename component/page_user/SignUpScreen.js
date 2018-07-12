@@ -1,7 +1,11 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import { Platform, View, Text, Image, Button, StyleSheet, Dimensions, TextInput,TouchableOpacity,ScrollView, Alert } from 'react-native';
+import {
+  Platform, View, Text, Image, Button, StyleSheet, Dimensions,
+  TextInput,TouchableOpacity,ScrollView, Alert,Keyboard,
+  TouchableWithoutFeedback
+} from 'react-native';
 //import { CheckBox } from 'react-native-elements';
 import lang_en from '../lang/en/user/language';
 import lang_vn from '../lang/vn/user/language';
@@ -175,7 +179,7 @@ export default class SignUpScreen extends Component {
       <View style={container}>
 
       <Image source={bgMap} style={bgImg} />
-
+      <TouchableWithoutFeedback onPress={()=>{Keyboard.dismiss()}}>
       <ScrollView>
         <View style={contentWrap}>
               <TouchableOpacity style={{position:'absolute',top:15,right:15,zIndex:9}}
@@ -261,7 +265,7 @@ export default class SignUpScreen extends Component {
 
         </View>
         </ScrollView>
-
+        </TouchableWithoutFeedback>
       </View>
 
     );

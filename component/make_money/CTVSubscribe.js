@@ -215,7 +215,7 @@ export default class AddImageMore extends Component {
   }
   render() {
     const {
-      container,headCatStyle,headContent,titleCreate,wrapInputCreImg,
+      wrapper,headCatStyle,headContent,titleCreate,wrapInputCreImg,
       wrapItems,widthLable,colorlbl,widthContentItem,show,hide,colorErr,
       popoverLoc,padCreate,overLayout,shadown,imgShare,btnYInfo,btnInfo,imgCamera,
       wrapSelect,posDayCTV,posMonthCTV,posYearCTV,widthYear,wrapBtnInfo,widthDay,colourTitle
@@ -226,10 +226,10 @@ export default class AddImageMore extends Component {
     showDay,showMonth,showYear,dDay,dMonth,dYear,showCMND,
     cmnd_image_back,cmnd_image_front} = this.state;
     return (
-        <ScrollView>
+        <View>
         <TouchableWithoutFeedback onPress={()=>this.setState({showDay:false,showMonth:false,showYear:false,})}>
 
-        <View style={container}>
+        <View style={wrapper}>
           <View style={headCatStyle}>
               <View style={headContent}>
                   <TouchableOpacity onPress={()=>goBack()}>
@@ -240,6 +240,7 @@ export default class AddImageMore extends Component {
               </View>
           </View>
 
+          <ScrollView>
           <View style={wrapItems}>
             <View style={widthLable}>
               <Text style={colorlbl}>{this.state.lang.name} </Text>
@@ -441,6 +442,8 @@ export default class AddImageMore extends Component {
            })}}>
              <Text style={{color:'#fff'}}>{this.state.lang.register}</Text>
            </TouchableOpacity>
+          </ScrollView>
+
 
         </View>
         </TouchableWithoutFeedback>
@@ -513,7 +516,7 @@ export default class AddImageMore extends Component {
           </View>}
         </Modal>}
         <View style={{height:15}}></View>
-      </ScrollView>
+      </View>
 
     );
   }

@@ -3,8 +3,8 @@
 import React, { Component } from 'react';
 import {
   Platform, View, Text, Image, Button,TouchableOpacity,StyleSheet,
-  Dimensions, TextInput, ScrollView,Alert,
-  DeviceEventEmitter
+  Dimensions, TextInput, ScrollView,Alert,Keyboard,
+  DeviceEventEmitter,TouchableWithoutFeedback
  } from 'react-native';
 //import { CheckBox } from 'react-native-elements';
 //import RoundCheckbox from 'rn-round-checkbox';
@@ -185,6 +185,7 @@ export default class LoginScreen extends Component {
     return (
       <View style={container}>
         <Image source={bgMap} style={bgImg} />
+        <TouchableWithoutFeedback onPress={()=>{Keyboard.dismiss()}}>
         <ScrollView>
         <TouchableOpacity style={{position:'absolute',top:Platform.OS==='ios'?25:15,right:15,zIndex:9}}
         onPress={()=>goBack()}>
@@ -242,6 +243,7 @@ export default class LoginScreen extends Component {
         </View>
         <View style={{height:15}}></View>
         </ScrollView>
+        </TouchableWithoutFeedback>
       </View>
     );
   }

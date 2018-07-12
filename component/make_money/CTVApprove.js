@@ -46,15 +46,14 @@ export default class CTVApprove extends Component {
 
   render() {
     const {
-      container,headCatStyle,headContent,titleCreate,
+      wrapper,headCatStyle,headContent,titleCreate,
       imgLogoTop,colorlbl,wrapItems,titleCoin,colorTitle
     } = styles;
     const {goBack} = this.props.navigation;
     const {el,lang} = this.props.navigation.state.params;
     const {showImg,index} = this.state;
     return (
-      <ScrollView>
-        <View style={container}>
+      <View style={wrapper}>
           <View style={headCatStyle}>
               <View style={headContent}>
               <TouchableOpacity onPress={()=>goBack()}>
@@ -64,8 +63,8 @@ export default class CTVApprove extends Component {
               <View></View>
               </View>
           </View>
-
-            <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center',paddingTop:15}}>
+          <ScrollView>
+          <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center',paddingTop:15}}>
               <View style={{flexDirection:'row',paddingBottom:15}}>
                   <Image source={{uri:checkUrl(el.avatar) ? el.avatar : `${global.url_media}${el.avatar}`}} style={{width:50,height:50,marginRight:10,borderRadius:25}} />
                   <View style={{width:width-90}}>
@@ -135,10 +134,8 @@ export default class CTVApprove extends Component {
              index={index}
              closeModal={()=>this.setState({showImg:false,index:0})}
              />
-
-
+          </ScrollView>
         </View>
-        </ScrollView>
     );
   }
 }

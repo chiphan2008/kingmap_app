@@ -58,7 +58,7 @@ export default class CTVDetail extends Component {
   }
   render() {
     const {
-      container,headCatStyle,headContent,titleCreate,
+      wrapper,headCatStyle,headContent,titleCreate,
       imgLogoTop,colorlbl,wrapWhite,titleCoin,colorTitle,
       popoverLoc,overLayout,shadown,listOverService,imgShare
     } = styles;
@@ -66,8 +66,8 @@ export default class CTVDetail extends Component {
     const {goBack} = this.props.navigation;
     const {avatar,name,address,lang,ctv_id,content_id} = this.props.navigation.state.params;
     return (
-      <ScrollView>
-        <View style={container}>
+      <View>
+        <View style={wrapper}>
           <View style={headCatStyle}>
               <View style={headContent}>
               <TouchableOpacity onPress={()=>goBack()}>
@@ -78,6 +78,7 @@ export default class CTVDetail extends Component {
               </View>
           </View>
 
+            <ScrollView>
             <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center',paddingTop:15}}>
               <View style={{flexDirection:'row',paddingBottom:15}}>
                   <Image source={{uri:avatar}} style={{width:50,height:50,marginRight:10,borderRadius:25}} />
@@ -127,6 +128,7 @@ export default class CTVDetail extends Component {
                        </View>
                       )} />
                  </View>}
+            </ScrollView>
 
         </View>
 
@@ -168,7 +170,7 @@ export default class CTVDetail extends Component {
         </View>
       </Modal>}
 
-        </ScrollView>
+        </View>
     );
   }
 }

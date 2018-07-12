@@ -109,7 +109,7 @@ export default class GrantRight extends Component {
     const { lang,isCeo,listAgency,itemChoose,noData } = this.props;
     return (
       <View style={wrapSetting}>
-      <ScrollView>
+      <View>
         <View style={headCatStyle}>
             <View style={headContent}>
                 <TouchableOpacity onPress={()=>{this.props.closeModal()}}>
@@ -120,6 +120,7 @@ export default class GrantRight extends Component {
             </View>
         </View>
 
+        <ScrollView>
         <View style={wrapWhite} >
             <View>
             <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14}]}>{isCeo?`${lang.choose_agency}`:`${lang.choose_coll}`}</Text>
@@ -245,12 +246,23 @@ export default class GrantRight extends Component {
        </View>
 
         <View style={{alignItems:'center',marginTop:10,marginBottom:height/3}}>
-          <TouchableOpacity onPress={()=>{this.postContent()}} style={[marTop,btnTransfer]} >
+          <TouchableOpacity onPress={()=>{
+            Alert.alert(
+              this.props.lang.notify,
+              'Bạn có chắc muốn phân quyền?',
+              [
+                {text: 'Cancel', onPress: () => {}, style: 'cancel'},
+                {text: 'OK', onPress: () => {this.postContent()}},
+              ],
+              { cancelable: false }
+            )
+            }} style={[marTop,btnTransfer]} >
           <Text style={{color:'#fff', fontWeight: '500'}}>{`${lang.assign}`}</Text>
           </TouchableOpacity>
         </View>
+        </ScrollView>
 
-      </ScrollView>
+      </View>
 
       {(listUser.length>0 || noDataUser!=='') &&
         <View style={{position:'absolute'}}>

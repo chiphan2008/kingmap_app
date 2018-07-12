@@ -387,12 +387,12 @@ export default class MakeMoney extends Component {
             {this.state.isPend===false && isNormal &&
             <View style={{justifyContent:'center',alignItems:'center',padding:15,height:height-95}}>
             <View>
-              <Text numberOfLines={2} style={{textAlign:'center',fontSize:20,fontWeight:'500',color:'#000'}}>{lang.title_ctv.toUpperCase()}</Text>
+              <Text numberOfLines={2} style={{textAlign:'center',fontSize:20,fontWeight:'bold',color:'#000'}}>{lang.title_ctv.toUpperCase()}</Text>
               <Text style={{textAlign:'center',fontSize:14,marginTop:5}}>{lang.des_ctv}</Text>
             </View>
             <TouchableOpacity style={{marginTop:15,backgroundColor:'#d0021b',borderRadius:3,width:width-30,paddingTop:10,paddingBottom:10,alignItems:'center'}}
             onPress={()=>navigate('CTVSubscribeScr',{user_profile,titleScr:lang.subscribe_ctv,lang:lang.lang})}>
-              <Text style={{color:'#fff', fontSize: 12, fontWeight: '500'}}>{lang.subscribe_ctv}</Text>
+              <Text style={{color:'#fff', fontSize: 12, fontWeight: 'bold'}}>{lang.subscribe_ctv}</Text>
             </TouchableOpacity>
             </View>}
             {this.state.isPend && isNormal &&
@@ -922,7 +922,7 @@ const styles = StyleSheet.create({
     color:'#d0021b',
   },
   contentKcoin:{flexDirection:'row',justifyContent:'space-between',width:width-80,alignItems:'center'},
-  colorTitle:{color:'#2F353F',fontSize:16,fontWeight:'500',},
+  colorTitle:{color:'#2F353F',fontSize:16,fontWeight:'bold',},
   imgContent:{width:38,height:38,marginRight:10},
   contentWrap : { flex : 1,alignItems: 'center',justifyContent: 'flex-start'},
   headCatStyle : {
@@ -942,7 +942,7 @@ const styles = StyleSheet.create({
   headContent : {
       width: width - 40,justifyContent: 'space-between',flexDirection: 'row',
   },
-  titleCreate:{color:'white',fontSize:18,paddingTop:5,fontWeight:'500'},
+  titleCreate:{color:'white',fontSize:18,paddingTop:5,fontWeight:'bold'},
   selectBoxCity : {
     marginBottom: 0,
   },

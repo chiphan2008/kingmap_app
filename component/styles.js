@@ -467,7 +467,7 @@ module.exports = {
   txtAddrOver:{color:'#6587A8',fontSize:14,overflow:'hidden',},
   txt:{color:'#6587A8',fontSize:16},
   txtNextItem:{color:'#6587A8',fontSize:17},
-  titleHead:{color:'#fff',fontSize:24,fontWeight:'500'},
+  titleHead:{color:'#fff',fontSize:24,fontWeight:'bold'},
   show : { display: 'flex',},
   hide : { display: 'none'},
   //hideMarker : { display: 'none',width:0,height:0},

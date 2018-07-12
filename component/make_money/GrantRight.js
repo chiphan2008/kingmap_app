@@ -123,7 +123,7 @@ export default class GrantRight extends Component {
         <ScrollView>
         <View style={wrapWhite} >
             <View>
-            <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14}]}>{isCeo?`${lang.choose_agency}`:`${lang.choose_coll}`}</Text>
+            <Text numberOfLines={1} style={[colorTitle, {fontWeight: 'bold', fontSize:14}]}>{isCeo?`${lang.choose_agency}`:`${lang.choose_coll}`}</Text>
             </View>
             <View style={{paddingTop:10,marginTop:10,borderColor:'#E0E8ED',borderTopWidth:1}}>
                 <TextInput underlineColorAndroid='transparent'
@@ -153,7 +153,7 @@ export default class GrantRight extends Component {
         </View>
         {itemChoose.avatar!==undefined &&
           <View onLayout={()=>{this.getContent()}}>
-          <Text numberOfLines={1} style={{color:'#6791AF',paddingLeft:15,marginTop:10, fontWeight: '500'}}>{isCeo?`${lang.selected_agency}`.toUpperCase():`${lang.selected_coll}`.toUpperCase()}</Text>
+          <Text numberOfLines={1} style={{color:'#6791AF',paddingLeft:15,marginTop:10, fontWeight: 'bold'}}>{isCeo?`${lang.selected_agency}`.toUpperCase():`${lang.selected_coll}`.toUpperCase()}</Text>
           <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center',marginTop:15}}>
             <View style={{flexDirection:'row',paddingBottom:15}}>
                 <Image source={{uri:checkUrl(itemChoose.avatar) ? itemChoose.avatar : `${global.url_media}${itemChoose.avatar}`}} style={{width:50,height:50,marginRight:10,borderRadius:25}} />
@@ -167,7 +167,7 @@ export default class GrantRight extends Component {
 
          <View style={wrapWhite} >
            <View>
-           <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14}]}>{`${lang.choose_area}`}</Text>
+           <Text numberOfLines={1} style={[colorTitle, {fontWeight: 'bold', fontSize:14}]}>{`${lang.choose_area}`}</Text>
            </View>
            <View style={{paddingTop:10,marginTop:10,borderColor:'#E0E8ED',borderTopWidth:1}}></View>
            <TouchableOpacity style={{flexDirection:'row',justifyContent:'space-between'}}
@@ -182,7 +182,7 @@ export default class GrantRight extends Component {
               }
             }
           }}>
-          <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14}]}>{`${lang.area}`}</Text>
+          <Text numberOfLines={1} style={[colorTitle, {fontWeight: 'bold', fontSize:14}]}>{`${lang.area}`}</Text>
           <Image source={arrowNextIC} style={{width:18,height:18}}/>
           </TouchableOpacity>
        </View>
@@ -206,7 +206,7 @@ export default class GrantRight extends Component {
                 this.setState({showAddCTV:!showAddCTV})
               }
             }}>
-               <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14}]}>{`${lang.add_coll}`}</Text>
+               <Text numberOfLines={1} style={[colorTitle, {fontWeight: 'bold', fontSize:14}]}>{`${lang.add_coll}`}</Text>
                <Image source={arrowNextIC} style={{width:18,height:18}}/>
            </TouchableOpacity>
              {showAddCTV && <View style={{paddingTop:10,marginTop:10,borderColor:'#E0E8ED',borderTopWidth:1}}>
@@ -235,7 +235,7 @@ export default class GrantRight extends Component {
         <View style={{height:5}}></View>
         <View style={wrapWhite} >
             <View>
-            <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14}]}>{`${lang.des_work}`}</Text>
+            <Text numberOfLines={1} style={[colorTitle, {fontWeight: 'bold', fontSize:14}]}>{`${lang.des_work}`}</Text>
             </View>
             <TextInput underlineColorAndroid='transparent'
             maxHeight={65} multiline numberOfLines={4}
@@ -257,7 +257,7 @@ export default class GrantRight extends Component {
               { cancelable: false }
             )
             }} style={[marTop,btnTransfer]} >
-          <Text style={{color:'#fff', fontWeight: '500'}}>{`${lang.assign}`}</Text>
+          <Text style={{color:'#fff', fontWeight: 'bold'}}>{`${lang.assign}`}</Text>
           </TouchableOpacity>
         </View>
         </ScrollView>

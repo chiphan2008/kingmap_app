@@ -153,7 +153,7 @@ export default class CategoryScreen extends Component {
        if(e.isLogin) this.refresh();
      })
      DeviceEventEmitter.addListener('detailBack', ()=>{
-       console.log('detailBack');
+       //console.log('detailBack');
        this.setState({pullToRefresh:true});
      })
    }
@@ -188,6 +188,7 @@ export default class CategoryScreen extends Component {
   }
 
   render() {
+    //console.log('listcat');
     //console.log('pullToRefresh',this.state.pullToRefresh);
     const { keyword,lang,idDist,id_sub,id_serv,isRefresh,listData,scrollToTop,isLogin } = this.state;
     const { goBack,navigate,state } = this.props.navigation;

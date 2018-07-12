@@ -36,7 +36,7 @@ export default class CTVDetail extends Component {
     const {daily_id,ctv_id,content_id,lang} = this.props.navigation.state.params;
     const userId = daily_id!==''?daily_id:ctv_id;
     getApi(`${global.url}${'static/giaoviec/'}${userId}${'?lang='}${lang.lang}`).then(arr => {
-        this.setState({ content:arr.data[0].content===null?'':arr.data[0].content });
+        arr.data!==null && this.setState({ content:arr.data[0].content===null?'':arr.data[0].content });
     }).catch(err => console.log(err));
   }
   getStatic(){
@@ -53,6 +53,7 @@ export default class CTVDetail extends Component {
 
     postApi(`${global.url}${'static'}${'?lang='}${lang.lang}`,arr)
     .then(arr => {
+      //console.log(arr);
         this.setState({ listData:arr.data });
     }).catch(err => console.log(err));
   }
@@ -65,6 +66,7 @@ export default class CTVDetail extends Component {
     const {listData,showArea,content} = this.state;
     const {goBack} = this.props.navigation;
     const {avatar,name,address,lang,ctv_id,content_id} = this.props.navigation.state.params;
+    console.log('content_id',content_id);
     return (
       <View>
         <View style={wrapper}>
@@ -128,22 +130,23 @@ export default class CTVDetail extends Component {
                        </View>
                       )} />
                  </View>}
+
+                 {content_id===undefined &&
+                   <View>
+                   <View style={{height:5}}></View>
+                   <View style={wrapWhite} >
+                       <View>
+                       <Text numberOfLines={1} style={{color:'#6791AF', fontWeight: 'bold'}}>{`${lang.assign_work}`}:</Text>
+                       <Text style={{color:'#2F353F',fontSize:16,lineHeight:22}}>{content}</Text>
+                       </View>
+                  </View>
+                 </View>}
+
+                         <View style={{height:15}}></View>
+
             </ScrollView>
 
         </View>
-
-        {content_id===undefined &&
-          <View>
-          <View style={{height:5}}></View>
-          <View style={wrapWhite} >
-              <View>
-              <Text numberOfLines={1} style={{color:'#6791AF', fontWeight: '500'}}>{`${lang.assign_work}`}:</Text>
-              <Text style={{color:'#2F353F',fontSize:16,lineHeight:22}}>{content}</Text>
-              </View>
-         </View>
-        </View>}
-
-        <View style={{height:15}}></View>
 
         {showArea &&
         <Modal onRequestClose={() => null} transparent visible={showArea} >

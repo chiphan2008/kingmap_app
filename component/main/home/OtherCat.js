@@ -94,7 +94,7 @@ export default class OtherCat extends Component {
                  <Text style={{textAlign:'center'}} numberOfLines={2}>{item.name}</Text>
              </TouchableOpacity>
            )}
-           style={{marginBottom:110}}
+           style={{marginBottom:Platform.OS!=='ios'?110:75}}
            keyExtractor={item => item.id}
          />
          </View>

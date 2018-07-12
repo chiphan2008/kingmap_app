@@ -155,6 +155,7 @@ export default class CategoryScreen extends Component {
   };
 
   render() {
+    //console.log('catsrc');
     //console.log('render',this.state.markers.length);
     const {navigate,goBack} = this.props.navigation;
     const { idCat, name_cat, sub_cat, serviceItem, lang } = this.props.navigation.state.params;

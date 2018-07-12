@@ -224,7 +224,7 @@ module.exports = {
     width:240,
     height:240,
     alignItems:'center',
-    justifyContent:'center',
+    // justifyContent:'center',
     //borderWidth:1
   },
   logoCenter:{top:20},

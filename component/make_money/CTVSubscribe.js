@@ -461,7 +461,7 @@ export default class AddImageMore extends Component {
         </Modal>
 
         <Modal onRequestClose={() => null} transparent visible={this.state.showCMND}>
-        <ScrollView style={container}>
+        <ScrollView style={wrapper}>
           <View style={headCatStyle}>
               <View style={headContent}>
                   <Text style={[titleCreate, {width: width * 0.33}]}>   </Text>

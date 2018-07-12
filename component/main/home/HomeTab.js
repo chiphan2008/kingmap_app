@@ -366,9 +366,8 @@ export default class HomeTab extends Component {
                   case 'dia_diem':
                       i=1;
                       return (
-                    <TouchableOpacity
-                      key={e.id}
-                      //style={[wrapCircle,logoCenter]}
+                    <TouchableOpacity key={e.id}
+                      style={{top:distance*0.6}}
                       onPress={() => navigate('OtherCatScr',{name_module:e.name,lang:this.state.lang}) }
                       >
                       {/*<Text style={labelNum}>(25)</Text>*/}

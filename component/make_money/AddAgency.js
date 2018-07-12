@@ -109,7 +109,7 @@ export default class AddAgency extends Component {
 
         <View style={wrapWhite} >
             <View>
-            <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14}]}>{`${lang.select_user}`}</Text>
+            <Text numberOfLines={1} style={[colorTitle, {fontWeight: 'bold', fontSize:14}]}>{`${lang.select_user}`}</Text>
             </View>
             <View style={{paddingTop:10,marginTop:10,borderColor:'#E0E8ED',borderTopWidth:1}}>
                 <TextInput underlineColorAndroid='transparent'
@@ -135,7 +135,7 @@ export default class AddAgency extends Component {
         </View>
         {itemCTVChoose.avatar!==undefined &&
           <View>
-          <Text numberOfLines={1} style={{color:'#6791AF',paddingLeft:15,marginTop:10, fontWeight: '500'}}>
+          <Text numberOfLines={1} style={{color:'#6791AF',paddingLeft:15,marginTop:10, fontWeight: 'bold'}}>
           {lang.selected_user.toUpperCase()}
           </Text>
           <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center',marginTop:15}}>
@@ -153,7 +153,7 @@ export default class AddAgency extends Component {
 
         <View style={{alignItems:'center',marginTop:10,marginBottom:height/3}}>
           <TouchableOpacity onPress={()=>{this.postContent()}} style={[marTop,btnTransfer]} >
-          <Text style={{color:'#fff', fontWeight: '500'}}>{`${lang.add_agency}`}</Text>
+          <Text style={{color:'#fff', fontWeight: 'bold',fontSize:18}}>{`${lang.add_agency}`}</Text>
           </TouchableOpacity>
         </View>
 

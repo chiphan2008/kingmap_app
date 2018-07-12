@@ -470,8 +470,8 @@ export default class SearchScreen extends Component {
               //this.mapRef.fitToCoordinates(markers, { edgePadding: { top: 50, right: 50, bottom: 50, left: 50 }, animated: false })
               style={{width,height,zIndex:-1}}
               region={curLocation}
-              onPress={this._onPressMap}
-              onRegionChangeComplete={this._onRegionChangeComplete}
+              onPress={()=>this._onPressMap}
+              onRegionChangeComplete={()=>this._onRegionChangeComplete}
               customMapStyle={global.style_map}
               showsPointsOfInterest={false}
 
@@ -482,6 +482,9 @@ export default class SearchScreen extends Component {
 
               <MapView.Marker
                 key={marker.id}
+                onLayout={()=>{
+                  marker.id!==undefined && this.setState({ callout: Object.assign({},{[marker.id]:false}) });
+                }}
                 coordinate={{
                   latitude: Number(marker.latitude),
                   longitude: Number(marker.longitude),
@@ -494,23 +497,27 @@ export default class SearchScreen extends Component {
                 //calloutOpen={false}
                 //ref={ref => { this.markerRef = ref }}
                 onPress={()=>{
-                  if(callout[marker.id] || callout[marker.id]===undefined){
-                    this.setState({ callout: {[marker.id]:false} });
+
+                  if(callout[marker.id]){
+                    console.log('onPress-t',callout[marker.id]);
+                    this.setState({ callout: Object.assign({},{[marker.id]:false}) });
                   }else {
-                    this.setState({ callout: {[marker.id]:true} })
+                    console.log('onPress-f',callout[marker.id]);
+                    this.setState({ callout: Object.assign({},{[marker.id]:true}) })
                   }
                 }} >
               {Platform.OS==='ios' &&
-              <Image
-                //resizeMode="contain"
-                source={{uri:`${marker.marker}`}}
-                style={{width:48,height:54,resizeMode:"cover"}} />}
+                <Image source={{uri:`${marker.marker}`}} style={{width:48,height:54,resizeMode:"cover"}} />
+              }
 
-                <View style={callout[marker.id] || callout[marker.id]===undefined ? show : hide}>
-                  <MapView.Callout tooltip={callout[marker.id] || callout[marker.id]==undefined ? false : true}
+                <View style={callout[marker.id] ? show : hide}>
+
+                  <MapView.Callout tooltip={callout[marker.id] ? false : true}
                   onPress={()=>{
-                    if(!callout[marker.id])
-                    navigate('DetailScr',{idContent:marker.id,lat:marker.latitude,lng:marker.longitude,curLoc,lang:lang.lang});
+                    !callout[marker.id] && navigate('DetailScr',{
+                      idContent:marker.id,lat:marker.latitude,lng:marker.longitude,
+                      curLoc,lang:lang.lang
+                    });
                   }}>
                     <TouchableOpacity >
                     <View style={{height: 45,width: 300,alignItems:'center',borderRadius:3}}>
@@ -583,7 +590,7 @@ export default class SearchScreen extends Component {
           curLocation={curLocation}
           circleLoc={circleLoc}
           curLoc={curLoc}
-          onRegionChangeComplete={ this._onRegionChangeComplete}
+          onRegionChangeComplete={()=>this._onRegionChangeComplete}
           lang={lang}
           navigation={this.props.navigation}
           data={markers}

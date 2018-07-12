@@ -115,7 +115,7 @@ export default class GrantRight extends Component {
                 <TouchableOpacity onPress={()=>{this.props.closeModal()}}>
                 <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                 </TouchableOpacity>
-                  <Text style={{marginTop:5,color:'#fff', fontWeight: '600'}}>{lang.assign.toUpperCase()}</Text>
+                  <Text style={{marginTop:5,color:'#fff', fontWeight: 'bold'}}>{lang.assign.toUpperCase()}</Text>
                 <View></View>
             </View>
         </View>
@@ -257,7 +257,7 @@ export default class GrantRight extends Component {
               { cancelable: false }
             )
             }} style={[marTop,btnTransfer]} >
-          <Text style={{color:'#fff', fontWeight: 'bold'}}>{`${lang.assign}`}</Text>
+          <Text style={{color:'#fff', fontWeight: 'bold',fontSize:18}}>{`${lang.assign}`}</Text>
           </TouchableOpacity>
         </View>
         </ScrollView>

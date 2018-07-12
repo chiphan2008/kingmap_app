@@ -35,7 +35,6 @@ export default class MapFullScreen extends Component {
       <Modal visible={showFullScreen} transparent onRequestClose={() => null}>
       <View>
       {curLocation.latitude!==undefined ?
-
       <MapView
           provider={PROVIDER_GOOGLE}
           style={{width,height}}

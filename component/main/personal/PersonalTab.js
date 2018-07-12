@@ -77,7 +77,7 @@ export default class PersonalTab extends Component {
     .then(arrData => {
         console.log(arrData);
         timeoutUser = setTimeout(()=>{
-          //this.setState({ countEntry: arrData.data });
+          this.setState({ countEntry: arrData.data });
         },2000)
     })
     .catch(err => console.log(err));
@@ -176,7 +176,7 @@ export default class PersonalTab extends Component {
           </TouchableOpacity>
         </View>
 
-        <View style={[wrapContent, isLogin ? hide : show]}>
+        <View style={[wrapContent, isLogin ? hide : show, {width: width}]}>
           <Text style={{color:'#B8B9BD'}}>{lang.request_login}</Text>
           <TouchableOpacity onPress={()=>navigate('LoginScr')} style={[btnPress,marTop]}>
           <Text style={colorNext}> {lang._login}</Text>

@@ -394,7 +394,11 @@ export default class FormCreate extends Component {
       upDDLoc,upDDSubCat,selectBox,optionUnitStyle,clockTime,centerVer,pad10,txtNextItem,
     } = styles;
 
-    const {idContent,showUpdateMore,showImgSpace,showProduct,showImgMenu,showVideo,sub_cat,nameCat, serv_items,} = this.state;
+    const {
+      idContent,showUpdateMore,showImgSpace,showProduct,showImgMenu,
+      showVideo,sub_cat,nameCat, serv_items, showService,hasService,
+
+    } = this.state;
 
     return (
       <View style={container}>
@@ -430,7 +434,7 @@ export default class FormCreate extends Component {
 
         </TouchableOpacity>
 
-        <TouchableOpacity style={listCreate} onPress={()=>this.setState({showService:!this.state.showService})}>
+        <TouchableOpacity style={listCreate} onPress={()=>this.setState({showService:!showService})}>
           <View style={{flexDirection:'row'}}>
             <View style={widthLblCre}>
             <Image source={addonIC} style={imgInfo} />
@@ -439,7 +443,7 @@ export default class FormCreate extends Component {
             <Text style={colorlbl}>{this.state.lang.utilities}</Text></View>
           </View>
           <View style={{flexDirection:'row',alignItems:'center'}}>
-            <Image source={selectedIC} style={[imgShare,this.state.hasService>0 ? show : hide]}/>
+            <Image source={selectedIC} style={[imgShare,hasService>0 ? show : hide]}/>
             <Image source={arrowNextIC} style={imgShare}/>
           </View>
         </TouchableOpacity>
@@ -465,7 +469,7 @@ export default class FormCreate extends Component {
             value={this.state.txtName}
            />
           <View style={{width:15}}>
-          <TouchableOpacity style={this.state.txtName!=='' ? show : hide} onPress={()=>{this.setState({txtName:''})}}>
+          <TouchableOpacity style={this.state.txtName!=='' && this.state.txtName!==null ? show : hide} onPress={()=>{this.setState({txtName:''})}}>
           <Image source={closeIC} style={imgShare} />
           </TouchableOpacity>
           </View>
@@ -488,7 +492,7 @@ export default class FormCreate extends Component {
           onSubmitEditing={(event) => {  this.refs.Des.focus(); clearTimeout(timeoutLatLng);this.getLatLng();  }}
           placeholder={`${this.state.lang.address}`} style={wrapInputCreImg} />
           <View style={{width:15}}>
-          <TouchableOpacity style={this.state.txtAddress!=='' ? show : hide}
+          <TouchableOpacity style={this.state.txtAddress!=='' && this.state.txtAddress!==null ? show : hide}
           onPress={()=>{this.setState({txtAddress:'',lat:'Lat 0.0',lng:'Lng 0.0',})}}>
           <Image source={closeIC} style={imgShare} />
           </TouchableOpacity>
@@ -527,7 +531,7 @@ export default class FormCreate extends Component {
           onSubmitEditing={(event) => {  this.refs.UserWifi.focus();  }}
           placeholder={this.state.lang.description} style={wrapInputCreImg} />
           <View style={{width:15}}>
-          <TouchableOpacity style={this.state.txtDes!=='' ? show : hide} onPress={()=>{this.setState({txtDes:''})}}>
+          <TouchableOpacity style={this.state.txtDes!=='' && this.state.txtDes!==null ? show : hide} onPress={()=>{this.setState({txtDes:''})}}>
           <Image source={closeIC} style={imgShare} />
           </TouchableOpacity>
           </View>
@@ -569,7 +573,7 @@ export default class FormCreate extends Component {
             value={this.state.txtUserWifi}
            />
           <View style={{width:15}}>
-          <TouchableOpacity style={this.state.txtUserWifi!=='' ? show : hide} onPress={()=>{this.setState({txtUserWifi:''})}}>
+          <TouchableOpacity style={this.state.txtUserWifi!=='' && this.state.txtUserWifi!==null ? show : hide} onPress={()=>{this.setState({txtUserWifi:''})}}>
           <Image source={closeIC} style={imgShare} />
           </TouchableOpacity>
           </View>
@@ -587,7 +591,7 @@ export default class FormCreate extends Component {
             value={this.state.txtPassWifi}
            />
           <View style={{width:15}}>
-          <TouchableOpacity style={this.state.txtPassWifi!=='' ? show : hide} onPress={()=>{this.setState({txtPassWifi:''})}}>
+          <TouchableOpacity style={this.state.txtPassWifi!=='' && this.state.txtUserWifi!==null ? show : hide} onPress={()=>{this.setState({txtPassWifi:''})}}>
           <Image source={closeIC} style={imgShare} />
           </TouchableOpacity>
           </View>
@@ -603,10 +607,10 @@ export default class FormCreate extends Component {
             placeholder={this.state.lang.phone} style={wrapInputCreImg}
             onChangeText={(txtPhone) => this.setState({txtPhone})}
             value={this.state.txtPhone}
-            maxLength={11}
+            maxLength={20}
            />
           <View style={{width:15}}>
-          <TouchableOpacity style={this.state.txtPhone!=='' ? show : hide} onPress={()=>{this.setState({txtPhone:''})}}>
+          <TouchableOpacity style={this.state.txtPhone!=='' && this.state.txtPhone!==null ? show : hide} onPress={()=>{this.setState({txtPhone:''})}}>
           <Image source={closeIC} style={imgShare} />
           </TouchableOpacity>
           </View>
@@ -624,7 +628,7 @@ export default class FormCreate extends Component {
             value={this.state.txtEmail}
            />
           <View style={{width:15}}>
-          <TouchableOpacity style={this.state.txtEmail!=='' ? show : hide} onPress={()=>{this.setState({txtEmail:''})}}>
+          <TouchableOpacity style={this.state.txtEmail!=='' && this.state.txtEmail!==null ? show : hide} onPress={()=>{this.setState({txtEmail:''})}}>
           <Image source={closeIC} style={imgShare} />
           </TouchableOpacity>
           </View>
@@ -663,7 +667,7 @@ export default class FormCreate extends Component {
           placeholder={`${this.state.lang.keyword}`} style={wrapInputCreImg} />
 
           <View style={{width:15}}>
-            <TouchableOpacity style={this.state.txtKW!=='' ? show : hide} onPress={()=>{this.setState({txtKW:''})}}>
+            <TouchableOpacity style={this.state.txtKW!=='' && this.state.txtKW!==null ? show : hide} onPress={()=>{this.setState({txtKW:''})}}>
             <Image source={closeIC} style={imgShare} />
             </TouchableOpacity>
           </View>

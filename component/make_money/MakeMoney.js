@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image,
   TextInput, TouchableOpacity,Modal,Alert,
   ScrollView,FlatList,TouchableWithoutFeedback,
-  DeviceEventEmitter
+  DeviceEventEmitter, KeyboardAvoidingView
 } from 'react-native';
 import Moment from 'moment';
 const {height, width} = Dimensions.get('window');
@@ -16,6 +16,7 @@ import global from '../global';
 import checkLogin from '../api/checkLogin';
 import loginServer from '../api/loginServer';
 import GrantRight from './GrantRight';
+import AddAgency from './AddAgency';
 
 import logoTop from '../../src/icon/ic-white/Logo-ngang.png';
 import searchIC from '../../src/icon/ic-gray/ic-search.png';
@@ -53,6 +54,7 @@ export default class MakeMoney extends Component {
       showLocPop:false,
       showCTV:false,
       showCTVPop:false,
+      showTDLPop:false,
       showArea:false,
       showListLocPend:false,
       showListCTVPend:false,
@@ -359,7 +361,7 @@ export default class MakeMoney extends Component {
     } = styles;
 
     const {
-      itemChoose,showCoin,showLoc,showLocPop,showCTV,showCTVPop,showArea,listData,index_ctv_pending,noData,
+      itemChoose,showCoin,showLoc,showLocPop,showCTV,showCTVPop,showTDLPop,showArea,listData,index_ctv_pending,noData,
       listAgency,listLoc,isCeo,isAgency,isNormal,isCTV,assign,listDistrict,labelArea,ListPend,suggestPend,
       ListLocPend,suggestLoc,showListLocPend,showListCTVPend,loadMore,page,static_notes,des_mm
     } = this.state;
@@ -367,9 +369,8 @@ export default class MakeMoney extends Component {
     //console.log(user_profile);
     return (
       <View>
-      <ScrollView style={container}>
       {isNormal &&
-        <View>
+        <View style={container}>
           <View style={headCatStyle}>
               <View style={headContent}>
                   <TouchableOpacity onPress={()=>goBack()}>
@@ -400,188 +401,198 @@ export default class MakeMoney extends Component {
       }
 
       {(isCTV || isAgency || isCeo) &&
-      <View>
-      <View style={headCatStyle}>
-          <View style={headContent}>
-              <TouchableOpacity onPress={()=>goBack()}>
-              <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
-              </TouchableOpacity>
-                <Image source={logoTop} style={imgLogoTop} />
-              <View></View>
+        <View  style={container}>
+          <View style={headCatStyle}>
+              <View style={headContent}>
+                  <TouchableOpacity onPress={()=>goBack()}>
+                  <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
+                  </TouchableOpacity>
+                    <Image source={logoTop} style={imgLogoTop} />
+                  <View></View>
+              </View>
           </View>
-      </View>
+          <ScrollView>
+          <View style={contentWrap}>
 
-        <View style={contentWrap}>
+          <View style={{width:width-80,height:110,justifyContent:'center',alignItems:'center'}}>
+          <Text style={titleHead}> {`${name_module}`.toUpperCase()} </Text>
+          <Text style={titleNormal}> {des_mm} </Text>
+          </View>
 
-        <View style={{width:width-80,height:110,justifyContent:'center',alignItems:'center'}}>
-        <Text style={titleHead}> {`${name_module}`.toUpperCase()} </Text>
-        <Text style={titleNormal}> {des_mm} </Text>
-        </View>
-
-        <View>
-          {listData.total!==undefined &&
-            <View style={wrapWhite}>
-            <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-              <View>
-                <Text numberOfLines={1} style={colorTitle}>{`${lang.this_revenus}`}</Text>
-                <Text style={titleCoin}>{`${listData.total ? format_number(listData.total) : 0}`}</Text>
-              </View>
-              <TouchableOpacity onPress={()=>{
-                listData.total>0 && this.setState({showCoin:!this.state.showCoin})
-              }}>
-              <Image source={showCoin?subIC:plusIC} style={{width:35,height:35}} />
-            </TouchableOpacity>
-            </View>
-
-            {showCoin &&
-              <FlatList
-               extraData={this.state}
-               data={listData.static}
-               style={{borderColor:'#E0E8ED',borderTopWidth:1,marginTop:5}}
-               keyExtractor={(item,index) => index.toString()}
-               renderItem={({item,index}) =>(
-                 <View style={{marginTop:5,width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-                   <Text style={{color:'#2F3C51'}}>{item.name}</Text>
-                   <Text style={{color:'#5782A4'}}>{item.value ? format_number(item.value) : 0}</Text>
-                </View>
-               )} />}
-
-          </View>}
-
-          {listData.count_location!==undefined &&  <View style={wrapWhite} >
+          <View>
+            {listData.total!==undefined &&
+              <View style={wrapWhite}>
               <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                 <View>
-                  <Text numberOfLines={1} style={colorTitle}>{`${lang.total_location}`}</Text>
-                  <Text style={titleCoin}>{`${listData.count_location ? format_number(listData.count_location) : 0}`}</Text>
+                  <Text numberOfLines={1} style={colorTitle}>{`${lang.this_revenus}`}</Text>
+                  <Text style={titleCoin}>{`${listData.total ? format_number(listData.total) : 0}`}</Text>
                 </View>
-                <TouchableOpacity onPress={()=>{listData.count_location>0 && this.setState({showLoc:!this.state.showLoc,listLoc:[],noData:''},()=>{
-                  !showLoc && this.searchContent('search-content','');
-                })}}>
-                <Image source={showLoc?subIC:plusIC} style={{width:35,height:35}} />
-                </TouchableOpacity>
+                <TouchableOpacity onPress={()=>{
+                  listData.total>0 && this.setState({showCoin:!this.state.showCoin})
+                }}>
+                <Image source={showCoin?subIC:plusIC} style={{width:35,height:35}} />
+              </TouchableOpacity>
               </View>
 
-              {showLoc && <View style={{paddingTop:10,marginTop:10,borderColor:'#E0E8ED',borderTopWidth:1}}>
-                  <TextInput underlineColorAndroid='transparent'
-                  style={{width:width-30,backgroundColor:'#EDEDED',borderRadius:3,padding:5}}
-                  onSubmitEditing={() => {
-                    if (this.state.valLoc.trim()!=='') {
-                      this.searchContent('search-content',this.state.valLoc);
-                    }
-                  }}
-                  onChangeText={(valLoc) => this.setState({valLoc})}
-                  value={this.state.valLoc} />
+              {showCoin &&
+                <FlatList
+                extraData={this.state}
+                data={listData.static}
+                style={{borderColor:'#E0E8ED',borderTopWidth:1,marginTop:5}}
+                keyExtractor={(item,index) => index.toString()}
+                renderItem={({item,index}) =>(
+                  <View style={{marginTop:5,width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+                    <Text style={{color:'#2F3C51'}}>{item.name}</Text>
+                    <Text style={{color:'#5782A4'}}>{item.value ? format_number(item.value) : 0}</Text>
+                  </View>
+                )} />}
 
-                  <TouchableOpacity style={{position:'absolute',top:20,right:5}}
-                  onPress={()=>{
-                    if (this.state.valLoc.trim()!=='') {
-                      this.searchContent('search-content',this.state.valLoc);
-                    }
-                  }}>
-                    <Image style={{width:16,height:16,}} source={searchIC} />
+            </View>}
+
+            {listData.count_location!==undefined &&  <View style={wrapWhite} >
+                <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+                  <View>
+                    <Text numberOfLines={1} style={colorTitle}>{`${lang.total_location}`}</Text>
+                    <Text style={titleCoin}>{`${listData.count_location ? format_number(listData.count_location) : 0}`}</Text>
+                  </View>
+                  <TouchableOpacity onPress={()=>{listData.count_location>0 && this.setState({showLoc:!this.state.showLoc,listLoc:[],noData:''},()=>{
+                    !showLoc && this.searchContent('search-content','');
+                  })}}>
+                  <Image source={showLoc?subIC:plusIC} style={{width:35,height:35}} />
                   </TouchableOpacity>
-              </View>}
-
-          </View>}
-
-          {(isCeo || isAgency) && <View style={wrapWhite} >
-              <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-                <View>
-                  <Text numberOfLines={1} style={colorTitle}>{isCeo?`${lang.total_agency}`:`${lang.total_coll}`}</Text>
-                  <Text style={titleCoin}>{isCeo?`${listData.count_daily ? format_number(listData.count_daily) : 0}`:`${listData.count_ctv ? format_number(listData.count_ctv) : 0}`}</Text>
                 </View>
 
-                  <TouchableOpacity onPress={()=>{
-                    (listData.count_ctv>0 || listData.count_daily>0) && this.setState({showCTV:!this.state.showCTV,listAgency:[]},()=>{
-                      const act = isCeo?'find-daily':'search-ctv';
-                      !showCTV && this.searchContent(act,'');
-                    })}}>
-                  <Image source={showCTV?subIC:plusIC} style={{width:35,height:35}} />
-                  </TouchableOpacity>
+                {showLoc && <View style={{paddingTop:10,marginTop:10,borderColor:'#E0E8ED',borderTopWidth:1}}>
+                    <TextInput underlineColorAndroid='transparent'
+                    style={{width:width-30,backgroundColor:'#EDEDED',borderRadius:3,padding:5}}
+                    onSubmitEditing={() => {
+                      if (this.state.valLoc.trim()!=='') {
+                        this.searchContent('search-content',this.state.valLoc);
+                      }
+                    }}
+                    onChangeText={(valLoc) => this.setState({valLoc})}
+                    value={this.state.valLoc} />
 
-              </View>
+                    <TouchableOpacity style={{position:'absolute',top:20,right:5}}
+                    onPress={()=>{
+                      if (this.state.valLoc.trim()!=='') {
+                        this.searchContent('search-content',this.state.valLoc);
+                      }
+                    }}>
+                      <Image style={{width:16,height:16,}} source={searchIC} />
+                    </TouchableOpacity>
+                </View>}
 
-              {showCTV && <View style={{paddingTop:10,marginTop:10,borderColor:'#E0E8ED',borderTopWidth:1}}>
-                  <TextInput underlineColorAndroid='transparent'
-                  style={{width:width-30,backgroundColor:'#EDEDED',borderRadius:3,padding:5}}
-                  onSubmitEditing={() => {
-                    if (this.state.valCTV.trim()!=='') {
-                      const act = isCeo?'find-daily':'search-ctv';
-                      this.searchContent(act,this.state.valCTV);
-                    }
-                  }}
-                  onChangeText={(valCTV) => this.setState({valCTV})}
-                  value={this.state.valCTV} />
+            </View>}
 
-                  <TouchableOpacity style={{position:'absolute',top:20,right:5}}
-                  onPress={()=>{
-                    if (this.state.valCTV.trim()!=='') {
-                      const act = isCeo?'find-daily':'search-ctv';
-                      this.searchContent(act,this.state.valCTV);
-                    }
-                  }}>
-                    <Image style={{width:16,height:16,}} source={searchIC} />
-                  </TouchableOpacity>
+            {(isCeo || isAgency) && <View style={wrapWhite} >
+                <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+                  <View>
+                    <Text numberOfLines={1} style={colorTitle}>{isCeo?`${lang.total_agency}`:`${lang.total_coll}`}</Text>
+                    <Text style={titleCoin}>{isCeo?`${listData.count_daily ? format_number(listData.count_daily) : 0}`:`${listData.count_ctv ? format_number(listData.count_ctv) : 0}`}</Text>
+                  </View>
 
-              </View>}
+                    <TouchableOpacity onPress={()=>{
+                      (listData.count_ctv>0 || listData.count_daily>0) && this.setState({showCTV:!this.state.showCTV,listAgency:[]},()=>{
+                        const act = isCeo?'find-daily':'search-ctv';
+                        !showCTV && this.searchContent(act,'');
+                      })}}>
+                    <Image source={showCTV?subIC:plusIC} style={{width:35,height:35}} />
+                    </TouchableOpacity>
 
-          </View>}
-
-          {isAgency &&
-            <View style={wrapWhite}>
-              <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-                <View>
-                <Text numberOfLines={1} style={colorTitle}>{`${lang.pending_collaborators}`}</Text>
-                <Text style={titleCoin}>{`${listData.count_ctv_pending ? listData.count_ctv_pending : 0}`}</Text>
                 </View>
-                <TouchableOpacity onPress={()=>{this.setState({showListCTVPend:true})}}>
+
+                {showCTV && <View style={{paddingTop:10,marginTop:10,borderColor:'#E0E8ED',borderTopWidth:1}}>
+                    <TextInput underlineColorAndroid='transparent'
+                    style={{width:width-30,backgroundColor:'#EDEDED',borderRadius:3,padding:5}}
+                    onSubmitEditing={() => {
+                      if (this.state.valCTV.trim()!=='') {
+                        const act = isCeo?'find-daily':'search-ctv';
+                        this.searchContent(act,this.state.valCTV);
+                      }
+                    }}
+                    onChangeText={(valCTV) => this.setState({valCTV})}
+                    value={this.state.valCTV} />
+
+                    <TouchableOpacity style={{position:'absolute',top:20,right:5}}
+                    onPress={()=>{
+                      if (this.state.valCTV.trim()!=='') {
+                        const act = isCeo?'find-daily':'search-ctv';
+                        this.searchContent(act,this.state.valCTV);
+                      }
+                    }}>
+                      <Image style={{width:16,height:16,}} source={searchIC} />
+                    </TouchableOpacity>
+
+                </View>}
+
+            </View>}
+
+            {isAgency &&
+              <View style={wrapWhite}>
+                <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+                  <View>
+                  <Text numberOfLines={1} style={colorTitle}>{`${lang.pending_collaborators}`}</Text>
+                  <Text style={titleCoin}>{`${listData.count_ctv_pending ? listData.count_ctv_pending : 0}`}</Text>
+                  </View>
+                  <TouchableOpacity onPress={()=>{this.setState({showListCTVPend:true})}}>
+                  <Image source={plusIC} style={{width:35,height:35}} />
+                  </TouchableOpacity>
+                </View>
+            </View>}
+
+            {isAgency &&
+              <View style={wrapWhite}>
+                <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+                <View>
+                  <Text numberOfLines={1} style={colorTitle}>{`${lang.pending_location}`}</Text>
+                  <Text style={titleCoin}>{`${listData.count_location_pending ? listData.count_location_pending : 0}`}</Text>
+                </View>
+                <TouchableOpacity onPress={()=>{this.setState({showListLocPend:true})}}>
                 <Image source={plusIC} style={{width:35,height:35}} />
                 </TouchableOpacity>
-              </View>
-          </View>}
+                </View>
+            </View>}
+            {(isAgency || isCeo) &&
+              <TouchableOpacity style={wrapWhite} onPress={()=>{
+                this.setState({assign:true,listAgency:[],itemChoose:{},listDistrict:{},showCTV:false,valCTV:''});
+              }}>
+                <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+                  <Text numberOfLines={1} style={colorTitle}>{`${lang.assign}`}</Text>
+                  <Image source={filterIC} style={{width:35,height:35}} />
+                </View>
+            </TouchableOpacity>}
 
-          {isAgency &&
-            <View style={wrapWhite}>
-              <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-              <View>
-                <Text numberOfLines={1} style={colorTitle}>{`${lang.pending_location}`}</Text>
-                <Text style={titleCoin}>{`${listData.count_location_pending ? listData.count_location_pending : 0}`}</Text>
-              </View>
-              <TouchableOpacity onPress={()=>{this.setState({showListLocPend:true})}}>
-              <Image source={plusIC} style={{width:35,height:35}} />
+            {isCeo &&
+              <TouchableOpacity style={wrapWhite} onPress={()=>{
+                this.setState({showTDLPop:true});
+              }}>
+                <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+                  <Text numberOfLines={1} style={colorTitle}>{`${lang.add_agency}`}</Text>
+                  <Image source={filterIC} style={{width:35,height:35}} />
+                </View>
+            </TouchableOpacity>}
+
+            {isCTV && <View style={{alignItems:'center'}}>
+              <TouchableOpacity style={[marTop,btnTransfer]}
+              onPress={()=>this.gotoCreate()}>
+              <Text style={titleCreate}>{`${lang.let_mm}`.toUpperCase()}</Text>
+              <Text style={{color:'#fff'}}>{`(${lang.new_location_mm})`}</Text>
               </TouchableOpacity>
-              </View>
-          </View>}
-          {(isAgency || isCeo) &&
-            <TouchableOpacity style={wrapWhite} onPress={()=>{
-              this.setState({assign:true,listAgency:[],itemChoose:{},listDistrict:{},showCTV:false,valCTV:''});
-            }}>
-              <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-                <Text numberOfLines={1} style={colorTitle}>{`${lang.assign}`}</Text>
-                <Image source={filterIC} style={{width:35,height:35}} />
-              </View>
-          </TouchableOpacity>}
+            </View>}
+          </View>
 
-          {isCTV && <View style={{alignItems:'center'}}>
-            <TouchableOpacity style={[marTop,btnTransfer]}
-            onPress={()=>this.gotoCreate()}>
-            <Text style={titleCreate}>{`${lang.let_mm}`.toUpperCase()}</Text>
-            <Text style={{color:'#fff'}}>{`(${lang.new_location_mm})`}</Text>
-            </TouchableOpacity>
-          </View>}
-        </View>
+          <View style={[marTop,wrapDes]}>
+          <Text style={{color:'#6587A8',fontSize:16,lineHeight:28}}>{`${static_notes}`}</Text>
+          </View>
 
-        <View style={[marTop,wrapDes]}>
-        <Text style={{color:'#6587A8',fontSize:16,lineHeight:28}}>{`${static_notes}`}</Text>
-        </View>
+          </View>
+          <View style={{height:height/6}}></View>
+          </ScrollView>
 
-        </View>
-        <View style={{height:height/6}}></View>
         </View>
 
       }
-
-      </ScrollView>
 
       {assign &&
         <GrantRight
@@ -597,6 +608,14 @@ export default class MakeMoney extends Component {
         searchContent={(route,keyword)=>{this.searchContent(route,keyword)}}
         chooseUser={(item)=>this.setState({itemChoose:item,listAgency:[]})}
         assignFunc={()=>{this.assignFunc()}}
+        />
+      }
+
+      {showTDLPop &&
+        <AddAgency
+        closeModal={()=>this.setState({showTDLPop:false})}
+        assignArea={(itemChoose)=>this.setState({itemChoose,assign:true,showTDLPop:false})}
+        lang={lang} isCeo={isCeo}
         />
       }
 
@@ -895,7 +914,7 @@ const styles = StyleSheet.create({
 
   titleCoin : {
     fontSize: 18,
-    fontWeight:'400',
+    fontWeight:'300',
     color:'#d0021b',
   },
   contentKcoin:{flexDirection:'row',justifyContent:'space-between',width:width-80,alignItems:'center'},

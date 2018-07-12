@@ -27,6 +27,7 @@ import lang_vn from '../lang/vn/language';
 import lang_en from '../lang/en/language';
 
 import checkinIC from '../../src/icon/ic-white/ic-check-in.png';
+import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
 
 import {Select, Option} from "react-native-chooser";
 
@@ -255,13 +256,27 @@ export default class DetailScreen extends Component {
       selectBox,optionListStyle,OptionItem,show,hide,colorTextPP,colorNumPP,
       wrapContent,leftContent,rightContent,middleContent,imgContent,labelCat,wrapImgDetail,
       wrapContentDetail,rowFlex,imgMail,imgContentIC,imgICLocation,imgICMail,
-      rowFlexBottom,rowFlexImg,colorBlack,
+      rowFlexBottom,rowFlexImg,colorBlack,headContent,
       titleSpace,sizeTitle,imgSpace,widthHafl,txtAddrOver,colorText,
-      padLeft,saveContentStyle,imgSave,
+      padLeft,saveContentStyle,imgSave, headStyle
     } = styles;
 
     return (
-      <ScrollView scrollEnabled={scroll} style={container} ref={(c) => { this._scrollView = c; }}>
+      <View style={container}>
+        <View style={headStyle}>
+          <View style={headContent}>
+          <TouchableOpacity onPress={()=>{this.backList()}}>
+          <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
+          </TouchableOpacity>
+              {/*<Image source={logoTop} style={imgLogoTop} />*/}
+              <View style={{width:width-80,marginTop:3}}>
+              <Text numberOfLines={1} style={{fontSize:16,color:'#fff'}}>{listData.content.name}</Text>
+              </View>
+              <View></View>
+          </View>
+        </View>
+        
+        <ScrollView scrollEnabled={scroll} ref={(c) => { this._scrollView = c; }}>
         <Header
         lang={lang}
         title={listData.content.name}
@@ -371,6 +386,8 @@ export default class DetailScreen extends Component {
          />
 
       </ScrollView>
+      </View>
+      
     );
   }
 }
@@ -378,7 +395,13 @@ export default class DetailScreen extends Component {
 const styles = StyleSheet.create({
   container: {flex: 1},
   imgIC:{width:21,height:23,marginBottom:5},
-
+  headStyle: {
+    backgroundColor: '#D0021B',paddingTop: Platform.OS==='ios' ? 25 : 10, alignItems: 'center',height: 65,
+    position:'relative',zIndex:5,justifyContent:'center',
+  },
+  headContent : {
+      width: width - 40,justifyContent: 'space-between',flexDirection: 'row',
+  },
   imgContentIC:{width:16,height:16,},
   imgICLocation:{width:14,height:16,},
   imgICMail:{width:16,height:12,marginTop:5},

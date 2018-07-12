@@ -67,20 +67,6 @@ export default class Header extends Component {
     //console.log('lang',lang);
     return (
       <View>
-      <View style={headStyle}>
-          <View style={headContent}>
-          <TouchableOpacity onPress={()=>{this.props.backList()}}>
-          <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
-          </TouchableOpacity>
-              {/*<Image source={logoTop} style={imgLogoTop} />*/}
-              <View style={{width:width-80,marginTop:3}}>
-              <Text numberOfLines={1} style={{fontSize:16,color:'#fff'}}>{title}</Text>
-              </View>
-              <View></View>
-          </View>
-      </View>
-
-
       <View style={wrapHeadBottom}>
         <View style={[headContent]}>
             <TouchableOpacity onPress={()=>this.props.saveLike('save-like')}

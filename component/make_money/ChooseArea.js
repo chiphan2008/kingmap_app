@@ -230,7 +230,7 @@ export default class ChooseArea extends Component {
                <View>
                    <TouchableOpacity style={[listAdd]} onLayout={()=>{
                      item.districts.map(e=>{
-                       itemChoose._area.district.includes(e.id) && this.setState({
+                       itemChoose._area!==undefined && itemChoose._area.district.includes(e.id) && this.setState({
                          chooseDist:Object.assign(this.state.chooseDist,{[e.id]:e.id})
                         })
                      })

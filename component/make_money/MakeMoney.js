@@ -307,38 +307,49 @@ export default class MakeMoney extends Component {
     const {listDistrict,itemChoose,isCeo} = this.state;
 
     if(itemChoose.id===undefined){
-      Alert.alert(lang.notify,lang.choose_ctv);
+      Alert.alert(lang.notify,isCeo?lang.plz_choose_agency:lang.choose_ctv);
     }else if(Object.entries(listDistrict).length===0){
       Alert.alert(lang.notify,lang.plz_choose_area);
     }else {
-      const arr = new FormData();
-      arr.append('id',itemChoose.id);
-      Object.entries(listDistrict).forEach(e=>{
-        e[1]!==false && arr.append('district[]',e[1]);
-      })
-      //console.log(arr);
-      //console.log(`${global.url}${'static/area-ctv'}`);
-      const act = isCeo?'daily':'ctv';
-      postApi(`${global.url}${'static/area-'}${act}${'?lang='}${lang.lang}`,arr).then(e => {
-        if(e.code===200){
-          Platform.OS==='ios'?
-          Alert.alert(lang.notify,e.data,[
-            {text: 'OK', onPress: () => this.setState({
-              listDistrict:{},itemChoose:{},listAgency:[],valCTV:'',assign:false,showCTVPop:false,showArea:false})}
-          ])
-          :
-          Alert.alert(lang.notify,e.data,[
-            {text: '', style: 'cancel'},
-            {text: 'OK', onPress: () => this.setState({
-              listDistrict:{},itemChoose:{},listAgency:[],valCTV:'',assign:false,showCTVPop:false,showArea:false})}
-          ],{ cancelable: false })
-       }else {
-         Alert.alert(lang.notify,e.message)
-       }
-      }).catch(err => console.log(err));
+      Platform.OS==='ios'?
+      Alert.alert(lang.notify,lang.confirm_assign,[
+        {text: 'OK', onPress: () => this.assignFuncConfirmed()}
+      ])
+      :
+      Alert.alert(lang.notify,lang.confirm_assign,[
+        {text: '', style: 'cancel'},
+        {text: 'OK', onPress: () => this.assignFuncConfirmed()}
+      ],{ cancelable: false })
     }
   }
+  assignFuncConfirmed() {
+    const { lang } = this.props.navigation.state.params;
+    const {listDistrict,itemChoose,isCeo} = this.state;
 
+    const arr = new FormData();
+    arr.append('id',itemChoose.id);
+    Object.entries(listDistrict).forEach(e=>{
+      e[1]!==false && arr.append('district[]',e[1]);
+    })
+    const act = isCeo?'daily':'ctv';
+    postApi(`${global.url}${'static/area-'}${act}${'?lang='}${lang.lang}`,arr).then(e => {
+      if(e.code===200){
+        Platform.OS==='ios'?
+        Alert.alert(lang.notify,e.data,[
+          {text: 'OK', onPress: () => this.setState({
+            listDistrict:{},itemChoose:{},listAgency:[],valCTV:'',assign:false,showCTVPop:false,showArea:false})}
+        ])
+        :
+        Alert.alert(lang.notify,e.data,[
+          {text: '', style: 'cancel'},
+          {text: 'OK', onPress: () => this.setState({
+            listDistrict:{},itemChoose:{},listAgency:[],valCTV:'',assign:false,showCTVPop:false,showArea:false})}
+        ],{ cancelable: false })
+     }else {
+       Alert.alert(lang.notify,e.message)
+     }
+    }).catch(err => console.log(err));
+  }
   componentWillMount(){
     //setTimeout(()=>{
       const { user_profile } = this.props.navigation.state.params;
@@ -488,7 +499,8 @@ export default class MakeMoney extends Component {
                     onChangeText={(valLoc) => this.setState({valLoc})}
                     value={this.state.valLoc} />
 
-                    <TouchableOpacity style={{position:'absolute',top:20,right:5}}
+                    <TouchableOpacity style={{position:'absolute',top:Platform.OS==='ios'?16:20,right:5}}
+                    hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
                     onPress={()=>{
                       if (this.state.valLoc.trim()!=='') {
                         this.searchContent('search-content',this.state.valLoc);
@@ -529,7 +541,8 @@ export default class MakeMoney extends Component {
                     onChangeText={(valCTV) => this.setState({valCTV})}
                     value={this.state.valCTV} />
 
-                    <TouchableOpacity style={{position:'absolute',top:20,right:5}}
+                    <TouchableOpacity style={{position:'absolute',top:Platform.OS==='ios'?16:20,right:5}}
+                    hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
                     onPress={()=>{
                       if (this.state.valCTV.trim()!=='') {
                         const act = isCeo?'find-daily':'search-ctv';

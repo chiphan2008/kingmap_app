@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image,
-  TextInput, TouchableOpacity,FlatList
+  TextInput, TouchableOpacity,FlatList,ActivityIndicator
 } from 'react-native';
 import SvgUri from 'react-native-svg-uri';
 import PushNotification from 'react-native-push-notification';
@@ -27,24 +27,32 @@ export default class ChooseCat extends Component {
         valueLang : '',
       },
       lang:language_vn,
+      loadMore:false,
+      page:0,
     }
   }
 
-  getCategory(lang){
-    getApi(global.url+'categories?language='+lang+'&limit=500')
-    .then(arrCategory => {
-        this.setState({ listCategory: arrCategory.data });
-    })
-    .catch(err => console.log(err));
+  getCategory(page = null){
+    const { lang } = this.props.navigation.state.params;
+    const limit = 20;
+    const skip = page===null?0:page;
+    let url = `${global.url}${'categories?language='}${lang}${'&skip='}${skip}${'&limit='}${limit}`;
+    //console.log(url);
+    getApi(url).then(arrCategory => {
+        this.state.listCategory = skip===0?arrCategory.data:this.state.listCategory.concat(arrCategory.data);
+        this.state.page = skip+limit;
+        this.state.loadMore = arrCategory.data.length<limit?false:true;
+        this.setState(this.state);
+    }).catch(err => console.log(err));
   }
+
 
   componentWillMount(){
     const { lang } = this.props.navigation.state.params;
-    this.getCategory(lang);
+    this.getCategory();
       this.setState({
         selectLang: {
           valueLang : lang,
-
         },
         lang: lang==='vn' ? language_vn : language_en,
     })
@@ -84,6 +92,12 @@ export default class ChooseCat extends Component {
            numColumns={3}
            extraData={this.state}
            data={this.state.listCategory}
+           onEndReachedThreshold={0.01}
+           onEndReached={() => {
+            this.state.loadMore && this.setState({loadMore:false},()=>{
+              this.getCategory(this.state.page);
+            });
+           }}
            renderItem={({item}) =>(
              <TouchableOpacity
                 onPress={()=>navigate('FormCreateScr',{idCat:item.id,nameCat:item.name,serv_items:item.service_items,lang:this.state.selectLang.valueLang})}
@@ -99,6 +113,13 @@ export default class ChooseCat extends Component {
            )}
            style={{marginBottom:Platform.OS==='ios' ? 135 : 170,}}
            keyExtractor={item => item.id.toString()}
+           ListFooterComponent={() => {
+            return (
+              <View>
+                {this.state.loadMore && <ActivityIndicator size="large" color="#d0021b" />}
+              </View>
+            )
+          }}
          />
          </View>
     </View>

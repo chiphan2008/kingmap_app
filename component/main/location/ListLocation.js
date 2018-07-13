@@ -458,24 +458,7 @@ export default class ListLocation extends Component {
                                      <Text> | </Text>
                                    </View>
                                    <View  style={{flexDirection:'row',paddingRight:10}}>
-                                     <TouchableOpacity onPress={()=>{this.saveVote(1,item.id)} }>
                                      <Rating rate={1} showVote={item.vote} styleIMG={favIC} />
-                                     </TouchableOpacity>
-                                     <TouchableOpacity onPress={()=>{this.saveVote(2,item.id)} }>
-                                     <Rating rate={2} showVote={item.vote} styleIMG={favIC} />
-                                     </TouchableOpacity>
-
-                                     <TouchableOpacity onPress={()=>{this.saveVote(3,item.id)} }>
-                                     <Rating rate={3} showVote={item.vote} styleIMG={favIC} />
-                                     </TouchableOpacity>
-
-                                     <TouchableOpacity onPress={()=>{this.saveVote(4,item.id)} }>
-                                     <Rating rate={4} showVote={item.vote} styleIMG={favIC} />
-                                     </TouchableOpacity>
-
-                                     <TouchableOpacity onPress={()=>{this.saveVote(5,item.id)} }>
-                                     <Rating rate={5} showVote={item.vote} styleIMG={[favIC,marRight5]} />
-                                     </TouchableOpacity>
 
                                      <Text>{item.vote}</Text>
                                    </View>

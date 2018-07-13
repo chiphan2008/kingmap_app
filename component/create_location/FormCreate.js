@@ -385,7 +385,7 @@ export default class FormCreate extends Component {
     const {navigate, goBack} = this.props.navigation;
     const { idCat,lang } = this.props.navigation.state.params;
     const {
-      container,
+      wrapper,
       headCatStyle,headContent, wrapDistribute,wrapFilter,
       show,hide,hidden,colorlbl,listAdd,txtKV,btnMap,
       listCreate,titleCreate,imgCamera,colorErr,btnPress,colorNext,
@@ -401,9 +401,11 @@ export default class FormCreate extends Component {
     } = this.state;
 
     return (
-      <View style={container}>
-      {showUpdateMore===false && <ScrollView >
-      <View style={headCatStyle}>
+      <View>
+
+      {(showUpdateMore===false || this.state.showOpenTime === false) &&
+        <View style={wrapper}>
+        <View style={headCatStyle}>
           <View style={headContent}>
               <TouchableOpacity onPress={()=>goBack()} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
               <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
@@ -414,6 +416,9 @@ export default class FormCreate extends Component {
               </TouchableOpacity>
           </View>
       </View>
+
+      <ScrollView >
+
     <View>
         <TouchableOpacity style={listCreate}
         onPress={()=>this.setState({showSubCat:!this.state.showSubCat})}>
@@ -825,7 +830,9 @@ export default class FormCreate extends Component {
         }
       </View>
 
-      </ScrollView>}
+      </ScrollView>
+    </View>}
+
 
       <View style={[clockTime,this.state.showOpenTime ? show : hidden]}>
       <OpenTime
@@ -833,6 +840,7 @@ export default class FormCreate extends Component {
       lang={this.state.lang}
       closeModal={this.setOpenTime.bind(this)} />
       </View>
+
       {this.state.showUpdate &&
         <View style={[popoverLoc,centerVer]}>
             <View style={[overLayout,pad10]}>

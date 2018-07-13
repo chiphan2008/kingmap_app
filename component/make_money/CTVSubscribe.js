@@ -232,8 +232,7 @@ export default class AddImageMore extends Component {
         <View style={wrapper}>
           <View style={headCatStyle}>
               <View style={headContent}>
-                  <TouchableOpacity onPress={()=>goBack()}
-                  hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
+                  <TouchableOpacity onPress={()=>goBack()}>
                   <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                   </TouchableOpacity>
                     <Text style={titleCreate}> {titleScr.toUpperCase()} </Text>
@@ -405,37 +404,43 @@ export default class AddImageMore extends Component {
              <Image source={arrowNextIC} style={{width:16,height:16,marginTop:5}} />
            </TouchableOpacity>
 
-
            {this.state.listAgency.length>0 &&
-             <View>
-           <Text style={{marginTop:15,paddingLeft:15,color:'#5D8BAF'}}>{this.state.lang.list_agency.toUpperCase()}</Text>
-           <View style={{backgroundColor:'#fff',marginTop:15,paddingTop:15}}>
-           <FlatList
-            extraData={this.state}
-            data={listAgency}
-            keyExtractor={(item,index) => index.toString()}
-            renderItem={({item,index}) =>(
-              <TouchableOpacity onPress={()=>{
-                if(daily_id===item.id){
-                  this.setState({daily_id:!item.id})
-                }else {
-                  this.setState({daily_id:item.id})
-                }
-              }} style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
-                  <View style={{flexDirection:'row',paddingBottom:15}}>
-                      <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:50,marginRight:10,borderRadius:25}} />
-                      <View style={{width:width-110}}>
-                        <Text numberOfLines={1} style={colorlbl}>{item.full_name}</Text>
-                        <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.address}`}</Text>
-                      </View>
+            <Modal onRequestClose={() => null} transparent visible={this.state.listAgency.length > 0 ? true : false}>
+              <TouchableOpacity onPress={()=>this.setState({showCTVPop:false,listAgency:[]})}
+              style={[popoverLoc, {justifyContent: 'center', flex: 1}]}>
+              <TouchableWithoutFeedback style={{justifyContent:'center'}}>
+              <View style={[overLayout,shadown]}>
+              <FlatList
+              extraData={this.state}
+              data={listAgency}
+              ListEmptyComponent={<Text style={{color:'#000',fontSize:16}}>{this.state.lang.not_found}</Text>}
+              style={{margin:15}}
+              keyExtractor={(item,index) => index.toString()}
+              renderItem={({item,index}) =>(
+                <TouchableOpacity onPress={()=>{
+                  if(daily_id===item.id){
+                    this.setState({daily_id:!item.id})
+                  }else {
+                    this.setState({daily_id:item.id})
+                  }
+                }} style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
+                    <View style={{flexDirection:'row',paddingBottom:15}}>
+                        <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:50,marginRight:10,borderRadius:25}} />
+                        <View style={{width:width-130}}>
+                          <Text numberOfLines={1} style={colorlbl}>{item.full_name}</Text>
+                          <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.address}`}</Text>
+                        </View>
+                    </View>
+                    <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                      <Image source={daily_id===item.id?checkIC:uncheckIC} style={imgShare} />
                   </View>
-                  <View style={{justifyContent: 'center', alignItems: 'center'}}>
-                    <Image source={daily_id===item.id?checkIC:uncheckIC} style={imgShare} />
-                 </View>
-                </TouchableOpacity>
-            )} />
-            </View>
-           </View>}
+                  </TouchableOpacity>
+              )}/>
+              </View>
+              </TouchableWithoutFeedback>
+            </TouchableOpacity>
+            </Modal>
+            }
 
            <TouchableOpacity style={{alignItems:'center',marginTop:15,backgroundColor:'#d0021b',borderRadius:3,width:width-30,paddingTop:10,paddingBottom:10,alignItems:'center',marginLeft:15}}
            onPress={()=>{this.setState({posted:true},()=>{

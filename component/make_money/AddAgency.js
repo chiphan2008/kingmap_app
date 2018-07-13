@@ -51,7 +51,7 @@ export default class AddAgency extends Component {
     const { lang } = this.props;
     const { itemCTVChoose } = this.state;
     if(itemCTVChoose.id===undefined){
-      Alert.alert(lang.notify,lang.plz_choose_coll);
+      Alert.alert(lang.notify,lang.plz_user);
     }else {
       let url = `${global.url}${'static/add-daily'}`;
       const arr = new FormData();
@@ -122,7 +122,8 @@ export default class AddAgency extends Component {
                 onChangeText={(valCTV) => this.setState({valCTV})}
                 value={this.state.valCTV} />
 
-                <TouchableOpacity style={{position:'absolute',top:20,right:5}}
+                <TouchableOpacity style={{position:'absolute',top:Platform.OS==='ios'?16:20,right:5}}
+                hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
                 onPress={()=>{
                   if (this.state.valCTV.trim()!=='') {
                     this.searchUser(valCTV);
@@ -175,14 +176,14 @@ export default class AddAgency extends Component {
              //   });
              // }}
              ListEmptyComponent={<Text style={{color:'#000',fontSize:16}}>{noDataUser}</Text>}
-             style={{paddingLeft:15,paddingRight:15,marginTop:15}}
+             style={{paddingLeft:15,paddingRight:15,marginTop:15,marginBottom:15,maxHeight:60*5}}
              keyExtractor={(item,index) => index.toString()}
              renderItem={({item,index}) =>(
                <TouchableOpacity onPress={()=>{
                  this.setState({itemCTVChoose:item,noDataUser:'',listUser:[]});
                }}
                style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-                   <View style={{flexDirection:'row',paddingBottom:13,width:width-110}}>
+                   <View style={{flexDirection:'row',paddingBottom:index===(listUser.length-1)?0:13,width:width-110}}>
                        <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:50,marginRight:10,borderRadius:25}} />
                        <View style={{width:width-120}}>
                          <Text numberOfLines={1} style={colorlbl}>{item.full_name}</Text>

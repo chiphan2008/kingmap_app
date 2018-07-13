@@ -36,9 +36,9 @@ export default class ImageViewer extends Component {
       <View style={{height,width,backgroundColor:'#000'}}>
 
         <TouchableOpacity onPress={()=>this.props.closeModal()}
-        style={{position:'absolute',padding:10,alignSelf:'flex-end',zIndex:9999, }}
+        style={{position:'absolute',top:Platform.OS==='ios'?25:15,right:15,zIndex:9999, }}
         hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
-          <Image source={closeIC} style={{width:18,height:18}} />
+          <Image source={closeIC} style={{width:22,height:22}} />
         </TouchableOpacity>
 
         <FlatList

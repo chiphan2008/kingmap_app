@@ -139,7 +139,8 @@ export default class GrantRight extends Component {
                 onChangeText={(valTDL) => this.setState({valTDL})}
                 value={this.state.valTDL} />
 
-                <TouchableOpacity style={{position:'absolute',top:20,right:5}}
+                <TouchableOpacity style={{position:'absolute',top:Platform.OS==='ios'?16:20,right:5}}
+                hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
                 onPress={()=>{
                   if (this.state.valTDL.trim()!=='') {
                     const act = isCeo?'find-daily':'search-ctv';
@@ -221,7 +222,8 @@ export default class GrantRight extends Component {
                  onChangeText={(valCTV) => this.setState({valCTV})}
                  value={this.state.valCTV} />
 
-                 <TouchableOpacity style={{position:'absolute',top:20,right:5}}
+                 <TouchableOpacity style={{position:'absolute',top:Platform.OS==='ios'?16:20,right:5}}
+                 hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
                  onPress={()=>{
                    if (this.state.valCTV.trim()!=='') {
                      this.searchUser(this.state.valCTV);
@@ -248,15 +250,7 @@ export default class GrantRight extends Component {
 
         <View style={{alignItems:'center',marginTop:10,marginBottom:height/3}}>
           <TouchableOpacity onPress={()=>{
-            Alert.alert(
-              this.props.lang.notify,
-              'Bạn có chắc muốn phân quyền?',
-              [
-                {text: 'Cancel', onPress: () => {}, style: 'cancel'},
-                {text: 'OK', onPress: () => {this.postContent()}},
-              ],
-              { cancelable: false }
-            )
+            this.postContent();
             }} style={[marTop,btnTransfer]} >
           <Text style={{color:'#fff', fontWeight: 'bold',fontSize:18}}>{`${lang.assign}`}</Text>
           </TouchableOpacity>

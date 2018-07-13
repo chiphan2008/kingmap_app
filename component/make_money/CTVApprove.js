@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import {
   View,Text,TouchableOpacity,Image,Alert,
   TextInput,Dimensions,ScrollView,FlatList,
-  DeviceEventEmitter
+  DeviceEventEmitter,Platform,
 } from 'react-native';
 import Moment from 'moment';
 import {format_number,checkUrl} from '../libs';
@@ -32,15 +32,22 @@ export default class CTVApprove extends Component {
     arr.append('daily_id',daily_id);
     arr.append('ctv_id[]',id)
     postApi(`${global.url}${'static/'}${route}${'-ctv'}${'?lang='}${lang.lang}`,arr).then(e => {
-        if(e.code===200)
-        Alert.alert(lang.notify,e.data,[
-          {text: '', style: 'cancel'},
-          {text: 'Ok', onPress: () => {
-            const obj = route==='accept'?{isLogin:true,ctv:el}:{isLogin:true}
-            DeviceEventEmitter.emit('gobackCTV',obj)
-            this.props.navigation.goBack()
-          }}
-        ],{ cancelable: false })
+        if(e.code===200){
+          const obj = route==='accept'?{isLogin:true,ctv:el}:{isLogin:true}
+          DeviceEventEmitter.emit('gobackCTV',obj)
+          Platform.OS==='ios'?
+          Alert.alert(lang.notify,e.data,[
+            {text: 'Ok', onPress: () => {
+              this.props.navigation.goBack()
+            }}
+          ])
+          :
+          Alert.alert(lang.notify,e.data,[
+            {text: '', style: 'cancel'},
+            {text: 'Ok', onPress: () => {
+              this.props.navigation.goBack()
+            }}],{ cancelable: false })
+        }
     }).catch(err => console.log(err));
   }
 

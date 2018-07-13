@@ -268,7 +268,7 @@ export default class HomeTab extends Component {
             <View style={square}>
             {
               this.state.listCategory.map((e,index)=>{
-                const x=(width/10)<60?(width/4):(width/10);const y=70;const distance=(width/10)<60?120:140;
+                const x=85;const y=70;const distance=(width/10)<60?120:140;
                 let angle = (360/(this.state.listCategory.length-1));
                 let pos = this.findNewPoint(x, y, angle, distance);
                 //console.log(e);
@@ -287,7 +287,7 @@ export default class HomeTab extends Component {
                             }
                           }}
                           >
-                          {/*<Text style={labelNum}>{width/10}</Text>*/}
+                          {/*<Text style={labelNum}>{x}</Text>*/}
                         <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                         <Text style={labelCat}>{e.name}</Text>
                       </TouchableOpacity>);
@@ -367,7 +367,7 @@ export default class HomeTab extends Component {
                       i=1;
                       return (
                     <TouchableOpacity key={e.id}
-                      style={{top:distance*0.6}}
+                      style={{top:distance*0.55}}
                       onPress={() => navigate('OtherCatScr',{name_module:e.name,lang:this.state.lang}) }
                       >
                       {/*<Text style={labelNum}>(25)</Text>*/}

@@ -282,7 +282,7 @@ export default class OpenTime extends Component {
   }
   render() {
     const {
-      container,headCatStyle,headContent,titleCreate,show,hide,
+      wrapSetting,headCatStyle,headContent,titleCreate,show,hide,
       titleOpentime,btnClock,marTop10,titleActive,btnPress,colorNext,popoverLoc,padCreate
     } = styles;
     const { lang } = this.props;
@@ -290,7 +290,7 @@ export default class OpenTime extends Component {
     //console.log('ListDataTime',ListDataTime);
     return (
 
-      <View style={container}>
+      <View style={wrapSetting}>
       <View style={headCatStyle}>
           <View style={headContent}>
               <View></View>

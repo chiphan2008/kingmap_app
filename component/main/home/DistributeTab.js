@@ -58,7 +58,8 @@ export default class Hometab extends Component {
 
       <View style={headCatStyle}>
           <View style={headContent}>
-              <TouchableOpacity onPress={()=>goBack()}>
+              <TouchableOpacity onPress={()=>goBack()}
+              hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
               <Image source={closeIC} style={{width:20, height:20}} />
               </TouchableOpacity>
               <TouchableOpacity

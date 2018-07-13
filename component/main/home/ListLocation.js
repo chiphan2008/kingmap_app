@@ -268,6 +268,7 @@ export default class ListLocation extends Component {
           <View style={headContent}>
           <TouchableOpacity
           onPress={()=>goBack()}
+          hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
           >
           <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
           </TouchableOpacity>

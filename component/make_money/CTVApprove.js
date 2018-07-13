@@ -56,7 +56,7 @@ export default class CTVApprove extends Component {
       <View style={wrapper}>
           <View style={headCatStyle}>
               <View style={headContent}>
-              <TouchableOpacity onPress={()=>goBack()}>
+              <TouchableOpacity onPress={()=>goBack()} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
               <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
               </TouchableOpacity>
                 <Image source={logoTop} style={imgLogoTop} />

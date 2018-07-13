@@ -103,7 +103,7 @@ export default class ChooseCat extends Component {
                 //console.log(idCat,labelCat,checkSubCat);
                 this.props.submitCat(idCat,labelCat,checkSubCat);
                 this.props.closeModal();
-              }}>
+              }} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
               <Image source={closeIC} style={{width:20, height:20,marginTop:5}} />
               </TouchableOpacity>
                <Text style={{color:'white',fontSize:18,paddingTop:5}}> Danh mục </Text>

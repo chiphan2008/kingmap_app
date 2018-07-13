@@ -69,12 +69,11 @@ export default class AddAgency extends Component {
           Alert.alert(lang.notify,e.data,[
             {text: '', style: 'cancel'},
             {text: 'OK', onPress: () => this.props.assignArea(itemCTVChoose)}
-          ],
-         { cancelable: false })
+          ],{ cancelable: false })
          :
-         Alert.alert(this.state.lang.notify,this.state.lang.update_success,[
+         Alert.alert(lang.notify,e.data,[
            {text: 'OK', onPress: () => this.props.assignArea(itemCTVChoose)}
-         ])
+         ],{ cancelable: false })
 
         });
       }).catch(err => console.log(err));
@@ -99,7 +98,8 @@ export default class AddAgency extends Component {
       <ScrollView>
         <View style={headCatStyle}>
             <View style={headContent}>
-                <TouchableOpacity onPress={()=>{this.props.closeModal()}}>
+                <TouchableOpacity onPress={()=>{this.props.closeModal()}}
+                hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
                 <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                 </TouchableOpacity>
                   <Text style={{marginTop:5,color:'#fff', fontWeight: '600'}}>{lang.add_agency.toUpperCase()}</Text>

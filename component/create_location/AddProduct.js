@@ -48,7 +48,7 @@ export default class AddProduct extends Component {
                   <TouchableOpacity onPress={()=>{
                     this.props.submitImage(this.state.imgMenu);
                     this.props.closeModal();
-                  }}>
+                  }} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
                   <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                   </TouchableOpacity>
                     <Text style={titleCreate}> THÊM HÌNH ẢNH </Text>

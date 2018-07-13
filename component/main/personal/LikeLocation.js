@@ -95,7 +95,7 @@ export default class LikeLocation extends Component {
                   <TouchableOpacity onPress={()=>{
                     DeviceEventEmitter.emit('goback',  {isLogin:true})
                     goBack();
-                  }}>
+                  }} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
                   <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                   </TouchableOpacity>
                     <Text style={titleCreate}>{lang.like_location.toUpperCase()} </Text>

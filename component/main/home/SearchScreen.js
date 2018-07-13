@@ -101,7 +101,7 @@ export default class SearchScreen extends Component {
 
     this.setState({ kw: keyword });
 
-    console.log('url',url);
+    //console.log('url',url);
     getApi(url)
       .then(arrData => {
         if(arrData.data.length===0 ){
@@ -389,7 +389,7 @@ export default class SearchScreen extends Component {
       <View style={container}>
         <View style={headStyle}>
             <View style={headContent}>
-            <TouchableOpacity onPress={()=>goBack()}>
+            <TouchableOpacity onPress={()=>goBack()} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
             <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
             </TouchableOpacity>
                 <Image source={logoTop} style={imgLogoTop} />
@@ -497,13 +497,14 @@ export default class SearchScreen extends Component {
                 //calloutOpen={false}
                 //ref={ref => { this.markerRef = ref }}
                 onPress={()=>{
-
                   if(callout[marker.id]){
-                    console.log('onPress-t',callout[marker.id]);
-                    this.setState({ callout: Object.assign({},{[marker.id]:false}) });
+                    this.setState({ callout: Object.assign({},{[marker.id]:false})},()=>{
+                      console.log('onPress-t',callout[marker.id]);
+                    });
                   }else {
-                    console.log('onPress-f',callout[marker.id]);
-                    this.setState({ callout: Object.assign({},{[marker.id]:true}) })
+                    this.setState({ callout: Object.assign({},{[marker.id]:true}) },()=>{
+                      console.log('onPress-f',callout[marker.id]);
+                    })
                   }
                 }} >
               {Platform.OS==='ios' &&
@@ -526,7 +527,7 @@ export default class SearchScreen extends Component {
                     </View>
                     </TouchableOpacity>
                   </MapView.Callout>
-                  </View>
+              </View>
 
               </MapView.Marker>
               </View>

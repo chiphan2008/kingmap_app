@@ -112,7 +112,8 @@ export default class GrantRight extends Component {
       <View>
         <View style={headCatStyle}>
             <View style={headContent}>
-                <TouchableOpacity onPress={()=>{this.props.closeModal()}}>
+                <TouchableOpacity onPress={()=>{this.props.closeModal()}}
+                hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
                 <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                 </TouchableOpacity>
                   <Text style={{marginTop:5,color:'#fff', fontWeight: 'bold'}}>{lang.assign.toUpperCase()}</Text>

@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image,
   TextInput, TouchableOpacity,Modal,Alert,
   ScrollView,FlatList,TouchableWithoutFeedback,
-  DeviceEventEmitter, KeyboardAvoidingView
+  DeviceEventEmitter, KeyboardAvoidingView, ActivityIndicator
 } from 'react-native';
 import Moment from 'moment';
 const {height, width} = Dimensions.get('window');
@@ -109,25 +109,34 @@ export default class MakeMoney extends Component {
       this.setState(this.state);
     }).catch(err => console.log(err));
   }
-  searchContent(route,keyword){
+  searchContent(route,keyword, page=null){
     const { user_profile,lang } = this.props.navigation.state.params;
     const {isCTV,isAgency,isCeo} = this.state;
+    if(page===null) page=0;
     let url = `${global.url}${'static/'}${route}`;
     const arr = new FormData();
     isCTV && arr.append('ctv_id',user_profile.id);
     isAgency && arr.append('daily_id',user_profile.id);
     // isCeo && arr.append('ceo_id',user_profile.id);
     arr.append('keyword',keyword);
-    console.log(`${global.url}${'static/'}${route}`);
-    console.log(arr);
+    arr.append('skip', page);
+    arr.append('limit', 20);
+    // console.log(`${global.url}${'static/'}${route}`);
+    // console.log(arr);
+
     postApi(url,arr).then(e => {
       this.state.noData = e.data.length>0?'':lang.not_found;
+      //console.log('e.data', e.data);
       if(route==='search-content'){
-        this.state.listLoc=e.data;
+        this.state.listLoc=page===0?e.data:this.state.listLoc.concat(e.data);
+        this.state.page =page===0?20:this.state.page+20;
+        this.state.loadMore =e.data.length===20?true:false;
         this.state.valLoc='';
         this.state.showLocPop=true;
       }else {
-        this.state.listAgency=e.data;
+        this.state.listAgency=page===0?e.data:this.state.listAgency.concat(e.data);
+        this.state.page =page===0?20:this.state.page+20;
+        this.state.loadMore =e.data.length===20?true:false;
         this.state.valCTV='';
         this.state.kw=keyword;
         this.state.showCTVPop=true;
@@ -162,7 +171,7 @@ export default class MakeMoney extends Component {
       //console.log(`${global.url}${'static?'}${'block_text='}${let_mm}${'&block_text=luu_y_make_money&lang='}${lang.lang}`);
       //console.log(arr);
       user_profile._roles.length>0 && postApi(`${global.url}${'static?'}${'block_text='}${let_mm}${',luu_y_make_money&lang='}${lang.lang}`,arr).then(e => {
-      //console.log('e.data',e.block_text);
+      console.log('e.data',e.data);
       this.state.static_notes=e.block_text.luu_y_make_money;
       this.state.des_mm=e.block_text[let_mm];
       this.state.listData=e.data;
@@ -286,7 +295,7 @@ export default class MakeMoney extends Component {
           {text: 'OK', onPress: () => this.searchContent('search-ctv',this.state.kw)}
         ],{ cancelable: false })
        :
-       Alert.alert(this.state.lang.notify,this.state.lang.update_success,[
+       Alert.alert(lang.notify,e.data,[
          {text: 'OK', onPress: () => this.searchContent('search-ctv',this.state.kw)}
        ])
      }
@@ -377,7 +386,8 @@ export default class MakeMoney extends Component {
         <View style={container}>
           <View style={headCatStyle}>
               <View style={headContent}>
-                  <TouchableOpacity onPress={()=>goBack()}>
+                  <TouchableOpacity onPress={()=>goBack()}
+                  hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
                   <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                   </TouchableOpacity>
                     <Text style={{marginTop:5,color:'#fff', fontWeight: 'bold', fontSize: 17}}>{lang.subscribe_ctv.toUpperCase()}</Text>
@@ -408,7 +418,8 @@ export default class MakeMoney extends Component {
         <View  style={container}>
           <View style={headCatStyle}>
               <View style={headContent}>
-                  <TouchableOpacity onPress={()=>goBack()}>
+                  <TouchableOpacity onPress={()=>goBack()}
+                  hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
                   <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                   </TouchableOpacity>
                     <Image source={logoTop} style={imgLogoTop} />
@@ -662,7 +673,20 @@ export default class MakeMoney extends Component {
                </View>
 
              </TouchableOpacity>
-         )} />
+         )}
+         onEndReachedThreshold={0.5}
+         onEndReached={() => {
+          if(loadMore) this.setState({loadMore:false},()=>{
+            this.searchContent(isCeo?'find-daily':'search-ctv','', page)
+          });
+         }}
+         ListFooterComponent={() => {
+          return (
+            <View>
+              {this.state.loadMore && <ActivityIndicator size="large" color="#d0021b" />}
+            </View>
+          )
+        }}/>
          </View>
          </TouchableWithoutFeedback>
        </TouchableOpacity>
@@ -716,7 +740,20 @@ export default class MakeMoney extends Component {
                        </View>
                    </View>
                </TouchableOpacity>
-           )} />
+           )}
+           onEndReachedThreshold={0.5}
+           onEndReached={() => {
+            if(loadMore) this.setState({loadMore:false},()=>{
+              this.searchContent('search-content','', page)
+            });
+            }}
+           ListFooterComponent={() => {
+             return (
+               <View>
+                 {this.state.loadMore && <ActivityIndicator size="large" color="#d0021b" />}
+               </View>
+             )
+           }}/>
            </View>
            </TouchableWithoutFeedback>
            </TouchableOpacity>

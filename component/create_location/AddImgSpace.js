@@ -103,7 +103,7 @@ export default class AddImgSpace extends Component {
                       this.props.submitImage(imgSpace,Object.entries(title_space),Object.entries(des_space));
                     }
                     this.props.closeModal();
-                  }}>
+                  }} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
                   <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                   </TouchableOpacity>
                     <Text style={titleCreate}> {lang.add_gallery} </Text>

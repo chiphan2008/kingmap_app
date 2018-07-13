@@ -391,7 +391,8 @@ export class ListChooseDate extends Component {
           this.props.updateDate(index);
           this.props.closeModal();
         }}
-        style={{position:'absolute',top:10,right:10}}>
+        style={{position:'absolute',top:10,right:10}}
+        hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
         <Image source={closeIC} style={{width:18, height:18}} />
         </TouchableOpacity>
 
@@ -462,7 +463,8 @@ export class Clock extends Component {
       <TouchableOpacity onPress={()=>{
         this.props.updateFTHour(`${apmFrom?f_hour.h+12:f_hour.h}:${padMinutes(f_hour.m)}`,`${apmTo?t_hour.h+12:t_hour.h}:${padMinutes(t_hour.m)}`,startAngle,angleLength);
         this.props.closeModal()}}
-      style={{position:'absolute',top:10,right:10}}>
+      style={{position:'absolute',top:10,right:10}}
+      hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
       <Image source={closeIC} style={{width:18, height:18}} />
       </TouchableOpacity>
       <View style={timeContainer}>

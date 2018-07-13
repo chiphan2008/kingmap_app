@@ -188,7 +188,7 @@ export default class LoginScreen extends Component {
         <TouchableWithoutFeedback onPress={()=>{Keyboard.dismiss()}}>
         <ScrollView>
         <TouchableOpacity style={{position:'absolute',top:Platform.OS==='ios'?25:15,right:15,zIndex:9}}
-        onPress={()=>goBack()}>
+        onPress={()=>goBack()} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
         <Image source={closeIC} style={{width:25,height:25}} />
         </TouchableOpacity>
         <View style={contentWrap}>

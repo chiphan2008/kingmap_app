@@ -265,7 +265,7 @@ export default class DetailScreen extends Component {
       <View style={container}>
         <View style={headStyle}>
           <View style={headContent}>
-          <TouchableOpacity onPress={()=>{this.backList()}}>
+          <TouchableOpacity onPress={()=>{this.backList()}} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
           <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
           </TouchableOpacity>
               {/*<Image source={logoTop} style={imgLogoTop} />*/}
@@ -275,7 +275,7 @@ export default class DetailScreen extends Component {
               <View></View>
           </View>
         </View>
-        
+
         <ScrollView scrollEnabled={scroll} ref={(c) => { this._scrollView = c; }}>
         <Header
         lang={lang}
@@ -387,7 +387,7 @@ export default class DetailScreen extends Component {
 
       </ScrollView>
       </View>
-      
+
     );
   }
 }

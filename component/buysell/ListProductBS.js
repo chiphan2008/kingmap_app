@@ -123,7 +123,7 @@ export default class ListProductBS extends Component {
 
       <View style={headCatStyle}>
           <View style={headContent}>
-              <TouchableOpacity onPress={()=>goBack()}>
+              <TouchableOpacity onPress={()=>goBack()} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
               <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
               </TouchableOpacity>
                 <Text style={titleCreate}> {`${cat_name}`.toUpperCase()} </Text>

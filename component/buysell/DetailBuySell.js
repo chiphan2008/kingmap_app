@@ -94,7 +94,7 @@ export default class DetailBuySell extends Component {
 
       <View style={headCatStyle}>
           <View style={headContent}>
-              <TouchableOpacity onPress={()=>goBack()}>
+              <TouchableOpacity onPress={()=>goBack()} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
               <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
               </TouchableOpacity>
                 <Image source={logoTop} style={imgLogoTop} />
@@ -161,7 +161,8 @@ export default class DetailBuySell extends Component {
 
       <Modal onRequestClose={() => null} visible={zoom} transparent>
         <TouchableOpacity onPress={()=>this.setState({zoom:false})}
-        style={{position:'absolute',padding:10,alignSelf:'flex-end',zIndex:9999}}>
+        style={{position:'absolute',padding:10,alignSelf:'flex-end',zIndex:9999}}
+        hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
           <Image source={closeIC} style={{width:18,height:18}} />
         </TouchableOpacity>
         <ImageViewer imageUrls={listData._images} index={activeSlide}/>

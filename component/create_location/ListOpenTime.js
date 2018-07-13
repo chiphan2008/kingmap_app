@@ -56,7 +56,7 @@ export default class ListOpenTime extends Component {
       <View style={container}>
       <View style={headCatStyle}>
           <View style={headContent}>
-              <TouchableOpacity onPress={()=>{
+              <TouchableOpacity hitSlop={{top: 20, bottom: 20, left: 20, right: 20}} onPress={()=>{
                 this.props.closeModal(`${from_date}`,`${to_date}`,`${from_hour.h}:${padMinutes(from_hour.m)}`,`${to_hour.h}:${padMinutes(to_hour.m)}`)}}>
               <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
               </TouchableOpacity>

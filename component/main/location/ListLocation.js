@@ -340,6 +340,7 @@ export default class ListLocation extends Component {
           <View style={headContent}>
           <TouchableOpacity
           onPress={()=>goBack()}
+          hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
           >
           <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
           </TouchableOpacity>
@@ -399,7 +400,7 @@ export default class ListLocation extends Component {
               <FlatList
                      ref="listPro"
                      onScroll={(e) => {
-                       console.log('e.nativeEvent',e.nativeEvent);
+                       //console.log('e.nativeEvent',e.nativeEvent);
                        if(e.nativeEvent.contentOffset!==undefined){
                          if(e.nativeEvent.contentOffset.y > 0 ){
                            this.state.scrollToTop===false && this.setState({scrollToTop: true});

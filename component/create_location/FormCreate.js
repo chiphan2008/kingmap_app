@@ -405,7 +405,7 @@ export default class FormCreate extends Component {
       {showUpdateMore===false && <ScrollView >
       <View style={headCatStyle}>
           <View style={headContent}>
-              <TouchableOpacity onPress={()=>goBack()}>
+              <TouchableOpacity onPress={()=>goBack()} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
               <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
               </TouchableOpacity>
               <Text style={titleCreate}> {idContent===undefined? this.state.lang.create_location:  this.state.lang.edit_location} </Text>
@@ -889,7 +889,7 @@ export default class FormCreate extends Component {
           <View style={container}>
             <View style={headCatStyle}>
                 <View style={headContent}>
-                    <TouchableOpacity onPress={()=>this.setState({showSubCat:!this.state.showSubCat})}>
+                    <TouchableOpacity hitSlop={{top: 20, bottom: 20, left: 20, right: 20}} onPress={()=>this.setState({showSubCat:!this.state.showSubCat})}>
                     <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                     </TouchableOpacity>
                     <Text style={titleCreate}> {this.state.lang.classify} </Text>
@@ -939,7 +939,7 @@ export default class FormCreate extends Component {
             <View style={container}>
               <View style={headCatStyle}>
                   <View style={headContent}>
-                      <TouchableOpacity onPress={()=>this.setState({showService:!this.state.showService})}>
+                      <TouchableOpacity hitSlop={{top: 20, bottom: 20, left: 20, right: 20}} onPress={()=>this.setState({showService:!this.state.showService})}>
                       <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                       </TouchableOpacity>
                       <Text style={titleCreate}> {this.state.lang.utilities} </Text>

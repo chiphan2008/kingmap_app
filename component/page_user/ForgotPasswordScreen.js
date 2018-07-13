@@ -76,7 +76,7 @@ export default class ForgotPasswordScreen extends Component {
       <ScrollView>
         <View style={contentWrap}>
               <TouchableOpacity style={{position:'absolute',top:15,right:15,zIndex:9}}
-              onPress={()=>goBack()}>
+              onPress={()=>goBack()} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
               <Image source={closeIC} style={{width:24,height:24}} />
               </TouchableOpacity>
 

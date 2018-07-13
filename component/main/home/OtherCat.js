@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import {Keyboard,Platform, View, Text, StyleSheet, Dimensions, Image,
-  TextInput, TouchableOpacity,FlatList,
+  TextInput, TouchableOpacity,FlatList,ActivityIndicator,
 } from 'react-native';
 import SvgUri from 'react-native-svg-uri';
 const {height, width} = Dimensions.get('window');
@@ -28,31 +28,42 @@ export default class OtherCat extends Component {
         valueLang : '',
         labelLang : '',
       },
+      loadMore:false,
+      page:0,
     }
     Keyboard.dismiss();
   }
 
-  getCategory(lang){
-    getApi(global.url+'categories?language='+lang+'&limit=100')
-    .then(arrCategory => {
-      //console.log('arrCategory',arrCategory.data);
-        this.setState({ listCategory: arrCategory.data });
-    })
-    .catch(err => console.log(err));
+  getCategory(page = null){
+    const { valueLang } = this.state.selectLang;
+    const limit = 20;
+    const skip = page===null?0:page;
+    let url = `${global.url}${'categories?language='}${valueLang}${'&skip='}${skip}${'&limit='}${limit}`;
+    //console.log(url);
+    getApi(url).then(arrCategory => {
+        this.state.listCategory = skip===0?arrCategory.data:this.state.listCategory.concat(arrCategory.data);
+        this.state.page = skip+limit;
+        this.state.loadMore = arrCategory.data.length<limit?false:true;
+        this.setState(this.state);
+    }).catch(err => console.log(err));
   }
 
-  componentWillMount(){
-    getLanguage().then((e) => {this.getCategory(e.valueLang);
-      this.setState({selectLang: {
-        valueLang : e.valueLang,
-        labelLang : e.labelLang,
-      },})
+  componentDidMount(){
+    getLanguage().then((e) => {
+      this.setState(
+        {selectLang:
+          {
+            valueLang : e.valueLang,
+            labelLang : e.labelLang,
+          },
+        },()=>{this.getCategory()})
     });
   }
 
   render() {
     //console.log('OtherCat');
     const {navigate, goBack} = this.props.navigation;
+    const {page, loadMore} = this.state;
     const { curLoc } = this.props.navigation.state.params || {};
     //console.log(curLoc);
     const {
@@ -67,7 +78,8 @@ export default class OtherCat extends Component {
 
       <View style={headCatStyle}>
           <View style={headContent}>
-              <TouchableOpacity onPress={()=>goBack()}>
+              <TouchableOpacity onPress={()=>goBack()}
+              hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
               <Image source={closeIC} style={{width:20, height:20,marginTop:5}} />
               </TouchableOpacity>
               <TouchableOpacity style={{alignItems:'center'}}>
@@ -81,6 +93,14 @@ export default class OtherCat extends Component {
     <View style={flatlistItem}>
         <FlatList
            numColumns={3}
+           extraData={this.state}
+           bounces={false}
+           onEndReachedThreshold={0.01}
+           onEndReached={() => {
+            this.state.loadMore && this.setState({loadMore:false},()=>{
+              this.getCategory(page);
+            });
+           }}
            data={this.state.listCategory}
            renderItem={({item}) =>(
              <TouchableOpacity
@@ -95,7 +115,15 @@ export default class OtherCat extends Component {
              </TouchableOpacity>
            )}
            style={{marginBottom:Platform.OS!=='ios'?110:75}}
-           keyExtractor={item => item.id}
+           keyExtractor={item => item.id.toString()}
+
+           ListFooterComponent={() => {
+            return (
+              <View>
+                {this.state.loadMore && <ActivityIndicator size="large" color="#d0021b" />}
+              </View>
+            )
+          }}
          />
          </View>
     </View>

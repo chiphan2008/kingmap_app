@@ -49,7 +49,7 @@ module.exports = {
   choose_img:'Please choose image',
   plz_name:'Please enter name',
   plz_des:'Please enter description',
-  plz_price:'Please enter price',
+  plz_price:'Price is empty or wrong format. Please enter a price',
   choose_loc:'Select location',
   choose_create:'Select a kind of place where you want to create',
   des_work:'Working description',

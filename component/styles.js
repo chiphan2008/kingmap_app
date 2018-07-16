@@ -51,8 +51,8 @@ module.exports = {
     position: 'absolute',
     top: 0,bottom: 0,left: 0,right: 0
   },
-  widthContentItem:{width:width-15-(width/3),flexDirection:'row',justifyContent:'space-between'},
-  widthLable:{width:(width-30)/3},
+  widthContentItem:{width:width*0.6,flexDirection:'row',justifyContent:'space-between'},
+  widthLable:{width:width*0.3,marginRight:20},
   wrapItems:{backgroundColor:'#fff',marginBottom:1,flexDirection:'row',padding:15},
   btnTransfer:{width:width-40,alignItems:'center',justifyContent:'center',backgroundColor:'#d0021b',padding:10,borderRadius:5},
 
@@ -224,7 +224,7 @@ module.exports = {
     width:240,
     height:240,
     alignItems:'center',
-    // justifyContent:'center',
+    //justifyContent:'center',
     //borderWidth:1
   },
   logoCenter:{top:20},

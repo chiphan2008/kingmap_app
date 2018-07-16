@@ -18,13 +18,13 @@ import getLanguage from '../api/getLanguage';
 import UpdateMore from './UpdateMore';
 import AddImgSpace from './AddImgSpace';
 import AddImgMenu from './AddImgMenu';
-import AddProduct from './AddProduct';
+//import AddProduct from './AddProduct';
 import AddVideo from './AddVideo';
 import OpenTime from './OpenTime';
 //import la from '../api/checkLocation';
 import ChooseArea from './ChooseArea';
 import checkLogin from '../api/checkLogin';
-
+import loginServer from '../api/loginServer';
 //import LatLng from './LatLng';
 
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
@@ -127,6 +127,7 @@ export default class FormCreate extends Component {
       if(e.id===undefined){
         this.setState({isLogin:false})
       }else {
+        loginServer(e,'cxv');
         this.setState({user_profile:e,ma_dinh_danh:e.ma_dinh_danh,isLogin:true});
       }
     })
@@ -307,30 +308,33 @@ export default class FormCreate extends Component {
     postApi(`${global.url}${act}`,arr).then((e)=>{
       //console.log('e',e);
       this.setState({showLoading:false,errMsg:''},()=>{
-        if(e.code===200){
-          if(this.state.editLoc){
-            Platform.OS==='android' ?
-            Alert.alert(this.state.lang.notify,this.state.lang.update_success,[
-              {text: '', style: 'cancel'},
-              {text: 'OK', onPress: () => this.props.navigation.goBack()}
-            ],
-           { cancelable: false })
-           :
-           Alert.alert(this.state.lang.notify,this.state.lang.update_success,[
-             {text: 'OK', onPress: () => this.props.navigation.goBack()}
-           ])
-          }else {
-            this.setState({idContent:e.data.content.id,showUpdate:true})
-           //  Alert.alert(this.state.lang.notify,this.state.lang.create_success,[
-           //    {text: '', style: 'cancel'},
-           //    {text: 'OK', onPress: () => this.setState({idContent:e.data.content.id,showUpdate:true})}
-           //  ],
-           // {cancelable: false });
-          }
+        this.state.showLoading===false && setTimeout(()=>{
+          if(e.code===200){
 
-        }else {
-          Alert.alert(this.state.lang.notify,e.message)
-        }
+            if(this.state.editLoc){
+              Platform.OS==='android' ?
+              Alert.alert(this.state.lang.notify,this.state.lang.update_success,[
+                {text: '', style: 'cancel'},
+                {text: 'OK', onPress: () => this.props.navigation.goBack()}
+              ],
+             { cancelable: false })
+             :
+             Alert.alert(this.state.lang.notify,this.state.lang.update_success,[
+               {text: 'OK', onPress: () => this.props.navigation.goBack()}
+             ])
+            }else {
+              this.setState({idContent:e.data.content.id,showUpdate:true})
+             //  Alert.alert(this.state.lang.notify,this.state.lang.create_success,[
+             //    {text: '', style: 'cancel'},
+             //    {text: 'OK', onPress: () => this.setState({idContent:e.data.content.id,showUpdate:true})}
+             //  ],
+             // {cancelable: false });
+            }
+
+          }else {
+            Alert.alert(this.state.lang.notify,e.message)
+          }
+        },700)
       });
 
     });
@@ -385,7 +389,7 @@ export default class FormCreate extends Component {
     const {navigate, goBack} = this.props.navigation;
     const { idCat,lang } = this.props.navigation.state.params;
     const {
-      wrapper,
+      wrapper,container,
       headCatStyle,headContent, wrapDistribute,wrapFilter,
       show,hide,hidden,colorlbl,listAdd,txtKV,btnMap,
       listCreate,titleCreate,imgCamera,colorErr,btnPress,colorNext,
@@ -833,13 +837,16 @@ export default class FormCreate extends Component {
       </ScrollView>
     </View>}
 
-
-      <View style={[clockTime,this.state.showOpenTime ? show : hidden]}>
+    {this.state.showOpenTime && <OpenTime
+    ListOpenTime={this.state.ListOpenTime}
+    lang={this.state.lang}
+    closeModal={this.setOpenTime.bind(this)} />}
+      {/*<View style={[clockTime,this.state.showOpenTime ? show : hidden]}>
       <OpenTime
       ListOpenTime={this.state.ListOpenTime}
       lang={this.state.lang}
       closeModal={this.setOpenTime.bind(this)} />
-      </View>
+      </View>*/}
 
       {this.state.showUpdate &&
         <View style={[popoverLoc,centerVer]}>

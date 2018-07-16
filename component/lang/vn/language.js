@@ -69,7 +69,7 @@ module.exports = {
   choose_img:'Vui lòng chọn hình ảnh',
   plz_name:'Vui lòng nhập tên',
   plz_des:'Vui lòng nhập mô tả',
-  plz_price:'Vui lòng nhập giá',
+  plz_price:'Giá đang trống hoặc sai định dạng. Vui lòng nhập giá',
   choose_loc:'Chọn địa điểm',
   choose_create:'Chọn loại địa điểm mà bạn muốn tạo',
   create_location:'Tạo địa điểm',

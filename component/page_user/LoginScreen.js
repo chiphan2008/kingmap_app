@@ -202,7 +202,8 @@ export default class LoginScreen extends Component {
               autoFocus value={this.state.txtUsername}
               onChangeText={(txtUsername) => this.setState({txtUsername})}
                />
-              <TextInput underlineColorAndroid='transparent' style={txtInput} selectionColor='#5b89ab' placeholderTextColor="#ddd" secureTextEntry
+              <TextInput underlineColorAndroid='transparent' style={txtInput} selectionColor='#5b89ab' placeholderTextColor="#ddd"
+              secureTextEntry autoCorrect={false} 
               placeholder={lang.pwd} ref='pwd' value={this.state.txtPassword}
               onChangeText={(txtPassword) => this.setState({txtPassword})}
               />

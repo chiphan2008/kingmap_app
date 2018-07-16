@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import {
   View,Text,StyleSheet,Image,TextInput,
-  Platform,Dimensions,TouchableOpacity,FlatList,
+  Dimensions,TouchableOpacity,FlatList,
 } from 'react-native';
 //import Carousel, { Pagination } from 'react-native-snap-carousel';
 import global from '../../global';

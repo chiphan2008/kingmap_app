@@ -17,7 +17,7 @@ import closeLargeIC from '../../src/icon/ic-create/ic-close-large.png';
 import removeIC from '../../src/icon/ic-create/ic-remove.png';
 import closeIC from '../../src/icon/ic-white/ic-close.png';
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
-import checkIC from '../../src/icon/ic-check.png';
+import checkIC from '../../src/icon/ic-create/ic-check.png';
 import uncheckIC from '../../src/icon/ic-uncheck.png';
 import LogoHome from '../../src/icon/ic-home/Logo-home.png';
 
@@ -240,6 +240,7 @@ export default class UpdateMore extends Component {
       nameProduct,desProduct,priceProduct,imgProduct,listLoc,showLoc,arrLoc,listLocChoose,listProduct,listKM,
       nameKM,desKM,priceKM,imgKM,disable,lang,
     }= this.state;
+    console.log('listLoc', listLoc)
     return (
 
       <Modal
@@ -444,6 +445,7 @@ export default class UpdateMore extends Component {
             <FlatList
              extraData={this.state}
              data={listLocChoose}
+             style={{marginBottom:60}}
              keyExtractor={(item,index) => index.toString()}
              renderItem={({item,index}) =>(
                <TouchableWithoutFeedback>
@@ -467,6 +469,7 @@ export default class UpdateMore extends Component {
           </View>}
 
           {showLoc &&
+
             <View style={[popoverLoc,centerVer]}>
                 {/*<TouchableOpacity onPress={()=>{this.setState({showLoc:false})}}
                 style={{position:'absolute',top:15,right:15}}>
@@ -481,7 +484,7 @@ export default class UpdateMore extends Component {
                    data={listLoc}
                    keyExtractor={(item,index) => index.toString()}
                    renderItem={({item,index}) =>(
-                     <TouchableOpacity style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginBottom:10}}
+                     <TouchableOpacity style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginBottom:10, marginTop: 5, marginLeft: 5, marginRight: 5}}
                      onPress={()=>{
                        if(arrLoc[item.id]){
                          arrLoc= Object.assign(arrLoc,{[item.id]:!item.id})
@@ -490,14 +493,14 @@ export default class UpdateMore extends Component {
                        }
                        this.setState(this.state);
                      }}>
-                         <View style={{flexDirection:'row',maxWidth:width-110}}>
+                         <View style={{flexDirection:'row',maxWidth:width-140}}>
                              <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:40,marginRight:10}} />
                              <View>
                                <Text numberOfLines={1} style={colorlbl}>{item.name}</Text>
                                <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.address}`}</Text>
                              </View>
                          </View>
-                           <Image source={arrLoc[item.id]?checkIC:uncheckIC} style={imgShare} />
+                           <Image source={arrLoc[item.id]?checkIC:uncheckIC} style={[imgShare,{width:24,height:24}]} />
                      </TouchableOpacity>
                    )} />
                    <View style={{flexDirection:'row',alignItems:'center',marginTop:10}}>

@@ -302,7 +302,7 @@ export default class OpenTime extends Component {
           </View>
 
       </View>
-      <ScrollView>
+      <ScrollView style={{height:height-150}}>
       <View style={{flexDirection:'row',justifyContent:'space-between',paddingTop:15,paddingLeft:15,width}}>
           <View style={{width:(width-40)/4,}}>
             <Text style={titleOpentime}>{lang.from_date}</Text>
@@ -325,7 +325,7 @@ export default class OpenTime extends Component {
       <View>
       {ListOpenTime}
       </View>
-      <View style={{width:width/2,alignSelf:'center',marginTop:20}}>
+      <View style={{width:width*0.7,alignSelf:'center',marginTop:20,marginBottom:40}}>
         <TouchableOpacity onPress={()=>this.addElement()} style={btnPress}>
         <Text style={colorNext}> + {lang.add_time_open} </Text>
         </TouchableOpacity>
@@ -353,6 +353,7 @@ export default class OpenTime extends Component {
       }}
       closeModal={()=>this.setState({showClock:false })}
       />}
+
       {showDate &&
         <ListChooseDate
         showDate={showDate}
@@ -435,6 +436,7 @@ export class Clock extends Component {
   }
 
   onUpdate = ({ startAngle, angleLength }) => {
+    console.log(startAngle, angleLength);
     this.setState({
       startAngle: roundAngleToFives(startAngle),
       angleLength: roundAngleToFives(angleLength)
@@ -459,7 +461,7 @@ export class Clock extends Component {
 
     return(
       showClock &&
-      <View style={[popupClock,showClock ? show : hide]}>
+      <View style={popupClock}>
       <TouchableOpacity onPress={()=>{
         this.props.updateFTHour(`${apmFrom?f_hour.h+12:f_hour.h}:${padMinutes(f_hour.m)}`,`${apmTo?t_hour.h+12:t_hour.h}:${padMinutes(t_hour.m)}`,startAngle,angleLength);
         this.props.closeModal()}}
@@ -488,7 +490,7 @@ export class Clock extends Component {
             {showClock && <Svg height={16} width={16}  style={{width:16,height:16}}>
               <G fill="#5b89ab">{BEDTIME_ICON}</G>
             </Svg>}
-            <Text style={bedtimeText}>{lang.close_time} </Text>
+            <Text style={bedtimeText}>{lang.close_time}</Text>
           </View>
           <View style={{flexDirection:'row'}}>
           <Text style={timeValue}>{t_hour.h}:{padMinutes(t_hour.m)}</Text>
@@ -503,10 +505,18 @@ export class Clock extends Component {
         {showClock && <CircularSlider
             startAngle={startAngle}
           angleLength={angleLength}
-          onUpdate={this.onUpdate}
+          onUpdate={({ startAngle, angleLength }) => {
+            this.setState({
+              startAngle: roundAngleToFives(startAngle),
+              angleLength: roundAngleToFives(angleLength)
+            });
+            var f_hour = calculateTimeFromAngle(startAngle);
+            var t_hour = calculateTimeFromAngle((startAngle + angleLength) % (2 * Math.PI));
+
+          }}
           segments={5}
           strokeWidth={40}
-          radius={145}
+          radius={width>320?140:120}
           gradientColorFrom="#8db9da"
           gradientColorTo="#5b89ab"
           showClockFace

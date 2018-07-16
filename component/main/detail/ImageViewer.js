@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import {
-  View,Text,Image,Modal,FlatList,TouchableOpacity,Dimensions
+  View,Text,Image,Modal,FlatList,TouchableOpacity,Dimensions,Platform
 } from 'react-native';
 import closeIC from '../../../src/icon/ic-white/ic-close.png';
 const {width,height} = Dimensions.get('window');

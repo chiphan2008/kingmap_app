@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import {
-  Platform, View, WebView, Text, StyleSheet,
+  View, WebView, Text, StyleSheet, ScrollView,
   Dimensions, Image, TextInput, TouchableOpacity,
   Modal,FlatList} from 'react-native';
 const {height, width} = Dimensions.get('window');
@@ -45,7 +45,7 @@ export default class ListImageContent extends Component {
     //console.log('idContent',idContent);
     getApi(`${global.url}${'content/'}${idContent}`)
     .then(arrData => {
-      this.setState({
+      arrData.data!==undefined && this.setState({
         listVideo:arrData.data.link_video,
         listSpace:arrData.data.image_space,
         listMenu:arrData.data.image_menu,
@@ -83,15 +83,16 @@ export default class ListImageContent extends Component {
         <View style={headCatStyle}>
             <View style={headContent}>
 
-                <TouchableOpacity onPress={()=> goBack()} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
+                <TouchableOpacity onPress={()=> goBack()}
+                hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
                 <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                 </TouchableOpacity>
-                <Text style={{color:'white',fontSize:16}}>{lang.image.toUpperCase()}</Text>
+                <Text style={{color:'white',fontSize:16,marginTop:5}}>{lang.image.toUpperCase()}</Text>
                 <View></View>
             </View>
         </View>
         <View style={{alignItems:'center'}}>
-          <View style={{flexDirection:'row',width:width-40,paddingTop:10,paddingBottom:10,}}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{flexDirection:'row',width:width-40,paddingTop:10,paddingBottom:10,}}>
             <TouchableOpacity onPress={()=> this.setState({showSpace:'active',showMenu:'',showVideo:''})} >
             <Text style={[marRight,this.state.showSpace==='active' ? titleTabActive : titleTab]}>{lang.space.toUpperCase()}</Text>
             </TouchableOpacity>
@@ -103,7 +104,7 @@ export default class ListImageContent extends Component {
             <TouchableOpacity onPress={()=> this.setState({showSpace:'',showMenu:'',showVideo:'active'})} >
             <Text style={[marRight,this.state.showVideo==='active' ? titleTabActive : titleTab]}>{'Video'.toUpperCase()}</Text>
             </TouchableOpacity>
-          </View>
+          </ScrollView>
         </View>
 
         {this.state.showSpace==='active' &&
@@ -113,7 +114,7 @@ export default class ListImageContent extends Component {
            numColumns={3}
            ListEmptyComponent={<Text style={{paddingLeft:20}}>{lang.updating}</Text>}
            showsHorizontalScrollIndicator={false}
-           keyExtractor={(item,index) => index}
+           keyExtractor={(item,index) => index.toString()}
            extraData={this.state}
            data={this.state.listSpace}
            renderItem={({item,index}) => (
@@ -139,7 +140,7 @@ export default class ListImageContent extends Component {
            numColumns={3}
            ListEmptyComponent={<Text style={{paddingLeft:20}}>{lang.updating}</Text>}
            showsHorizontalScrollIndicator={false}
-           keyExtractor={(item,index) => index}
+           keyExtractor={(item,index) => index.toString()}
            extraData={this.state}
            data={this.state.listMenu}
            renderItem={({item,index}) => (
@@ -166,7 +167,7 @@ export default class ListImageContent extends Component {
            //numColumns={3}
            ListEmptyComponent={<Text style={{paddingLeft:20}}>{lang.updating}</Text>}
            showsHorizontalScrollIndicator={false}
-           keyExtractor={(item,index) => index}
+           keyExtractor={(item,index) => index.toString()}
            extraData={this.state}
            data={this.state.listVideo}
            renderItem={({item,index}) => (

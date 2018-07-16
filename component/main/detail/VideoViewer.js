@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import {
-  View,Modal,WebView,TouchableOpacity,Dimensions,Image
+  View,Modal,WebView,TouchableOpacity,Dimensions,Image,Platform
 } from 'react-native';
 import closeIC from '../../../src/icon/ic-white/ic-close.png';
 import arrowLeft from '../../../src/icon/ic-white/arrow-left.png';
@@ -26,13 +26,13 @@ export default class VideoViewer extends Component {
       link!=='' &&
       <Modal onRequestClose={() => null} visible={visible} transparent>
       <TouchableOpacity style={{position:'absolute',zIndex:999,top:14,left:5}}
-      onPress={()=>{this.props.closeModal()}} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
+      onPress={()=>{this.props.closeModal()}}
+      hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
       <Image source={arrowLeft} style={{width:18, height:18}} />
       </TouchableOpacity>
-      <View  onLayout={()=>console.log(chanelVideo(link))} style={{width,height:height-24,backgroundColor:'#000',justifyContent:'center',alignItems:'center'}}>
+      <View style={{width,height:Platform.OS==='ios'?height:height-24,backgroundColor:'#000',justifyContent:'center',alignItems:'center'}}>
 
       <WebView
-
          style={{width,height:width,backgroundColor:'#000',alignSelf:'center',marginTop:height/4,padding:0}}
          //resizeMode='cover'
          allowsInlineMediaPlayback

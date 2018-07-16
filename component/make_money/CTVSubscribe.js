@@ -426,7 +426,7 @@ export default class AddImageMore extends Component {
                 }} style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
                     <View style={{flexDirection:'row',paddingBottom:15}}>
                         <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:50,marginRight:10,borderRadius:25}} />
-                        <View style={{width:width-130}}>
+                        <View style={{width:width-145}}>
                           <Text numberOfLines={1} style={colorlbl}>{item.full_name}</Text>
                           <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.address}`}</Text>
                         </View>

@@ -73,6 +73,7 @@ export default class HomeTab extends Component {
     };
     accessLocation();
     checkLogin().then(e=>{
+      //console.log(e);
       if(e.id===undefined){
         this.setState({isLogin:false})
       }else {

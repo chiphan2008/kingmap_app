@@ -8,7 +8,7 @@ import {
  } from 'react-native';
 //import { CheckBox } from 'react-native-elements';
 //import RoundCheckbox from 'rn-round-checkbox';
-import {GoogleSignin, GoogleSigninButton} from 'react-native-google-signin';
+import {GoogleSignin} from 'react-native-google-signin';
 
 import loginApi from '../api/loginApi';
 import gooApi from '../api/gooApi';
@@ -64,7 +64,6 @@ export default class LoginScreen extends Component {
 
   loginGooIOS(){
     GoogleSignin.signIn().then((user) => {
-
       gooApi(`${global.url}${'login-google'}`,user).then(e =>{
             if(e.code===200){
               this.props.navigation.navigate('MainScr');
@@ -203,7 +202,7 @@ export default class LoginScreen extends Component {
               onChangeText={(txtUsername) => this.setState({txtUsername})}
                />
               <TextInput underlineColorAndroid='transparent' style={txtInput} selectionColor='#5b89ab' placeholderTextColor="#ddd"
-              secureTextEntry autoCorrect={false} 
+              secureTextEntry autoCorrect={false}
               placeholder={lang.pwd} ref='pwd' value={this.state.txtPassword}
               onChangeText={(txtPassword) => this.setState({txtPassword})}
               />

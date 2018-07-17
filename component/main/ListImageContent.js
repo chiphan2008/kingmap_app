@@ -62,6 +62,13 @@ export default class ListImageContent extends Component {
       showMenu : menuTab,
       showVideo : videoTab,
     });
+    videoTab==='active' && this.gotoEndScroll();
+  }
+  gotoEndScroll = (contentWidth, contentHeight) => {
+
+      this.state.showSpace==='active' &&  this.scrollView.scrollTo({x: 0, y: 0, animated: true})
+
+      this.state.showVideo==='active' &&  this.scrollView.scrollToEnd({animated: false});
   }
 
   render() {
@@ -92,8 +99,16 @@ export default class ListImageContent extends Component {
             </View>
         </View>
         <View style={{alignItems:'center'}}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{flexDirection:'row',width:width-40,paddingTop:10,paddingBottom:10,}}>
-            <TouchableOpacity onPress={()=> this.setState({showSpace:'active',showMenu:'',showVideo:''})} >
+          <ScrollView
+          horizontal
+          onContentSizeChange={this.gotoEndScroll.bind(this)}
+          ref={(scrollView) => { this.scrollView = scrollView }}
+          showsHorizontalScrollIndicator={false}
+          style={{flexDirection:'row',width:width-40,paddingTop:10,paddingBottom:10,}}
+          >
+            <TouchableOpacity onPress={()=> this.setState({showSpace:'active',showMenu:'',showVideo:''},()=>{
+              this.gotoEndScroll();
+            })} >
             <Text style={[marRight,this.state.showSpace==='active' ? titleTabActive : titleTab]}>{lang.space.toUpperCase()}</Text>
             </TouchableOpacity>
             <Text style={[marRight,titleTab]}> | </Text>
@@ -101,7 +116,9 @@ export default class ListImageContent extends Component {
             <Text style={[marRight,this.state.showMenu==='active' ? titleTabActive : titleTab]}>{lang.image.toUpperCase()}</Text>
             </TouchableOpacity>
             <Text style={[marRight,titleTab]}> | </Text>
-            <TouchableOpacity onPress={()=> this.setState({showSpace:'',showMenu:'',showVideo:'active'})} >
+            <TouchableOpacity onPress={()=> this.setState({showSpace:'',showMenu:'',showVideo:'active'},()=>{
+              this.gotoEndScroll();
+            })} >
             <Text style={[marRight,this.state.showVideo==='active' ? titleTabActive : titleTab]}>{'Video'.toUpperCase()}</Text>
             </TouchableOpacity>
           </ScrollView>

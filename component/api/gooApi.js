@@ -8,7 +8,6 @@ const gooApi = async (url,param) => {
 
     const auth_key = await AsyncStorage.getItem('@AuthKey:key');
     auth_key = JSON.parse(auth_key);
-    //console.log('param',param);
     const acc = new FormData();
     if(param.id_google===undefined){
       acc.append('id_google',param.id );

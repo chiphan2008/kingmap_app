@@ -319,7 +319,7 @@ export default class OpenTime extends Component {
           </View>
 
           <TouchableOpacity>
-          <Text style={{fontWeight:'bold',fontSize:18,transform:[{ rotate: '45deg'}]}}>   </Text>
+          <Text style={{fontWeight:'bold',fontSize:20,transform:[{ rotate: '45deg'}]}}>   </Text>
           </TouchableOpacity>
       </View>
       <View>

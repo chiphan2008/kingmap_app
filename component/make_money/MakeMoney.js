@@ -446,11 +446,21 @@ export default class MakeMoney extends Component {
           </View>
 
           <View>
+
+          <View style={wrapWhite} >
+              <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+                <View>
+                  <Text numberOfLines={1} style={colorTitle}>{`${lang.my_coin}`}</Text>
+                  <Text style={titleCoin}>{`${format_number(user_profile.coin)}`}</Text>
+                </View>
+              </View>
+          </View>
+
             {listData.total!==undefined &&
               <View style={wrapWhite}>
               <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                 <View>
-                  <Text numberOfLines={1} style={colorTitle}>{`${lang.this_revenus}`}</Text>
+                  <Text numberOfLines={1} style={colorTitle}>{`${lang.total_MM}`}</Text>
                   <Text style={titleCoin}>{`${listData.total ? format_number(listData.total) : 0}`}</Text>
                 </View>
                 <TouchableOpacity onPress={()=>{

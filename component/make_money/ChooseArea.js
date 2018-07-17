@@ -139,7 +139,19 @@ export default class ChooseArea extends Component {
                   <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                   </TouchableOpacity>
                   <Text style={titleCreate}> {lang.choose_area} </Text>
-                  <View></View>
+                  <View>
+                    {showDist && <TouchableOpacity hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
+                    onPress={()=>{
+                      if(Object.entries(this.state.chooseDist).length>0){
+                        this.props.chooseDist(this.state.chooseDist);
+                        this.props.closeModal();
+                      }else {
+                        Alert.alert(lang.notify,lang.plz_choose_area);
+                      }
+                    }}>
+                    <Text style={titleCreate}> {lang.done} </Text>
+                    </TouchableOpacity>}
+                  </View>
               </View>
           </View>
 
@@ -214,7 +226,7 @@ export default class ChooseArea extends Component {
               this.state.showCity = true;
               this.state.showDist = false;
               this.setState(this.state,()=>{
-                this.props.chooseDist(chooseDist)
+                //this.props.chooseDist(chooseDist)
               })
             }} style={[listAdd,{justifyContent:'flex-start',alignItems:'center'}]}>
             <Image source={prevIC} style={{width:20,height:20}} />
@@ -254,7 +266,7 @@ export default class ChooseArea extends Component {
                     }else {
                       this.state.chooseDist = Object.assign(this.state.chooseDist,{[e.id]:e.id});
                     }
-                    this.setState(this.state,()=>this.props.chooseDist(chooseDist));
+                    this.setState(this.state,()=>{});
                   }} style={listAdd}>
                     <Text style={colorlbl}>{e.name}</Text>
                     <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>

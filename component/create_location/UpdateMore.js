@@ -10,6 +10,7 @@ import styles from '../styles';
 import global from '../global';
 import getApi from '../api/getApi';
 import postApi from '../api/postApi';
+import checkLogin from '../api/checkLogin';
 import lang_en from '../lang/en/language';
 import lang_vn from '../lang/vn/language';
 import cameraLargeIC from '../../src/icon/ic-create/ic-camera-large.png';
@@ -23,7 +24,7 @@ import LogoHome from '../../src/icon/ic-home/Logo-home.png';
 
 const {width,height} = Dimensions.get('window');
 import ImagePicker from 'react-native-image-crop-picker';
-import {checkUrl,onlyNumber} from '../libs';
+import {checkUrl,onlyNumber,format_number} from '../libs';
 
 export default class UpdateMore extends Component {
   constructor(props){
@@ -56,8 +57,11 @@ export default class UpdateMore extends Component {
       product_id:'',
       discount_id:'',
       disable:false,
+      page: 0,
+      loadMore: true,
     }
     this.getList('product');
+
   }
   uploadProduct(route){
     ImagePicker.openPicker({
@@ -100,9 +104,10 @@ export default class UpdateMore extends Component {
         type: `${img.mime}`
       });
       const act = edit?'edit':'create';
-      //console.log(`${global.url}${route}/${act}`);
-      //console.log('arr',arr);
+      // console.log(`${global.url}${route}/${act}`);
+      // console.log('arr',arr);
       postApi(`${global.url}${route}/${act}`,arr).then((e)=>{
+        console.log(e);
         if(e.code===200){
           this.setState({
             nameProduct:'',desProduct:'',priceProduct:'',imgProduct:{},
@@ -178,13 +183,19 @@ export default class UpdateMore extends Component {
     });
   }
 
-  getData(){
+  getData(page=null){
     const {content_id} = this.props;
-    const url = `${global.url}${'branch/list-content/'}${content_id}`;
-    //console.log(url);
+    let limit = 20;
+    if(page===null) page = 0;
+    const url = `${global.url}${'branch/list-content/'}${content_id}?skip=${page}&limit=${limit}`;
+    console.log(url);
     getApi(url)
     .then(arrData => {
-        this.setState({ listLoc: arrData.data });
+        this.setState({
+          listLoc: page===0 ? arrData.data : this.state.listLoc.concat(arrData.data),
+          page: page===0 ? 20 : this.state.page + 20,
+          loadMore: arrData.data.length===20 ? true : false
+        });
     })
     .catch(err => console.log(err));
   }
@@ -220,11 +231,18 @@ export default class UpdateMore extends Component {
       this.updateListLoc();
     })
   }
-  updateListLoc = () => {
+  updateListLoc = (page=null) => {
     const {content_id} = this.props;
-    const url = `${global.url}${'branch/list/'}${content_id}`;
+    if(page===null) page = 0;
+    const url = `${global.url}${'branch/list/'}${content_id}?skip=${page}&limit=20`;
+    //console.log(url)
     getApi(url).then(arrData => {
-        this.setState({ listLocChoose: arrData.data });
+      //console.log('arrData',arrData)
+        this.setState({
+          page: page === 0 ? 20 : this.state.page + 20,
+          loadMore: arrData.data.length === 20 ? true : false,
+          listLocChoose: page === 0 ? arrData.data : this.state.listLocChoose.concat(arrData.data)
+        });
     })
     .catch(err => console.log(err));
   }
@@ -238,9 +256,9 @@ export default class UpdateMore extends Component {
     const {visible,user_profile,editLoc}= this.props;
     var {
       nameProduct,desProduct,priceProduct,imgProduct,listLoc,showLoc,arrLoc,listLocChoose,listProduct,listKM,
-      nameKM,desKM,priceKM,imgKM,disable,lang,
+      nameKM,desKM,priceKM,imgKM,disable,lang,loadMore, page
     }= this.state;
-    console.log('listLoc', listLoc)
+    //console.log('listLocChoose', listLocChoose)
     return (
 
       <Modal
@@ -352,7 +370,7 @@ export default class UpdateMore extends Component {
                        <Image source={{uri:checkUrl(item.thumb) ? item.thumb : `${global.url_media}${item.thumb}`}} style={{width:50,height:40,marginRight:10}} />
                        <View style={{minWidth:width-50}}>
                          <Text numberOfLines={1} style={colorlbl}>{item.name}</Text>
-                         <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.price} ${item.currency}`}</Text>
+                         <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${format_number(item.price)} ${item.currency}`}</Text>
                        </View>
                    </TouchableOpacity>
                    <TouchableOpacity onPress={()=>this.delProduct('product',item.id)}>
@@ -409,9 +427,10 @@ export default class UpdateMore extends Component {
             <Text style={colorNext}> {this.state.lblKM} </Text>
             </TouchableOpacity>
           </View>
+
           <FlatList
              extraData={this.state}
-             style={{marginTop:15,paddingBottom:15,paddingLeft:15,width:width-15}}
+             style={{marginTop:15,paddingBottom:15,paddingLeft:15,paddingRight:15,width}}
              data={listKM}
              keyExtractor={(item,index) => index.toString()}
              renderItem={({item,index}) =>(
@@ -422,7 +441,7 @@ export default class UpdateMore extends Component {
                        <Image source={{uri:checkUrl(item.thumb) ? item.thumb : `${global.url_media}${item.thumb}`}} style={{width:50,height:40,marginRight:10}} />
                        <View style={{minWidth:width-50}}>
                          <Text numberOfLines={1} style={colorlbl}>{item.name}</Text>
-                         <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.price}`}</Text>
+                         <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${format_number(item.price)} ${item.currency}`}</Text>
                        </View>
                    </TouchableOpacity>
                    <TouchableOpacity onPress={()=>this.delProduct('discount',item.id)}>
@@ -434,7 +453,7 @@ export default class UpdateMore extends Component {
 
           {this.state.showBrandTab &&
           <View style={[container,this.state.showBrandTab ? show : hide]}>
-          <View style={{width:width-(width/4),alignSelf:'center',marginTop:20}}>
+          <View style={{width:width*0.8,alignSelf:'center',marginTop:20}}>
             <TouchableOpacity onPress={()=>{this.getData();this.setState({showLoc:true})}} style={btnPress}>
             <Text style={colorNext}> + {lang.add_branch} </Text>
             </TouchableOpacity>
@@ -445,11 +464,11 @@ export default class UpdateMore extends Component {
             <FlatList
              extraData={this.state}
              data={listLocChoose}
-             style={{marginBottom:60}}
+             style={{marginBottom: 60}}
              keyExtractor={(item,index) => index.toString()}
              renderItem={({item,index}) =>(
                <TouchableWithoutFeedback>
-               <View style={{flexDirection:'row',justifyContent:'center'}}>
+               <View style={{flexDirection:'row',justifyContent:'center',}}>
                    <View style={{flexDirection:'row',paddingBottom:15}}>
                        <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:40,marginRight:10}} />
                        <View style={{width:width-110}}>
@@ -462,7 +481,13 @@ export default class UpdateMore extends Component {
                   </TouchableOpacity>
                   </View>
                 </TouchableWithoutFeedback>
-             )} />
+             )}
+             onEndReachedThreshold={0.5}
+             onEndReached={() => {
+               if(loadMore) this.setState({loadMore: false}, () => {
+                 this.updateListLoc(page);
+               })
+             }}/>
             </View>
            }
 
@@ -480,7 +505,7 @@ export default class UpdateMore extends Component {
                 <Text numberOfLines={1} style={{color:'#2A2D37',fontSize:17}}>{lang.add_branch.toUpperCase()}</Text>
                 <FlatList
                    extraData={this.state}
-                   style={{marginTop:15,width:width-30,paddingBottom:15,paddingLeft:5,paddingRight:5,}}
+                   style={{marginTop:15,width:width-30,paddingBottom:15,paddingLeft:5,paddingRight:5}}
                    data={listLoc}
                    keyExtractor={(item,index) => index.toString()}
                    renderItem={({item,index}) =>(
@@ -493,7 +518,7 @@ export default class UpdateMore extends Component {
                        }
                        this.setState(this.state);
                      }}>
-                         <View style={{flexDirection:'row',maxWidth:width-140}}>
+                         <View style={{flexDirection:'row',maxWidth:width-135}}>
                              <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:40,marginRight:10}} />
                              <View>
                                <Text numberOfLines={1} style={colorlbl}>{item.name}</Text>
@@ -502,14 +527,21 @@ export default class UpdateMore extends Component {
                          </View>
                            <Image source={arrLoc[item.id]?checkIC:uncheckIC} style={[imgShare,{width:24,height:24}]} />
                      </TouchableOpacity>
-                   )} />
+                   )}
+                   onEndReachedThreshold={0.5}
+                   onEndReached={() => {
+                     if(loadMore) this.setState({loadMore: false}, () => {
+                       console.log('load more', page)
+                      this.getData(page)
+                     })
+                   }} />
                    <View style={{flexDirection:'row',alignItems:'center',marginTop:10}}>
                        <TouchableOpacity style={{alignItems:'center',padding:7,borderWidth:1,borderRadius:4,borderColor:'#d0021b',minWidth:width/3}}
-                       onPress={()=>{this.setState({showLoc:false,arrLoc:[]})}}>
+                       onPress={()=>{this.setState({showLoc:false,arrLoc:[], page: 0, loadMore: true})}}>
                          <Text style={{color:'#d0021b',fontSize:16}}>{`${lang.cancel}`}</Text>
                        </TouchableOpacity>
                        <TouchableOpacity style={{alignItems:'center',padding:7,borderRadius:4,backgroundColor:'#d0021b',marginLeft:10,minWidth:width/3}}
-                       onPress={()=>{this.setState({showLoc:false},()=>{
+                       onPress={()=>{this.setState({showLoc:false, page: 0, loadMore: true},()=>{
                          this.addListLoc();
                        })}}>
                          <Text style={{color:'#fff',fontSize:16}}>{`${lang.done}`}</Text>

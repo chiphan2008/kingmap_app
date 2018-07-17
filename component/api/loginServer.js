@@ -9,11 +9,11 @@ const loginServer = async (param,reqLoc=null) => {
   try {
     //console.log(`${global.url}${'check-login'}`,);
     getApi(`${global.url}${'check-login'}`).then(arr => {
-      //console.log('arr.data.length',arr.data);
 
       if(arr.data.length===0 || reqLoc!==null){
         //console.log('aaa',param.login_type);
         if(param.login_type==='goo'){
+          //console.log('check-login-goo',param);
           gooApi(`${global.url}${'login-google'}`,param);
         }else if (param.login_type==='fac') {
           faceApi(`${global.url}${'login-facebook'}`,param);

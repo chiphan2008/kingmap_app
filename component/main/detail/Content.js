@@ -82,14 +82,14 @@ export default class Content extends Component {
         <View style={rowFlex}>
           <Image style={[imgContentIC,marRight]} source={timeIC} />
           <View>
-          {strtoarray(listContent.open_time).map((e)=>(
-            <Text key={e} style={colorContent}>{`${e}`.trim()}</Text>
+          {strtoarray(listContent.open_time).map((e,index)=>(
+            <Text key={index} style={colorContent}>{`${e}`.trim()}</Text>
           ))}
           </View>
         </View>
         <View style={rowFlex}>
           {/*<Image style={[imgContentIC,marRight]} source={priceIC} />*/}
-          <Text numberOfLines={5} style={[colorContent,width30]}>{`${listContent.description}`}</Text>
+          <Text numberOfLines={5} style={[colorContent,{width:width-35}]}>{`${listContent.description}`}</Text>
         </View>
 
 

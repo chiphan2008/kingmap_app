@@ -1,5 +1,5 @@
 import Intl from 'intl';
-import {AsyncStorage} from 'react-native';
+import {AsyncStorage,Platform} from 'react-native';
 import 'intl/locale-data/jsonp/en';
 import lang_en from './lang/en/user/language';
 import lang_vn from './lang/vn/user/language';
@@ -72,7 +72,8 @@ export function chanelVideo(link,height=null){
   var facebook = /^https:\/\/www\.facebook\.com\/([^\/?].+\/)?video(s|\.php)[\/?].*$/gm;
   if(link.match(youtube)){
     id_video = link.match(/^.*(youtu.be\/|v\/|e\/|u\/\w+\/|embed\/|v=)([^#\&\?]*).*/).pop();
-    return `https://www.youtube.com/embed/${id_video}?autoplay=1&amp;autohide=1&amp;fs=1&amp;rel=0&amp;hd=1&amp;wmode=transparent&amp;enablejsapi=1&amp;html5=1`;
+    //const opt = Platform.OS==='ios'?link:`${'https://www.youtube.com/embed/'}${id_video}${'?autoplay=1&amp;autohide=1&amp;fs=1&amp;rel=0&amp;hd=1&amp;wmode=transparent&amp;enablejsapi=1&amp;html5=1'}`
+    return `${'https://www.youtube.com/embed/'}${id_video}${'?autoplay=1&amp;autohide=1&amp;fs=1&amp;rel=0&amp;hd=1&amp;wmode=transparent&amp;enablejsapi=1&amp;html5=1'}`;
   }
   if(link.match(facebook)){
     if(height===null) height=300;

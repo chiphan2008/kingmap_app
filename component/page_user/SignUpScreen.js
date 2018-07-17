@@ -7,9 +7,11 @@ import {
   TouchableWithoutFeedback
 } from 'react-native';
 //import { CheckBox } from 'react-native-elements';
+import {GoogleSignin} from 'react-native-google-signin';
 import lang_en from '../lang/en/user/language';
 import lang_vn from '../lang/vn/user/language';
 import postApi from '../api/postApi';
+import gooApi from '../api/gooApi';
 import global from '../global';
 import getLanguage from '../api/getLanguage';
 
@@ -166,6 +168,25 @@ export default class SignUpScreen extends Component {
       this.setState({err_pwd:obj.msg,color_pwd:obj.color});
     },800);
   }
+
+  loginGooIOS(){
+    GoogleSignin.signIn().then((user) => {
+     //console.log(user);
+      gooApi(`${global.url}${'login-google'}`,user).then(e =>{
+        //console.log(e);
+            if(e.code===200){
+              this.props.navigation.navigate('MainScr');
+            }else{
+              this.setState({errMsg:e.message})
+            }
+      })
+    }).catch((err) => {
+      //alert(err.toString())
+  //console.log('WRONG SIGNIN', err);
+}).done();
+
+  }
+
   render() {
     const {
       container, imgLogo, title, txtInput,mrgTop,imgSoci,bgImg,
@@ -184,7 +205,7 @@ export default class SignUpScreen extends Component {
         <View style={contentWrap}>
               <TouchableOpacity style={{position:'absolute',top:15,right:15,zIndex:9}}
               onPress={()=>goBack()} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
-                  <Image source={closeIC} style={{width:20,height:20}} />
+                  <Image source={closeIC} style={{width:25,height:25}} />
               </TouchableOpacity>
 
               <Image style={imgLogo} source={LogoHome} />
@@ -253,7 +274,7 @@ export default class SignUpScreen extends Component {
                 <TouchableOpacity onPress={()=>this.loginFB()}>
                 <Image style={imgSoci} source={FacebookColor} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={()=>{}}>
+                <TouchableOpacity onPress={()=>{this.loginGooIOS()}}>
                 <Image style={imgSoci} source={GoogleColor} />
                 </TouchableOpacity>
 

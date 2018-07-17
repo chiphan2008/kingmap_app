@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image,
   TextInput, TouchableOpacity,ScrollView,Modal,FlatList,
-  BackHandler,Alert,ActivityIndicator,
+  Alert,ActivityIndicator,
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 const {height, width} = Dimensions.get('window');
@@ -123,10 +123,11 @@ export default class FormCreate extends Component {
 
     };
     checkLogin().then(e=>{
-      //console.log(e);
+      //console.log('e11',e);
       if(e.id===undefined){
         this.setState({isLogin:false})
       }else {
+        //console.log('e',e);
         loginServer(e,'cxv');
         this.setState({user_profile:e,ma_dinh_danh:e.ma_dinh_danh,isLogin:true});
       }
@@ -230,6 +231,7 @@ export default class FormCreate extends Component {
     this.setState({showLoading:true});
     const arr = new FormData();
     this.state.editLoc && arr.append('id_content',this.state.idContent);
+    this.state.user_profile.id!==undefined && arr.append('id_user',this.state.user_profile.id);
     this.state.txtName!==null && arr.append('name',this.state.txtName.trim());
     arr.append('id_category',this.props.navigation.state.params.idCat);
     Object.entries(this.state.checkSubCat).forEach((e)=>{
@@ -303,10 +305,10 @@ export default class FormCreate extends Component {
       }
     });
     const act = this.state.editLoc?'update-location':'create-location';
-    // console.log('arr',arr);
-    // console.log('e',`${global.url}${act}`);
+    console.log('arr',arr);
+    console.log('e',`${global.url}${act}`);
     postApi(`${global.url}${act}`,arr).then((e)=>{
-      //console.log('e',e);
+      console.log('e',e);
       this.setState({showLoading:false,errMsg:''},()=>{
         this.state.showLoading===false && setTimeout(()=>{
           if(e.code===200){
@@ -337,7 +339,7 @@ export default class FormCreate extends Component {
         },700)
       });
 
-    });
+    }).catch(err=>console.log(err));
 
     //this.setState({showUpdate:true});
   }
@@ -829,7 +831,7 @@ export default class FormCreate extends Component {
             <Text style={colorNext}> {this.state.lang.update_general_info} </Text>
             </TouchableOpacity>
           </View>
-          <View style={{height:15}}></View>
+          <View style={{height:30}}></View>
           </View>
         }
       </View>

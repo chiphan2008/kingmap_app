@@ -172,7 +172,7 @@ export default class DetailScreen extends Component {
    }
 
   componentWillUnMount(){
-    clearTimeout(timeoutCheckUser);
+    //clearTimeout(timeoutCheckUser);
   }
   saveLike(routing){
     const {isLogin,user_id} = this.state;

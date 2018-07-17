@@ -32,13 +32,26 @@ export default class VideoViewer extends Component {
       </TouchableOpacity>
       <View style={{width,height:Platform.OS==='ios'?height:height-24,backgroundColor:'#000',justifyContent:'center',alignItems:'center'}}>
 
+      {Platform.OS==='ios'?
+      <View style={{width:width-15,height:width,backgroundColor:'#000',alignSelf:'center',padding:0}}>
+      <WebView
+
+         //resizeMode='cover'
+         allowsInlineMediaPlayback
+         source={{
+           uri:`${chanelVideo(link)}`
+         }}
+         //scalesPageToFit={true}
+      />
+      </View>
+      :
+      <View>
       <WebView
          style={{width,height:width,backgroundColor:'#000',alignSelf:'center',marginTop:height/4,padding:0}}
          //resizeMode='cover'
          allowsInlineMediaPlayback
          source={{
-           html:`<iframe  width="${width-15}" height="300" frameborder="0" vspace="0" hspace="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="true" allowtransparency="true" src="${chanelVideo(link)}"  scrolling="no"></iframe>`
-           //uri: `${link}`
+           html:`<iframe  width="${width-15}" height="300" src="${chanelVideo(link)}"  scrolling="no" frameborder="0" vspace="0" hspace="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="true" allowtransparency="true" ></iframe>`
          }}
          javaScriptEnabled
          domStorageEnabled
@@ -49,6 +62,7 @@ export default class VideoViewer extends Component {
          startInLoadingState={true}
          //scalesPageToFit={true}
       />
+      </View>}
       </View>
       </Modal>
     );

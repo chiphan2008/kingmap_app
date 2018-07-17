@@ -58,7 +58,7 @@ export default class PersonalTab extends Component {
   }
   refresh(){
     checkLogin().then(e=>{
-      //console.log('checkLogin',e);
+      console.log('checkLogin123',e);
       if(e.id===undefined){
         this.setState({isLogin:false})
       }else {

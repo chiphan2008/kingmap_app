@@ -9,17 +9,22 @@ const postApi = async (url,param) => {
     let params = {
         method: 'POST',
         headers: {
+          Accept: 'application/json',
           'Content-Type': 'multipart/form-data',
           'Authorization': 'Bearer '+ auth_key.access_token,
         },
         body: param,
       };
 
+    //console.log('url, params',url, params);
     let response = await fetch(url, params);
+    // console.log('response',response);
     let responseJson = await response.json();
+    // console.log('responseJson',responseJson);
 
     return responseJson;
   } catch (error) {
+    console.log('err',error);
   }
 
 };

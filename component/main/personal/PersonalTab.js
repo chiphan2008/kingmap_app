@@ -58,7 +58,7 @@ export default class PersonalTab extends Component {
   }
   refresh(){
     checkLogin().then(e=>{
-      console.log('checkLogin123',e);
+      //console.log('checkLogin123',e);
       if(e.id===undefined){
         this.setState({isLogin:false})
       }else {
@@ -66,7 +66,7 @@ export default class PersonalTab extends Component {
         this.getUser(e.id);
         this.setState({user_profile:e,isLogin:true});
         //console.log('loginServer',e);
-        loginServer(e);
+        //loginServer(e);
       }
     });
   }

@@ -124,7 +124,7 @@ export default class ListLocPer extends Component {
                   <TouchableOpacity onPress={()=>{
                     DeviceEventEmitter.emit('goback',  {isLogin:true})
                     goBack();
-                  }} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
+                  }}>
                   <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                   </TouchableOpacity>
                     <Text style={titleCreate}>{lang.list_location.toUpperCase()} </Text>
@@ -146,6 +146,7 @@ export default class ListLocPer extends Component {
          keyExtractor={(item,index) => index.toString()}
          renderItem={({item,index}) =>(
            <View >
+             <View style={{height:8}}></View>
              <View style={{backgroundColor:'#fff'}}>
                <TouchableOpacity onPress={()=>{
                  navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc,lang:lang.lang,update:true})
@@ -198,12 +199,12 @@ export default class ListLocPer extends Component {
                      id_content:item.id,
                      idCat:item._category_type.id,
                      nameCat:item._category_type.name,
-                     moderation:item.moderation})}>
+                     moderation:item.moderation})}
+                     hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
                      <Image source={moreIC} style={{width:20,height:20}} />
                      </TouchableOpacity>
                  </View>
              </View>
-             <View style={{height:14}}></View>
            </View>
          )} />
 

@@ -32,7 +32,8 @@ export default class AddImgMenu extends Component {
   }
   uploadSpace(){
     ImagePicker.openPicker({
-      multiple: true
+      multiple: true,
+      maxFiles: 50
     }).then(img => {
       if(this.state.update){
         img.forEach(e=>{

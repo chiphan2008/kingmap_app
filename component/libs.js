@@ -46,7 +46,9 @@ export function hasNumber(text) {
   return /\d/.test(text);
 }
 export function getThumbVideo(link,thumb=null){
+
   if(link===null || link==='') return;
+  //console.log('link',link);
   var youtube = /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
   let id_video;
   if(link.match(youtube)){
@@ -60,7 +62,7 @@ export function getThumbVideo(link,thumb=null){
   //console.log(link);
   var facebook = /^https:\/\/www\.facebook\.com\/([^\/?].+\/)?video(s|\.php)[\/?].*$/gm;
   if(link.match(facebook)){
-    id_video = link.match(/(videos\/|vl\.\d+\/)(\d+).*/).pop();
+    id_video = link.match(/(videos\/|vl\.|vb\.\d+\/)(\d+).*/).pop();
     //console.log('link',id_video);
     return `${'https://graph.facebook.com/'}${id_video}${'/picture'}`;
   }
@@ -165,8 +167,11 @@ export function onlyLetters(str) {
     return regex.test(xoa_dau(str));
 }
 
-export function onlyNumber(str) {
+export function onlyNumber(str,dot=null) {
     let regex = /^[0-9\s]+$/;
+    if(dot!==null){
+      regex = /^\d(\.\d)*$/;
+    }
     return regex.test(str);
 }
 export function checkUrl(url){

@@ -21,6 +21,7 @@ import editBlueIC from '../../../src/icon/ic-blue/ic-edit.png';
 import saveBlueIC from '../../../src/icon/ic-blue/ic-save.png';
 import doneIC from '../../../src/icon/ic-create/ic-done.png';
 import closeIC from '../../../src/icon/ic-create/ic-close.png';
+import * as _ from 'lodash';
 
 const {width,height} = Dimensions.get('window');
 
@@ -66,12 +67,19 @@ export default class Collection extends Component {
   }
   delCollection(idCollection){
     const arr = new FormData();
+    const {listData} = this.state;
     arr.append('collection_id',idCollection);
     arr.append('user_id',this.state.user_profile.id);
     const url = `${global.url}${'collection/delete'}`;
 
     postApi(url,arr).then(e => {
-      if(e.code===200) this.getData();
+      if(e.code===200) {
+        _.remove(listData, function(item) {
+          return item.id === idCollection;
+        });
+        this.setState({listData: listData})
+        // this.getData();
+      }
     }).catch(err => console.log(err));
 
   }
@@ -96,12 +104,23 @@ export default class Collection extends Component {
 
   removeContentInCol(id_collection,id_content){
     const arr = new FormData();
+    const {listData} = this.state;
     arr.append('collection_id',id_collection);
     arr.append('content_id',id_content);
     const url = `${global.url}${'collection/remove'}`;
 
     postApi(url,arr).then(e => {
-      if(e.code===200) this.getData();
+      if(e.code===200) {
+        _.forEach(listData, function(item) {
+          if(item.id === id_collection){
+            _.remove(item._contents, function(el) {
+              return el.id === id_content
+            })
+          }
+        });
+        this.setState({listData: listData})
+        // this.getData();
+      }
     }).catch(err => console.log(err));
 
   }
@@ -128,7 +147,7 @@ export default class Collection extends Component {
     const { showPopup,showInput,showEdit,isFocus,name_coll } = this.state;
     const { lang,curLoc } = this.props.navigation.state.params;
     const { goBack,navigate } = this.props.navigation;
-    //console.log('visible',visible);
+    console.log('this.state.listData',this.state.listData);
     const {
       container,headCatStyle,headContent,titleCreate,
       titleTab,titleActive,listCreate,widthLblCre,show,hide,popup,
@@ -165,7 +184,7 @@ export default class Collection extends Component {
              }}
              data={this.state.listData}
              renderItem={({item}) => (
-               <View>
+               <View key={item.id}>
                  <View style={{backgroundColor:'#fff'}}>
                      <View style={listCreate}>
                        <View style={{width:width-105,flexDirection:'row',alignItems:'center'}}>
@@ -198,7 +217,7 @@ export default class Collection extends Component {
                          }else {
                             this.setState({showPopup: {[item.id]:item.id} })
                          }
-                       }}>
+                       }} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
                        <Image source={moreIC} style={{width:20,height:20}} />
                        </TouchableOpacity>
                        <View style={[popup ,showPopup[item.id] ? show : hide]}>

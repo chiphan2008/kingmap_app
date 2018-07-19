@@ -80,9 +80,9 @@ export default class ChooseArea extends Component {
     timeoutRecive = setTimeout(()=>{
     if(idDist!=='' && idDist!==undefined){
        //console.log('!!!null',idDist);
-       this.getName('country',idCountry);
-       this.getName('city',idCity);
-       this.getName('district',idDist);
+       // this.getName('country',idCountry);
+       // this.getName('city',idCity);
+       // this.getName('district',idDist);
       this.state.update && this.setState({idCountry, idCity,  idDist},()=>{
         this.setState({update:false});
         //console.log('nameDist',nameDist);

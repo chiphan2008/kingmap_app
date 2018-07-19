@@ -52,7 +52,8 @@ export default class Comments extends Component {
     }
 
     ImagePicker.openPicker({
-      multiple: true
+      multiple: true,
+      maxFiles: 50
     }).then(img => {
       //console.log('img',img);
       if(id===0){
@@ -86,6 +87,7 @@ export default class Comments extends Component {
           });
         })
       }
+      //console.log(`${global.url}${'content-create-comment'}`,arr);
       postApi(`${global.url}${'content-create-comment'}`,arr);
       if(comment_id===0){
         this.setState({inputComment:'',arrImage:[],showNotify:true});

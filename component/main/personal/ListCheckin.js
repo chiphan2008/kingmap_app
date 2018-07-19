@@ -13,8 +13,9 @@ import global from '../../global';
 import styles from '../../styles';
 
 import arrowLeft from '../../../src/icon/ic-white/arrow-left.png';
-import moreIC from '../../../src/icon/ic-create/ic-more.png';
+//import moreIC from '../../../src/icon/ic-create/ic-more.png';
 import closeIC from '../../../src/icon/ic-create/ic-close.png';
+import * as _ from 'lodash';
 
 const {width,height} = Dimensions.get('window');
 
@@ -75,11 +76,20 @@ export default class ListCheckin extends Component {
   }
   delCheckin(id){
     const url = `${global.url}${'user/delete-checkin/'}${id}`;
+    const { listData } = this.state;
+    console.log('id', id)
     getApi(url)
     .then((e)=>{
-      this.refresh();
+      _.remove(listData, function(item) {
+        return item.id === id;
+      });
+      this.setState({listData: listData})
+      // this.refresh();
     })
     .catch(err => console.log(err));
+  }
+  shouldComponentUpdate(nextState, nextProps){
+    if(this.state !== nextState) return true;
   }
   render() {
     const { lang,curLoc } = this.props.navigation.state.params;
@@ -121,12 +131,14 @@ export default class ListCheckin extends Component {
            }}
            renderItem={({item,index}) =>(
              <View>
+               <View style={{height:8}}></View>
                <View style={{backgroundColor:'#fff'}}>
                  <TouchableOpacity onPress={()=>{
                      navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc,lang:lang.lang})
                  }}>
                    <TouchableOpacity style={{position:'absolute',top:5,right:5,zIndex:99}}
-                   onPress={()=>this.confirmDel(item.id)}>
+                   onPress={()=>this.confirmDel(item.id)}
+                   hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
                    <Image source={closeIC} style={{width:20,height:20}} />
                    </TouchableOpacity>
                    <Image source={{uri:`${global.url_media}${item.avatar}`}} style={{width:width,minHeight:width/2,marginBottom:10}} />
@@ -143,7 +155,6 @@ export default class ListCheckin extends Component {
                      <View></View>
                    </View>
                </View>
-               <View style={{height:14}}></View>
              </View>
            )} />
 

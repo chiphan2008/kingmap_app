@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import {
   View,Text,Modal,TouchableOpacity,Image,Keyboard,
   TextInput,Dimensions,ScrollView,FlatList,Alert,
-  TouchableWithoutFeedback,
+  TouchableWithoutFeedback,Platform,
 } from 'react-native';
 import styles from '../styles';
 import global from '../global';
@@ -84,12 +84,13 @@ export default class UpdateMore extends Component {
     var des = route==='product'?desProduct:desKM;
     var price = route==='product'?priceProduct:priceKM;
     var img = route==='product'?imgProduct:imgKM;
-    if(name===''||des===''||price===''||img.path===undefined) {
+    if(name===''||des===''||price===''||img.path===undefined || !onlyNumber(price)) {
       this.setState({disable:false},()=>{
         if(name===''){Alert.alert(lang.notify,lang.plz_name);return false;}
         if(des===''){Alert.alert(lang.notify,lang.plz_des);return false;}
         if(price===''){Alert.alert(lang.notify,lang.plz_price);return false;}
         if(img.path===undefined){Alert.alert(lang.notify,lang.choose_img);return false;}
+        if(Platform.OS==='ios'&&!onlyNumber(price)){Alert.alert(lang.notify,lang.plz_format_price);return false;}
       })
     }else {
       arr.append('content_id',content_id);
@@ -163,7 +164,7 @@ export default class UpdateMore extends Component {
         this.setState({
           nameProduct:row.name,
           desProduct:row.description,
-          priceProduct:row.price,
+          priceProduct:parseInt(row.price).toString(),
           imgProduct:{path:`${global.url_media}${row.thumb}`},
           lblPro:this.state.lang.title_edit_pro,
           edit:true,
@@ -173,7 +174,7 @@ export default class UpdateMore extends Component {
         this.setState({
           nameKM:row.name,
           desKM:row.description,
-          priceKM:row.price,
+          priceKM:parseInt(row.price).toString(),
           imgKM:{path:`${global.url_media}${row.thumb}`},
           lblKM:this.state.lang.title_edit_km,
           edit:true,
@@ -325,25 +326,32 @@ export default class UpdateMore extends Component {
               </View>
 
               <View style={{justifyContent:'center',alignItems:'center'}}>
-              <TextInput
+              <TextInput autoCorrect={false} autoCapitalize={'none'}
               underlineColorAndroid='transparent'
               onChangeText={(nameProduct) => this.setState({nameProduct})}
               placeholder={`${lang.name}`} value={nameProduct}
               style={{
                 paddingLeft:0,paddingTop:5,paddingBottom:5,fontSize:16,width:width-150,borderBottomWidth:1,borderColor:'#E1E7EC',marginRight:10}}
                 />
-              <TextInput
+              <TextInput autoCorrect={false} autoCapitalize={'none'}
               underlineColorAndroid='transparent'
               onChangeText={(desProduct) => this.setState({desProduct})}
               placeholder={`${lang.des}`} value={desProduct}
               style={{
                 paddingLeft:0,paddingTop:5,paddingBottom:5,fontSize:16,width:width-150,borderBottomWidth:1,borderColor:'#E1E7EC',marginRight:10}}
                 />
-              <TextInput
+              <TextInput autoCorrect={false} autoCapitalize={'none'}
               underlineColorAndroid='transparent'
-              onChangeText={(priceProduct) => {if(priceProduct==='' || (onlyNumber(priceProduct) && priceProduct.substr(0,1)>0) )this.setState({priceProduct})}}
+              onChangeText={(priceProduct) => {
+                if(Platform.OS!=='ios'){
+                  if(priceProduct==='' || (onlyNumber(priceProduct) && priceProduct.substr(0,1)>0))
+                  this.setState({priceProduct})
+                }else {
+                  this.setState({priceProduct})
+                }
+              }}
               keyboardType={'numeric'} maxLength={9}
-              placeholder={`${lang.price}`} value={priceProduct.toString()}
+              placeholder={`${lang.price}`} value={this.state.priceProduct}
               style={{
                 paddingLeft:0,paddingTop:5,paddingBottom:5,fontSize:16,width:width-150,borderBottomWidth:1,borderColor:'#E1E7EC',marginRight:10}}
                 />
@@ -365,15 +373,17 @@ export default class UpdateMore extends Component {
              renderItem={({item,index}) =>(
                <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginBottom:10}}
                >
-                   <TouchableOpacity style={{flexDirection:'row',maxWidth:width-50}}
+                   <TouchableOpacity style={{flexDirection:'row',maxWidth:width-65}}
                    onPress={()=>this.getOne('product',item.id)}>
-                       <Image source={{uri:checkUrl(item.thumb) ? item.thumb : `${global.url_media}${item.thumb}`}} style={{width:50,height:40,marginRight:10}} />
-                       <View style={{minWidth:width-50}}>
+                       <Image source={{uri:checkUrl(item.thumb) ? item.thumb : `${global.url_media}${item.thumb}`}}
+                       style={{width:50,height:40,marginRight:10}} />
+                       <View style={{minWidth:width-65}}>
                          <Text numberOfLines={1} style={colorlbl}>{item.name}</Text>
                          <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${format_number(item.price)} ${item.currency}`}</Text>
                        </View>
                    </TouchableOpacity>
-                   <TouchableOpacity onPress={()=>this.delProduct('product',item.id)}>
+                   <TouchableOpacity onPress={()=>this.delProduct('product',item.id)}
+                   hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
                      <Image source={removeIC} style={imgShare} />
                   </TouchableOpacity>
                </View>
@@ -398,7 +408,7 @@ export default class UpdateMore extends Component {
               <TextInput
               underlineColorAndroid='transparent'
               onChangeText={(nameKM) => this.setState({nameKM})}
-              placeholder={`${lang.name}`} value={nameKM}
+              placeholder={`${lang.name}`} value={nameKM.toString()}
               style={{
                 paddingLeft:0,paddingTop:5,paddingBottom:5,fontSize:16,width:width-150,borderBottomWidth:1,borderColor:'#E1E7EC',marginRight:10}}
                 />
@@ -411,9 +421,16 @@ export default class UpdateMore extends Component {
                 />
               <TextInput
               underlineColorAndroid='transparent'
-              onChangeText={(priceKM) => {if(priceKM==='' || (onlyNumber(priceKM) && priceKM.substr(0,1)>0) )this.setState({priceKM})}}
+              onChangeText={(priceKM) => {
+                if(Platform.OS!=='ios'){
+                  if(priceKM==='' || (onlyNumber(priceKM) && priceKM.substr(0,1)>0) )
+                  this.setState({priceKM})
+                }else {
+                  this.setState({priceKM})
+                }
+              }}
               keyboardType={'numeric'} maxLength={9}
-              placeholder={`${lang.price}`} value={priceKM.toString()}
+              placeholder={`${lang.price}`} value={priceKM}
               style={{
                 paddingLeft:0,paddingTop:5,paddingBottom:5,fontSize:16,width:width-150,borderBottomWidth:1,borderColor:'#E1E7EC',marginRight:10}}
                 />
@@ -436,15 +453,16 @@ export default class UpdateMore extends Component {
              renderItem={({item,index}) =>(
                <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginBottom:10}}
                >
-                   <TouchableOpacity style={{flexDirection:'row',maxWidth:width-50}}
+                   <TouchableOpacity style={{flexDirection:'row',maxWidth:width-65}}
                    onPress={()=>this.getOne('discount',item.id)}>
                        <Image source={{uri:checkUrl(item.thumb) ? item.thumb : `${global.url_media}${item.thumb}`}} style={{width:50,height:40,marginRight:10}} />
-                       <View style={{minWidth:width-50}}>
+                       <View style={{minWidth:width-65}}>
                          <Text numberOfLines={1} style={colorlbl}>{item.name}</Text>
                          <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${format_number(item.price)} ${item.currency}`}</Text>
                        </View>
                    </TouchableOpacity>
-                   <TouchableOpacity onPress={()=>this.delProduct('discount',item.id)}>
+                   <TouchableOpacity onPress={()=>this.delProduct('discount',item.id)}
+                   hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
                      <Image source={removeIC} style={imgShare} />
                   </TouchableOpacity>
                </View>
@@ -476,7 +494,8 @@ export default class UpdateMore extends Component {
                          <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.address}`}</Text>
                        </View>
                    </View>
-                   <TouchableOpacity onPress={()=>{this.delBranch(item.id)}}>
+                   <TouchableOpacity onPress={()=>{this.delBranch(item.id)}}
+                   hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
                      <Image source={removeIC} style={imgShare} />
                   </TouchableOpacity>
                   </View>

@@ -30,17 +30,20 @@ export default class CityScreen extends Component {
         id:-1,
       },
       latitude:'',longitude:'',
-      position:{}
+      position:{},
+      callCountry:true,
     };
-    checkLocation().then(e=>{
-      if(e.idCountry===undefined){
-        this.getCountry();
-        //this.getLoc();
-      }
-    });
+
 
   }
-
+  componentWillMount() {
+    let _this = this;
+    checkLocation().then(e=>{
+      if(e.idCountry===undefined){
+        _this.getCountry();
+      }
+    });
+  }
   getLoc(){
     try{
         navigator.geolocation.getCurrentPosition(
@@ -114,13 +117,12 @@ export default class CityScreen extends Component {
     }
   }
   getCountry(){
-    getApi(`${global.url}${'countries'}`)
-    .then(arrCountry => {
+    //console.log(`${global.url}${'countries'}`);
+    getApi(`${global.url}${'countries'}`).then(arrCountry => {
       //console.log('arrCountry',arrCountry);
       com.setState({ listCountry: arrCountry.data });
 
-    })
-    //.catch(err => console.log(err));
+    }).catch(err => console.log(err));
   }
 
   getCity(id_country){

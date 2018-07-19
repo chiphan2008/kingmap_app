@@ -17,7 +17,7 @@ import closeIC from '../../../src/icon/ic-white/ic-close.png';
 import searchIC from '../../../src/icon/ic-gray/ic-search.png';
 import infoIC from '../../../src/icon/ic-white/ic-analysis.png';
 import socialIC from '../../../src/icon/ic-white/ic-social.png';
-
+//import * as _ from 'lodash';
 
 export default class OtherCat extends Component {
   constructor(props) {

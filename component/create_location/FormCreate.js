@@ -128,7 +128,7 @@ export default class FormCreate extends Component {
         this.setState({isLogin:false})
       }else {
         //console.log('e',e);
-        loginServer(e,'cxv');
+        //loginServer(e,'cxv');
         this.setState({user_profile:e,ma_dinh_danh:e.ma_dinh_danh,isLogin:true});
       }
     })
@@ -260,14 +260,14 @@ export default class FormCreate extends Component {
       name: `my_avatar.jpg`,
       type: `${this.state.imgAvatar.mime}`
     });
-    this.state.txtAddress!==null && arr.append('address',this.state.txtAddress.trim());
-    arr.append('lat',this.state.lat);
-    arr.append('lng',this.state.lng);
+    this.state.txtAddress!==null && arr.append('address',`${this.state.txtAddress.trim()}`);
+    arr.append('lat',`${this.state.lat}`);
+    arr.append('lng',`${this.state.lng}`);
     strtoarray(this.state.txtKW,',').forEach((e)=>{
       e.trim()!=='' && arr.append('tag[]',e);
     });
 
-    arr.append('description',this.state.txtDes);
+    arr.append('description',`${this.state.txtDes}`);
     // //arr.append('code_invite',this.state.txtCode);
     arr.append('ma_dinh_danh',this.state.ma_dinh_danh);
     this.state.img_space.length>0 && this.state.img_space.forEach((e,index)=>{
@@ -305,10 +305,10 @@ export default class FormCreate extends Component {
       }
     });
     const act = this.state.editLoc?'update-location':'create-location';
-    console.log('arr',arr);
-    console.log('e',`${global.url}${act}`);
+    //console.log('arr',arr);
+    //console.log('e',`${global.url}${act}`);
     postApi(`${global.url}${act}`,arr).then((e)=>{
-      console.log('e',e);
+      console.log('postApi-e',e);
       this.setState({showLoading:false,errMsg:''},()=>{
         this.state.showLoading===false && setTimeout(()=>{
           if(e.code===200){
@@ -423,7 +423,7 @@ export default class FormCreate extends Component {
           </View>
       </View>
 
-      <ScrollView >
+      <ScrollView keyboardShouldPersistTaps={'never'}>
 
     <View>
         <TouchableOpacity style={listCreate}
@@ -473,7 +473,7 @@ export default class FormCreate extends Component {
           </View>
           <Text style={colorErr}>{'(*)'}</Text>
           <TextInput underlineColorAndroid='transparent'
-            returnKeyType = {"next"} autoFocus = {true}
+            returnKeyType = {"next"} autoFocus = {true} autoCorrect={false}
             onSubmitEditing={(event) => {this.refs.Address.focus();}}
             placeholder={`${this.state.lang.name_location}`} style={wrapInputCreImg}
             onChangeText={(txtName) => this.setState({txtName})}
@@ -491,9 +491,12 @@ export default class FormCreate extends Component {
           <Image source={locationIC} style={imgInfo} />
           </View>
           <Text style={colorErr}>{'(*)'}</Text>
-          <TextInput underlineColorAndroid='transparent'
+          <TextInput underlineColorAndroid='transparent' autoCapitalize={'none'} autoCorrect={false}
           onChangeText={(txtAddress) => { this.setState({txtAddress}) } }
-          value={`${this.state.txtAddress}`} ref='Address' returnKeyType = {"next"}
+          value={`${this.state.txtAddress}`}
+          //ref={ref => this.input3 = ref}
+          onFocus={() => this.refs.Address.focus()}
+          ref='Address' returnKeyType = {"next"}
           onBlur={()=>{
             if(this.state.txtAddress!==''){
               clearTimeout(timeoutLatLng);

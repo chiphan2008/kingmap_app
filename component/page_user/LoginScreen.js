@@ -184,8 +184,8 @@ export default class LoginScreen extends Component {
     return (
       <View style={container}>
         <Image source={bgMap} style={bgImg} />
-        <TouchableWithoutFeedback onPress={()=>{Keyboard.dismiss()}}>
-        <ScrollView>
+        <TouchableWithoutFeedback onPress={()=>Keyboard.dismiss()} accessible={false}>
+        <ScrollView keyboardShouldPersistTaps={'never'}>
         <TouchableOpacity style={{position:'absolute',top:Platform.OS==='ios'?25:15,right:15,zIndex:9}}
         onPress={()=>goBack()} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
         <Image source={closeIC} style={{width:25,height:25}} />
@@ -198,12 +198,15 @@ export default class LoginScreen extends Component {
               <TextInput underlineColorAndroid='transparent' style={txtInput} selectionColor='#5b89ab' placeholderTextColor="#ddd"
               placeholder={lang.username}
               onSubmitEditing={(event)=> this.refs.pwd.focus()}
-              autoFocus value={this.state.txtUsername}
+              autoCorrect={false} autoCapitalize={'none'}
+              value={this.state.txtUsername}
               onChangeText={(txtUsername) => this.setState({txtUsername})}
                />
-              <TextInput underlineColorAndroid='transparent' style={txtInput} selectionColor='#5b89ab' placeholderTextColor="#ddd"
-              secureTextEntry autoCorrect={false}
-              placeholder={lang.pwd} ref='pwd' value={this.state.txtPassword}
+              <TextInput underlineColorAndroid='transparent' style={txtInput}
+              ref={ref => this.txtPWD = ref}
+              onFocus={() => this.txtPWD.focus()}
+              secureTextEntry autoCorrect={false} autoCapitalize={'none'}
+              placeholder={lang.pwd} value={this.state.txtPassword}
               onChangeText={(txtPassword) => this.setState({txtPassword})}
               />
               </View>

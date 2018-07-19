@@ -133,9 +133,9 @@ export default class UpdateInfo extends Component {
         });
       }
       //console.log(arr);
-      console.log(`${global.url}${'user/update/'}${userId}`);
+      //console.log(`${global.url}${'user/update/'}${userId}`);
       postApi(`${global.url}${'user/update/'}${userId}`,arr).then(e=>{
-        console.log(e);
+        //console.log(e);
         if(e.code===200){
           encodeApi(`${global.url_node}${'person'}`,'POST',e.data);
           AsyncStorage.setItem('@MyAccount:key', JSON.stringify(Object.assign(e.data,{'pwd':this.state.pwd})));
@@ -171,7 +171,7 @@ export default class UpdateInfo extends Component {
     const {listDay,listMonth,listYear,showDay,showMonth,showYear,disable} = this.state;
     return (
 
-      <ScrollView scrollEnabled={disable} horizontalScroll={disable}>
+
       <TouchableWithoutFeedback onPress={()=>{
         this.setState({showDay:false,showMonth:false,showYear:false,disable:true})
       }}>
@@ -187,7 +187,7 @@ export default class UpdateInfo extends Component {
                   </TouchableOpacity>
               </View>
           </View>
-
+          <ScrollView horizontalScroll={disable}>
          <View style={{height:150,justifyContent:'center',alignItems:'center'}}>
           {this.state.avatar!=='' && <Image source={{isStatic:true,uri:this.state.avatar}} style={{width:90,height:90,borderRadius:45}} />}
           <TouchableOpacity style={{position:'absolute',top:90,right:(width/2)-45,padding:6,borderRadius:13,backgroundColor:'#fff',}}
@@ -246,7 +246,6 @@ export default class UpdateInfo extends Component {
 
               <View style={{width:15}}></View>
          </View>
-
 
          {showDay && <View style={[wrapSelect,posDay,wrapBtnInfo]}>
          <ScrollView>
@@ -355,11 +354,11 @@ export default class UpdateInfo extends Component {
               />
               <View style={{width:15}}></View>
          </View>
-
+         </ScrollView>
       </View>
       </TouchableWithoutFeedback>
 
-      </ScrollView>
+
     );
   }
 }

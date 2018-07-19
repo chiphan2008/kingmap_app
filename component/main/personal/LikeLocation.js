@@ -15,6 +15,7 @@ import styles from '../../styles';
 import arrowLeft from '../../../src/icon/ic-white/arrow-left.png';
 import moreIC from '../../../src/icon/ic-create/ic-more.png';
 import closeIC from '../../../src/icon/ic-create/ic-close.png';
+import * as _ from 'lodash';
 
 const {width,height} = Dimensions.get('window');
 
@@ -66,8 +67,14 @@ export default class LikeLocation extends Component {
   deleteLike(idContent){
     const url = `${global.url}${'user/delete-like/'}${idContent}`;
     //console.log('url',url);
-    getApi(url).then(e => console.log(e)).catch(err => console.log(err));
-    this.getData();
+    const { listData } = this.state;
+    getApi(url).then(e =>{
+      _.remove(listData, function(item) {
+        return item.id === idContent;
+      });
+      this.setState({listData: listData})
+    }).catch(err => console.log(err));
+
   }
   confirmDel(id){
     const {lang} = this.props.navigation.state.params;
@@ -102,7 +109,6 @@ export default class LikeLocation extends Component {
                   <View></View>
               </View>
           </View>
-
           <FlatList
            extraData={this.state}
            data={listData}
@@ -118,6 +124,7 @@ export default class LikeLocation extends Component {
            }}
            renderItem={({item,index}) =>(
              <View>
+             <View style={{height:8}}></View>
                <View style={{backgroundColor:'#fff'}}>
                  <TouchableOpacity onPress={()=>{
                    navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc,lang:lang.lang})
@@ -125,7 +132,8 @@ export default class LikeLocation extends Component {
                    <Image source={{uri:`${global.url_media}${item.avatar}`}} style={{width:width,minHeight:width/2,marginBottom:10}} />
                  </TouchableOpacity>
                  <TouchableOpacity style={{position:'absolute',top:7,right:7}}
-                   onPress={()=>this.confirmDel(item.id)}>
+                   onPress={()=>this.confirmDel(item.id)}
+                   hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
                    <Image source={closeIC} style={{width:20,height:20}} />
                    </TouchableOpacity>
 
@@ -141,7 +149,7 @@ export default class LikeLocation extends Component {
 
                    </View>
                </View>
-               <View style={{height:14}}></View>
+
              </View>
            )} />
       </View>

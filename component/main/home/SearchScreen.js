@@ -1,6 +1,6 @@
 /* @flow */
 
-import React, { Component } from 'react';
+import React, { Component, PureComponent } from 'react';
 import {
   Keyboard, Platform, View, Text, StyleSheet, Dimensions,Image,AsyncStorage,
   TextInput, TouchableOpacity,FlatList,Alert, ActivityIndicator,Modal} from 'react-native';
@@ -383,7 +383,6 @@ export default class SearchScreen extends Component {
       imgUpCreate,imgUpLoc,overLayout,popoverLoc,padCreate,imgUpInfo,
     } = styles;
 
-
     //let timeoutZoom;
     return (
       <View style={container}>
@@ -478,13 +477,8 @@ export default class SearchScreen extends Component {
             >
             {markers.length>0 &&
               markers.map((marker,index) => (
-                <View key={marker.id}>
-
               <MapView.Marker
                 key={marker.id}
-                onLayout={()=>{
-                  marker.id!==undefined && this.setState({ callout: Object.assign({},{[marker.id]:false}) });
-                }}
                 coordinate={{
                   latitude: Number(marker.latitude),
                   longitude: Number(marker.longitude),
@@ -493,44 +487,34 @@ export default class SearchScreen extends Component {
                   x: Number(marker.latitude),
                   y: Number(marker.longitude),
                 }}
+                style={{borderWidth:1}}
                 image={ Platform.OS==='android' ? {uri:`${marker.marker}`} : null}
-                //calloutOpen={false}
-                //ref={ref => { this.markerRef = ref }}
                 onPress={()=>{
-                  if(callout[marker.id]){
-                    this.setState({ callout: Object.assign({},{[marker.id]:false})},()=>{
-                      console.log('onPress-t',callout[marker.id]);
-                    });
+                  if(callout[marker.id] || callout[marker.id]===undefined){
+                    this.setState({ callout: {[marker.id]:false} });
                   }else {
-                    this.setState({ callout: Object.assign({},{[marker.id]:true}) },()=>{
-                      console.log('onPress-f',callout[marker.id]);
-                    })
+                    this.setState({ callout: {[marker.id]:true} })
                   }
                 }} >
-              {Platform.OS==='ios' &&
-                <Image source={{uri:`${marker.marker}`}} style={{width:48,height:54,resizeMode:"cover"}} />
-              }
 
-                <View style={callout[marker.id] ? show : hide}>
+              {Platform.OS==='ios' && <Image source={{uri:`${marker.marker}`}} style={{width:48,height:54}} />}
 
-                  <MapView.Callout tooltip={callout[marker.id] ? false : true}
-                  onPress={()=>{
-                    !callout[marker.id] && navigate('DetailScr',{
-                      idContent:marker.id,lat:marker.latitude,lng:marker.longitude,
-                      curLoc,lang:lang.lang
-                    });
-                  }}>
-                    <TouchableOpacity >
-                    <View style={{height: 45,width: 300,alignItems:'center',borderRadius:3}}>
-                    <Text numberOfLines={1} style={{fontWeight:'bold'}}>{marker.name}</Text>
-                    <Text numberOfLines={1}>{`${marker.address}`}</Text>
-                    </View>
-                    </TouchableOpacity>
-                  </MapView.Callout>
+              <View style={(callout[marker.id] || callout[marker.id]==undefined)?show:hide}>
+              <MapView.Callout tooltip={(callout[marker.id] || callout[marker.id]==undefined) ? false : true}
+              onPress={()=>{
+                if(!callout[marker.id])
+                navigate('DetailScr',{idContent:marker.id,lat:marker.latitude,lng:marker.longitude,curLoc,lang:lang.lang});
+              }}>
+                <TouchableOpacity >
+                <View style={{height: 45,width: 280,alignItems:'center',borderRadius:3}}>
+                <Text numberOfLines={1} style={{fontWeight:'bold'}}>{marker.name}</Text>
+                <Text numberOfLines={1}>{`${marker.address}`}</Text>
+                </View>
+                </TouchableOpacity>
+              </MapView.Callout>
               </View>
-
               </MapView.Marker>
-              </View>
+
             )
           )}
           {circleLoc.latitude!==undefined &&

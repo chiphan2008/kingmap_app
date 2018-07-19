@@ -101,21 +101,21 @@ export default class ListLocation extends Component {
     if(skip===null){
       skip = 0; this.setState({page:0})
     }
-
+    const { keyword,kw,curLoc,id_cat,idDist } = this.state;
+    if(id_district===null) id_district=idDist;
     //const id_cat = this.props.navigation.state.params.idCat;
-    const { keyword,kw,curLoc,id_cat } = this.state;
-    var url = `${global.url}${'search-content?category='}${id_cat}&skip=${skip}&limit=20`;
+    var url = `${global.url}${'search-content?category='}${id_cat}${'&skip='}${skip}${'&limit=20'}${'&distance=25000'}`;
     if(id_district!==null) {
       url += `${'&district='}${id_district}`;
-    }else {
+    }
+    if(curLoc.latitude!==undefined) {
       url += `${'&location='}${curLoc.latitude},${curLoc.longitude}`;
-      this.getPosition(curLoc.latitude,curLoc.longitude);
+      //this.getPosition(curLoc.latitude,curLoc.longitude);
     }
     //if(curLoc.latitude!==undefined)
     if(keyword.trim()!=='' && kw!==keyword.trim()) url += `${'&keyword='}${keyword}`;
     else {
       url += `${'&keyword='}${keyword}`;
-
       if(id_sub!==null) url += `${'&subcategory='}${id_sub}`;
       //id_serv = id_serv.replace('-1,','');
       if(id_serv!=='') url += `${'&service='}${id_serv}`;
@@ -126,20 +126,11 @@ export default class ListLocation extends Component {
     getApi(url)
     .then(arrData => {
       //console.log(arrData.data.length);
-      if(skip===0){
-        this.state.listData= arrData.data;
-        this.state.isLoad=false;
-        this.state.isRefresh=false;
-        this.state.pullToRefresh=true;
-        this.state.noData= arrData.data.length===0 ? this.state.lang.not_found : '' ;
-      }else {
-        //console.log('-----skip!==-----');
-        this.state.listData= this.state.listData.concat(arrData.data);
-        this.state.isLoad=false;this.state.pullToRefresh=true;this.state.isRefresh=false;
-      }
-      if(arrData.data.length<20) {
-        this.state.pullToRefresh=false;this.state.isLoad=false;this.state.isRefresh=false;
-      };
+      this.state.listData= skip===0?arrData.data:this.state.listData.concat(arrData.data);
+      this.state.isLoad=false;
+      this.state.isRefresh=false;
+      this.state.pullToRefresh=arrData.data.length<20?false:true;
+      this.state.noData= arrData.data.length===0 ? this.state.lang.not_found : '' ;
       this.setState(this.state);
     })
     .catch(err => console.log(err));
@@ -161,7 +152,7 @@ export default class ListLocation extends Component {
        if(e.id!==undefined){
          setTimeout(()=>{
            this.setState({user_id:e.id,isLogin:true});
-           loginServer(e);
+           //loginServer(e);
          },1200)
        }
      });
@@ -171,12 +162,13 @@ export default class ListLocation extends Component {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         //console.log('position',position);
-        const {id_sub,id_serv,isRefresh} = this.state;
+        const {id_sub,id_serv} = this.state;
         const {latitude,longitude} = position.coords;
+        this.getPosition(latitude,longitude);
         this.setState({curLoc:{
           latitude,longitude
         }},()=>{
-          if(isRefresh) this.getContentByDist(null,id_sub,id_serv,null)
+          //if(isRefresh) this.getContentByDist(null,id_sub,id_serv,null)
           //this.getCategory(`${latitude},${longitude}`);
         })
       },
@@ -185,11 +177,13 @@ export default class ListLocation extends Component {
         getLocationByIP().then(e=>{
           const {latitude,longitude} = e;
           const {id_sub,id_serv,isRefresh} = this.state;
+          this.getPosition(latitude,longitude);
           this.setState({curLoc:{
             latitude,longitude
           }},()=>{
+
             //console.log(isRefresh);
-            if(isRefresh) this.getContentByDist(null,id_sub,id_serv,null);
+            //if(isRefresh) this.getContentByDist(null,id_sub,id_serv,null);
           })
         })
       },
@@ -200,10 +194,13 @@ export default class ListLocation extends Component {
   getPosition(lat,lng){
     const url = `${global.url}${'get-position?location='}${lat},${lng}`;
     getApi(url).then(e=>{
+      const { isRefresh,id_sub,id_serv } = this.state;
       const { district,city,country } = e.data[0];
-      // district!==0 && district!==undefined && this.setState({
-      //   idDist:district,
-      // });
+      if(isRefresh) this.getContentByDist(district,id_sub,id_serv,null);
+
+      district!==0 && district!==undefined && this.setState({
+        idDist:district,
+      });
       const url1 = `${global.url}${'district/'}${district}`;
       //console.log(url1);
       getApi(url1).then(dist=>{
@@ -418,7 +415,7 @@ export default class ListLocation extends Component {
                      }}
                      //refreshing={isRefresh}
                      extraData={this.state}
-                     onEndReachedThreshold={0.5}
+                     onEndReachedThreshold={0.01}
                      onEndReached={() => {this.onRefresh()}}
                      ListFooterComponent={this.renderFooter}
                      data={listData}

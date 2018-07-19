@@ -66,7 +66,7 @@ module.exports = {
   pad10:{padding:10,alignItems:'center'},
   actionSheetRadius:{borderRadius:5},
   actionSheetContent:{width:width-30,backgroundColor:'#fff',alignItems:'center',overflow:'hidden'},
-  actionSheetWrap:{justifyContent:'flex-end',alignItems:'center',position:'absolute',zIndex:999,backgroundColor:'rgba(0,0,0,0.6)',width,height,paddingBottom:30},
+  actionSheetWrap:{justifyContent:'flex-end',alignItems:'center',position:'absolute',zIndex:999,backgroundColor:'rgba(0,0,0,0.6)',width,height,paddingBottom:Platform.OS==='ios'?15:30},
   closeCollection:{position:'absolute',top:5,right:5},
   popup:{flexDirection:'row',width:45,justifyContent:'space-between'},
   btnInfo:{width:45,height:30,borderColor:'#E1E7ED',borderWidth:1,borderRadius:5,alignItems:'center',justifyContent:'space-between',padding:5,flexDirection:'row'},

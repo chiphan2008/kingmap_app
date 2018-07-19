@@ -2,7 +2,9 @@
 
 import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image, TextInput,ScrollView,Alert,
-  TouchableOpacity,PermissionsAndroid, AsyncStorage, Modal,Keyboard,YellowBox } from 'react-native';
+  TouchableOpacity,PermissionsAndroid, AsyncStorage, Modal,Keyboard,YellowBox,
+  TouchableWithoutFeedback
+} from 'react-native';
 import RNSettings from 'react-native-settings';
 //import SvgUri from 'react-native-svg-uri';
 const {height, width} = Dimensions.get('window');
@@ -214,15 +216,14 @@ export default class HomeTab extends Component {
     } = styles;
     let i=0;
     return (
+      <TouchableWithoutFeedback onPress={()=>Keyboard.dismiss()}>
       <View style={container} >
-
       <Image source={bgMap} style={bgImg} />
         <View style={headStyle}>
             <View style={headContent}>
             <TouchableOpacity onPress={()=> this.setState({showInfo:false,showShare:false}) } >
                 <Image source={logoTop} style={imgLogoTop} />
             </TouchableOpacity>
-
             <Select
                   onClick={()=> this.setState({showInfo:false,showShare:false}) }
                   onSelect = {this.onSelectLang.bind(this)}
@@ -341,7 +342,7 @@ export default class HomeTab extends Component {
                             this.requestLogin();
 
                             if(this.state.isLogin){
-                              navigate('MakeMoneyScr',{user_profile,icon:`${global.url_media}${e.image}`,name_module:e.name,lang:this.state.lang}) }}
+                              navigate('MakeMoneyScr',{curLoc,user_profile,icon:`${global.url_media}${e.image}`,name_module:e.name,lang:this.state.lang}) }}
                             }
                           >
                           {/*<Text style={labelNum}>(25)</Text>*/}
@@ -460,6 +461,7 @@ export default class HomeTab extends Component {
        </ScrollView>
 
       </View>
+      </TouchableWithoutFeedback>
     );
   }
 }

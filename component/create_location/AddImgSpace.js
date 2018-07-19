@@ -33,7 +33,8 @@ export default class AddImgSpace extends Component {
   }
   uploadSpace(){
     ImagePicker.openPicker({
-      multiple: true
+      multiple: true,
+      maxFiles: 50
     }).then(img => {
       //console.log(img);
       if(this.state.update){

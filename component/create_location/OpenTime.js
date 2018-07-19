@@ -305,21 +305,21 @@ export default class OpenTime extends Component {
       <ScrollView style={{height:height-150}}>
       <View style={{flexDirection:'row',justifyContent:'space-between',paddingTop:15,paddingLeft:15,width}}>
           <View style={{width:(width-40)/4,}}>
-            <Text style={titleOpentime}>{lang.from_date}</Text>
+            <Text numberOfLines={1} style={titleOpentime}>{lang.from_date}</Text>
           </View>
 
           <View style={{width:(width-40)/4}}>
-            <Text style={titleOpentime}>{lang.to_date}</Text>
+            <Text  numberOfLines={1} style={titleOpentime}>{lang.to_date}</Text>
           </View>
 
-          <View style={{width:(width-40)/2,flexDirection:'row',justifyContent:'space-between'}}>
+          <View style={{paddingRight:15,width:(width-40)*0.5,flexDirection:'row',justifyContent:'space-between'}}>
             <Text style={titleOpentime}>{lang.from_hour}</Text>
 
             <Text style={titleOpentime}>{lang.to_hour}</Text>
           </View>
 
           <TouchableOpacity>
-          <Text style={{fontWeight:'bold',fontSize:20,transform:[{ rotate: '45deg'}]}}>   </Text>
+          <Text style={{fontWeight:'bold',fontSize:16,transform:[{ rotate: '45deg'}]}}>   </Text>
           </TouchableOpacity>
       </View>
       <View>
@@ -588,7 +588,7 @@ export class ListTime extends Component {
           <Text numberOfLines={1} style={{fontWeight:'bold',fontSize:22,transform:[{ rotate: '45deg'}]}}>{'+'}</Text>
           </TouchableOpacity>
           :
-          <View>
+          <View style={{width:14}}>
           <Text numberOfLines={1} style={{fontWeight:'bold',fontSize:22,transform:[{ rotate: '45deg'}]}}>{'  '}</Text>
           </View>
           }

@@ -40,7 +40,7 @@ export default class MapContent extends Component {
       this.setState({direct:this.props.region.latlng})
       //const APIKEY = 'AIzaSyCCCOoPlN2D-mfrYEMWkz-eN7MZnOsnZ44';
       const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}&destination=${destination}&mode=${mode}`;
-      console.log(url);
+      //console.log(url);
       latitude!==undefined && getApi(url).then(e=> {
         if(e.routes[0].overview_polyline!==undefined){
           this.setState({
@@ -80,7 +80,7 @@ export default class MapContent extends Component {
   render() {
     const { curLoc,region,distance,lang } = this.props;
     const {showFullScreen,direct} = this.state;
-    console.log(curLoc);
+    //console.log(curLoc);
     //console.log('lang',lang);
     //console.log('region',region.latlng);
     //console.log('curLoc',curLoc.latitude,curLoc.longitude);

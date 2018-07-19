@@ -11,6 +11,7 @@ const {height, width} = Dimensions.get('window');
 import {Select, Option} from "react-native-chooser";
 
 //import styles from '../styles';
+import getLocationByIP from '../api/getLocationByIP';
 import postApi from '../api/postApi';
 import global from '../global';
 import checkLogin from '../api/checkLogin';
@@ -83,10 +84,34 @@ export default class MakeMoney extends Component {
       index_ctv_pending:'',
       static_notes:'',
       noData:'',
+      curLoc:this.props.navigation.state.params.curLoc || {},
     }
     loginServer(this.props.navigation.state.params.user_profile,'fgdjk')
     temp_daily_code==='' && this.getStatic();
+    //console.log('this.state.curLoc',this.state.curLoc);
+    this.state.curLoc.latitude===undefined && this.findLoc();
   }
+
+  findLoc(){
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const {latitude,longitude} = position.coords;
+          this.setState({curLoc:{
+            latitude,longitude
+          }});
+      },
+      (error) => {
+        getLocationByIP().then((e) => {
+          const {latitude,longitude} = e;
+            this.setState({curLoc:{
+              latitude,longitude
+            }});
+
+        });
+      },
+      { timeout: 5000,maximumAge: 60000 },
+    );
+   }
 
   searchContentPending(page=null){
     const { user_profile } = this.props.navigation.state.params;
@@ -171,7 +196,7 @@ export default class MakeMoney extends Component {
       //console.log(`${global.url}${'static?'}${'block_text='}${let_mm}${'&block_text=luu_y_make_money&lang='}${lang.lang}`);
       //console.log(arr);
       user_profile._roles.length>0 && postApi(`${global.url}${'static?'}${'block_text='}${let_mm}${',luu_y_make_money&lang='}${lang.lang}`,arr).then(e => {
-      console.log('e.data',e.data);
+      //console.log('e.data',e.data);
       this.state.static_notes=e.block_text.luu_y_make_money;
       this.state.des_mm=e.block_text[let_mm];
       this.state.listData=e.data;
@@ -387,8 +412,10 @@ export default class MakeMoney extends Component {
     const {
       itemChoose,showCoin,showLoc,showLocPop,showCTV,showCTVPop,showTDLPop,showArea,listData,index_ctv_pending,noData,
       listAgency,listLoc,isCeo,isAgency,isNormal,isCTV,assign,listDistrict,labelArea,ListPend,suggestPend,
-      ListLocPend,suggestLoc,showListLocPend,showListCTVPend,loadMore,page,static_notes,des_mm
+      ListLocPend,suggestLoc,showListLocPend,showListCTVPend,loadMore,page,static_notes,des_mm,
+      curLoc
     } = this.state;
+
     const _this = this;
     //console.log(user_profile);
     return (
@@ -487,13 +514,14 @@ export default class MakeMoney extends Component {
 
             {listData.count_location!==undefined &&  <View style={wrapWhite} >
                 <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-                  <View>
+                  <TouchableOpacity style={{width:width-70}}
+                  onPress={()=>{listData.count_location>0 && this.setState({listLoc:[],noData:''},()=>{
+                     this.searchContent('search-content','');
+                  })}}>
                     <Text numberOfLines={1} style={colorTitle}>{`${lang.total_location}`}</Text>
                     <Text style={titleCoin}>{`${listData.count_location ? format_number(listData.count_location) : 0}`}</Text>
-                  </View>
-                  <TouchableOpacity onPress={()=>{listData.count_location>0 && this.setState({showLoc:!this.state.showLoc,listLoc:[],noData:''},()=>{
-                    !showLoc && this.searchContent('search-content','');
-                  })}}>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={()=>{listData.count_location>0 && this.setState({showLoc:!this.state.showLoc,listLoc:[],noData:''})}}>
                   <Image source={showLoc?subIC:plusIC} style={{width:35,height:35}} />
                   </TouchableOpacity>
                 </View>
@@ -524,16 +552,17 @@ export default class MakeMoney extends Component {
 
             {(isCeo || isAgency) && <View style={wrapWhite} >
                 <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-                  <View>
+                  <TouchableOpacity style={{width:width-70}}
+                  onPress={()=>this.setState({listAgency:[]},()=>{
+                    const act = isCeo?'find-daily':'search-ctv';
+                      this.searchContent(act,'');
+                  })}>
                     <Text numberOfLines={1} style={colorTitle}>{isCeo?`${lang.total_agency}`:`${lang.total_coll}`}</Text>
                     <Text style={titleCoin}>{isCeo?`${listData.count_daily ? format_number(listData.count_daily) : 0}`:`${listData.count_ctv ? format_number(listData.count_ctv) : 0}`}</Text>
-                  </View>
+                  </TouchableOpacity>
 
                     <TouchableOpacity onPress={()=>{
-                      (listData.count_ctv>0 || listData.count_daily>0) && this.setState({showCTV:!this.state.showCTV,listAgency:[]},()=>{
-                        const act = isCeo?'find-daily':'search-ctv';
-                        !showCTV && this.searchContent(act,'');
-                      })}}>
+                      (listData.count_ctv>0 || listData.count_daily>0) && this.setState({showCTV:!this.state.showCTV})}}>
                     <Image source={showCTV?subIC:plusIC} style={{width:35,height:35}} />
                     </TouchableOpacity>
 
@@ -801,7 +830,7 @@ export default class MakeMoney extends Component {
              renderItem={({item,index}) =>(
                <TouchableOpacity style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}
                onPress={()=>{
-                 navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,lang:lang.lang,update:true})
+                 navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,lang:lang.lang,update:true,curLoc})
                }}>
                    <View style={{flexDirection:'row',paddingBottom:17}}>
                        <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:50,marginRight:10,borderRadius:25}} />

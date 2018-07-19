@@ -24,7 +24,8 @@ export default class AddProduct extends Component {
 
   uploadMenu(){
     ImagePicker.openPicker({
-      multiple: true
+      multiple: true,
+      maxFiles: 50
     }).then(imgMenu => {
       //console.log(imgMenu);
       this.setState({imgMenu})

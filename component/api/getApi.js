@@ -10,13 +10,18 @@ const getApi = async (url) => {
 
     var resposive = {code:401};
     if(auth_key!==null){
-      resposive = await fetch(url, {
+      const params = {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer '+ auth_key.access_token,
         },
-      }).then(res => res.json());
+      };
+      //console.log(url);
+      let res = await fetch(url, params);//.then(res => {res.json()});
+      //console.log(res);
+      resposive = await res.json();
+      //console.log(resposive);
       if(resposive.code!==401) return resposive;
     }
 

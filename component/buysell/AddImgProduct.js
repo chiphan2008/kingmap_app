@@ -21,7 +21,8 @@ export default class AddImgProduct extends Component {
   }
   uploadImage(){
     ImagePicker.openPicker({
-      multiple: true
+      multiple: true,
+      maxFiles: 50
     }).then(imgList => {
       //console.log(imgList);
       this.setState({imgList})

@@ -16,8 +16,8 @@ import uncheckIC from '../../src/icon/ic-uncheck.png';
 const {width,height} = Dimensions.get('window');
 import CircularSlider from 'react-native-circular-slider';
 import Svg, { G, Path } from 'react-native-svg';
-
-import {getIndex,calcAngle} from '../libs';
+//import * as _ from 'lodash';
+//import {getIndex,calcAngle} from '../libs';
 
 const WAKE_ICON = (
   <G>
@@ -92,12 +92,14 @@ export default class OpenTime extends Component {
   constructor(props){
     super(props);
     const {lang} = this.props;
-    console.log('lang',lang);
+    //console.log('lang',lang);
     this.state = {
       from_date:1,
       to_date:6,
       from_hour:'10:00',
       to_hour:'17:00',
+      startAngle:5.333,
+      angleLength:3.222,
       opt_date: lang.lang ==='vn'? opt_date_vn : opt_date_en,
 
       ListDataTime:[{
@@ -123,7 +125,7 @@ export default class OpenTime extends Component {
   componentWillUpdate(){
     const {ListOpenTime} = this.props;
     if(ListOpenTime.length>0 && this.state.update){
-      console.log(ListOpenTime);
+      //console.log(ListOpenTime);
       var arr = [];
       ListOpenTime.forEach((e,index)=>{
         arr.push(<ListTime
@@ -222,7 +224,11 @@ export default class OpenTime extends Component {
 
   }
   openTimer(index_clock){
-    this.setState({showClock:true,index_clock})
+    this.setState({
+      showClock:true,index_clock,
+      startAngle:parseFloat(this.state.ListDataTime[index_clock].angle_from),
+      angleLength:parseFloat(this.state.ListDataTime[index_clock].angle_to),
+    })
   }
   openFromDate(index_clock,updateFromDate){
     this.setState({showDate:true,index_clock,updateFromDate,updateToDate:''})
@@ -282,7 +288,7 @@ export default class OpenTime extends Component {
   }
   render() {
     const {
-      wrapSetting,headCatStyle,headContent,titleCreate,show,hide,
+      container,wrapSetting,headCatStyle,headContent,titleCreate,show,hide,
       titleOpentime,btnClock,marTop10,titleActive,btnPress,colorNext,popoverLoc,padCreate
     } = styles;
     const { lang } = this.props;
@@ -314,7 +320,6 @@ export default class OpenTime extends Component {
 
           <View style={{paddingRight:15,width:(width-40)*0.5,flexDirection:'row',justifyContent:'space-between'}}>
             <Text style={titleOpentime}>{lang.from_hour}</Text>
-
             <Text style={titleOpentime}>{lang.to_hour}</Text>
           </View>
 
@@ -331,6 +336,30 @@ export default class OpenTime extends Component {
         </TouchableOpacity>
       </View>
       </ScrollView>
+
+      {/*<CircularSlider
+        startAngle={this.state.startAngle}
+        angleLength={this.state.angleLength}
+        onUpdate={({ startAngle, angleLength }) => {
+          this.setState({
+            startAngle: roundAngleToFives(startAngle),
+            angleLength: roundAngleToFives(angleLength)
+          });
+          //var f_hour = calculateTimeFromAngle(startAngle);
+          //var t_hour = calculateTimeFromAngle((startAngle + angleLength) % (2 * Math.PI));
+
+        }}
+        segments={5}
+        strokeWidth={40}
+        radius={width>320?140:120}
+        gradientColorFrom="#8db9da"
+        gradientColorTo="#5b89ab"
+        showClockFace
+        clockFaceColor="#fff"
+        bgCircleColor="#2E3B51"
+        stopIcon={<G scale="1.1" x="-8" y="-8" transform={{ translate: "-8, -8" }}>{BEDTIME_ICON}</G>}
+        startIcon={<G scale="1.1"  x="-8" y="-8" transform={{ translate: "-8, -8" }}>{WAKE_ICON}</G>}
+      />*/}
 
       {this.state.showClock && <Clock
       index={index_clock}
@@ -429,20 +458,20 @@ export class Clock extends Component {
       // angleLength:calcAngle(to_hour),
       apmFrom:parseInt(from_hour.substr(0,2))>12?true:false,
       apmTo:parseInt(to_hour.substr(0,2))>12?true:false,
-      startAngle:parseInt(startAngle),
-      angleLength:parseInt(angleLength),
+      startAngle:parseFloat(startAngle),
+      angleLength:parseFloat(angleLength),
       opt_date: lang.lang==='vn'?opt_date_vn:opt_date_en,
     }
   }
 
   onUpdate = ({ startAngle, angleLength }) => {
-    console.log(startAngle, angleLength);
+    //console.log(startAngle, angleLength);
     this.setState({
       startAngle: roundAngleToFives(startAngle),
       angleLength: roundAngleToFives(angleLength)
     });
-    var f_hour = calculateTimeFromAngle(startAngle);
-    var t_hour = calculateTimeFromAngle((startAngle + angleLength) % (2 * Math.PI));
+    //var f_hour = calculateTimeFromAngle(startAngle);
+    //var t_hour = calculateTimeFromAngle((startAngle + angleLength) % (2 * Math.PI));
 
   }
   static propTypes = {
@@ -503,17 +532,9 @@ export class Clock extends Component {
       </View>
 
         {showClock && <CircularSlider
-            startAngle={startAngle}
+          startAngle={startAngle}
           angleLength={angleLength}
-          onUpdate={({ startAngle, angleLength }) => {
-            this.setState({
-              startAngle: roundAngleToFives(startAngle),
-              angleLength: roundAngleToFives(angleLength)
-            });
-            var f_hour = calculateTimeFromAngle(startAngle);
-            var t_hour = calculateTimeFromAngle((startAngle + angleLength) % (2 * Math.PI));
-
-          }}
+          onUpdate={this.onUpdate}
           segments={5}
           strokeWidth={40}
           radius={width>320?140:120}

@@ -340,19 +340,12 @@ export default class UpdateInfo extends Component {
               <View style={{width:15}}></View>
          </View>
 
-         <View style={listCreate}>
+         <View style={[listCreate, {marginBottom: 20}]}>
              <View style={widthLblCre}>
              <Image source={emailIC} style={imgInfo} />
              </View>
-             <TextInput underlineColorAndroid='transparent'
-             returnKeyType = {"done"}
-             ref='email'
-             editable={false}
-             style={wrapInputCreImg}
-             onChangeText={(email) => this.setState({email})}
-             value={this.state.email}
-              />
-              <View style={{width:15}}></View>
+             <Text style={[wrapInputCreImg, {color: 'black'}]}>{this.state.email}</Text>
+             <View style={{width:15}}></View>
          </View>
          </ScrollView>
       </View>

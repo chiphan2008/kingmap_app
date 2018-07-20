@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import {
-  View,Text,TouchableOpacity,Image,
+  View,Text,TouchableOpacity,Image,Platform,
   Dimensions,ScrollView,Alert,FlatList,
   TextInput,DeviceEventEmitter,
 } from 'react-native';
@@ -226,14 +226,14 @@ export default class Collection extends Component {
                            <Image source={removeIC} style={{width:20,height:20}} />
                          </TouchableOpacity>
 
-                         <TouchableOpacity onPress={()=>this.setState({showEdit:!showEdit,})}>
+                         <TouchableOpacity hitSlop={{top: 10, bottom: 10, left: 5, right: 10}} onPress={()=>this.setState({showEdit:!showEdit,})}>
                            <Image source={showPopup[item.id] && showEdit===false ? editIC : doneIC} style={{width:20,height:20}} />
                          </TouchableOpacity>
                        </View>
                      </View>
                      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                      {item._contents.length>0 && item._contents.map(el=>{
-                       return (<View key={el.id.toString()} style={{marginRight:0,padding:10,width:(width)/2}}>
+                       return (<View key={el.id.toString()} style={{marginRight:4,padding:10,width:(width)/2}}>
 
                          <TouchableOpacity onPress={()=>{
                            console.log(`${global.url_media}${el.avatar}`);
@@ -246,8 +246,10 @@ export default class Collection extends Component {
                          }}>
                          <Text style={{color:'#2F353F',fontSize:16}} numberOfLines={2}>{el.name}</Text>
                          </TouchableOpacity>
-                         {showPopup[item.id] && showEdit && <TouchableOpacity onPress={()=>this.confirmDel(item.id,el.id,'remove')}
-                         style={[closeCollection]}>
+                         {showPopup[item.id] && showEdit && 
+                         <TouchableOpacity
+                         onPress={()=>this.confirmDel(item.id,el.id,'remove')}
+                         style={[closeCollection, {right: Platform.OS === 'ios' ? -5 : 5}]}>
                          <Image source={closeIC} style={{width:18,height:18}} />
                          </TouchableOpacity>}
                        </View>)

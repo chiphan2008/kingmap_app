@@ -93,7 +93,6 @@ export default class App extends Component {
 
   getLang(){
     getLanguage().then((e) =>{
-      //console.log('App',e);
       if(e!==null){
           e.valueLang==='vn' ?  this.setState({lang : lang_vn}) : this.setState({lang : lang_en});
         }
@@ -193,7 +192,7 @@ export default class App extends Component {
       initialRouteName:this.state.initRoute,
       tabBarPosition: 'bottom',
       animationEnabled: false,
-      swipeEnabled: true,
+      swipeEnabled: false,
       tabBarSelected: 'Home',
       tabBarOptions: {
         showLabel:true,

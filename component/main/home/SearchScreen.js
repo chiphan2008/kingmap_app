@@ -483,38 +483,41 @@ export default class SearchScreen extends Component {
                   latitude: Number(marker.latitude),
                   longitude: Number(marker.longitude),
                 }}
-                centerOffset={{
-                  x: Number(marker.latitude),
-                  y: Number(marker.longitude),
-                }}
-                style={{borderWidth:1}}
+                
                 image={ Platform.OS==='android' ? {uri:`${marker.marker}`} : null}
-                onPress={()=>{
-                  if(callout[marker.id] || callout[marker.id]===undefined){
-                    this.setState({ callout: {[marker.id]:false} });
+                onPress={(e)=>{
+                  e.stopPropagation();
+                  if(callout[marker.id]){
+                    const newCallout = {[marker.id]:false};
+                    this.setState({ callout: newCallout});
                   }else {
-                    this.setState({ callout: {[marker.id]:true} })
+                    const newCallout = {[marker.id]:true};
+                    this.setState({ callout: newCallout })
                   }
-                }} >
-
-              {Platform.OS==='ios' && <Image source={{uri:`${marker.marker}`}} style={{width:48,height:54}} />}
-
-              <View style={(callout[marker.id] || callout[marker.id]==undefined)?show:hide}>
-              <MapView.Callout tooltip={(callout[marker.id] || callout[marker.id]==undefined) ? false : true}
-              onPress={()=>{
-                if(!callout[marker.id])
-                navigate('DetailScr',{idContent:marker.id,lat:marker.latitude,lng:marker.longitude,curLoc,lang:lang.lang});
-              }}>
-                <TouchableOpacity >
-                <View style={{height: 45,width: 280,alignItems:'center',borderRadius:3}}>
-                <Text numberOfLines={1} style={{fontWeight:'bold'}}>{marker.name}</Text>
-                <Text numberOfLines={1}>{`${marker.address}`}</Text>
-                </View>
-                </TouchableOpacity>
-              </MapView.Callout>
+                  
+                }}>
+              {Platform.OS==='ios' &&
+                <Image source={{uri:`${marker.marker}`}} style={{width:48,height:54,resizeMode:"cover"}} />
+              }
+                <View style={callout[marker.id] ? hide : show}>
+                  <MapView.Callout key={marker.id} tooltip={callout[marker.id] ? true : false}
+                  onPress={()=>{
+                    navigate('DetailScr',{
+                      idContent:marker.id,lat:marker.latitude,lng:marker.longitude,
+                      curLoc,lang:lang.lang
+                    });
+                  }}>
+                    <TouchableOpacity >
+                    <View style={{height: 45,width: 300,justifyContent: 'center',alignItems:'center',borderRadius:3}}>
+                    <Text numberOfLines={1} style={{fontWeight:'bold', fontSize: 13}}>{marker.name}</Text>
+                    <Text numberOfLines={1} style={{fontSize: 12}}>{`${marker.address}`}</Text>
+                    </View>
+                    </TouchableOpacity>
+                  </MapView.Callout>
               </View>
-              </MapView.Marker>
 
+              </MapView.Marker>
+              
             )
           )}
           {circleLoc.latitude!==undefined &&

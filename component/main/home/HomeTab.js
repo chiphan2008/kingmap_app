@@ -22,7 +22,7 @@ import lang_vn from '../../lang/vn/language';
 import lang_en from '../../lang/en/language';
 import styles from '../../styles.js';
 
-import bgMap from '../../../src/icon/bg-map.png';
+import bgMap from '../../../src/icon/bg-map.jpg';
 //import test from '../../../src/icon/test.svg';
 import logoTop from '../../../src/icon/ic-white/Logo-ngang.png';
 import searchIC from '../../../src/icon/ic-gray/ic-search.png';
@@ -203,7 +203,7 @@ export default class HomeTab extends Component {
    }
   render() {
     //console.log('this.props',this.props);
-    const {height, width} = Dimensions.get('window');
+    //const {height, width} = Dimensions.get('window');
     const {navigate} = this.props.navigation;
     const {listStatus,user_profile,curLoc, slogan} = this.state;
     //console.log("this.props.Hometab=",util.inspect(this.state.listCategory,false,null));
@@ -211,7 +211,7 @@ export default class HomeTab extends Component {
       container, bgImg,colorlbl,flexRow,
       headStyle, headContent,imgLogoTop,imgSocial, imgWidthGoogle, imgShare,wrapIcRight,
       selectBox,optionListStyle,OptionItem,inputSearch,show,hide,colorTextPP,colorWhite,marRight,itemCreate,
-      wrapContent,imgContent,square,wrapCircle,logoCenter,circle1,circle2,circle3,circle4,circle5,circle6,circle7,circle8,labelCat,labelNum,
+      wrapContent,imgContent,iconHome,square,wrapCircle,logoCenter,circle1,circle2,circle3,circle4,circle5,circle6,circle7,circle8,labelCat,labelNum,
       plusStyle,imgPlusStyle,popover,overLayout,listOver,popoverShare,popoverCreate,overLayoutShare,listOverShare,imgMargin,imgUpHome,imgUpInfo,imgUpShare
     } = styles;
     let i=0;
@@ -290,7 +290,7 @@ export default class HomeTab extends Component {
                           }}
                           >
                           {/*<Text style={labelNum}>{x}</Text>*/}
-                        <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
+                        <Image style={e.noibat===1?iconHome:imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                         <Text style={labelCat}>{e.name}</Text>
                       </TouchableOpacity>);
                         break;
@@ -309,7 +309,7 @@ export default class HomeTab extends Component {
                           }}
                           >
                           {/*<Text style={labelNum}>(25)</Text>*/}
-                        <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
+                        <Image style={e.noibat===1?iconHome:imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                         <Text style={labelCat}>{e.name}</Text>
                       </TouchableOpacity>);
                         break;
@@ -327,7 +327,7 @@ export default class HomeTab extends Component {
                           }}
                           >
                           {/*<Text style={labelNum}>(25)</Text>*/}
-                        <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
+                        <Image style={e.noibat===1?iconHome:imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                         <Text style={labelCat}>{e.name}</Text>
                       </TouchableOpacity>);
                         break;
@@ -346,7 +346,7 @@ export default class HomeTab extends Component {
                             }
                           >
                           {/*<Text style={labelNum}>(25)</Text>*/}
-                        <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
+                        <Image style={e.noibat===1?iconHome:imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                         <Text style={labelCat}>{e.name}</Text>
                       </TouchableOpacity>);
                         break;
@@ -359,8 +359,8 @@ export default class HomeTab extends Component {
                         style={{position:'absolute',alignItems:'center',top:pos.y,left :pos.x,overflow: 'visible'}}
                         >
                         {/*<Text style={labelNum}>(25)</Text>*/}
-                        {/*<Image style={imgContent} source={logoHome} />*/}
-                        <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
+                        {/*<Image style={e.noibat===1?iconHome:imgContent} source={logoHome} />*/}
+                        <Image style={e.noibat===1?iconHome:imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                         <Text style={labelCat}>{e.name}</Text>
 
                         </TouchableOpacity>);
@@ -373,7 +373,7 @@ export default class HomeTab extends Component {
                       onPress={() => navigate('OtherCatScr',{name_module:e.name,lang:this.state.lang}) }
                       >
                       {/*<Text style={labelNum}>(25)</Text>*/}
-                    <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
+                    <Image style={e.noibat===1?iconHome:imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                     <Text style={labelCat}>{e.name}</Text>
                   </TouchableOpacity>);
                         break;
@@ -385,7 +385,7 @@ export default class HomeTab extends Component {
                         style={{position:'absolute',alignItems:'center',top:pos.y,left :pos.x,}}
                         onPress={() => navigate('CatScr') }
                         >
-                      <Image style={imgContent} source={{uri:`${global.url_media}${e.image}`}} />
+                      <Image style={e.noibat===1?iconHome:imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                       <Text style={labelCat}>{e.name}</Text>
                       {/*<Text style={labelNum}>(25)</Text>*/}
                     </TouchableOpacity>);

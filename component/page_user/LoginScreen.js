@@ -19,7 +19,7 @@ import lang_vn from '../lang/vn/user/language';
 import global from '../global';
 
 import closeIC from '../../src/icon/ic-close.png';
-import bgMap from '../../src/icon/bg-map.png';
+import bgMap from '../../src/icon/bg-map.jpg';
 import LogoHome from '../../src/icon/ic-home/Logo-home.png';
 import FacebookColor from '../../src/icon/Facebook_color.png';
 import GoogleColor from '../../src/icon/Google_color.png';

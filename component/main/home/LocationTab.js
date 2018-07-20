@@ -25,7 +25,7 @@ import lang_vn from '../../lang/vn/language';
 import lang_en from '../../lang/en/language';
 import styles from '../../styles.js';
 
-import bgMap from '../../../src/icon/bg-map.png';
+import bgMap from '../../../src/icon/bg-map.jpg';
 //import test from '../../../src/icon/test.svg';
 import logoTop from '../../../src/icon/ic-white/Logo-ngang.png';
 import searchIC from '../../../src/icon/ic-gray/ic-search.png';

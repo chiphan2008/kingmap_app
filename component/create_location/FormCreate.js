@@ -5,6 +5,8 @@ import {Platform, View, Text, StyleSheet, Dimensions, Image,
   TextInput, TouchableOpacity,ScrollView,Modal,FlatList,
   Alert,ActivityIndicator,
 } from 'react-native';
+
+//import * as _ from 'lodash';
 import ImagePicker from 'react-native-image-crop-picker';
 const {height, width} = Dimensions.get('window');
 import language_vn from '../lang/vn/language';
@@ -59,6 +61,7 @@ import selectedIC from '../../src/icon/ic-create/ic-selected.png';
 import LogoHome from '../../src/icon/ic-home/Logo-home.png';
 
 import {hasNumber,getIndex,strtoarray,isEmail,checkSVG,checkKeyword} from '../libs';
+
 
 var timeoutLatLng;
 export default class FormCreate extends Component {
@@ -409,7 +412,7 @@ export default class FormCreate extends Component {
     return (
       <View>
 
-      {(showUpdateMore===false || this.state.showOpenTime === false) &&
+      {(showUpdateMore === false || this.state.showOpenTime === false) &&
         <View style={wrapper}>
         <View style={headCatStyle}>
           <View style={headContent}>
@@ -838,6 +841,8 @@ export default class FormCreate extends Component {
           </View>
         }
       </View>
+
+
 
       </ScrollView>
     </View>}

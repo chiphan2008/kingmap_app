@@ -5,7 +5,7 @@ import { Platform, View, Text, Image, Alert,
   StyleSheet, Dimensions, TextInput,Keyboard,ScrollView,
   TouchableOpacity,TouchableWithoutFeedback } from 'react-native';
 //import { CheckBox } from 'react-native-elements';
-import bgMap from '../../src/icon/bg-map.png';
+import bgMap from '../../src/icon/bg-map.jpg';
 import lang_en from '../lang/en/user/language';
 import lang_vn from '../lang/vn/user/language';
 import postApi from '../api/postApi';

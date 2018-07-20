@@ -19,7 +19,7 @@ import lang_vn from '../../lang/vn/language';
 import lang_en from '../../lang/en/language';
 import getLocationByIP from '../../api/getLocationByIP';
 
-import bgMap from '../../../src/icon/bg-map.png';
+import bgMap from '../../../src/icon/bg-map.jpg';
 import userProfileIC from '../../../src/icon/ic-user-profile.png';
 import logoTop from '../../../src/icon/ic-white/Logo-ngang.png';
 import searchIC from '../../../src/icon/ic-gray/ic-search.png';

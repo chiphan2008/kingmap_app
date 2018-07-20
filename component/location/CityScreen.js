@@ -10,7 +10,7 @@ import checkLocation from '../api/checkLocation';
 import global from '../global';
 //import image
 import LogoHome from '../../src/icon/ic-home/Logo-home.png';
-import bgMap from '../../src/icon/bg-map.png';
+import bgMap from '../../src/icon/bg-map.jpg';
 const {height, width} = Dimensions.get('window');
 
 var com;

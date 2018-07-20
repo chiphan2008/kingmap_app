@@ -19,6 +19,7 @@ import loginServer from '../api/loginServer';
 import GrantRight from './GrantRight';
 import AddAgency from './AddAgency';
 
+import makeMoneyIC from '../../src/icon/make-money.png';
 import logoTop from '../../src/icon/ic-white/Logo-ngang.png';
 import searchIC from '../../src/icon/ic-gray/ic-search.png';
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
@@ -435,7 +436,10 @@ export default class MakeMoney extends Component {
             {this.state.isPend===false && isNormal &&
             <View style={{justifyContent:'center',alignItems:'center',padding:15,height:height-95}}>
             <View>
-              <Text numberOfLines={2} style={{textAlign:'center',fontSize:20,fontWeight:'bold',color:'#000'}}>{lang.title_ctv.toUpperCase()}</Text>
+
+              <Text numberOfLines={2} style={{textAlign:'center',fontSize:20,fontWeight:'bold',color:'#000'}}>
+              {lang.title_ctv.toUpperCase()}
+              </Text>
               <Text style={{textAlign:'center',fontSize:14,marginTop:5}}>{lang.des_ctv}</Text>
             </View>
             <TouchableOpacity style={{marginTop:15,backgroundColor:'#d0021b',borderRadius:3,width:width-30,paddingTop:10,paddingBottom:10,alignItems:'center'}}
@@ -467,7 +471,10 @@ export default class MakeMoney extends Component {
           <ScrollView>
           <View style={contentWrap}>
 
-          <View style={{width:width-80,height:110,justifyContent:'center',alignItems:'center'}}>
+          <View style={{width:width-80,height:200,justifyContent:'center',alignItems:'center'}}>
+          <View style={{marginBottom:5,width:80,height:80,backgroundColor:'#fff',borderRadius:60,justifyContent:'center',alignItems:'center'}}>
+          <Image source={makeMoneyIC} style={{width:60,height:60}} />
+          </View>
           <Text style={titleHead}> {`${name_module}`.toUpperCase()} </Text>
           <Text style={titleNormal}> {des_mm} </Text>
           </View>

@@ -213,6 +213,9 @@ module.exports = {
   imgContent : {
       width: 65,height: 65,marginBottom:10,
   },
+  iconHome : {
+      width: 75,height: 75,marginBottom:10,
+  },
   wrapContent :{
     alignItems:'center',
     justifyContent:'center',

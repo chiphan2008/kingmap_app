@@ -4,6 +4,8 @@ import {
   Platform, StyleSheet, View, AsyncStorage, Image, Dimensions,
 } from 'react-native';
 import { StackNavigator,TabNavigator,Animated,NavigationActions } from 'react-navigation';
+import {createStore} from 'redux';
+import {Provider} from 'react-redux';
 //import util from 'util';
 //import icon tabBarIcon
 import getLanguage from './component/api/getLanguage';
@@ -78,6 +80,24 @@ import ListCheckin from './component/main/personal/ListCheckin';
 
 const {width,height} = Dimensions.get('window');
 
+const defaultState = {
+  yourCurLoc : {
+    latitude:'',
+    longitude:''
+  }
+};
+const reducer = (state = defaultState, action) => {
+  switch (action.type) {
+    case 'FIND_CURRENT_LOCATION':
+      return {...state, yourCurLoc:action.yourCurLoc}
+      break;
+    default:
+      break;
+  }
+  return state;
+}
+const store = createStore(reducer);
+
 export default class App extends Component {
   constructor(props) {
     super(props);
@@ -87,6 +107,7 @@ export default class App extends Component {
       isLogin : false,
       lang : lang_vn,
       setVal:false,
+
     }
     this.getLang();
   }
@@ -288,6 +309,10 @@ export default class App extends Component {
       initialRouteName: this.state.initApp ? 'MainScr' : 'IntroSrc',
     });
     //const {setVal} = this.state;
-    return (<RootNav screenProps={()=>{this.setState({initApp:true},()=>this.getLang())}} />);
+    return (
+      <Provider store={store}>
+        <RootNav screenProps={()=>{this.setState({initApp:true},()=>this.getLang())}} />
+      </Provider>
+    );
   }
 } ;

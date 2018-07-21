@@ -5,14 +5,15 @@ import {Keyboard,Platform, View, Text, StyleSheet, Dimensions, Image,
   TextInput, TouchableOpacity,Modal,ActivityIndicator,
   FlatList,DeviceEventEmitter,
 } from 'react-native';
+import { connect } from 'react-redux';
 const {height, width} = Dimensions.get('window');
 
 import Rating from '../detail/Rating'
 import styles from '../../styles';
 import loginServer from '../../api/loginServer';
-import Geolocation from '../../api/Geolocation';
+//import Geolocation from '../../api/Geolocation';
 import getApi from '../../api/getApi';
-import getLocationByIP from '../../api/getLocationByIP';
+//import getLocationByIP from '../../api/getLocationByIP';
 import global from '../../global';
 import lang_vn from '../../lang/vn/language';
 import lang_en from '../../lang/en/language';
@@ -35,7 +36,7 @@ import topIC from '../../../src/icon/ic-top.png';
 import {remove,removeText} from '../../libs';
 
 var timeout;
-export default class ListLocation extends Component {
+class ListLocation extends Component {
   constructor(props) {
     super(props);
     const {lang,idCat} = this.props.navigation.state.params || '';
@@ -50,9 +51,6 @@ export default class ListLocation extends Component {
       valueLoc : 0,
       valueCat : 0,
       valueSer : 0,
-      curLocation : {
-        latlng:'',
-      },
       curLoc:{},
       showLoc:false,
       listData:[],
@@ -77,7 +75,8 @@ export default class ListLocation extends Component {
       isLoad:false,
       scrollToTop:false,
     }
-    this.findLoc();
+    const {latitude,longitude} = this.props.yourCurLoc;
+    this.getPosition(latitude,longitude);
     this.refresh();
     accessLocation();
   }
@@ -157,39 +156,7 @@ export default class ListLocation extends Component {
        }
      });
    }
-  findLoc(){
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        //console.log('position',position);
-        const {id_sub,id_serv} = this.state;
-        const {latitude,longitude} = position.coords;
-        this.getPosition(latitude,longitude);
-        this.setState({curLoc:{
-          latitude,longitude
-        }},()=>{
-          //if(isRefresh) this.getContentByDist(null,id_sub,id_serv,null)
-          //this.getCategory(`${latitude},${longitude}`);
-        })
-      },
-      (error) => {
-        //console.log('getLocationByIP');
-        getLocationByIP().then(e=>{
-          const {latitude,longitude} = e;
-          const {id_sub,id_serv,isRefresh} = this.state;
-          this.getPosition(latitude,longitude);
-          this.setState({curLoc:{
-            latitude,longitude
-          }},()=>{
-
-            //console.log(isRefresh);
-            //if(isRefresh) this.getContentByDist(null,id_sub,id_serv,null);
-          })
-        })
-      },
-      { timeout: 5000,maximumAge: 60000 },
-    );
-  }
 
   getPosition(lat,lng){
     const url = `${global.url}${'get-position?location='}${lat},${lng}`;
@@ -495,8 +462,12 @@ export default class ListLocation extends Component {
         closeModal={()=>this.setState({showServie:false})}
         />
 
-
       </View>
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {yourCurLoc:state.yourCurLoc}
+}
+export default connect(mapStateToProps)(ListLocation);

@@ -5,33 +5,32 @@ import {
   View,Text,StyleSheet,Image,TextInput,
   Platform,Dimensions,TouchableOpacity,Modal
 } from 'react-native';
+import {connect} from 'react-redux';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 
 import logoMap from '../../../src/icon/Logo-map.png';
 import normalScreenIC from '../../../src/icon/ic-normal-screen.png';
 import fullScreenIC from '../../../src/icon/ic-full-screen.png';
 
-import getLocationByIP from '../../api/getLocationByIP';
+//import getLocationByIP from '../../api/getLocationByIP';
 import global from '../../global';
 import getApi from '../../api/getApi';
 
 const {width,height} = Dimensions.get('window');
-export default class MapContent extends Component {
+
+class MapContent extends Component {
   constructor(props){
     super(props);
     this.state = {
       coords:[],
       showFullScreen:false,
       direct:this.props.region,
-      curLoc:{},
     }
   }
   getDirection(){
       //console.log('this.props.region.latlng',this.props.region.latlng);
-      const {latitude,longitude} = this.props.curLoc;
-      if(latitude===undefined){
-        const {latitude,longitude} = this.state.curLoc;
-      }
+      const {latitude,longitude} = this.props.yourCurLoc;
+
       const mode = 'driving'; // 'walking';
       const origin = `${latitude},${longitude}`;
       const destination = this.props.region.latlng;
@@ -56,37 +55,17 @@ export default class MapContent extends Component {
       a=null,h=0,i=0;do a=t.charCodeAt(u++)-63,i|=(31&a)<<h,h+=5;while(a>=32);n=1&i?~(i>>1):i>>1,h=i=0;do a=t.charCodeAt(u++)-63,i|=(31&a)<<h,h+=5;
       while(a>=32);o=1&i?~(i>>1):i>>1,l+=n,r+=o,d.push([l/c,r/c])}return d=d.map(function(t){return{latitude:t[0],longitude:t[1]}})
   }
-  findLoc(){
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const {latitude,longitude} = position.coords;
-          this.setState({curLoc:{
-            latitude,longitude
-          }});
-      },
-      (error) => {
-        getLocationByIP().then((e) => {
-          const {latitude,longitude} = e;
-            this.setState({curLoc:{
-              latitude,longitude
-            }});
-
-        });
-      },
-      { timeout: 5000,maximumAge: 60000 },
-    );
-   }
 
   render() {
-    const { curLoc,region,distance,lang } = this.props;
+    const { yourCurLoc,region,distance,lang } = this.props;
     const {showFullScreen,direct} = this.state;
-    //console.log(curLoc);
+    //console.log(yourCurLoc);
     //console.log('lang',lang);
     //console.log('region',region.latlng);
-    //console.log('curLoc',curLoc.latitude,curLoc.longitude);
+    //console.log('yourCurLoc',yourCurLoc.latitude,yourCurLoc.longitude);
     return (
       <View>
-    {curLoc.latitude!==undefined ?
+    {yourCurLoc.latitude!==undefined ?
     <View style={{width,height:height/2}} >
       {region.latitude!==undefined &&
         <MapView
@@ -99,8 +78,8 @@ export default class MapContent extends Component {
           showsPointsOfInterest={false}
         >
 
-        {curLoc.latitude!==undefined &&
-          <MapView.Marker coordinate={{latitude: Number(curLoc.latitude),longitude: Number(curLoc.longitude)}} />}
+        {yourCurLoc.latitude!==undefined &&
+          <MapView.Marker coordinate={{latitude: Number(yourCurLoc.latitude),longitude: Number(yourCurLoc.longitude)}} />}
 
         {this.state.coords[0]!==undefined &&
             <MapView.Polyline coordinates={this.state.coords} strokeWidth={4} strokeColor='#BE2827' />
@@ -130,8 +109,8 @@ export default class MapContent extends Component {
             showsPointsOfInterest={false}
           >
 
-          {curLoc.latitude!==undefined &&
-            <MapView.Marker coordinate={{latitude: Number(curLoc.latitude),longitude: Number(curLoc.longitude)}}>
+          {yourCurLoc.latitude!==undefined &&
+            <MapView.Marker coordinate={{latitude: Number(yourCurLoc.latitude),longitude: Number(yourCurLoc.longitude)}}>
             {/*<View><Text>{lang.your_current_location}</Text></View>*/}
             </MapView.Marker>
           }
@@ -164,3 +143,8 @@ export default class MapContent extends Component {
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {yourCurLoc:state.yourCurLoc}
+}
+export default connect(mapStateToProps)(MapContent);

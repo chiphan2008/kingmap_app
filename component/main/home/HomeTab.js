@@ -5,7 +5,8 @@ import {Platform, View, Text, StyleSheet, Dimensions, Image, TextInput,ScrollVie
   TouchableOpacity,PermissionsAndroid, AsyncStorage, Modal,Keyboard,YellowBox,
   TouchableWithoutFeedback
 } from 'react-native';
-import RNSettings from 'react-native-settings';
+import { connect } from 'react-redux';
+//import RNSettings from 'react-native-settings';
 //import SvgUri from 'react-native-svg-uri';
 const {height, width} = Dimensions.get('window');
 
@@ -43,7 +44,8 @@ YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated', 'Module RCTIm
 
 import {Select, Option} from "react-native-chooser";
 var timeoutLang;
-export default class HomeTab extends Component {
+
+class HomeTab extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -67,7 +69,6 @@ export default class HomeTab extends Component {
       isLogin:false,
       user_id:0,
       avatar:'',
-      curLoc:{},
       user_profile:{},
       valSearch:'',
       slogan:'',
@@ -103,17 +104,12 @@ export default class HomeTab extends Component {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const {latitude,longitude} = position.coords;
-          this.setState({curLoc:{
-            latitude,longitude
-          }});
+        this.props.dispatch({type:'FIND_CURRENT_LOCATION',yourCurLoc:position.coords});
       },
       (error) => {
         getLocationByIP().then((e) => {
           const {latitude,longitude} = e;
-            this.setState({curLoc:{
-              latitude,longitude
-            }});
-
+          this.props.dispatch({type:'FIND_CURRENT_LOCATION',yourCurLoc:e});
         });
       },
       { timeout: 5000,maximumAge: 60000 },
@@ -204,8 +200,9 @@ export default class HomeTab extends Component {
   render() {
     //console.log('this.props',this.props);
     //const {height, width} = Dimensions.get('window');
+    const {yourCurLoc} = this.props;
     const {navigate} = this.props.navigation;
-    const {listStatus,user_profile,curLoc, slogan} = this.state;
+    const {listStatus,user_profile, slogan} = this.state;
     //console.log("this.props.Hometab=",util.inspect(this.state.listCategory,false,null));
     const {
       container, bgImg,colorlbl,flexRow,
@@ -245,7 +242,7 @@ export default class HomeTab extends Component {
           <TextInput underlineColorAndroid='transparent'
           placeholder={this.state.lang.search} style={inputSearch}
           onSubmitEditing={() => { if (this.state.valSearch.trim()!==''){
-            navigate('SearchScr',{keyword:this.state.valSearch,idCat:'',lat:curLoc.latitude,lng:curLoc.longitude,lang:this.state.lang.lang})}
+            navigate('SearchScr',{keyword:this.state.valSearch,idCat:'',lat:yourCurLoc.latitude,lng:yourCurLoc.longitude,lang:this.state.lang.lang})}
             this.setState({valSearch:''})
           }}
           onChangeText={(valSearch) => this.setState({valSearch})}
@@ -254,7 +251,7 @@ export default class HomeTab extends Component {
           <TouchableOpacity style={{top:Platform.OS==='ios' ? 75 : 65,left:(width-50),position:'absolute'}}
           onPress={()=>{
             if (this.state.valSearch.trim()!=='') {
-              navigate('SearchScr',{keyword:this.state.valSearch,lat:curLoc.latitude,lng:curLoc.longitude,idCat:'',lang:this.state.lang.lang});
+              navigate('SearchScr',{keyword:this.state.valSearch,lat:yourCurLoc.latitude,lng:yourCurLoc.longitude,idCat:'',lang:this.state.lang.lang});
               this.setState({valSearch:''})
             }
           }}>
@@ -340,9 +337,8 @@ export default class HomeTab extends Component {
                           style={{position:'absolute',alignItems:'center',top:pos.y,left :pos.x,overflow: 'visible'}}
                           onPress={() => {
                             this.requestLogin();
-
                             if(this.state.isLogin){
-                              navigate('MakeMoneyScr',{curLoc,user_profile,icon:`${global.url_media}${e.image}`,name_module:e.name,lang:this.state.lang}) }}
+                              navigate('MakeMoneyScr',{user_profile,icon:`${global.url_media}${e.image}`,name_module:e.name,lang:this.state.lang}) }}
                             }
                           >
                           {/*<Text style={labelNum}>(25)</Text>*/}
@@ -465,3 +461,8 @@ export default class HomeTab extends Component {
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {yourCurLoc:state.yourCurLoc}
+}
+export default connect(mapStateToProps)(HomeTab);

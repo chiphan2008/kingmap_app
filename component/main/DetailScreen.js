@@ -6,6 +6,7 @@ import {
   Dimensions, Image, TextInput, TouchableOpacity,
   DeviceEventEmitter
 } from 'react-native';
+import {connect} from 'react-redux';
 const {height, width} = Dimensions.get('window');
 
 import global from '../global';
@@ -33,7 +34,7 @@ import {Select, Option} from "react-native-chooser";
 
 
 var timeoutCheckUser;
-export default class DetailScreen extends Component {
+class DetailScreen extends Component {
   constructor(props) {
     super(props);
     const {curLoc,lang} = this.props.navigation.state.params;
@@ -319,7 +320,7 @@ export default class DetailScreen extends Component {
         <MapContent
         lang={lang}
         distance={Number.parseFloat(listData.content.line).toFixed(0)}
-        curLoc={this.state.curLoc}
+        curLoc={this.props.yourCurLoc}
         region={this.state.region}
         />
 
@@ -391,6 +392,12 @@ export default class DetailScreen extends Component {
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {yourCurLoc:state.yourCurLoc}
+}
+
+export default connect(mapStateToProps)(DetailScreen);
 
 const styles = StyleSheet.create({
   container: {flex: 1},

@@ -11,7 +11,7 @@ import Rating from '../detail/Rating'
 import styles from '../../styles';
 import loginServer from '../../api/loginServer';
 import getApi from '../../api/getApi';
-import getLocationByIP from '../../api/getLocationByIP';
+//import getLocationByIP from '../../api/getLocationByIP';
 import global from '../../global';
 import lang_vn from '../../lang/vn/language';
 import lang_en from '../../lang/en/language';

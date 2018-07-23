@@ -8,6 +8,7 @@ import SvgUri from 'react-native-svg-uri';
 YellowBox.ignoreWarnings(['Class RCTCxxModule']);
 YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader']);
 const {height, width} = Dimensions.get('window');
+import {connect} from 'react-redux';
 //import Geolocation from '../../api/Geolocation';
 //import hasLocationPermission from '../../api/hasLocationPermission';
 
@@ -15,7 +16,7 @@ import getApi from '../../api/getApi';
 //import reqLatLng from '../../api/reqLatLng';
 import getLanguage from '../../api/getLanguage';
 import accessLocation from '../../api/accessLocation';
-import getLocationByIP from '../../api/getLocationByIP';
+//import getLocationByIP from '../../api/getLocationByIP';
 
 import global from '../../global';
 import loginServer from '../../api/loginServer';
@@ -43,7 +44,7 @@ import userDD from '../../../src/icon/ic-gray/ic-user.png';
 import {Select, Option} from "react-native-chooser";
 import {format_number,checkSVG} from '../../libs';
 
-export default class LocationTab extends Component {
+class LocationTab extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -67,7 +68,6 @@ export default class LocationTab extends Component {
       isLogin:false,
       user_id:0,
       avatar:'',
-      curLoc:{},
       valSearch:'',
     };
 
@@ -82,31 +82,11 @@ export default class LocationTab extends Component {
       }
     })
 
-    this.findLoc();
+    //this.findLoc();
     this.getLang();
     Keyboard.dismiss();
     arrLang = [{name:'VIE',v:'vn'},{name:'ENG',v:'en'}];
   }
-  findLoc(){
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const {latitude,longitude} = position.coords;
-        this.setState({curLoc:{
-          latitude,longitude
-        }})
-      },
-      (error) => {
-        getLocationByIP().then((e) => {
-          const {latitude,longitude} = e;
-          this.setState({curLoc:{
-            latitude,longitude
-          }});
-        });
-      },
-      { timeout: 5000,maximumAge: 60000 },
-    );
-   }
-
 
   requestLogin(){
     if(this.state.isLogin===false){
@@ -149,7 +129,6 @@ export default class LocationTab extends Component {
     }, 1000);
   }
   getCategory(lang){
-
     getApi(global.url+'categories?language='+lang+'&limit=10')
     .then(arrCategory => {
       //console.log('arrCategory',arrCategory);
@@ -181,7 +160,8 @@ export default class LocationTab extends Component {
     const {height, width} = Dimensions.get('window');
     const {navigate,state} = this.props.navigation;
     //console.log('this.props.navigation',this.props.navigation);
-    const {listStatus,listCategory,curLoc} = this.state;
+    const {listStatus,listCategory} = this.state;
+    const { yourCurLoc } = this.props;
     //console.log("this.props.Hometab=",util.inspect(this.state.listCategory,false,null));
     const {
       container, bgImg,colorlbl,flexRow,
@@ -222,7 +202,7 @@ export default class LocationTab extends Component {
           <TextInput underlineColorAndroid='transparent'
           placeholder={this.state.lang.search} style={inputSearch}
           onSubmitEditing={() => { if (this.state.valSearch.trim()!==''){
-            navigate('SearchScr',{keyword:this.state.valSearch,idCat:'',lat:curLoc.latitude,lng:curLoc.longitude,lang:this.state.lang.lang})}
+            navigate('SearchScr',{keyword:this.state.valSearch,idCat:'',lat:yourCurLoc.latitude,lng:yourCurLoc.longitude,lang:this.state.lang.lang})}
             this.setState({valSearch:''})
           }}
           onChangeText={(valSearch) => this.setState({valSearch})}
@@ -231,7 +211,7 @@ export default class LocationTab extends Component {
           <TouchableOpacity style={{top:Platform.OS==='ios' ? 75 : 65,left:(width-50),position:'absolute'}}
           onPress={()=>{
             if (this.state.valSearch.trim()!=='') {
-              navigate('SearchScr',{keyword:this.state.valSearch,lat:curLoc.latitude,lng:curLoc.longitude,idCat:'',lang:this.state.lang.lang});
+              navigate('SearchScr',{keyword:this.state.valSearch,lat:yourCurLoc.latitude,lng:yourCurLoc.longitude,idCat:'',lang:this.state.lang.lang});
               this.setState({valSearch:''})
             }
           }}>
@@ -258,7 +238,7 @@ export default class LocationTab extends Component {
                     return (<TouchableOpacity
                         key={e.id}
                         style={{position:'absolute',flex:1,alignItems:'center',top:pos.y,left :pos.x,}}
-                        onPress={()=>navigate('SearchScr',{idCat:e.id,labelCat:e.name,service_items:e.service_items, keyword:this.state.valSearch,lat:curLoc.latitude,lng:curLoc.longitude,lang:this.state.lang.lang}) }
+                        onPress={()=>navigate('SearchScr',{idCat:e.id,labelCat:e.name,service_items:e.service_items, keyword:this.state.valSearch,lat:yourCurLoc.latitude,lng:yourCurLoc.longitude,lang:this.state.lang.lang}) }
                         >
                       {checkSVG(e.image)?
                         <SvgUri width="70" height="70" source={{uri:`${global.url_media}${e.image}`}} />
@@ -275,7 +255,7 @@ export default class LocationTab extends Component {
               })
             }
             <TouchableOpacity style={[wrapCircle,logoCenter]}
-              onPress={() => navigate('OtherCatScr',{name_module:'AAA',lang:this.state.lang,curLoc}) }>
+              onPress={() => navigate('OtherCatScr',{name_module:'AAA',lang:this.state.lang,yourCurLoc}) }>
             <Image style={imgContent} source={logoHome} />
             <Text style={labelCat}>{this.state.lang.other}</Text>
             </TouchableOpacity>
@@ -351,3 +331,9 @@ export default class LocationTab extends Component {
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {yourCurLoc:state.yourCurLoc}
+}
+
+export default connect(mapStateToProps)(LocationTab);

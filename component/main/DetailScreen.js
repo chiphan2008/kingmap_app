@@ -13,7 +13,7 @@ import global from '../global';
 import getApi from '../api/getApi';
 import loginServer from '../api/loginServer';
 import checkLogin from '../api/checkLogin';
-import getLocationByIP from '../api/getLocationByIP';
+//import getLocationByIP from '../api/getLocationByIP';
 
 import Collection from './detail/Collection';
 import Header from './detail/Header';
@@ -37,12 +37,11 @@ var timeoutCheckUser;
 class DetailScreen extends Component {
   constructor(props) {
     super(props);
-    const {curLoc,lang} = this.props.navigation.state.params;
+    const {lang} = this.props.navigation.state.params;
     //console.log('lang1',lang.lang);
     this.state = {
       lang:lang==='vn' ? lang_vn : lang_en,
       region:{},
-      curLoc:curLoc || {},
       listData:{
         image_space:[],
         image_menu:[],
@@ -75,12 +74,12 @@ class DetailScreen extends Component {
       isLogin:false,
     }
     this.refresh();
-    if(curLoc===undefined) this.findLoc();
+    //if(curLoc===undefined) this.findLoc();
   }
 
 
   getContent(idContent){
-    const {latitude,longitude} = this.state.curLoc;
+    const {latitude,longitude} = this.props.yourCurLoc;
     const {update} =this.props.navigation.state.params;
     //console.log(latitude,longitude);
     //if(latlng===undefined) latlng='10.7818513,106.6769368';
@@ -134,7 +133,7 @@ class DetailScreen extends Component {
   }
   requestLogin(){
     const {state,navigate} = this.props.navigation;
-    const {idContent,lang,curLoc,lat,lng} = this.props.navigation.state.params;
+    const {idContent,lang,lat,lng} = this.props.navigation.state.params;
     if(this.state.isLogin===false){
       //console.log('this.state.isLogin',this.state.isLogin);
       navigate('LoginScr');
@@ -151,26 +150,7 @@ class DetailScreen extends Component {
       }
     });
   }
-  findLoc(){
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const {latitude,longitude} = position.coords;
-          this.setState({curLoc:{
-            latitude,longitude
-          }});
-      },
-      (error) => {
-        getLocationByIP().then((e) => {
-          const {latitude,longitude} = e;
-            this.setState({curLoc:{
-              latitude,longitude
-            }});
 
-        });
-      },
-      { timeout: 5000,maximumAge: 60000 },
-    );
-   }
 
   componentWillUnMount(){
     //clearTimeout(timeoutCheckUser);
@@ -246,10 +226,11 @@ class DetailScreen extends Component {
     //console.log('this.props.navigation',this.props.navigation.state.params.curLoc);
 
     const {navigate} = this.props.navigation;
+    const { yourCurLoc } = this.props;
     //console.log('this.props.navigation',this.props.navigation);
     const {lang,user_id,isLogin,scroll,hasCheckin,hasSaveLike,listData,hasCollection} = this.state;
     //console.log('lang',lang.lang);
-    const { idContent,curLoc } = this.props.navigation.state.params;
+    const { idContent } = this.props.navigation.state.params;
     //console.log('lang',lang);
     const {
       container, bgImg,colorWhite,likeIC,shareIC,imgIC,voteIC,
@@ -345,7 +326,7 @@ class DetailScreen extends Component {
           </View>
           <OtherBranch
             lang={lang}
-            curLoc={this.state.curLoc}
+            curLoc={this.props.yourCurLoc}
             listGroup={listData.list_group}
             navigation={this.props.navigation}
             />
@@ -357,7 +338,7 @@ class DetailScreen extends Component {
 
         <Suggest
         lang={lang}
-        curLoc={this.state.curLoc}
+        curLoc={this.props.yourCurLoc}
         listSuggest={listData.list_suggest}
         likeContent={this.likeContent.bind(this)}
         navigation={this.props.navigation}

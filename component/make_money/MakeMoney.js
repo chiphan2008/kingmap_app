@@ -6,12 +6,12 @@ import {Platform, View, Text, StyleSheet, Dimensions, Image,
   ScrollView,FlatList,TouchableWithoutFeedback,
   DeviceEventEmitter, KeyboardAvoidingView, ActivityIndicator
 } from 'react-native';
+import {connect} from 'react-redux';
 import Moment from 'moment';
 const {height, width} = Dimensions.get('window');
 import {Select, Option} from "react-native-chooser";
 
 //import styles from '../styles';
-import getLocationByIP from '../api/getLocationByIP';
 import postApi from '../api/postApi';
 import global from '../global';
 import checkLogin from '../api/checkLogin';
@@ -46,7 +46,7 @@ import withdrawIC from '../../src/icon/ic-wallet/ic-withdraw.png';
 import {format_number,checkUrl} from '../libs';
 
 var com;
-export default class MakeMoney extends Component {
+class MakeMoney extends Component {
   constructor(props) {
     super(props);
     const { _roles,api_roles,temp_daily_code } = this.props.navigation.state.params.user_profile;
@@ -85,34 +85,12 @@ export default class MakeMoney extends Component {
       index_ctv_pending:'',
       static_notes:'',
       noData:'',
-      curLoc:this.props.navigation.state.params.curLoc || {},
+
     }
     loginServer(this.props.navigation.state.params.user_profile,'fgdjk')
     temp_daily_code==='' && this.getStatic();
     //console.log('this.state.curLoc',this.state.curLoc);
-    this.state.curLoc.latitude===undefined && this.findLoc();
   }
-
-  findLoc(){
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const {latitude,longitude} = position.coords;
-          this.setState({curLoc:{
-            latitude,longitude
-          }});
-      },
-      (error) => {
-        getLocationByIP().then((e) => {
-          const {latitude,longitude} = e;
-            this.setState({curLoc:{
-              latitude,longitude
-            }});
-
-        });
-      },
-      { timeout: 5000,maximumAge: 60000 },
-    );
-   }
 
   searchContentPending(page=null){
     const { user_profile } = this.props.navigation.state.params;
@@ -414,9 +392,9 @@ export default class MakeMoney extends Component {
       itemChoose,showCoin,showLoc,showLocPop,showCTV,showCTVPop,showTDLPop,showArea,listData,index_ctv_pending,noData,
       listAgency,listLoc,isCeo,isAgency,isNormal,isCTV,assign,listDistrict,labelArea,ListPend,suggestPend,
       ListLocPend,suggestLoc,showListLocPend,showListCTVPend,loadMore,page,static_notes,des_mm,
-      curLoc
-    } = this.state;
 
+    } = this.state;
+    const {yourCurLoc} = this.props;
     const _this = this;
     //console.log(user_profile);
     return (
@@ -837,7 +815,7 @@ export default class MakeMoney extends Component {
              renderItem={({item,index}) =>(
                <TouchableOpacity style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}
                onPress={()=>{
-                 navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,lang:lang.lang,update:true,curLoc})
+                 navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,lang:lang.lang,update:true,yourCurLoc})
                }}>
                    <View style={{flexDirection:'row',paddingBottom:17}}>
                        <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:50,marginRight:10,borderRadius:25}} />
@@ -963,6 +941,12 @@ export default class MakeMoney extends Component {
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {yourCurLoc:state.yourCurLoc}
+}
+
+export default connect(mapStateToProps)(MakeMoney);
 
 const styles = StyleSheet.create({
   container: {

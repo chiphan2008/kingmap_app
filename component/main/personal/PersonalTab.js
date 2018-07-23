@@ -6,6 +6,7 @@ import {
   Dimensions, Image, TextInput, TouchableOpacity,
   AsyncStorage,DeviceEventEmitter} from 'react-native';
 const {height, width} = Dimensions.get('window');
+import {connect} from 'react-redux';
 import {GoogleSignin} from 'react-native-google-signin';
 import encodeApi from '../../api/encodeApi';
 //import UpdateInfo from './UpdateInfo';
@@ -37,17 +38,16 @@ import changeIC from '../../../src/icon/ic-white/ic-change.png';
 import {checkUrl} from '../../libs';
 
 var timeoutUser;
-export default class PersonalTab extends Component {
+class PersonalTab extends Component {
   constructor(props) {
     super(props);
     this.state = {
       lang : lang_vn,
       isLogin : false,
-      curLoc:{},
       countEntry:{},
       user_profile:{},
     };
-    this.getLoc();
+    //this.getLoc();
     getLanguage().then((e) =>{
       //console.log('e',e);
       if(e!==null){
@@ -95,40 +95,7 @@ export default class PersonalTab extends Component {
     .then(()=>this.props.navigation.navigate('MainScr'));
   }
 
-  getLoc(){
-    navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const latlng = `${position.coords.latitude}${','}${position.coords.longitude}`;
-            this.setState({
-              curLoc : {
-                latitude:position.coords.latitude,
-                longitude: position.coords.longitude,
-                lat:position.coords.latitude,
-                lng: position.coords.longitude,
-                latitudeDelta:  0.008757,
-                longitudeDelta: 0.010066,
-                latlng:latlng,
-              }
-            });
-           },
-           (error) => {
-            getLocationByIP().then((e) => {
-                this.setState({
-                  curLoc : {
-                    latitude:e.latitude,
-                    longitude: e.longitude,
-                    lat:e.latitude,
-                    lng: e.longitude,
-                    latitudeDelta:  0.008757,
-                    longitudeDelta: 0.010066,
-                    latlng:`${e.latitude}${','}${e.longitude}`,
-                  }
-                });
-            });
-          },
-          { timeout: 20000, maximumAge: 10000}
-    );
-  }
+
   componentWillMount(){
     DeviceEventEmitter.addListener('goback', (e)=>{
       if(e.isLogin) this.refresh();
@@ -137,10 +104,11 @@ export default class PersonalTab extends Component {
 
   render() {
     const {
-      lang, valSearch, curLoc, isLogin, user_profile, countEntry,
+      lang, valSearch, isLogin, user_profile, countEntry,
     } = this.state;
     //console.log(lang);
     const {navigate} = this.props.navigation;
+    const {yourCurLoc} = this.props;
     //console.log("this.props.Hometab=",this.props);
     const {
       container, colorNext,btnPress,marTop,rowItem,headPerBG,infoPerBG,
@@ -162,14 +130,14 @@ export default class PersonalTab extends Component {
           <View style={{height:11}}></View>
           <TextInput underlineColorAndroid='transparent'
           placeholder={lang.search} style={inputSearch}
-          onSubmitEditing={() => { if (valSearch.trim()!==''){navigate('SearchScr',{keyword:valSearch,lat:curLoc.lat,lng:curLoc.lng,lang})} }}
+          onSubmitEditing={() => { if (valSearch.trim()!==''){navigate('SearchScr',{keyword:valSearch,lat:yourCurLoc.lat,lng:yourCurLoc.lng,lang})} }}
           onChangeText={(valSearch) => this.setState({valSearch})}
           value={valSearch} />
 
           <TouchableOpacity style={{top:Platform.OS==='ios' ? 75 : 65,left:(width-50),position:'absolute'}}
           onPress={()=>{
             if (valSearch.trim()!=='') {
-              navigate('SearchScr',{keyword:valSearch,lat:curLoc.lat,lng:curLoc.lng,lang});
+              navigate('SearchScr',{keyword:valSearch,lat:yourCurLoc.lat,lng:yourCurLoc.lng,lang});
             }
           }}>
             <Image style={{width:16,height:16,}} source={searchIC} />
@@ -298,7 +266,7 @@ export default class PersonalTab extends Component {
             <View>
               <View style={[rowItem]}>
                 <Image source={locationIC} style={imgIconPerInfo} />
-                <TouchableOpacity style={padPerInfo} onPress={()=>navigate('ListCheckinScr',{lang,curLoc})}>
+                <TouchableOpacity style={padPerInfo} onPress={()=>navigate('ListCheckinScr',{lang,yourCurLoc})}>
                 <Text style={titlePer}>{`${'Check in'} (${countEntry.count_checkin})`}</Text>
                 </TouchableOpacity>
               </View>
@@ -308,7 +276,7 @@ export default class PersonalTab extends Component {
             <View>
               <View style={[rowItem]}>
                 <Image source={starIC} style={imgIconPerInfo} />
-                <TouchableOpacity style={padPerInfo} onPress={()=>navigate('LikeLocationScr',{lang,curLoc})}>
+                <TouchableOpacity style={padPerInfo} onPress={()=>navigate('LikeLocationScr',{lang,yourCurLoc})}>
                 <Text style={titlePer}>{`${lang.like_location} (${countEntry.count_like})`}</Text>
                 </TouchableOpacity>
               </View>
@@ -319,7 +287,7 @@ export default class PersonalTab extends Component {
             <View>
               <View style={[rowItem]}>
                 <Image source={collectionIC} style={imgIconPerInfo} />
-                <TouchableOpacity style={padPerInfo} onPress={()=>{navigate('CollectionScr',{lang,curLoc})}}>
+                <TouchableOpacity style={padPerInfo} onPress={()=>{navigate('CollectionScr',{lang,yourCurLoc})}}>
                 <Text style={titlePer}>{`${lang.collection} (${countEntry.count_collection})`}</Text>
                 </TouchableOpacity>
               </View>
@@ -331,7 +299,7 @@ export default class PersonalTab extends Component {
               <View style={[rowItem]}>
                 <Image source={menuIC} style={imgIconPerInfo} />
                 <TouchableOpacity style={padPerInfo}
-                onPress={()=>{navigate('ListLocPerScr',{lang,curLoc})}}>
+                onPress={()=>{navigate('ListLocPerScr',{lang,yourCurLoc})}}>
                 <Text style={titlePer}>{`${lang.list_location} (${countEntry.count_location})`}</Text>
                 </TouchableOpacity>
               </View>
@@ -374,3 +342,9 @@ export default class PersonalTab extends Component {
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {yourCurLoc:state.yourCurLoc}
+}
+
+export default connect(mapStateToProps)(PersonalTab);

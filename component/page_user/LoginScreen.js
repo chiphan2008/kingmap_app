@@ -197,7 +197,6 @@ export default class LoginScreen extends Component {
               <View style={mrgTop}>
               <TextInput underlineColorAndroid='transparent' style={txtInput} selectionColor='#5b89ab' placeholderTextColor="#ddd"
               placeholder={lang.username}
-              onSubmitEditing={(event)=> this.refs.pwd.focus()}
               autoCorrect={false} autoCapitalize={'none'}
               value={this.state.txtUsername}
               onChangeText={(txtUsername) => this.setState({txtUsername})}

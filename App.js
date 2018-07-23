@@ -38,7 +38,7 @@ import DesignAds from './component/ads/DesignAds';
 import FadeView from './component/FadeView';
 import DetailScreen from './component/main/DetailScreen';
 import ListImageContent from './component/main/ListImageContent';
-import CategoryScreen from './component/main/home/CategoryScreen';
+//import CategoryScreen from './component/main/home/CategoryScreen';
 import SearchScreen from './component/main/home/SearchScreen';
 import ListCategory from './component/main/home/ListCategory';
 

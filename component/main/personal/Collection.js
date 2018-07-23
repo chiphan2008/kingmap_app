@@ -147,7 +147,7 @@ export default class Collection extends Component {
     const { showPopup,showInput,showEdit,isFocus,name_coll } = this.state;
     const { lang,curLoc } = this.props.navigation.state.params;
     const { goBack,navigate } = this.props.navigation;
-    console.log('this.state.listData',this.state.listData);
+    //console.log('this.state.listData',this.state.listData);
     const {
       container,headCatStyle,headContent,titleCreate,
       titleTab,titleActive,listCreate,widthLblCre,show,hide,popup,
@@ -246,10 +246,12 @@ export default class Collection extends Component {
                          }}>
                          <Text style={{color:'#2F353F',fontSize:16}} numberOfLines={2}>{el.name}</Text>
                          </TouchableOpacity>
-                         {showPopup[item.id] && showEdit && 
+                         {showPopup[item.id] && showEdit &&
                          <TouchableOpacity
                          onPress={()=>this.confirmDel(item.id,el.id,'remove')}
-                         style={[closeCollection, {right: Platform.OS === 'ios' ? -5 : 5}]}>
+                         style={[closeCollection, {right: Platform.OS === 'ios' ? -15 : 5}]}
+                         hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
+                         >
                          <Image source={closeIC} style={{width:18,height:18}} />
                          </TouchableOpacity>}
                        </View>)

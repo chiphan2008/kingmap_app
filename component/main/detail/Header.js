@@ -63,27 +63,27 @@ export default class Header extends Component {
     //console.log("this.props.navigation=",util.inspect(this.props.navigation,false,null));
     const {goBack,state} = this.props.navigation;
     const {showOption} = this.state;
-    const {lang,curLoc,hasSaveLike,hasCheckin,hasCollection,title} = this.props;
+    const {lang,curLoc,hasSaveLike,hasCheckin,hasCollection,title,moderation} = this.props;
     //console.log('lang',lang);
     return (
       <View>
       <View style={wrapHeadBottom}>
         <View style={[headContent]}>
-            <TouchableOpacity onPress={()=>this.props.saveLike('save-like')}
+            <TouchableOpacity onPress={()=> moderation==='request_publish' ? {} : this.props.saveLike('save-like')}
             style={{alignItems:'center'}}>
                 <Image source={hasSaveLike===0 ? starIC : starYellowIcon} style={voteIC} />
                 <Text style={colorWhite}>{lang.like}</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={()=>{this.props.saveLike('checkin');}} style={{alignItems:'center'}}>
+            <TouchableOpacity onPress={()=>{ moderation==='request_publish' ? {} : this.props.saveLike('checkin');}} style={{alignItems:'center'}}>
                 <Image source={hasCheckin===0 ? locationIC : locationYellowIcon} style={imgCheckin} />
                 <Text style={colorWhite}>{lang.check_in}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={{alignItems:'center'}}
-            onPress={()=>this.socialShare()}>
+            onPress={()=> moderation==='request_publish' ? {} : this.socialShare()}>
                 <Image source={socialIC} style={shareIC} />
                 <Text style={colorWhite}>{lang.share}</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={()=>{this.props.callCollect()}} style={{alignItems:'center'}}>
+            <TouchableOpacity onPress={()=>{ moderation==='request_publish' ? {} : this.props.callCollect()}} style={{alignItems:'center'}}>
                 <Image source={hasCollection.length===0 ? saveIC : collectionYellowIcon} style={imgCheckin} />
                 <Text style={colorWhite}>{lang.collection}</Text>
             </TouchableOpacity>

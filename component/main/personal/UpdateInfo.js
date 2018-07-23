@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import {
   View,Text,TouchableOpacity,Image,DeviceEventEmitter,
   TextInput,Dimensions,ScrollView,Alert,AsyncStorage,
-  TouchableWithoutFeedback,
+  TouchableWithoutFeedback,Platform,
 } from 'react-native';
 import Moment from 'moment';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -170,8 +170,6 @@ export default class UpdateInfo extends Component {
     const {lang} = this.props.navigation.state.params;
     const {listDay,listMonth,listYear,showDay,showMonth,showYear,disable} = this.state;
     return (
-
-
       <TouchableWithoutFeedback onPress={()=>{
         this.setState({showDay:false,showMonth:false,showYear:false,disable:true})
       }}>
@@ -247,7 +245,7 @@ export default class UpdateInfo extends Component {
               <View style={{width:15}}></View>
          </View>
 
-         {showDay && <View style={[wrapSelect,posDay,wrapBtnInfo]}>
+         {showDay && <View style={[wrapSelect,wrapBtnInfo,{top:Platform.OS==='ios'?245:275,left:Platform.OS==='ios'?52:57}]}>
          <ScrollView>
          <View style={widthDay}>
          {Array(listDay).fill().map((_, i) => {
@@ -261,7 +259,7 @@ export default class UpdateInfo extends Component {
          </ScrollView>
          </View>}
 
-         {showMonth && <View style={[wrapSelect,wrapBtnInfo,posMonth]}>
+         {showMonth && <View style={[wrapSelect,wrapBtnInfo,{top:Platform.OS==='ios'?245:275,left:Platform.OS==='ios'?110:115}]}>
          <ScrollView>
          <View style={widthDay}>
          {Array(listMonth).fill().map((_, i) => {
@@ -275,7 +273,7 @@ export default class UpdateInfo extends Component {
          </ScrollView>
          </View>}
 
-         {showYear && <View style={[wrapSelect,posYear,wrapBtnInfo]}>
+         {showYear && <View style={[wrapSelect,wrapBtnInfo,{top:Platform.OS==='ios'?245:275,left:Platform.OS==='ios'?170:175}]}>
          <ScrollView>
          <View style={widthYear}>
          {Array(100).fill().map((_, i) => {
@@ -344,7 +342,7 @@ export default class UpdateInfo extends Component {
              <View style={widthLblCre}>
              <Image source={emailIC} style={imgInfo} />
              </View>
-             <Text style={[wrapInputCreImg, {color: 'black'}]}>{this.state.email}</Text>
+             <Text numberOfLines={1} style={[wrapInputCreImg, {color: 'black'}]}>{this.state.email}</Text>
              <View style={{width:15}}></View>
          </View>
          </ScrollView>

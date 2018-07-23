@@ -139,6 +139,7 @@ export default class LoginScreen extends Component {
     const { state,goBack,navigate } = this.props.navigation;
     const params = state.params || {};
     loginApi(`${global.url}${'login'}`,param).then(e=>{
+      console.log(e);
       if(e.code!==200){
         this.setState({errMsg:this.state.lang.wrong_pwd,disable:false})
       }else{

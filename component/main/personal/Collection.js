@@ -233,7 +233,7 @@ export default class Collection extends Component {
                      </View>
                      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                      {item._contents.length>0 && item._contents.map(el=>{
-                       return (<View key={el.id.toString()} style={{marginRight:4,padding:10,width:(width)/2}}>
+                       return (<View key={el.id.toString()} style={{marginRight:Platform.OS === 'ios'?15:4,padding:10,width:(width)/2}}>
 
                          <TouchableOpacity onPress={()=>{
                            console.log(`${global.url_media}${el.avatar}`);
@@ -249,12 +249,13 @@ export default class Collection extends Component {
                          {showPopup[item.id] && showEdit &&
                          <TouchableOpacity
                          onPress={()=>this.confirmDel(item.id,el.id,'remove')}
-                         style={[closeCollection, {right: Platform.OS === 'ios' ? -15 : 5}]}
+                         style={[closeCollection, {top:12,right: Platform.OS === 'ios' ? -8 : 12}]}
                          hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
                          >
                          <Image source={closeIC} style={{width:18,height:18}} />
                          </TouchableOpacity>}
                        </View>)
+
                      })}
                      </ScrollView>
 

@@ -77,6 +77,7 @@ import UpdateInfo from './component/main/personal/UpdateInfo';
 import Setting from './component/main/personal/Setting';
 import Collection from './component/main/personal/Collection';
 import ListCheckin from './component/main/personal/ListCheckin';
+import AppInfo from './component/main/personal/AppInfo';
 
 const {width,height} = Dimensions.get('window');
 
@@ -281,6 +282,7 @@ export default class App extends Component {
       ListLocPerScr: { screen : ListLocPer },
       CollectionScr: { screen : Collection },
       SettingScr: { screen : Setting },
+      AppInfoScr: { screen: AppInfo },
       UpdateInfoScr: { screen : UpdateInfo },
       LikeLocationScr: { screen : LikeLocation },
       ListCheckinScr: { screen : ListCheckin },

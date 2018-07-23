@@ -49,7 +49,7 @@ export default class Content extends Component {
       imgDetailContent,colorContent,imgICLocation,marRight,
       favIC,imgOnline,width30,imgContentIC,likeIC,colorRed,
     } = styles;
-    const {listContent,vote} = this.props;
+    const {listContent,vote,moderation} = this.props;
     const { vote_avg } = this.state;
     //console.log('listContent.line',listContent.line);
     return (
@@ -95,28 +95,28 @@ export default class Content extends Component {
 
         <View style={rowFlexBottom}>
           <View style={{flexDirection:'row'}}>
-          <TouchableOpacity onPress={()=>this.props.saveLike('like')}>
+          <TouchableOpacity onPress={()=> moderation==='request_publish' ? {} : this.props.saveLike('like')}>
             <Image source={this.props.hasLiked===1 ? likeFullIcon : likeIcon} style={[likeIC]} />
           </TouchableOpacity>
             <Text style={[marRight,colorRed]}>{this.props.liked}</Text>
             <Text style={marRight}> | </Text>
-            <TouchableOpacity onPress={()=>{this.saveVote(1)} }>
+            <TouchableOpacity onPress={()=>{ moderation==='request_publish' ? {} : this.saveVote(1)} }>
             <Rating rate={1} showVote={vote_avg===-1 ? vote : vote_avg } styleIMG={favIC} />
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={()=>{this.saveVote(2)} }>
+            <TouchableOpacity onPress={()=>{ moderation==='request_publish' ? {} : this.saveVote(2)} }>
             <Rating rate={2} showVote={vote_avg===-1 ? vote : vote_avg } styleIMG={favIC} />
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={()=>{this.saveVote(3)} }>
+            <TouchableOpacity onPress={()=>{ moderation==='request_publish' ? {} : this.saveVote(3)} }>
             <Rating rate={3} showVote={vote_avg===-1 ? vote : vote_avg } styleIMG={favIC} />
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={()=>{this.saveVote(4)} }>
+            <TouchableOpacity onPress={()=>{ moderation==='request_publish' ? {} : this.saveVote(4)} }>
             <Rating rate={4} showVote={vote_avg===-1 ? vote : vote_avg } styleIMG={favIC} />
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={()=>{this.saveVote(5)} }>
+            <TouchableOpacity onPress={()=>{ moderation==='request_publish' ? {} : this.saveVote(5)} }>
             <Rating rate={5} showVote={vote_avg===-1 ? vote : vote_avg } styleIMG={[favIC,marRight]} />
             </TouchableOpacity>
             <Text>({vote_avg===-1 ? vote : vote_avg })</Text>

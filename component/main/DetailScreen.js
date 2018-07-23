@@ -230,8 +230,8 @@ class DetailScreen extends Component {
     //console.log('this.props.navigation',this.props.navigation);
     const {lang,user_id,isLogin,scroll,hasCheckin,hasSaveLike,listData,hasCollection} = this.state;
     //console.log('lang',lang.lang);
-    const { idContent } = this.props.navigation.state.params;
-    //console.log('lang',lang);
+    const { idContent, moderation } = this.props.navigation.state.params;
+    console.log('moderation',moderation);
     const {
       container, bgImg,colorWhite,likeIC,shareIC,imgIC,voteIC,
       imgSocial, imgInfo,aligncenter,
@@ -273,6 +273,7 @@ class DetailScreen extends Component {
         requestLogin={this.requestLogin.bind(this)}
         saveLike={this.saveLike.bind(this)}
         callCollect={this.callCollect.bind(this)}
+        moderation={moderation}
         />
         <Content
         listContent={listData.content}
@@ -283,6 +284,7 @@ class DetailScreen extends Component {
         liked={this.state.liked}
         vote={this.state.vote}
         hasLiked={this.state.hasLiked}
+        moderation={moderation}
         />
         <SpaceContent
         lang={lang}

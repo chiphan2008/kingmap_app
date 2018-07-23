@@ -132,10 +132,10 @@ export default class Setting extends Component {
           </View>
 
          <View style={listCreate}>
-            <View style={{width:(width-30)/2}}>
+            <View style={{width:(width-100)/2}}>
             <Text style={colorTitle}>Nhận thông báo</Text>
             </View>
-            <View style={{width:(width-30)/2}}>
+            <View style={{width:width * 0.85}}>
 
             <SwitchButton setNoti={(active,pan)=>this.setState({active,pan})}/>
 
@@ -143,10 +143,10 @@ export default class Setting extends Component {
          </View>
 
          <View style={listCreate}>
-            <View style={{width:(width-30)/2}}>
+            <View style={{width:(width-100)/2}}>
             <Text style={colorTitle}>Ngôn ngữ</Text>
             </View>
-            <View style={{width:(width-30)/2}}>
+            <View style={{width:width * 0.85}}>
             <TouchableOpacity onPress={()=>{
               this.state.selectLang.valueLang==='vn' ? this.setState({selectLang:{valueLang:'en',labelLang:'ENG'}}) : this.setState({selectLang:{valueLang:'vn',labelLang:'VN'}})
             }}>
@@ -158,20 +158,20 @@ export default class Setting extends Component {
          <View style={{height:15}}></View>
 
          <View style={listCreate}>
-            <View style={{width:(width-30)/2}}>
+            <View style={{width:(width-100)/2}}>
             <Text style={colorTitle}>Email</Text>
             </View>
-            <View style={{width:(width-30)/2}}>
+            <View style={{width:width * 0.85}}>
             <Text style={{color:'#B8B9BD'}}>{this.state.email}</Text>
             </View>
          </View>
 
          <View style={listCreate}>
-            <View style={{width:(width-30)/2}}>
+            <View style={{width:(width-100)/2}}>
               <Text style={colorTitle}>Mật khẩu</Text>
             </View>
 
-            <View style={{width:(width-30)/2}}>
+            <View style={{width:width * 0.85}}>
               <TouchableOpacity onPress={()=>this.setState({showChangePwd:true})}>
               <Text style={colorTitle}>******</Text>
               </TouchableOpacity>

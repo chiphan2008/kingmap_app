@@ -5,6 +5,7 @@ import {
   Keyboard, Platform, View, Text, StyleSheet, Dimensions,Image,AsyncStorage,
   TextInput, TouchableOpacity,FlatList,Alert, ActivityIndicator,Modal} from 'react-native';
 const {height, width} = Dimensions.get('window');
+import {connect} from 'react-redux';
 
 import accessLocation from '../../api/accessLocation';
 import getApi from '../../api/getApi';
@@ -38,7 +39,7 @@ import upDD from '../../../src/icon/ic-white/ic-dropdown_up.png';
 import checkIC from '../../../src/icon/ic-green/ic-check.png';
 
 var timeout,timeoutZoom,timeoutPosition,timeoutCurPos;
-export default class SearchScreen extends Component {
+class SearchScreen extends Component {
   constructor(props) {
     super(props);
     this.mapRef = null;
@@ -205,89 +206,45 @@ export default class SearchScreen extends Component {
 
   getLoc(){
     //console.log('getLoc');
-    //const { keyword } = this.props.navigation.state.params;
     navigator.geolocation.getCurrentPosition(
           (position) => {
-            //console.log('position',position);
                 const {latitude,longitude} = position.coords;
-                //this.getPosition(latitude,longitude);
                 this.setState({
                   curLoc : { latitude,longitude, },
                   circleLoc : { latitude,longitude },
                   onClick:false,
                 },()=>{
-                  //this.getPosition(latitude,longitude);
                   this.getCategory(latitude,longitude);
                 });
 
-           },
-           (error) => {
+           },(error) => {
              //console.log('getLocationByIP');
             getLocationByIP().then(e=>{
-              //console.log('edsfdsfds',e);
               const {latitude,longitude} = e;
-              //this.getPosition(latitude,longitude);
               this.setState({
                 curLoc : { latitude,longitude, },
                 circleLoc : { latitude,longitude, },
                 onClick:false,
               },()=>{
-                //this.getPosition(latitude,longitude);
                 this.getCategory(latitude,longitude); });
-            });//enableHighAccuracy: true,
-          },
-          { timeout: 5000,maximumAge: 60000 }
+            });
+          },{ timeout: 5000,maximumAge: 60000 }
           //enableHighAccuracy: true,
     );
   }
 
   findCurrentLoc(){
     clearTimeout(timeoutCurPos);
-    navigator.geolocation.getCurrentPosition(
-     ({coords}) => {
-       const {latitude, longitude} = coords
-       timeoutCurPos = setTimeout(()=>{
-         this.setState({
-           // curLocation : {
-           //   latitude,longitude,
-           //   lat:latitude,lng:longitude,
-           //   latlng:`${latitude},${longitude}`,
-           //   latitudeDelta: 0.008757 ,
-           //   longitudeDelta: 0.010066,
-           // },
-           curLoc : { latitude,longitude, },
-           circleLoc : { latitude,longitude, },
-           onClick:true,
-         },()=>{
-           //this.getPosition(latitude,longitude);
-           this.getCategory(latitude,longitude)
-         });
-       },1000)
-
-     },
-     (error) => {
-       getLocationByIP().then(e=>{
-         const {latitude,longitude} = e;
-         timeoutCurPos = setTimeout(()=>{
-           this.setState({
-             curLocation : {
-               latitude,longitude,
-               lat:latitude,lng:longitude,
-               latlng:`${latitude},${longitude}`,
-               latitudeDelta: 0.008757 ,
-               longitudeDelta: 0.010066,
-             },
-             curLoc : { latitude,longitude, },
-             circleLoc : { latitude,longitude, },
-             onClick:true,
-           },()=>{
-             //this.getPosition(latitude,longitude);
-             this.getCategory(latitude,longitude)
-           });
-         },1000)
-       });
-     }, { timeout: 5000,maximumAge: 60000 }
-   )
+    const {latitude, longitude} = this.props.yourCurLoc;
+    timeoutCurPos = setTimeout(()=>{
+      this.setState({
+        curLoc : { latitude,longitude, },
+        circleLoc : { latitude,longitude, },
+        onClick:true,
+      },()=>{
+        this.getCategory(latitude,longitude)
+      });
+    },700)
   }
   onPressZoom(zoom) {
     //console.log(zoom);
@@ -317,7 +274,6 @@ export default class SearchScreen extends Component {
     var _this = this;
     clearTimeout(timeoutPosition);
     const url = `${global.url}${'get-position?location='}${lat},${lng}`;
-    //console.log('url',url);
     getApi(url).then(e=>{
       const { district,city,country } = e.data[0];
       //district!==0 && district!==undefined && _this.setState({id_district:district,},()=>{});
@@ -337,9 +293,6 @@ export default class SearchScreen extends Component {
   }
   componentDidMount(){
     const { labelCat,service_items } = this.props.navigation.state.params || '';
-    //console.log('labelCat',labelCat);
-    //console.log('lat,lng',latitude,longitude );
-    //if(lat!=='' || lat!==undefined) this.getPosition(lat,lng);
     if(labelCat!==undefined) this.setState({labelCat});
     if(service_items!==undefined) this.setState({service_items});
   }
@@ -483,7 +436,7 @@ export default class SearchScreen extends Component {
                   latitude: Number(marker.latitude),
                   longitude: Number(marker.longitude),
                 }}
-                
+
                 image={ Platform.OS==='android' ? {uri:`${marker.marker}`} : null}
                 onPress={(e)=>{
                   e.stopPropagation();
@@ -494,7 +447,7 @@ export default class SearchScreen extends Component {
                     const newCallout = {[marker.id]:true};
                     this.setState({ callout: newCallout })
                   }
-                  
+
                 }}>
               {Platform.OS==='ios' &&
                 <Image source={{uri:`${marker.marker}`}} style={{width:48,height:54,resizeMode:"cover"}} />
@@ -517,7 +470,7 @@ export default class SearchScreen extends Component {
               </View>
 
               </MapView.Marker>
-              
+
             )
           )}
           {circleLoc.latitude!==undefined &&
@@ -539,9 +492,9 @@ export default class SearchScreen extends Component {
 
             </View>
         :
-        <View onLayout={()=>this.getLoc()} style={{width,height:height-300,justifyContent:'center',alignItems:'center'}}>
-          <ActivityIndicator size="large" color="#d0021b" />
-        </View>
+          <View onLayout={()=>this.getLoc()} style={{width,height:height-300,justifyContent:'center',alignItems:'center'}}>
+            <ActivityIndicator size="large" color="#d0021b" />
+          </View>
         }
 
           {/*<TouchableOpacity style={plusStyle}>
@@ -633,3 +586,9 @@ export default class SearchScreen extends Component {
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {yourCurLoc:state.yourCurLoc}
+}
+
+export default connect(mapStateToProps)(SearchScreen);

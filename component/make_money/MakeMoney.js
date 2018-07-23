@@ -13,11 +13,13 @@ import {Select, Option} from "react-native-chooser";
 
 //import styles from '../styles';
 import postApi from '../api/postApi';
+import getApi from '../api/getApi';
 import global from '../global';
 import checkLogin from '../api/checkLogin';
 import loginServer from '../api/loginServer';
 import GrantRight from './GrantRight';
 import AddAgency from './AddAgency';
+import BonusAgency from './BonusAgency';
 
 import makeMoneyIC from '../../src/icon/make-money.png';
 import logoTop from '../../src/icon/ic-white/Logo-ngang.png';
@@ -43,6 +45,7 @@ import receiveIC from '../../src/icon/ic-wallet/ic-receive.png';
 import walletIC from '../../src/icon/ic-wallet/ic-wallet.png';
 import transferIC from '../../src/icon/ic-wallet/ic-transfer.png';
 import withdrawIC from '../../src/icon/ic-wallet/ic-withdraw.png';
+import profileIC from '../../src/icon/ic-profile.png';
 import {format_number,checkUrl} from '../libs';
 
 var com;
@@ -57,6 +60,7 @@ class MakeMoney extends Component {
       showCTV:false,
       showCTVPop:false,
       showTDLPop:false,
+      showTDLCTVPop:false,
       showArea:false,
       showListLocPend:false,
       showListCTVPend:false,
@@ -85,7 +89,7 @@ class MakeMoney extends Component {
       index_ctv_pending:'',
       static_notes:'',
       noData:'',
-
+      content:'',
     }
     loginServer(this.props.navigation.state.params.user_profile,'fgdjk')
     temp_daily_code==='' && this.getStatic();
@@ -354,9 +358,19 @@ class MakeMoney extends Component {
      }
     }).catch(err => console.log(err));
   }
+
+  assignWork(){
+    const { user_profile,lang } = this.props.navigation.state.params;
+    //const userId = daily_id!==''?daily_id:ctv_id;
+    getApi(`${global.url}${'static/giaoviec/'}${user_profile.id}${'?lang='}${lang.lang}`).then(arr => {
+        arr.data!==null && this.setState({ content:arr.data[0].content===null?'':arr.data[0].content });
+    }).catch(err => console.log(err));
+  }
+
   componentWillMount(){
     //setTimeout(()=>{
       const { user_profile } = this.props.navigation.state.params;
+      this.assignWork();
       checkLogin().then(e=>{
         //console.log(e);
         if(user_profile._roles.length!==e._roles.length) this.props.navigation.navigate('MainScr');
@@ -389,10 +403,10 @@ class MakeMoney extends Component {
     } = styles;
 
     const {
-      itemChoose,showCoin,showLoc,showLocPop,showCTV,showCTVPop,showTDLPop,showArea,listData,index_ctv_pending,noData,
+      itemChoose,showCoin,showLoc,showLocPop,showCTV,showCTVPop,showTDLPop,showTDLCTVPop,showArea,listData,index_ctv_pending,noData,
       listAgency,listLoc,isCeo,isAgency,isNormal,isCTV,assign,listDistrict,labelArea,ListPend,suggestPend,
       ListLocPend,suggestLoc,showListLocPend,showListCTVPend,loadMore,page,static_notes,des_mm,
-
+      content
     } = this.state;
     const {yourCurLoc} = this.props;
     const _this = this;
@@ -458,6 +472,24 @@ class MakeMoney extends Component {
           </View>
 
           <View>
+          {/*console.log('user_profile',user_profile)*/}
+          {(isCTV || isAgency) && <TouchableOpacity style={wrapWhite}
+          onPress={()=>{
+            navigate('CTVDetailScr',{
+              lang,content,ctv_id:isCTV?user_profile.id:'',
+              daily_id:isAgency?user_profile.id:'',
+              name:user_profile.full_name,address:user_profile.address,
+            avatar:checkUrl(user_profile.avatar) ? user_profile.avatar : `${global.url_media}${user_profile.avatar}`})
+          }}>
+            <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+              <Text numberOfLines={1} style={colorTitle}>{`${lang.info_general}`}</Text>
+              <TouchableOpacity onPress={()=>{
+                listData.total>0 && this.setState({showCoin:!this.state.showCoin})
+              }}>
+                <Image source={profileIC} style={{width:35,height:35}} />
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>}
 
           <View style={wrapWhite} >
               <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
@@ -467,6 +499,8 @@ class MakeMoney extends Component {
                 </View>
               </View>
           </View>
+
+
 
             {listData.total!==undefined &&
               <View style={wrapWhite}>
@@ -617,6 +651,16 @@ class MakeMoney extends Component {
 
             {isCeo &&
               <TouchableOpacity style={wrapWhite} onPress={()=>{
+                this.setState({showTDLCTVPop:true});
+              }}>
+                <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+                  <Text numberOfLines={1} style={colorTitle}>{`${lang.bonus_ctv}`}</Text>
+                  <Image source={filterIC} style={{width:35,height:35}} />
+                </View>
+            </TouchableOpacity>}
+
+            {isCeo &&
+              <TouchableOpacity style={wrapWhite} onPress={()=>{
                 this.setState({showTDLPop:true});
               }}>
                 <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
@@ -635,6 +679,7 @@ class MakeMoney extends Component {
           </View>
 
           <View style={[marTop,wrapDes]}>
+          {content!=='' && <Text style={{color:'#6587A8',fontSize:16,lineHeight:28}}>{`${content}\n\n`}</Text>}
           <Text style={{color:'#6587A8',fontSize:16,lineHeight:28}}>{`${static_notes}`}</Text>
           </View>
 
@@ -667,6 +712,14 @@ class MakeMoney extends Component {
         <AddAgency
         closeModal={()=>this.setState({showTDLPop:false})}
         assignArea={(itemChoose)=>this.setState({itemChoose,assign:true,showTDLPop:false})}
+        lang={lang} isCeo={isCeo}
+        />
+      }
+
+      {showTDLCTVPop &&
+        <BonusAgency
+        closeModal={()=>this.setState({showTDLCTVPop:false})}
+        //assignArea={(itemChoose)=>this.setState({itemChoose,assign:true,showTDLCTVPop:false})}
         lang={lang} isCeo={isCeo}
         />
       }

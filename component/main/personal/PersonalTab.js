@@ -325,6 +325,17 @@ class PersonalTab extends Component {
 
               <View>
                 <View style={[rowItem]}>
+                  <Image source={settingIC} style={imgIconPerInfo} />
+                  <TouchableOpacity style={padPerInfo} onPress={()=>navigate('AppInfoScr',{lang})}>
+                  <Text style={titlePer}>{`Thông tin ứng dụng`}</Text>
+                  </TouchableOpacity>
+
+                </View>
+                <View style={borderItemInfoPer}></View>
+              </View>
+
+              <View>
+                <View style={[rowItem]}>
                   <Image source={logoutIC} style={imgIconPerInfo} />
                   <TouchableOpacity style={padPerInfo} onPress={()=>this.logoutUser()}>
                   <Text style={titlePer}>{`${lang.logout}`}</Text>

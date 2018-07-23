@@ -25,20 +25,13 @@ export default class CTVDetail extends Component {
     this.state={
       listData:{},
       showArea:false,
-      content:'',
+
     }
   }
   componentWillMount(){
     this.getStatic();
-    this.getContent();
   }
-  getContent(){
-    const {daily_id,ctv_id,content_id,lang} = this.props.navigation.state.params;
-    const userId = daily_id!==''?daily_id:ctv_id;
-    getApi(`${global.url}${'static/giaoviec/'}${userId}${'?lang='}${lang.lang}`).then(arr => {
-        arr.data!==null && this.setState({ content:arr.data[0].content===null?'':arr.data[0].content });
-    }).catch(err => console.log(err));
-  }
+
   getStatic(){
     const {ceo_id,daily_id,ctv_id,content_id,lang} = this.props.navigation.state.params;
     const month = Moment().format('MM');
@@ -63,10 +56,10 @@ export default class CTVDetail extends Component {
       imgLogoTop,colorlbl,wrapWhite,titleCoin,colorTitle,
       popoverLoc,overLayout,shadown,listOverService,imgShare
     } = styles;
-    const {listData,showArea,content} = this.state;
+    const {listData,showArea} = this.state;
     const {goBack} = this.props.navigation;
-    const {avatar,name,address,lang,ctv_id,content_id} = this.props.navigation.state.params;
-    console.log('content_id',content_id);
+    const {avatar,name,address,lang,ctv_id,content_id,content} = this.props.navigation.state.params;
+    //console.log('content_id',content_id);
     return (
       <View>
         <View style={wrapper}>
@@ -125,14 +118,16 @@ export default class CTVDetail extends Component {
                       //style={{borderColor:'#E0E8ED',borderTopWidth:1,marginTop:5}}
                       keyExtractor={(item,index) => index.toString()}
                       renderItem={({item,index}) =>(
+                        <TouchableWithoutFeedback>
                         <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginBottom:5}}>
                           <Text style={{color:'#2F3C51',fontWeight:'500'}}>{item.name}</Text>
                           <Text style={{color:'#5782A4'}}>{format_number(item.value)}</Text>
                        </View>
+                       </TouchableWithoutFeedback>
                       )} />
                  </View>}
 
-                 {content_id===undefined &&
+                 {content!==undefined &&
                    <View>
                    <View style={{height:5}}></View>
                    <View style={wrapWhite} >
@@ -156,17 +151,18 @@ export default class CTVDetail extends Component {
         onPress={()=>this.setState({showArea:false})} style={{justifyContent:'center',alignItems:'center',flex:1}}>
         <TouchableWithoutFeedback>
         <View style={[overLayout,shadown]}>
+
           <FlatList
              keyExtractor={(item,index) => index.toString()}
              extraData={this.state}
              data={listData.area}
              renderItem={({item}) => (
-               <View style={listOverService}>
+               <TouchableWithoutFeedback style={listOverService}>
                 <View style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',padding:15}}>
                     <Text style={colorTitle}>{item.name}</Text>
                     <Image source={checkIC} style={[imgShare]} />
                 </View>
-                </View>
+                </TouchableWithoutFeedback>
            )} />
            </View>
         </TouchableWithoutFeedback>

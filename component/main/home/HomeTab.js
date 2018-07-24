@@ -81,16 +81,10 @@ class HomeTab extends Component {
         this.setState({isLogin:false})
       }else {
         loginServer(e);
-        //console.log(e);
+        this.props.dispatch({type:'USER_LOGINED',isLogin:true,user_profile:e});
         const params = {username:e.email,password:e.pwd};
         var _this = this;
-        //let approve_acc_ctv = e.api_roles.cong_tac_vien!==undefined && e.api_roles.active===0?true:false;
         _this.setState({user_profile:e,user_id:e.id,avatar:e.avatar,code_user:e.phone,isLogin:true});
-
-        // loginApi(`${global.url}${'login'}`,params).then(el=>{
-        //   console.log(el.data[0]);
-        //   _this.setState({user_profile:el.data[0],user_id:e.id,avatar:e.avatar,code_user:e.phone,isLogin:true});
-        // }).catch(err=>{});
       }
     })
 
@@ -104,12 +98,12 @@ class HomeTab extends Component {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const {latitude,longitude} = position.coords;
-        this.props.dispatch({type:'FIND_CURRENT_LOCATION',yourCurLoc:position.coords});
+        this.props.dispatch({type:'FIND_CURRENT_LOCATION',yourCurLoc:position.coords,updateState:true});
       },
       (error) => {
         getLocationByIP().then((e) => {
           const {latitude,longitude} = e;
-          this.props.dispatch({type:'FIND_CURRENT_LOCATION',yourCurLoc:e});
+          this.props.dispatch({type:'FIND_CURRENT_LOCATION',yourCurLoc:e,updateState:true});
         });
       },
       { timeout: 5000,maximumAge: 60000 },
@@ -117,7 +111,7 @@ class HomeTab extends Component {
    }
 
    requestLogin(){
-     if(this.state.isLogin===false){
+     if(this.props.isLogin===false){
        this.props.navigation.navigate('LoginScr',{backScr:'MainScr'});
      }
    }
@@ -465,6 +459,9 @@ class HomeTab extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return {yourCurLoc:state.yourCurLoc}
+  return {
+    yourCurLoc:state.yourCurLoc,
+    isLogin:state.isLogin,
+  }
 }
 export default connect(mapStateToProps)(HomeTab);

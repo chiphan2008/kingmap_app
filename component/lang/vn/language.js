@@ -49,6 +49,7 @@ module.exports = {
   branch:'Chi nhánh',
   assign:'Phân quyền',
   add_agency:'Thêm TĐL',
+  agency:'Tổng đại lý',
   select_user:'Chọn người dùng',
   plz_user:'Vui lòng chọn người dùng',
   selected_user:'Người dùng đã được chọn:',
@@ -225,6 +226,8 @@ module.exports = {
   confirm_change:'Bạn có chắc chắn thay đổi chủ sở hữu cho ',
   your_current_location:'Vị trí của bạn',
   selected_locations:'Địa điểm đã chọn:',
+  obligation: "Nghĩa vụ",
+  jurisdiction: 'Quyền hạn',
 
   lang:'vn'
 };

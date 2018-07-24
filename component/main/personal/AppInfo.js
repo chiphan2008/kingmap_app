@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import {
   View,Text,Modal,TouchableOpacity,Image,
   Dimensions,PanResponder,Animated,AsyncStorage,
-  DeviceEventEmitter,
+  
 } from 'react-native';
 import ChangePwd from './ChangePwd';
 import checkNoti from '../../api/checkNoti';

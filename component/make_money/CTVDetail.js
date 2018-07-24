@@ -43,7 +43,7 @@ export default class CTVDetail extends Component {
     content_id!==undefined && arr.append('content_id',content_id);
     arr.append('month',month);
     arr.append('year',year);
-
+    console.log(`${global.url}${'static'}${'?lang='}${lang.lang}`,arr);
     postApi(`${global.url}${'static'}${'?lang='}${lang.lang}`,arr)
     .then(arr => {
       //console.log(arr);
@@ -58,8 +58,8 @@ export default class CTVDetail extends Component {
     } = styles;
     const {listData,showArea} = this.state;
     const {goBack} = this.props.navigation;
-    const {avatar,name,address,lang,ctv_id,content_id,content} = this.props.navigation.state.params;
-    //console.log('content_id',content_id);
+    const {avatar,name,address,lang,ctv_id,content_id,content,user_profile} = this.props.navigation.state.params;
+    // console.log('user_profile',user_profile);
     return (
       <View>
         <View style={wrapper}>
@@ -86,6 +86,17 @@ export default class CTVDetail extends Component {
             </View>
 
               {content_id===undefined && <View>
+
+                {user_profile!==undefined && user_profile._daily!== null && <View>
+                <View style={wrapWhite}>
+                  <View>
+                    <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14}]}>{`${lang.agency}`}</Text>
+                    <Text style={titleCoin}>{`${user_profile._daily.full_name}`}</Text>
+                  </View>
+                </View>
+                <View style={{height:1}}></View>
+                </View>}
+
                   <View style={wrapWhite}>
                     <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                       <View>
@@ -99,7 +110,7 @@ export default class CTVDetail extends Component {
                       </TouchableOpacity>
                     </View>
                   </View>
-                  <View style={{height:5}}></View>
+                  <View style={{height:1}}></View>
                   </View> }
 
                  <View style={wrapWhite}>
@@ -108,10 +119,10 @@ export default class CTVDetail extends Component {
                      <Text style={titleCoin}>{`${format_number(listData.total)}`}</Text>
                    </View>
                  </View>
-                 <View style={{height:5}}></View>
+                 <View style={{height:1}}></View>
                  {listData.static!==undefined && listData.static.length>0 &&
                    <View style={wrapWhite}>
-                     <View style={{height:5}}></View>
+                     <View style={{height:1}}></View>
                      <FlatList
                       extraData={this.state}
                       data={listData.static}
@@ -129,7 +140,7 @@ export default class CTVDetail extends Component {
 
                  {content!==undefined &&
                    <View>
-                   <View style={{height:5}}></View>
+                   <View style={{height:1}}></View>
                    <View style={wrapWhite} >
                        <View>
                        <Text numberOfLines={1} style={{color:'#6791AF', fontWeight: 'bold'}}>{`${lang.assign_work}`}:</Text>

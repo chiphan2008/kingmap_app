@@ -114,9 +114,9 @@ class DetailScreen extends Component {
     this.getContent(this.props.navigation.state.params.idContent);
   }
   likeContent(id_content){
-    const {isLogin,user_id} = this.state;
+    const {user_id} = this.state;
     const {idContent} = this.props.navigation.state.params;
-    if(isLogin===false){ this.requestLogin();return;}
+    if(this.props.isLogin===false){ this.requestLogin();return;}
     getApi(`${global.url}${'like'}${'?content='}${id_content}${'&user='}${user_id}`).then(e=>{
       this.getContent(idContent);
     })
@@ -124,19 +124,16 @@ class DetailScreen extends Component {
   }
 
   callCollect(){
-    const {isLogin} = this.state;
-    if(isLogin===false){ this.requestLogin();}else {
+
+    if(this.props.isLogin===false){ this.requestLogin();}else {
       this.setState({collection:true,scroll:false});
     }
   }
   requestLogin(){
     const {state,navigate} = this.props.navigation;
     const {idContent,lang,lat,lng} = this.props.navigation.state.params;
-    if(this.state.isLogin===false){
-      //console.log('this.state.isLogin',this.state.isLogin);
-      navigate('LoginScr');
-      //return false;
-    }
+    if(this.props.isLogin===false) navigate('LoginScr');
+
   }
   refresh(){
     checkLogin().then(e=>{
@@ -154,8 +151,8 @@ class DetailScreen extends Component {
     //clearTimeout(timeoutCheckUser);
   }
   saveLike(routing){
-    const {isLogin,user_id} = this.state;
-    if(isLogin===false){ this.requestLogin();return;}
+    const {user_id} = this.state;
+    if(this.props.isLogin===false){ this.requestLogin();return;}
     getApi(`${global.url}${routing}${'?content='}${this.props.navigation.state.params.idContent}${'&user='}${user_id}`).then(e=>
       {this.setState({savelike:true,scroll:false});
         switch (routing) {
@@ -373,7 +370,8 @@ class DetailScreen extends Component {
 const mapStateToProps = (state) => {
   return {
     yourCurLoc:state.yourCurLoc,
-    isLogin:state.isLogin
+    isLogin:state.isLogin,
+    updateState:state.updateState,
   }
 }
 

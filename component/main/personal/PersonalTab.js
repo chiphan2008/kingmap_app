@@ -37,15 +37,15 @@ import logoutIC from '../../../src/icon/ic-white/ic-logout.png';
 import changeIC from '../../../src/icon/ic-white/ic-change.png';
 import {checkUrl} from '../../libs';
 
-var timeoutUser;
+let timeoutUser,timeoutUpdateState ;
 class PersonalTab extends Component {
   constructor(props) {
     super(props);
     this.state = {
       lang : lang_vn,
-      isLogin : false,
+      //isLogin : false,
       countEntry:{},
-      user_profile:{},
+      //user_profile:{},
     };
     //this.getLoc();
     getLanguage().then((e) =>{
@@ -57,22 +57,14 @@ class PersonalTab extends Component {
     this.refresh();
   }
   refresh(){
-    checkLogin().then(e=>{
-      //console.log('checkLogin123',e);
-      if(e.id===undefined){
-        this.setState({isLogin:false})
-      }else {
-        clearTimeout(timeoutUser);
-        this.getUser(e.id);
-        this.setState({user_profile:e,isLogin:true});
-        //console.log('loginServer',e);
-        //loginServer(e);
-      }
-    });
+    clearTimeout(timeoutUser);
+    const {isLogin,user_profile} = this.props;
+    isLogin && user_profile.id!==undefined && this.getUser(user_profile.id);
   }
   getUser(id){
     //console.log(`${global.url}${'user/get-static/'}${id}`);
     //console.log(`${global.url}${'user/get-static/'}${id}`);
+
     getApi(`${global.url}${'user/get-static/'}${id}`)
     .then(arrData => {
         //console.log(arrData);
@@ -83,7 +75,8 @@ class PersonalTab extends Component {
     .catch(err => console.log(err));
   }
   logoutUser(){
-    const {user_profile} = this.state;
+    const {user_profile} = this.props;
+    this.props.dispatch({type:'USER_LOGINED',isLogin:false,user_profile:{}});
     GoogleSignin.signOut().catch(e=>{});
     encodeApi(`${global.url_node}${'person/offline'}`,'POST',user_profile);
     getApi(`${global.url}${'logout'}`);
@@ -95,20 +88,20 @@ class PersonalTab extends Component {
     .then(()=>this.props.navigation.navigate('MainScr'));
   }
 
-
-  componentWillMount(){
-    DeviceEventEmitter.addListener('goback', (e)=>{
-      if(e.isLogin) this.refresh();
-    })
+  componentDidUpdate(){
+    if(this.props.updateState){
+      this.props.dispatch({type:'STOP_UPDATE_STATE'});
+      this.refresh();
+    }
   }
 
   render() {
     const {
-      lang, valSearch, isLogin, user_profile, countEntry,
+      lang, valSearch, countEntry,
     } = this.state;
     //console.log(lang);
     const {navigate} = this.props.navigation;
-    const {yourCurLoc} = this.props;
+    const {yourCurLoc, isLogin, user_profile} = this.props;
     //console.log("this.props.Hometab=",this.props);
     const {
       container, colorNext,btnPress,marTop,rowItem,headPerBG,infoPerBG,
@@ -146,11 +139,11 @@ class PersonalTab extends Component {
 
         <View style={[wrapContent, isLogin ? hide : show, {width: width}]}>
           <Text style={{color:'#B8B9BD'}}>{lang.request_login}</Text>
-          <TouchableOpacity onPress={()=>navigate('LoginScr')} style={[btnPress,marTop]}>
+          <TouchableOpacity onPress={()=>navigate('LoginScr',{backScr:'MainScr'})} style={[btnPress,marTop]}>
           <Text style={colorNext}> {lang._login}</Text>
           </TouchableOpacity>
         </View>
-        <ScrollView style={isLogin ? show : hide}>
+        <ScrollView style={this.props.isLogin ? show : hide}>
           <View style={headPerBG}>
 
             <View style={rowItem}>
@@ -355,7 +348,12 @@ class PersonalTab extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return {yourCurLoc:state.yourCurLoc}
+  return {
+    yourCurLoc:state.yourCurLoc,
+    isLogin:state.isLogin,
+    user_profile:state.user_profile,
+    updateState:state.updateState,
+  }
 }
 
 export default connect(mapStateToProps)(PersonalTab);

@@ -26,7 +26,7 @@ module.exports = {
   ratio:'Ratio %',
   plz_enter_rate:'Please enter rate',
   subscribe_ctv:'Register to CTV',
-  title_ctv:'Become a contributor',
+  title_ctv:'Become \n a contributor',
   des_ctv:'Want to become our collaborator? What are you waiting for?',
   request_login:'Please login to perform this function',
   _login:'Login',
@@ -156,6 +156,7 @@ module.exports = {
   save:'Save',
   assign:'Grant rights',
   add_agency:'Add agency',
+  agency:'Agency',
   select_user:'Select user',
   plz_user:'Please select a user',
   selected_user:'Selected user',
@@ -224,6 +225,8 @@ module.exports = {
   confirm_change:'Are you sure change the owner for ',
   your_current_location:'Your current location',
   selected_locations:'Selected locations:',
+  obligation: "Obligation",
+  jurisdiction: 'Jurisdiction',
 
   lang:'en',
 };

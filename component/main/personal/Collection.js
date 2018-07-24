@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import {
   View,Text,TouchableOpacity,Image,Platform,
   Dimensions,ScrollView,Alert,FlatList,
-  TextInput,DeviceEventEmitter,
+  TextInput,
 } from 'react-native';
 
 import getApi from '../../api/getApi';

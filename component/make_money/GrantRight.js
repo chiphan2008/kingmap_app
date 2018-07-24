@@ -30,6 +30,7 @@ export default class GrantRight extends Component {
       chooseDist:{},
       listUser:[],
       showArea:false,
+      focus:false,
       showAddCTV:false,
       itemCTVChoose:{},
       noDataUser:'',
@@ -38,11 +39,13 @@ export default class GrantRight extends Component {
   postContent(){
     const { desWork } = this.state;
     const { lang,itemChoose,userId } = this.props;
-    if(desWork.trim()!=='' && itemChoose.id!==undefined){
+    if(itemChoose.id!==undefined){
       const arr = new FormData();
       arr.append('from_client',userId);
       arr.append('to_client',itemChoose.id);
       arr.append('content',desWork);
+      // console.log(`${global.url}${'static/giaoviec'}${'?lang='}${lang.lang}`);
+      // console.log(arr);
       postApi(`${global.url}${'static/giaoviec'}${'?lang='}${lang.lang}`,arr)
       .then(e=>{});
     }
@@ -105,7 +108,7 @@ export default class GrantRight extends Component {
       wrapWhite,colorTitle,marTop,btnTransfer,colorlbl,
       overLayout,shadown,popoverLoc,padBuySell
     } = styles;
-    const {valCTV,valTDL,desWork,showAddCTV,listUser,itemCTVChoose,noDataUser,showArea} = this.state;
+    const {valCTV,valTDL,desWork,showAddCTV,listUser,itemCTVChoose,noDataUser,showArea,focus} = this.state;
     const { lang,isCeo,listAgency,itemChoose,noData } = this.props;
     return (
       <View style={wrapSetting}>
@@ -129,6 +132,12 @@ export default class GrantRight extends Component {
             <View style={{paddingTop:10,marginTop:10,borderColor:'#E0E8ED',borderTopWidth:1}}>
                 <TextInput underlineColorAndroid='transparent'
                 style={{width:width-30,backgroundColor:'#EDEDED',borderRadius:3,padding:5}}
+                onFocus={()=>this.setState({focus:true},()=>{
+                  //console.log(focus);
+                })}
+                onBlur={()=>this.setState({focus:false},()=>{
+                  //console.log(focus);
+                })}
                 onSubmitEditing={() => {
                   if (this.state.valTDL.trim()!=='') {
                     const act = isCeo?'find-daily':'search-ctv';
@@ -193,7 +202,7 @@ export default class GrantRight extends Component {
          visible={showArea} lang={lang} itemChoose={itemChoose}
          closeModal={()=>this.setState({showArea:false})}
          chooseDist={(listDist)=>{
-           console.log('listDist',listDist);
+           //console.log('listDist',listDist);
            this.props.chooseDist(listDist)}}
          />
        }
@@ -219,6 +228,12 @@ export default class GrantRight extends Component {
                      this.searchUser(this.state.valCTV);
                    }
                  }}
+                 onFocus={()=>this.setState({focus:true},()=>{
+                   //console.log(focus);
+                 })}
+                 onBlur={()=>this.setState({focus:false},()=>{
+                   //console.log(focus);
+                 })}
                  onChangeText={(valCTV) => this.setState({valCTV})}
                  value={this.state.valCTV} />
 
@@ -255,16 +270,22 @@ export default class GrantRight extends Component {
           <Text style={{color:'#fff', fontWeight: 'bold',fontSize:18}}>{`${lang.assign}`}</Text>
           </TouchableOpacity>
         </View>
+        <View style={{height:focus?0:height/2}}></View>
         </ScrollView>
 
       </View>
 
       {(listUser.length>0 || noDataUser!=='') &&
-        <View style={{position:'absolute'}}>
+
         <TouchableOpacity onPress={()=>this.setState({listUser:[],noDataUser:''})}
-        style={[popoverLoc,padBuySell]}>
-        <TouchableWithoutFeedback >
-            <View style={[overLayout,shadown]}>
+        style={{position:'absolute',width,height,justifyContent:'center',alignItems:'center',backgroundColor:'rgba(0,0,0,0.7)'}}>
+        <TouchableWithoutFeedback>
+        <View style={{
+          width:width-30,
+          maxHeight:listUser.length>4? 69*4:60*(listUser.length+1),
+          backgroundColor:'#fff',
+          padding:15,borderRadius:5
+        }}>
             <FlatList
              extraData={this.state}
              data={listUser}
@@ -275,7 +296,7 @@ export default class GrantRight extends Component {
              //   });
              // }}
              ListEmptyComponent={<Text style={{color:'#000',fontSize:16}}>{noDataUser}</Text>}
-             style={{paddingLeft:15,paddingRight:15,marginTop:15}}
+             //style={{paddingLeft:15,paddingRight:15,marginTop:15}}
              keyExtractor={(item,index) => index.toString()}
              renderItem={({item,index}) =>(
                <TouchableOpacity onPress={()=>{
@@ -306,8 +327,7 @@ export default class GrantRight extends Component {
              </View>}
             </View>
         </TouchableWithoutFeedback>
-      </TouchableOpacity>
-    </View>}
+      </TouchableOpacity>}
 
       {(listAgency.length>0 || noData!=='') &&
       <TouchableOpacity onPress={()=>this.props.hidePopup()}

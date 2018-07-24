@@ -67,8 +67,17 @@ class LoginScreen extends Component {
   loginGooIOS(){
     GoogleSignin.signIn().then((user) => {
       gooApi(`${global.url}${'login-google'}`,user).then(e =>{
+
             if(e.code===200){
-              this.props.navigation.navigate('MainScr');
+              const { state,goBack,navigate } = this.props.navigation;
+              const params = state.params || {};
+
+              if(params.backScr===undefined) {
+                this.props.dispatch({type:'USER_LOGINED',isLogin:true,user_profile:e.data[0],updateState:true});
+                goBack();
+              }else {
+                navigate('MainScr');
+              }
             }else{
               this.setState({errMsg:e.message})
             }
@@ -94,7 +103,7 @@ class LoginScreen extends Component {
     fetch('https://graph.facebook.com/v2.5/me?fields=email,name,picture&access_token=' + token)
         .then((response) => response.json())
         .then((profile) => {
-          console.log(profile);
+          //console.log(profile);
           this.loginFB(profile);
         }).catch(() => {})
   }
@@ -102,7 +111,15 @@ class LoginScreen extends Component {
     faceApi(`${global.url}${'login-facebook'}`,profile).then(e =>{
       //console.log(e);
       if(e.code===200){
-        this.props.navigation.navigate('MainScr');
+        const { state,goBack,navigate } = this.props.navigation;
+        const params = state.params || {};
+        this.props.dispatch({type:'USER_LOGINED',isLogin:true,user_profile:e.data[0]});
+        if(params.backScr===undefined) {
+          goBack();
+        }else {
+
+          navigate('MainScr');
+        }
       }else{
         this.setState({errMsg:e.message})
       }
@@ -142,19 +159,24 @@ class LoginScreen extends Component {
     const params = state.params || {};
     loginApi(`${global.url}${'login'}`,param).then(e=>{
       //console.log(e);
+
       if(e.code!==200){
         this.setState({errMsg:this.state.lang.wrong_pwd,disable:false})
       }else{
-        this.props.dispatch({type:'USER_LOGINED'});
-        if(params.backScr!==undefined || params.backScr!=='') navigate('MainScr');
-        else {
+        const { state,goBack,navigate } = this.props.navigation;
+        const params = state.params || {};
+        this.props.dispatch({type:'USER_LOGINED',isLogin:true,user_profile:e.data[0]});
+        if(params.backScr===undefined) {
           goBack();
+        }else {
+
+          navigate('MainScr');
         }
 
       }
     }).catch(err=>{});
   }
-  
+
   componentWillMount(){
 
     GoogleSignin.hasPlayServices({ autoResolve: true }).then(() => {

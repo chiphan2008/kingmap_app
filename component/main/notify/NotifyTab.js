@@ -7,6 +7,7 @@ FlatList,AppState} from 'react-native';
 import Moment from 'moment';
 import PushNotification from 'react-native-push-notification';
 import Pusher from 'pusher-js/react-native';
+import {connect} from 'react-redux';
 const {height, width} = Dimensions.get('window');
 
 import getApi from '../../api/getApi';
@@ -37,7 +38,8 @@ console.ignoredYellowBox = [
 
 const channelNews = socket.subscribe('get-new-notifi-0');
 var NotiTimeout,countNoti,channelUserAll,channelUser;
-export default class NotifyTab extends Component {
+
+class NotifyTab extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -156,7 +158,9 @@ export default class NotifyTab extends Component {
       headStyle, imgLogoTop,headContent,inputSearch,colorlbl,
       listAdd,imgShare,wrapContent,btnPress,marTop,colorNext,
     } = styles;
-    const {listNoti,isLogin,lang} = this.state;
+    const {listNoti ,lang} = this.state;
+    const { isLogin } =this.props;
+    //console.log('isLoginNoti',isLogin);
     return (
       <View style={container}>
 
@@ -206,7 +210,7 @@ export default class NotifyTab extends Component {
          :
          <View style={wrapContent}>
            <Text style={{color:'#B8B9BD'}}>{lang.request_login}</Text>
-           <TouchableOpacity onPress={()=>navigate('LoginScr')} style={[btnPress,marTop]}>
+           <TouchableOpacity onPress={()=>navigate('LoginScr',{backScr:'MainScr'})} style={[btnPress,marTop]}>
            <Text style={colorNext}> {lang._login}</Text>
            </TouchableOpacity>
          </View>
@@ -216,3 +220,15 @@ export default class NotifyTab extends Component {
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    yourCurLoc:state.yourCurLoc,
+    isLogin:state.isLogin,
+    user_profile:state.user_profile,
+    //updateState:state.updateState,
+
+  }
+}
+
+export default connect(mapStateToProps)(NotifyTab);

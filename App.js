@@ -86,17 +86,30 @@ const defaultState = {
     latitude:'',
     longitude:''
   },
+  updateState:false,
+  user_profile:{},
   isLogin:false,
   detailBack:false,
 };
 const reducer = (state = defaultState, action) => {
   switch (action.type) {
+    case 'STOP_UPDATE_STATE':
+      return {...state,updateState:false}
+      break;
     case 'FIND_CURRENT_LOCATION':
-      return {...state, yourCurLoc:action.yourCurLoc}
+      return {
+        ...state,
+        yourCurLoc:action.yourCurLoc,
+        updateState:action.updateState!==undefined?action.updateState:false,
+      }
       break;
 
     case 'USER_LOGINED':
-      return {...state, isLogin:true}
+      return {
+        ...state, isLogin:action.isLogin,
+        user_profile:action.user_profile,
+        updateState:action.updateState===undefined?false:action.updateState,
+      }
       break;
 
     case 'DETAIL_BACK':
@@ -106,6 +119,7 @@ const reducer = (state = defaultState, action) => {
     default:
       break;
   }
+  //console.log('state',state);
   return state;
 }
 const store = createStore(reducer);

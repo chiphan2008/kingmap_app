@@ -35,6 +35,7 @@ import arrowLeft from '../../../src/icon/ic-white/arrow-left.png';
 import logoTop from '../../../src/icon/ic-white/Logo-ngang.png';
 import topIC from '../../../src/icon/ic-top.png';
 import {remove,removeText} from '../../libs';
+//import * as _ from 'lodash';
 
 var timeout;
 class ListLocation extends Component {
@@ -75,9 +76,10 @@ class ListLocation extends Component {
       scrollToTop:false,
     }
     const {latitude,longitude} = this.props.yourCurLoc;
-    this.getPosition(latitude,longitude);
+    latitude!=='' && this.getPosition(latitude,longitude);
     this.refresh();
     accessLocation();
+
   }
 
 
@@ -100,14 +102,15 @@ class ListLocation extends Component {
       skip = 0; this.setState({page:0})
     }
     const { keyword,kw,curLoc,id_cat,idDist } = this.state;
+    const { yourCurLoc } =this.props;
     if(id_district===null) id_district=idDist;
     //const id_cat = this.props.navigation.state.params.idCat;
     var url = `${global.url}${'search-content?category='}${id_cat}${'&skip='}${skip}${'&limit=20'}${'&distance=25000'}`;
     if(id_district!==null) {
       url += `${'&district='}${id_district}`;
     }
-    if(curLoc.latitude!==undefined) {
-      url += `${'&location='}${curLoc.latitude},${curLoc.longitude}`;
+    if(yourCurLoc.latitude!==undefined) {
+      url += `${'&location='}${yourCurLoc.latitude},${yourCurLoc.longitude}`;
       //this.getPosition(curLoc.latitude,curLoc.longitude);
     }
     //if(curLoc.latitude!==undefined)
@@ -156,7 +159,9 @@ class ListLocation extends Component {
 
   getPosition(lat,lng){
     const url = `${global.url}${'get-position?location='}${lat},${lng}`;
+    //console.log('url',url);
     getApi(url).then(e=>{
+      //console.log('e.data',e);
       const { isRefresh,id_sub,id_serv } = this.state;
       const { district,city,country } = e.data[0];
       if(isRefresh) this.getContentByDist(district,id_sub,id_serv,null);
@@ -189,6 +194,7 @@ class ListLocation extends Component {
      if(labelCat!==undefined) this.setState({labelCat});
      //if(service_items!==undefined) this.setState({service_items});
      //this.setState({pullToRefresh:true});
+     //console.log('componentDidMount',this.props.updateState);
    }
   requestLogin(){
     const {navigate} = this.props.navigation;
@@ -258,7 +264,13 @@ class ListLocation extends Component {
       <ActivityIndicator color="#d0021b" size="large" />
     </View>)
   }
-
+  componentDidUpdate(){
+    if(this.props.updateState){
+        this.props.dispatch({type:'STOP_UPDATE_STATE'})
+        const {latitude,longitude} = this.props.yourCurLoc;
+        this.getPosition(latitude,longitude);
+    }
+  }
   render() {
     //console.log('pullToRefresh',this.state.pullToRefresh);
     const {
@@ -282,8 +294,18 @@ class ListLocation extends Component {
       favIC,marRight,marRight5,
     } = styles;
     //console.log('this.props.navigation',this.props.navigation);
+
+
+
     return (
-      <View style={container}>
+      <View style={container} onLayout={()=>{
+        console.log('render',this.props.updateState);
+        if(this.props.updateState){
+            const {latitude,longitude} = this.props.yourCurLoc;
+            this.getPosition(latitude,longitude);
+            this.props.dispatch({type:'STOP_UPDATE_STATE'})
+        }
+      }}>
       {scrollToTop && <TouchableOpacity style={btnScrollTop}
       onPress={()=>{
         this.refs.listPro.scrollToOffset({x: 0, y: 0, animated: true});
@@ -463,6 +485,7 @@ const mapStateToProps = (state) => {
     yourCurLoc:state.yourCurLoc,
     isLogin:state.isLogin,
     detailBack:state.detailBack,
+    updateState:state.updateState,
   }
 }
 export default connect(mapStateToProps)(ListLocation);

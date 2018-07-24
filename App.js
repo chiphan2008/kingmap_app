@@ -214,7 +214,7 @@ export default class App extends Component {
       initialRouteName:this.state.initRoute,
       tabBarPosition: 'bottom',
       animationEnabled: false,
-      swipeEnabled: false,
+      swipeEnabled: true,
       tabBarSelected: 'Home',
       tabBarOptions: {
         showLabel:true,

@@ -247,7 +247,8 @@ class DetailScreen extends Component {
       <View style={container}>
         <View style={headStyle}>
           <View style={headContent}>
-          <TouchableOpacity onPress={()=>{this.backList()}} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
+          <TouchableOpacity onPress={()=>{this.backList()}}
+          hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
           <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
           </TouchableOpacity>
               {/*<Image source={logoTop} style={imgLogoTop} />*/}
@@ -360,10 +361,7 @@ class DetailScreen extends Component {
 
         <Collection
         hasCollection={(hasCollection)=>this.setState({hasCollection})}
-        idContent={idContent}
-        userId={user_id}
-        lang={lang}
-        visible={this.state.collection}
+        idContent={idContent} userId={user_id} lang={lang} visible={this.state.collection}
         closeModal={(has_collection)=>this.setState({collection:false,scroll:true,hasCollection: has_collection ? [1] : []},()=>{
           //console.log('has_collection',has_collection);
         })}

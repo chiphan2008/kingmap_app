@@ -85,13 +85,24 @@ const defaultState = {
   yourCurLoc : {
     latitude:'',
     longitude:''
-  }
+  },
+  isLogin:false,
+  detailBack:false,
 };
 const reducer = (state = defaultState, action) => {
   switch (action.type) {
     case 'FIND_CURRENT_LOCATION':
       return {...state, yourCurLoc:action.yourCurLoc}
       break;
+
+    case 'USER_LOGINED':
+      return {...state, isLogin:true}
+      break;
+
+    case 'DETAIL_BACK':
+      return {...state, detailBack:action.detailBack}
+      break;
+
     default:
       break;
   }

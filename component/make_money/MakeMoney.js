@@ -483,11 +483,9 @@ class MakeMoney extends Component {
           }}>
             <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
               <Text numberOfLines={1} style={colorTitle}>{`${lang.info_general}`}</Text>
-              <TouchableOpacity onPress={()=>{
-                listData.total>0 && this.setState({showCoin:!this.state.showCoin})
-              }}>
+              <View>
                 <Image source={profileIC} style={{width:35,height:35}} />
-              </TouchableOpacity>
+              </View>
             </View>
           </TouchableOpacity>}
 

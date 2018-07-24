@@ -3,7 +3,8 @@
 import React, { Component } from 'react';
 import {Keyboard,Platform, View, Text, StyleSheet, Dimensions, Image,
   TextInput, TouchableOpacity,Modal,
-  FlatList,DeviceEventEmitter,
+  FlatList,
+  //DeviceEventEmitter,
 } from 'react-native';
 const {height, width} = Dimensions.get('window');
 

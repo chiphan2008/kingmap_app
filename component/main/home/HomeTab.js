@@ -428,6 +428,7 @@ class HomeTab extends Component {
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false}
         style={{width,backgroundColor:'#2e3c52',alignSelf:'center',maxHeight:30,position:'absolute',bottom:0}}>
+        <TouchableWithoutFeedback>
         <View style={{paddingLeft:5,paddingRight:5,justifyContent:'center',flexDirection:'row'}}>
         <View style={flexRow}>
             <Image style={[imgShare,imgMargin]} source={locationDD} />
@@ -454,6 +455,7 @@ class HomeTab extends Component {
             <Text style={colorTextPP}><Text style={colorWhite}>{format_number(listStatus.countUser)}</Text></Text>
         </View>
         </View>
+        </TouchableWithoutFeedback>
        </ScrollView>
 
       </View>

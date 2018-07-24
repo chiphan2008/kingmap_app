@@ -3,7 +3,8 @@
 import React, { Component } from 'react';
 import {Keyboard,Platform, View, Text, StyleSheet, Dimensions, Image,
   TextInput, TouchableOpacity,Modal,ActivityIndicator,
-  FlatList,DeviceEventEmitter,
+  FlatList,
+  //DeviceEventEmitter,
 } from 'react-native';
 import { connect } from 'react-redux';
 const {height, width} = Dimensions.get('window');
@@ -69,9 +70,7 @@ class ListLocation extends Component {
       isRefresh:true,
       page:0,
       pullToRefresh:false,
-      //disable:false,
       user_id:0,
-      isLogin:false,
       isLoad:false,
       scrollToTop:false,
     }
@@ -138,7 +137,7 @@ class ListLocation extends Component {
   saveLocation(){
     this.setState({isRefresh:false},()=>{
       checkLocation().then((e)=>{
-        console.log('isRefresh',this.state.isRefresh);
+        //console.log('isRefresh',this.state.isRefresh);
         this.getContentByDist(e.idDist,this.state.id_sub,this.state.id_serv);
         this.setState({showLoc:!this.state.showLoc,id_city:e.idCity,idDist:e.idDist,labelLoc:e.nameDist});
       });
@@ -149,10 +148,7 @@ class ListLocation extends Component {
    refresh(){
      checkLogin().then(e=>{
        if(e.id!==undefined){
-         setTimeout(()=>{
-           this.setState({user_id:e.id,isLogin:true});
-           //loginServer(e);
-         },1200)
+         this.setState({user_id:e.id});
        }
      });
    }
@@ -181,15 +177,10 @@ class ListLocation extends Component {
   }
 
    componentWillMount(){
-     setTimeout(()=>{
-       DeviceEventEmitter.addListener('goback', (e)=>{
-         if(e.isLogin) this.refresh();
-       })
-       DeviceEventEmitter.addListener('detailBack', ()=>{
-         //console.log('detailBack');
-         this.setState({pullToRefresh:true});
-       })
-     },1500)
+     this.props.isLogin && this.refresh();
+     this.props.detailBack && this.setState({pullToRefresh:true},()=>{
+       this.props.dispatch({type:'DETAIL_BACK',detailBack:false});
+     });
    }
 
    componentDidMount(){
@@ -201,15 +192,15 @@ class ListLocation extends Component {
    }
   requestLogin(){
     const {navigate} = this.props.navigation;
-    if(this.state.isLogin===false){
+    if(this.props.isLogin===false){
       navigate('LoginScr');
     }
 
   }
   saveLike(id){
     //console.log('like');
-    const {isLogin,user_id,page} = this.state;
-    if(isLogin===false){ this.requestLogin();}else {
+    const {user_id,page} = this.state;
+    if(this.props.isLogin===false){ this.requestLogin();}else {
       getApi(`${global.url}${'like'}${'?content='}${id}${'&user='}${user_id}`).then(e=>{
           this.onRefresh(0);
         }
@@ -250,8 +241,8 @@ class ListLocation extends Component {
   }
 
   saveVote(rate,id){
-    const {isLogin,idDist,id_sub,id_serv,page,user_id}=this.state;
-    if(isLogin===false){this.requestLogin();}else {
+    const {idDist,id_sub,id_serv,page,user_id}=this.state;
+    if(this.props.isLogin===false){this.requestLogin();}else {
       const url =`${global.url}${'vote?content='}${id}${'&user='}${user_id}${'&point='}${rate}`;
       getApi(url).then(e=>{
         this.onRefresh(page);
@@ -272,7 +263,7 @@ class ListLocation extends Component {
     //console.log('pullToRefresh',this.state.pullToRefresh);
     const {
       keyword,lang,idDist,id_sub,id_serv,isRefresh,
-      listData,scrollToTop,isLogin,noData,showCat,id_cat
+      listData,scrollToTop,noData,showCat,id_cat
     } = this.state;
     const { goBack,navigate,state } = this.props.navigation;
     //console.log('this.props.navigation',this.props);
@@ -468,6 +459,10 @@ class ListLocation extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return {yourCurLoc:state.yourCurLoc}
+  return {
+    yourCurLoc:state.yourCurLoc,
+    isLogin:state.isLogin,
+    detailBack:state.detailBack,
+  }
 }
 export default connect(mapStateToProps)(ListLocation);

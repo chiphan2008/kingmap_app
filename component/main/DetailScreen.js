@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import {
   Platform, ScrollView, View, Text, StyleSheet,
   Dimensions, Image, TextInput, TouchableOpacity,
-  DeviceEventEmitter
+  //DeviceEventEmitter
 } from 'react-native';
 import {connect} from 'react-redux';
 const {height, width} = Dimensions.get('window');
@@ -110,9 +110,7 @@ class DetailScreen extends Component {
   }
 
   componentWillMount(){
-    DeviceEventEmitter.addListener('goback', (e)=>{
-      if(e.isLogin) this.refresh();
-    })
+    this.props.isLogin && this.refresh();
     this.getContent(this.props.navigation.state.params.idContent);
   }
   likeContent(id_content){
@@ -213,10 +211,7 @@ class DetailScreen extends Component {
     );
   }
   backList(){
-    setTimeout(()=>{
-      DeviceEventEmitter.emit('detailBack');
-    },1500)
-
+    this.props.dispatch({type:'DETAIL_BACK',detailBack:true});
     this.props.navigation.goBack();
   }
   scrollTop = () => {
@@ -231,7 +226,7 @@ class DetailScreen extends Component {
     const {lang,user_id,isLogin,scroll,hasCheckin,hasSaveLike,listData,hasCollection} = this.state;
     //console.log('lang',lang.lang);
     const { idContent, moderation } = this.props.navigation.state.params;
-    console.log('moderation',moderation);
+    //console.log('moderation',moderation);
     const {
       container, bgImg,colorWhite,likeIC,shareIC,imgIC,voteIC,
       imgSocial, imgInfo,aligncenter,
@@ -320,6 +315,7 @@ class DetailScreen extends Component {
           userId={user_id}
           requestLogin={this.requestLogin.bind(this)}
           listComment={listData.content._comments}
+          moderation={moderation}
           />
 
           {listData.list_group.length>0 &&
@@ -375,7 +371,10 @@ class DetailScreen extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return {yourCurLoc:state.yourCurLoc}
+  return {
+    yourCurLoc:state.yourCurLoc,
+    isLogin:state.isLogin
+  }
 }
 
 export default connect(mapStateToProps)(DetailScreen);

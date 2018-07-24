@@ -121,7 +121,7 @@ export default class Comments extends Component {
       txtComments,padLeft,colorText,mrgTop,show,hide,rowFlex
     } = styles;
     //console.log("this.props.navigation=",util.inspect(this.props.navigation,false,null));
-    const {idContent,listComment,lang,userId} = this.props;
+    const {idContent,listComment,lang,userId,moderation} = this.props;
 
     const {
       showImgComment,arrImage,showImgCommentChild,arrImageChild,index,
@@ -133,17 +133,17 @@ export default class Comments extends Component {
       <View>
           <View>
             <TextInput onFocus={()=>{this.props.requestLogin();}} style={[txtComments,padLeft]} underlineColorAndroid='transparent'
-            placeholder={lang.your_comment}
+            placeholder={lang.your_comment} editable={moderation==='request_publish' ? false : true}
             onChangeText={(text) => this.setState({inputComment: text})}
             value={this.state.inputComment}
              />
             <TouchableOpacity style={{position:'absolute',right:45,top:Platform.OS==='ios' ? 15 : 18}}
-            onPress={()=>this.uploadImage(0)}>
+            onPress={()=> moderation==='request_publish' ? {} : this.uploadImage(0)}>
             <Image source={ImageIcon} style={{width:20,height:20,}} />
             </TouchableOpacity>
 
             <TouchableOpacity style={{position:'absolute',right:15,top:Platform.OS==='ios' ? 15 : 18}}
-            onPress={()=>this.postComment(0)}
+            onPress={()=> moderation==='request_publish' ? {} : this.postComment(0)}
             >
             <Image source={sendEmailIcon} style={{width:20,height:20,}} />
             </TouchableOpacity>

@@ -4,10 +4,12 @@ import React, { Component } from 'react';
 import {
   Platform, View, Text, Image, Button,TouchableOpacity,StyleSheet,
   Dimensions, TextInput, ScrollView,Alert,Keyboard,
-  DeviceEventEmitter,TouchableWithoutFeedback
+  TouchableWithoutFeedback,
+  //DeviceEventEmitter,
  } from 'react-native';
 //import { CheckBox } from 'react-native-elements';
 //import RoundCheckbox from 'rn-round-checkbox';
+import {connect} from 'react-redux';
 import {GoogleSignin} from 'react-native-google-signin';
 
 import loginApi from '../api/loginApi';
@@ -35,7 +37,7 @@ var LoginBehavior = {
 }
 import {hasNumber,isEmail,checkPassword} from '../libs';
 
-export default class LoginScreen extends Component {
+class LoginScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -139,22 +141,20 @@ export default class LoginScreen extends Component {
     const { state,goBack,navigate } = this.props.navigation;
     const params = state.params || {};
     loginApi(`${global.url}${'login'}`,param).then(e=>{
-      console.log(e);
+      //console.log(e);
       if(e.code!==200){
         this.setState({errMsg:this.state.lang.wrong_pwd,disable:false})
       }else{
+        this.props.dispatch({type:'USER_LOGINED'});
         if(params.backScr!==undefined || params.backScr!=='') navigate('MainScr');
         else {
-          DeviceEventEmitter.emit('goback',  {isLogin:true})
           goBack();
         }
 
       }
     }).catch(err=>{});
   }
-  componentDidMount(){
-    //FBLogin.logout()
-  }
+  
   componentWillMount(){
 
     GoogleSignin.hasPlayServices({ autoResolve: true }).then(() => {
@@ -202,7 +202,7 @@ export default class LoginScreen extends Component {
               value={this.state.txtUsername}
               onChangeText={(txtUsername) => this.setState({txtUsername})}
                />
-              <TextInput underlineColorAndroid='transparent' style={txtInput}
+              <TextInput underlineColorAndroid='transparent' style={txtInput} selectionColor='#5b89ab' placeholderTextColor="#ddd"
               ref={ref => this.txtPWD = ref}
               onFocus={() => this.txtPWD.focus()}
               secureTextEntry autoCorrect={false} autoCapitalize={'none'}
@@ -251,6 +251,8 @@ export default class LoginScreen extends Component {
     );
   }
 }
+
+export default connect()(LoginScreen);
 
 const styles = StyleSheet.create({
   container: {

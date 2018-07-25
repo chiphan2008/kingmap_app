@@ -212,7 +212,7 @@ module.exports = {
   opening:'Đang hoạt động',
   closing:'Đang ngưng hoạt động',
   reopen:'Mở lại',
-  space:'Hình không gian',
+  space:'Không gian',
   image:'Hình ảnh',
   content:'Nội dung',
   comment:'Bình luận',

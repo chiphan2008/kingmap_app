@@ -195,7 +195,7 @@ export default class ListImageContent extends Component {
              <Image
              //style={{width:(width-50)/2,height:width/3,marginRight:10,resizeMode: 'cover'}}
              style={{width,height:width/2,marginBottom:10}}
-             source={{uri: getThumbVideo(item,'hdfhgdhghfhkd') }} />
+             source={{uri: item.thumbnail }} />
              </TouchableOpacity>
         )} />
 

@@ -23,7 +23,7 @@ export default class SpaceContent extends Component {
       showImageMenu:false,
       showImgSpace:false,
       showVideo:false,
-      linkVideo:'',
+      linkVideo:{},
     }
   }
 
@@ -146,7 +146,7 @@ export default class SpaceContent extends Component {
           <VideoViewer
           visible={showVideo}
           link={linkVideo}
-          closeModal={()=>this.setState({showVideo:false,linkVideo:''})}
+          closeModal={()=>this.setState({showVideo:false,linkVideo:{} })}
           />
 
           <View style={{height:30}}></View>

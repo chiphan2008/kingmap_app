@@ -7,6 +7,7 @@ import {
   TouchableWithoutFeedback,
   //DeviceEventEmitter,
  } from 'react-native';
+import { StackActions, NavigationActions } from 'react-navigation';
 //import { CheckBox } from 'react-native-elements';
 //import RoundCheckbox from 'rn-round-checkbox';
 import {connect} from 'react-redux';
@@ -71,13 +72,8 @@ class LoginScreen extends Component {
             if(e.code===200){
               const { state,goBack,navigate } = this.props.navigation;
               const params = state.params || {};
-
-              if(params.backScr===undefined) {
-                this.props.dispatch({type:'USER_LOGINED',isLogin:true,user_profile:e.data[0],updateState:true});
-                goBack();
-              }else {
-                navigate('MainScr');
-              }
+              this.props.dispatch({type:'USER_LOGINED',isLogin:true,user_profile:e.data[0],updateState:true});
+              if(params.backScr===undefined) { goBack(); }else { navigate('MainScr'); }
             }else{
               this.setState({errMsg:e.message})
             }
@@ -113,13 +109,12 @@ class LoginScreen extends Component {
       if(e.code===200){
         const { state,goBack,navigate } = this.props.navigation;
         const params = state.params || {};
-        this.props.dispatch({type:'USER_LOGINED',isLogin:true,user_profile:e.data[0]});
-        if(params.backScr===undefined) {
-          goBack();
-        }else {
 
+        this.props.dispatch({type:'USER_LOGINED',isLogin:true,user_profile:e.data[0],updateState:true});
+        if(params.backScr===undefined) { goBack(); }else {
           navigate('MainScr');
         }
+
       }else{
         this.setState({errMsg:e.message})
       }
@@ -142,8 +137,6 @@ class LoginScreen extends Component {
 
       })
     })
-
-
   }
 
 
@@ -163,14 +156,18 @@ class LoginScreen extends Component {
       if(e.code!==200){
         this.setState({errMsg:this.state.lang.wrong_pwd,disable:false})
       }else{
-        const { state,goBack,navigate } = this.props.navigation;
+        const { state,goBack } = this.props.navigation;
         const params = state.params || {};
-        this.props.dispatch({type:'USER_LOGINED',isLogin:true,user_profile:e.data[0]});
+        this.props.dispatch({type:'USER_LOGINED',isLogin:true,user_profile:e.data[0],updateState:true});
         if(params.backScr===undefined) {
           goBack();
         }else {
-
           navigate('MainScr');
+          // const resetAction = StackActions.reset({
+          //   index: 0,
+          //   actions: [NavigationActions.navigate({ routeName: 'MainScr' })],
+          // });
+          // this.props.navigation.dispatch(resetAction);
         }
 
       }

@@ -68,8 +68,10 @@ export default class CTVDetail extends Component {
     } = styles;
     const {listData,showArea,content} = this.state;
     const {goBack} = this.props.navigation;
-    const {avatar,name,address,lang,ctv_id,content_id,user_profile} = this.props.navigation.state.params;
-    // console.log('user_profile',user_profile);
+    const {avatar,name,address,lang,ctv_id,content_id,user_profile,_daily} = this.props.navigation.state.params;
+
+    // console.log('content_id',content_id);
+    // console.log('_daily',_daily);
     return (
       <View>
         <View style={wrapper}>
@@ -96,12 +98,11 @@ export default class CTVDetail extends Component {
             </View>
 
               {content_id===undefined && <View>
-
-                {user_profile!==undefined && user_profile._daily!== null && <View>
+                {(_daily!=='' && _daily!==undefined) && <View>
                 <View style={wrapWhite}>
                   <View>
                     <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14}]}>{`${lang.agency}`}</Text>
-                    <Text style={titleCoin}>{`${user_profile._daily.full_name}`}</Text>
+                    {<Text style={titleCoin}>{_daily}</Text>}
                   </View>
                 </View>
                 <View style={{height:1}}></View>
@@ -148,7 +149,7 @@ export default class CTVDetail extends Component {
                       )} />
                  </View>}
 
-                 {content!==null &&
+                 {content!==null && content_id===undefined &&
                    <View>
                    <View style={{height:1}}></View>
                    <View style={wrapWhite} >

@@ -232,11 +232,17 @@ class HomeTab extends Component {
                   ))}
               </Select>
               <View style={{width:30,borderColor:'transparent',position:'relative'}}>
-                {this.state.isLogin ?
-                (user_profile.avatar ?
-                  <Image source={{uri: checkUrl(`${user_profile.avatar}`) ? `${user_profile.avatar}` : `${global.url_media}/${user_profile.avatar}`}} style={{width:25,height:25,borderRadius:12}} /> :
-                  <Image source={icUserProfile} style={{width: 25, height: 25}} />) :
-                  <Image source={icProfileWhite} style={{width: 25, height: 25}} /> }
+                {this.props.isLogin ?
+                  <Image
+                  source={{uri: checkUrl(`${user_profile.avatar}`) ? `${user_profile.avatar}` : `${global.url_media}/${user_profile.avatar}`}}
+                  style={{width:30,height:30,borderRadius:15}} />
+                  :
+                  <TouchableOpacity onPress={()=>{
+                    navigate('LoginScr',{backScr:'MainScr'});
+                  }}>
+                  <Image source={icProfileWhite} style={{width: 30, height: 30}} />
+                  </TouchableOpacity>
+                }
               </View>
             </View>
 
@@ -283,7 +289,7 @@ class HomeTab extends Component {
                           style={{position:'absolute',alignItems:'center',top:pos.y,left :pos.x,overflow: 'visible'}}
                           onPress={() => {
                             this.requestLogin();
-                            if(this.state.isLogin){
+                            if(this.props.isLogin){
                               navigate('AdsScr',{icon:`${global.url_media}${e.image}`,name_module:e.name,code_user:this.state.code_user,lang:this.state.lang});
                             }
                           }}
@@ -300,9 +306,7 @@ class HomeTab extends Component {
                           key={e.id}
                           style={{position:'absolute',alignItems:'center',top:pos.y,left :pos.x,overflow: 'visible'}}
                           onPress={() => {
-                            //this.requestLogin();
-                            // if(this.state.isLogin){
-                            // }
+
                             navigate('ListBuySellScr',{icon:`${global.url_media}${e.image}`,name_module:e.name,code_user:this.state.code_user,lang:this.state.lang});
 
                           }}
@@ -320,7 +324,7 @@ class HomeTab extends Component {
                           style={{position:'absolute',alignItems:'center',top:pos.y,left :pos.x,overflow: 'visible'}}
                           onPress={() => {
                             this.requestLogin();
-                            if(this.state.isLogin){
+                            if(this.props.isLogin){
                               navigate('ContactScr',{user_id:this.state.user_id,avatar:this.state.avatar, name_module:e.name,lang:this.state.lang});
                             }
                           }}
@@ -339,7 +343,7 @@ class HomeTab extends Component {
                           style={{position:'absolute',alignItems:'center',top:pos.y,left :pos.x,overflow: 'visible'}}
                           onPress={() => {
                             this.requestLogin();
-                            if(this.state.isLogin){
+                            if(this.props.isLogin){
                               navigate('MakeMoneyScr',{user_profile,icon:`${global.url_media}${e.image}`,name_module:e.name,lang:this.state.lang}) }}
                             }
                           >
@@ -400,7 +404,7 @@ class HomeTab extends Component {
         <TouchableOpacity
         onPress={()=>{
           this.requestLogin();
-          if(this.state.isLogin){
+          if(this.props.isLogin){
             this.setState({showCreate:!this.state.showCreate,showInfo:false,showShare:false},()=>{
               loginServer(this.state.user_profile,'cxv');
             });

@@ -7,6 +7,7 @@ import {Platform, View, Text, StyleSheet, Dimensions, Image,
 } from 'react-native';
 
 //import * as _ from 'lodash';
+import {connect} from 'react-redux';
 import ImagePicker from 'react-native-image-crop-picker';
 const {height, width} = Dimensions.get('window');
 import language_vn from '../lang/vn/language';
@@ -59,12 +60,13 @@ import keywordsIC from '../../src/icon/ic-create/ic-keywords.png';
 import codeIC from '../../src/icon/ic-create/ic-code.png';
 import selectedIC from '../../src/icon/ic-create/ic-selected.png';
 import LogoHome from '../../src/icon/ic-home/Logo-home.png';
+import currentLocIC from '../../src/icon/ic-current-location.png';
 
 import {hasNumber,getIndex,strtoarray,isEmail,checkSVG,checkKeyword} from '../libs';
 
 
 var timeoutLatLng;
-export default class FormCreate extends Component {
+class FormCreate extends Component {
   constructor(props) {
     super(props);
     const {lang,nameCat,idCat,serv_items,idContent} = this.props.navigation.state.params;
@@ -389,6 +391,16 @@ export default class FormCreate extends Component {
     })
   }
 
+  getAddress(lat,lng){
+    let url = `${'https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyCCCOoPlN2D-mfrYEMWkz-eN7MZnOsnZ44&sensor=true&latlng='}${lat},${lng}`;
+    //console.log(url);
+    getApi(url).then(e=>{
+      const res = e.results[0];
+      const newAddress = res.address_components[0].long_name + ' ' + res.address_components[1].long_name;
+      this.setState({txtAddress: newAddress})
+    })
+  }
+
   render() {
     //console.log('idContent',this.state.idContent);
     const {navigate, goBack} = this.props.navigation;
@@ -706,6 +718,21 @@ export default class FormCreate extends Component {
             </View>
         </View>
 
+        <TouchableOpacity style={listCreate} onPress={() => {
+          const { yourCurLoc } = this.props;
+          this.setState({lat:yourCurLoc.latitude,lng:yourCurLoc.longitude})
+          this.getAddress(yourCurLoc.latitude,yourCurLoc.longitude)
+        }}>
+          <View style={{flexDirection:'row'}}>
+            <View style={widthLblCre}>
+              <Image source={currentLocIC} style={imgInfo} />
+            </View>
+              <View style={{paddingLeft:15}}>
+              <Text style={colorlbl}>{this.state.lang.yourlocation}</Text>
+              </View>
+          </View>
+        </TouchableOpacity>
+
 
         <View style={{height:15}}></View>
         <TouchableOpacity style={listCreate}
@@ -1017,3 +1044,9 @@ export default class FormCreate extends Component {
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {yourCurLoc:state.yourCurLoc}
+}
+
+export default connect(mapStateToProps)(FormCreate);

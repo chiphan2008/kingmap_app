@@ -150,7 +150,7 @@ class ListLocPer extends Component {
              <View style={{height:8}}></View>
              <View style={{backgroundColor:'#fff'}}>
                <TouchableOpacity onPress={()=>{
-                 navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc,lang:lang.lang,update:true})
+                 navigate('DetailScr',{moderation:item.moderation,idContent:item.id,lat:item.lat,lng:item.lng,curLoc,lang:lang.lang,update:true})
                }}>
                  <Image source={{uri:`${global.url_media}${item.avatar}`}} style={{width:width,minHeight:200,marginBottom:10}} />
                </TouchableOpacity>
@@ -160,7 +160,7 @@ class ListLocPer extends Component {
                    <View style={{width:width-80}}>
                      <TouchableOpacity onPress={()=>{
                        //this.props.closeModal()
-                       navigate('DetailScr',{idContent:item.id,lat:item.lat,lng:item.lng,curLoc,lang:lang.lang,update:true})
+                       navigate('DetailScr',{moderation:item.moderation,idContent:item.id,lat:item.lat,lng:item.lng,curLoc,lang:lang.lang,update:true})
                      }}>
                        <Text numberOfLines={1} style={txtTitleOverCat}>{item.name}</Text>
                      </TouchableOpacity>

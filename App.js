@@ -156,7 +156,7 @@ export default class App extends Component {
 
   getLang(slLang,route=null){
     // const { slLang } = defaultState;
-    console.log('slLang',slLang);
+    //console.log('slLang',slLang);
     if(route!==null) this.state.initApp=true;
     this.state.lang = (slLang.valueLang==='vn' || slLang.valueLang==='') ?lang_vn:lang_en;
     this.setState(this.state);
@@ -248,6 +248,7 @@ export default class App extends Component {
       animationEnabled: false,
       allowFontScaling:true,
       swipeEnabled:false,
+      scrollEnabled:false,
       tabBarSelected: 'Home',
       tabBarOptions: {
         showLabel:true,

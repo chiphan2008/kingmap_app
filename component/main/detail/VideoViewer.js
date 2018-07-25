@@ -23,7 +23,7 @@ export default class VideoViewer extends Component {
     //console.log('data',data.length,index,data[index]);
     //const {index} = this.state;//${'?autoplay=1'}
     return (
-      link!=='' &&
+      link!=={} &&
       <Modal onRequestClose={() => null} visible={visible} transparent>
       <TouchableOpacity style={{position:'absolute',zIndex:999,top:14,left:5}}
       onPress={()=>{this.props.closeModal()}}
@@ -32,7 +32,18 @@ export default class VideoViewer extends Component {
       </TouchableOpacity>
       <View style={{width,height:Platform.OS==='ios'?height:height-24,backgroundColor:'#000',justifyContent:'center',alignItems:'center'}}>
 
-      {Platform.OS==='ios'?
+      <View style={{width:width-15,height:width,backgroundColor:'#000',alignSelf:'center',padding:0}}>
+      <WebView
+
+         //resizeMode='cover'
+         allowsInlineMediaPlayback
+         source={{
+           uri:`${link.link}`
+         }}
+         //scalesPageToFit={true}
+      />
+      </View>
+      {/*Platform.OS==='ios'?
       <View style={{width:width-15,height:width,backgroundColor:'#000',alignSelf:'center',padding:0}}>
       <WebView
 
@@ -62,7 +73,7 @@ export default class VideoViewer extends Component {
          startInLoadingState={true}
          //scalesPageToFit={true}
       />
-      </View>}
+      </View>*/}
       </View>
       </Modal>
     );

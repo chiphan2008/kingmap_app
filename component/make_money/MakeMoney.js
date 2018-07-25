@@ -181,7 +181,7 @@ class MakeMoney extends Component {
       }
       arr.append('month',month);
       arr.append('year',year);
-      //console.log(`${global.url}${'static?'}${'block_text='}${let_mm}${'&block_text=luu_y_make_money&lang='}${lang.lang}`);
+      console.log(`${global.url}${'static?'}${'block_text='}${let_mm}${'&block_text=luu_y_make_money&lang='}${lang.lang}`);
       //console.log(arr);
       user_profile._roles.length>0 && postApi(`${global.url}${'static?'}${'block_text='}${let_mm}${',luu_y_make_money&lang='}${lang.lang}`,arr).then(e => {
       //console.log('e.data',e.data);
@@ -482,7 +482,7 @@ class MakeMoney extends Component {
           onPress={()=>{
             navigate('CTVDetailScr',{
               lang,content,user_profile,ctv_id:isCTV?user_profile.id:'',
-              daily_id:isAgency?user_profile.id:'',
+              daily_id:isAgency?user_profile.id:'',_daily:(isCTV&&user_profile._daily!==null)?user_profile._daily.full_name:'',
               name:user_profile.full_name,address:user_profile.address,
             avatar:checkUrl(user_profile.avatar) ? user_profile.avatar : `${global.url_media}${user_profile.avatar}`})
           }}>
@@ -726,12 +726,12 @@ class MakeMoney extends Component {
           <View style={[marTop,wrapDes]}>
           {content!=='' &&
             <View>
-              <Text style={{color:'#6587A8',fontSize:17,lineHeight:28, fontWeight: '600'}}>{lang.obligation}</Text>
-              <Text style={{color:'#6587A8',fontSize:16,lineHeight:28}}>{`${content}\n`}</Text>
+              <Text style={{color:'#748EAB',fontSize:17,lineHeight:28, fontWeight: 'bold'}}>{lang.obligation}</Text>
+              <Text style={{color:'#748EAB',fontSize:17,lineHeight:28}}>{`${content}`}</Text>
             </View>
           }
-          <Text style={{color:'#6587A8',fontSize:17,lineHeight:28, fontWeight: '600'}}>{lang.jurisdiction}</Text>
-          <Text style={{color:'#6587A8',fontSize:16,lineHeight:28}}>{`${static_notes}`}</Text>
+          <Text style={{color:'#748EAB',fontSize:17,lineHeight:28, fontWeight: 'bold'}}>{lang.jurisdiction}</Text>
+          <Text style={{color:'#748EAB',fontSize:17,lineHeight:28}}>{`${static_notes}`}</Text>
           </View>
 
           </View>
@@ -790,7 +790,7 @@ class MakeMoney extends Component {
          renderItem={({item,index}) =>(
            <TouchableOpacity
            onPress={()=>{navigate('CTVDetailScr',{
-             lang,content,ctv_id:searchCTV?item.id:'',daily_id:searchCTV?'':item.id,name:item.full_name,address:item.address,
+             lang,content,ctv_id:searchCTV?item.id:'',_daily:item._daily!==undefined?item._daily.full_name:'',daily_id:searchCTV?'':item.id,name:item.full_name,address:item.address,
            avatar:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`})}}
            style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
                <View style={{flexDirection:'row',paddingBottom:15,alignItems:'center'}}>

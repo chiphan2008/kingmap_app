@@ -43,8 +43,7 @@ export default class FadeView extends Component {
       <View>
       <Animated.View                 // Special animatable View
         style={{
-          width,
-          height,
+          width, height,
           justifyContent: 'center',
           alignItems: 'center',
           backgroundColor: '#D0021B',
@@ -66,7 +65,7 @@ export default class FadeView extends Component {
             }}
           >
 
-            <CityScreen screenProps={this.props.screenProps}  navigation={navigation}/>
+            <CityScreen screenProps={this.props.screenProps} navigation={navigation}/>
           </Animated.View>
 
       </View>

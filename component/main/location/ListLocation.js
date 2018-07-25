@@ -266,7 +266,7 @@ class ListLocation extends Component {
   }
   componentDidUpdate(){
     if(this.props.updateState){
-        this.props.dispatch({type:'STOP_UPDATE_STATE'})
+        this.props.dispatch({type:'STOP_START_UPDATE_STATE',updateState:false})
         const {latitude,longitude} = this.props.yourCurLoc;
         this.getPosition(latitude,longitude);
     }
@@ -303,7 +303,7 @@ class ListLocation extends Component {
         if(this.props.updateState){
             const {latitude,longitude} = this.props.yourCurLoc;
             this.getPosition(latitude,longitude);
-            this.props.dispatch({type:'STOP_UPDATE_STATE'})
+            this.props.dispatch({type:'STOP_START_UPDATE_STATE',updateState:false})
         }
       }}>
       {scrollToTop && <TouchableOpacity style={btnScrollTop}

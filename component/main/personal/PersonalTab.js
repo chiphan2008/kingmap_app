@@ -4,7 +4,8 @@ import React, { Component } from 'react';
 import {
   ScrollView,Platform, View, Text,Keyboard,
   Dimensions, Image, TextInput, TouchableOpacity,
-  AsyncStorage,DeviceEventEmitter} from 'react-native';
+  AsyncStorage,TouchableWithoutFeedback
+} from 'react-native';
 const {height, width} = Dimensions.get('window');
 import {connect} from 'react-redux';
 import {GoogleSignin} from 'react-native-google-signin';
@@ -43,9 +44,7 @@ class PersonalTab extends Component {
     super(props);
     this.state = {
       lang : lang_vn,
-      //isLogin : false,
       countEntry:{},
-      //user_profile:{},
     };
     //this.getLoc();
     getLanguage().then((e) =>{
@@ -62,9 +61,6 @@ class PersonalTab extends Component {
     isLogin && user_profile.id!==undefined && this.getUser(user_profile.id);
   }
   getUser(id){
-    //console.log(`${global.url}${'user/get-static/'}${id}`);
-    //console.log(`${global.url}${'user/get-static/'}${id}`);
-
     getApi(`${global.url}${'user/get-static/'}${id}`)
     .then(arrData => {
         //console.log(arrData);
@@ -90,7 +86,7 @@ class PersonalTab extends Component {
 
   componentDidUpdate(){
     if(this.props.updateState){
-      this.props.dispatch({type:'STOP_UPDATE_STATE'});
+      this.props.dispatch({type:'STOP_START_UPDATE_STATE',updateState:false})
       this.refresh();
     }
   }
@@ -112,8 +108,8 @@ class PersonalTab extends Component {
     } = styles;
 
     return (
+      <TouchableWithoutFeedback onPress={()=>Keyboard.dismiss()}>
       <View style={container}>
-
         <View style={headStyle}>
           <View style={headContent}>
           <View></View>
@@ -340,9 +336,8 @@ class PersonalTab extends Component {
           </View>
 
         </ScrollView>
-
-
       </View>
+      </TouchableWithoutFeedback>
     );
   }
 }

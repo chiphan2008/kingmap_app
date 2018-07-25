@@ -3,10 +3,9 @@
 import React, { Component } from 'react';
 import {
   View,Text,TouchableOpacity,Image,Platform,
-  Dimensions,ScrollView,Alert,FlatList,
-  TextInput,
+  ScrollView,Alert,FlatList,TextInput,Dimensions
 } from 'react-native';
-
+import {connect} from 'react-redux';
 import getApi from '../../api/getApi';
 import postApi from '../../api/postApi';
 import checkLogin from '../../api/checkLogin';
@@ -26,7 +25,7 @@ import * as _ from 'lodash';
 const {width,height} = Dimensions.get('window');
 
 
-export default class Collection extends Component {
+class Collection extends Component {
   constructor(props){
     super(props);
     this.state = {
@@ -160,7 +159,7 @@ export default class Collection extends Component {
           <View style={headCatStyle}>
               <View style={headContent}>
                   <TouchableOpacity onPress={()=>{
-                    DeviceEventEmitter.emit('goback',  {isLogin:true})
+                    this.props.dispatch({type:'STOP_START_UPDATE_STATE',updateState:true})
                     goBack();
                   }} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
                   <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
@@ -270,3 +269,5 @@ export default class Collection extends Component {
     );
   }
 }
+
+export default connect()(Collection);

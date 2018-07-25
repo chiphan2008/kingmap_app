@@ -39,7 +39,7 @@ export default class VideoViewer extends Component {
          //resizeMode='cover'
          allowsInlineMediaPlayback
          source={{
-           uri:`${chanelVideo(link)}`
+           uri:`${link.link}`
          }}
          //scalesPageToFit={true}
       />
@@ -51,7 +51,7 @@ export default class VideoViewer extends Component {
          //resizeMode='cover'
          allowsInlineMediaPlayback
          source={{
-           html:`<iframe  width="${width-15}" height="300" src="${chanelVideo(link)}"  scrolling="no" frameborder="0" vspace="0" hspace="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="true" allowtransparency="true" ></iframe>`
+           html:`<iframe  width="${width-15}" height="300" src="${link.link}"  scrolling="no" frameborder="0" vspace="0" hspace="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen="true" allowtransparency="true" ></iframe>`
          }}
          javaScriptEnabled
          domStorageEnabled

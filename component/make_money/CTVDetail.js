@@ -25,11 +25,21 @@ export default class CTVDetail extends Component {
     this.state={
       listData:{},
       showArea:false,
-
+      content:'',
     }
   }
   componentWillMount(){
     this.getStatic();
+    this.assignWork();
+  }
+
+  assignWork(){
+    const { daily_id, ctv_id, lang } = this.props.navigation.state.params;
+    const userId = daily_id!==''?daily_id:ctv_id;
+    //console.log(`${global.url}${'static/giaoviec/'}${userId}${'?lang='}${lang.lang}`);
+    getApi(`${global.url}${'static/giaoviec/'}${userId}${'?lang='}${lang.lang}`).then(arr => {
+        arr.data!==null && this.setState({ content:arr.data[0].content });
+    }).catch(err => console.log(err));
   }
 
   getStatic(){
@@ -43,7 +53,7 @@ export default class CTVDetail extends Component {
     content_id!==undefined && arr.append('content_id',content_id);
     arr.append('month',month);
     arr.append('year',year);
-    console.log(`${global.url}${'static'}${'?lang='}${lang.lang}`,arr);
+    //console.log(`${global.url}${'static'}${'?lang='}${lang.lang}`,arr);
     postApi(`${global.url}${'static'}${'?lang='}${lang.lang}`,arr)
     .then(arr => {
       //console.log(arr);
@@ -56,9 +66,9 @@ export default class CTVDetail extends Component {
       imgLogoTop,colorlbl,wrapWhite,titleCoin,colorTitle,
       popoverLoc,overLayout,shadown,listOverService,imgShare
     } = styles;
-    const {listData,showArea} = this.state;
+    const {listData,showArea,content} = this.state;
     const {goBack} = this.props.navigation;
-    const {avatar,name,address,lang,ctv_id,content_id,content,user_profile} = this.props.navigation.state.params;
+    const {avatar,name,address,lang,ctv_id,content_id,user_profile} = this.props.navigation.state.params;
     // console.log('user_profile',user_profile);
     return (
       <View>
@@ -138,7 +148,7 @@ export default class CTVDetail extends Component {
                       )} />
                  </View>}
 
-                 {content!==undefined &&
+                 {content!==null &&
                    <View>
                    <View style={{height:1}}></View>
                    <View style={wrapWhite} >

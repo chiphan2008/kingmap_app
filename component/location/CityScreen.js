@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import { Platform, View, Text, Image, Button, StyleSheet, Dimensions, TouchableOpacity,AsyncStorage } from 'react-native';
 import {Select, Option} from "react-native-chooser";
-
+import {connect} from 'react-redux';
 import getApi from '../api/getApi';
 import checkLocation from '../api/checkLocation';
 
@@ -14,7 +14,7 @@ import bgMap from '../../src/icon/bg-map.jpg';
 const {height, width} = Dimensions.get('window');
 
 var com;
-export default class CityScreen extends Component {
+class CityScreen extends Component {
   constructor(props) {
     super(props);
     com = this;
@@ -43,26 +43,6 @@ export default class CityScreen extends Component {
         _this.getCountry();
       }
     });
-  }
-  getLoc(){
-    try{
-        navigator.geolocation.getCurrentPosition(
-            ({coords}) => {
-              const {latitude,longitude} = coords
-              getApi(`${global.url}${'get-position?location='}${latitude},${longitude}`)
-              .then(arr => {
-                setTimeout(()=>{
-                  //console.log(latitude,longitude,arr);
-                  com.setState({ latitude,longitude,position: arr.data });
-                },3000)
-              }).catch(err => console.log(err));
-            },
-            (error) => {},
-            { timeout: 5000,maximumAge: 60000 },
-          );
-    } catch (error) {
-      //console.log(error);
-    }
   }
 
   onSelectCountry(value, label) {
@@ -93,23 +73,21 @@ export default class CityScreen extends Component {
                 nameCity: slCity.name,
                 //latitude,longitude,position
             })).then(()=>{
+              //this.props.dispatch({type:'STOP_START_UPDATE_STATE',updateState:true});
+              let slLang={};
               if(this.state.slCountry.id==1){
-                AsyncStorage.setItem('@MyLanguage:key',JSON.stringify({
-                  valueLang:'vn',labelLang :'VIE'
-                })).then(()=>{
-                  setTimeout(()=>{
-                    this.props.screenProps();
-                  },1000)
-                });
+                slLang={valueLang:'vn',labelLang :'VIE'};
               }else{
-                AsyncStorage.setItem('@MyLanguage:key',JSON.stringify({
-                  valueLang:'en',labelLang :'ENG'
-                })).then(()=>{
-                  setTimeout(()=>{
-                    this.props.screenProps();
-                  },1000)
-                });
+                slLang={valueLang:'en',labelLang :'ENG'};
               }
+
+              this.props.dispatch({type:'UPDATE_LANG',slLang});
+              AsyncStorage.setItem('@MyLanguage:key',JSON.stringify(slLang)).then(()=>{
+                setTimeout(()=>{
+                  this.props.screenProps(slLang,'home');
+                  //this.props.navigation.navigate('MainScr');
+                },700)
+              });
 
           });
 
@@ -128,7 +106,6 @@ export default class CityScreen extends Component {
   getCity(id_country){
     getApi(`${global.url}${'cities/'}${id_country}`)
     .then(arrCity => {
-      //console.log('arrCity',arrCity);
         this.setState({ listCity: arrCity.data });
     })
     .catch(err => console.log(err));
@@ -209,6 +186,7 @@ export default class CityScreen extends Component {
   }
 }
 
+export default connect()(CityScreen);
 const styles = StyleSheet.create({
   container: {
     width,

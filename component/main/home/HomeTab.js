@@ -38,7 +38,9 @@ import checkDD from '../../../src/icon/ic-gray/ic-check-gray.png';
 import likeDD from '../../../src/icon/ic-gray/ic-like.png';
 import socialDD from '../../../src/icon/ic-gray/ic-social.png';
 import userDD from '../../../src/icon/ic-gray/ic-user.png';
-import {format_number} from '../../libs';
+import icProfileWhite from '../../../src/icon/ic-profile-white.png';
+import icUserProfile from '../../../src/icon/ic-user-profile.png';
+import {format_number,checkUrl} from '../../libs';
 YellowBox.ignoreWarnings(['Class RCTCxxModule']);
 YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader']);
 
@@ -87,8 +89,8 @@ class HomeTab extends Component {
         _this.setState({user_profile:e,user_id:e.id,avatar:e.avatar,code_user:e.phone,isLogin:true});
       }
     })
-
-    this.findLoc();
+    //console.log(this.props.yourCurLoc);
+    this.props.yourCurLoc.latitude==='' && this.findLoc();
     this.getLang();
     Keyboard.dismiss();
     arrLang = [{name:'VIE',v:'vn'},{name:'ENG',v:'en'}];
@@ -137,14 +139,13 @@ class HomeTab extends Component {
      });
    }
 
-   onSelectLang(value, label) {
-     if(this.state.selectLang.valueLang!==value){
-       clearTimeout(timeoutLang);
-       AsyncStorage.setItem('@MyLanguage:key',JSON.stringify({valueLang:value,labelLang :label})).then(()=>{
-         setTimeout(() => {
-             this.props.screenProps();
-         }, 500);
-       });
+   onSelectLang(valueLang,labelLang) {
+     const slLang={valueLang,labelLang};
+     if(this.props.slLang.valueLang!==valueLang){
+       this.props.screenProps(slLang);
+       //this.props.dispatch({type:'STOP_START_UPDATE_STATE',updateState:true});
+       this.props.dispatch({type:'UPDATE_LANG',slLang});
+       AsyncStorage.setItem('@MyLanguage:key', JSON.stringify({valueLang,labelLang}) );
      }
    }
 
@@ -163,9 +164,7 @@ class HomeTab extends Component {
    getListStatus(){
      getApi(global.url+'get-static')
      .then(arrData => {
-       setTimeout(()=>{
-         this.setState({ listStatus: arrData.data });
-       },500)
+       this.setState({ listStatus: arrData.data });
      }).catch(err => console.log(err));
    }
 
@@ -215,22 +214,31 @@ class HomeTab extends Component {
             <TouchableOpacity onPress={()=> this.setState({showInfo:false,showShare:false}) } >
                 <Image source={logoTop} style={imgLogoTop} />
             </TouchableOpacity>
-            <Select
-                  onClick={()=> this.setState({showInfo:false,showShare:false}) }
-                  onSelect = {this.onSelectLang.bind(this)}
-                  defaultText  = {this.state.selectLang.labelLang}
-                  style = {selectBox}
-                  textStyle = {{color:'#fff'}}
-                  optionListStyle={optionListStyle}
-                  indicatorColor="#fff"
-                  indicator="down"
-                  indicatorSize={7}
-                  transparent
-                >
-                {arrLang.map((e,i)=>(
-                    <Option style={OptionItem} key={i} value ={e.v}>{e.name}</Option>
-                ))}
-            </Select>
+            <View style={{justifyContent: 'space-between',flexDirection: 'row', width: 90}}>
+              <Select
+                    onClick={()=> this.setState({showInfo:false,showShare:false}) }
+                    onSelect = {this.onSelectLang.bind(this)}
+                    defaultText  = {this.state.selectLang.labelLang}
+                    style = {[selectBox]}
+                    textStyle = {{color:'#fff'}}
+                    optionListStyle={[optionListStyle, {right:50}]}
+                    indicatorColor="#fff"
+                    indicator="down"
+                    indicatorSize={7}
+                    transparent
+                  >
+                  {arrLang.map((e,i)=>(
+                      <Option style={OptionItem} key={i} value ={e.v}>{e.name}</Option>
+                  ))}
+              </Select>
+              <View style={{width:30,borderColor:'transparent',position:'relative'}}>
+                {this.state.isLogin ?
+                (user_profile.avatar ?
+                  <Image source={{uri: checkUrl(`${user_profile.avatar}`) ? `${user_profile.avatar}` : `${global.url_media}/${user_profile.avatar}`}} style={{width:25,height:25,borderRadius:12}} /> :
+                  <Image source={icUserProfile} style={{width: 25, height: 25}} />) :
+                  <Image source={icProfileWhite} style={{width: 25, height: 25}} /> }
+              </View>
+            </View>
 
           </View>
           <TextInput underlineColorAndroid='transparent'
@@ -462,6 +470,7 @@ const mapStateToProps = (state) => {
   return {
     yourCurLoc:state.yourCurLoc,
     isLogin:state.isLogin,
+    slLang:state.slLang,
   }
 }
 export default connect(mapStateToProps)(HomeTab);

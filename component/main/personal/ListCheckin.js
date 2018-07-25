@@ -3,10 +3,10 @@
 import React, { Component } from 'react';
 import {
   View,Text,TouchableOpacity,Image,
-  Dimensions,Alert,DeviceEventEmitter,
+  Dimensions,Alert,
   FlatList
 } from 'react-native';
-
+import {connect} from 'react-redux';
 import getApi from '../../api/getApi';
 import checkLogin from '../../api/checkLogin';
 import global from '../../global';
@@ -20,7 +20,7 @@ import * as _ from 'lodash';
 const {width,height} = Dimensions.get('window');
 
 
-export default class ListCheckin extends Component {
+class ListCheckin extends Component {
   constructor(props){
     super(props);
     this.state = {
@@ -107,7 +107,7 @@ export default class ListCheckin extends Component {
           <View style={headCatStyle}>
               <View style={headContent}>
                   <TouchableOpacity onPress={()=>{
-                    DeviceEventEmitter.emit('goback',  {isLogin:true})
+                    this.props.dispatch({type:'STOP_START_UPDATE_STATE',updateState:true})
                     goBack();
                   }} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
                   <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
@@ -164,3 +164,5 @@ export default class ListCheckin extends Component {
     );
   }
 }
+
+export default connect()(ListCheckin);

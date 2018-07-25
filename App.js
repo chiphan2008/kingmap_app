@@ -86,6 +86,10 @@ const defaultState = {
     latitude:'',
     longitude:''
   },
+  slLang: {
+    valueLang : '',
+    labelLang : '',
+  },
   updateState:false,
   user_profile:{},
   isLogin:false,
@@ -93,8 +97,11 @@ const defaultState = {
 };
 const reducer = (state = defaultState, action) => {
   switch (action.type) {
-    case 'STOP_UPDATE_STATE':
-      return {...state,updateState:false}
+    case 'UPDATE_LANG':
+      return {...state,slLang:action.slLang}
+      break;
+    case 'STOP_START_UPDATE_STATE':
+      return {...state,updateState:action.updateState}
       break;
     case 'FIND_CURRENT_LOCATION':
       return {
@@ -133,24 +140,26 @@ export default class App extends Component {
       isLogin : false,
       lang : lang_vn,
       setVal:false,
-
     }
-    this.getLang();
-  }
-
-  getLang(){
-    getLanguage().then((e) =>{
-      if(e!==null){
-          e.valueLang==='vn' ?  this.setState({lang : lang_vn}) : this.setState({lang : lang_en});
-        }
-    });
-  }
-  componentWillMount(){
+    getLanguage().then(e=>{
+      //console.log('e',e);
+      this.setState({
+        lang : (e.valueLang==='vn' || e.valueLang==='') ?lang_vn:lang_en,
+      });
+    })
     checkLocation().then(e=>{
       if(e.idCountry!==undefined){
         this.setState({initApp:true});
       }
     });
+  }
+
+  getLang(slLang,route=null){
+    // const { slLang } = defaultState;
+    console.log('slLang',slLang);
+    if(route!==null) this.state.initApp=true;
+    this.state.lang = (slLang.valueLang==='vn' || slLang.valueLang==='') ?lang_vn:lang_en;
+    this.setState(this.state);
   }
 
   render(){
@@ -163,7 +172,7 @@ export default class App extends Component {
         height: 24,
       },
     });
-
+    const {lang} =this.state;
     const HomeScreen = StackNavigator({
       HomeTabs: { screen: HomeTab },
       //HomeTabs: { screen:LocationTab},
@@ -189,11 +198,11 @@ export default class App extends Component {
 
 
 
-    const RootTabs = TabNavigator({
+    let RootTabs = TabNavigator({
       HomeT: {
         screen: HomeScreen,
         navigationOptions: {
-          tabBarLabel: `${this.state.lang.home}`,
+          tabBarLabel: `${lang.home}`,
           tabBarIcon: ({ tintColor }) => (
             <Image source={homeIC} style={[styles.icon, {tintColor}]} />
           ),
@@ -202,7 +211,7 @@ export default class App extends Component {
       LocationT: {
         screen: LocScreen,
         navigationOptions: {
-          tabBarLabel: `${this.state.lang.location}`,
+          tabBarLabel: `${lang.location}`,
           tabBarIcon: ({ tintColor }) => (
             <Image source={locationIC} style={[styles.icon, {tintColor}]} />
           ),
@@ -214,7 +223,7 @@ export default class App extends Component {
       NotifyT: {
         screen: NotifyTab,
         navigationOptions: {
-          tabBarLabel: `${this.state.lang.notify}`,
+          tabBarLabel: `${lang.notify}`,
           tabBarIcon: ({ tintColor }) => (
             <Image source={notifyIC} style={[styles.icon, {tintColor}]} />
           ),
@@ -223,7 +232,7 @@ export default class App extends Component {
       PersonalT: {
         screen: PersonalTab,
         navigationOptions: {
-          tabBarLabel: `${this.state.lang.personal}`,
+          tabBarLabel: `${lang.personal}`,
           tabBarIcon: ({ tintColor }) => (
             <Image source={personalIC} style={[styles.icon, {tintColor}]} />
           ),
@@ -233,13 +242,12 @@ export default class App extends Component {
         },
       },
 
-
-
     }, {
       initialRouteName:this.state.initRoute,
       tabBarPosition: 'bottom',
       animationEnabled: false,
-      swipeEnabled: true,
+      allowFontScaling:true,
+      swipeEnabled:false,
       tabBarSelected: 'Home',
       tabBarOptions: {
         showLabel:true,
@@ -255,7 +263,6 @@ export default class App extends Component {
         style : {
             backgroundColor:'#D0021B',
             height: Platform.OS==='ios' ? 55 : 60,
-
         },
         tabStyle:{
           paddingBottom:3,
@@ -338,7 +345,7 @@ export default class App extends Component {
     //const {setVal} = this.state;
     return (
       <Provider store={store}>
-        <RootNav screenProps={()=>{this.setState({initApp:true},()=>this.getLang())}} />
+        <RootNav screenProps={this.getLang.bind(this)}/>
       </Provider>
     );
   }

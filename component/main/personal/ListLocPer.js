@@ -3,8 +3,9 @@
 import React, { Component } from 'react';
 import {
   View,Text,TouchableOpacity,Image,
-  Dimensions,FlatList,Alert,DeviceEventEmitter,
+  Dimensions,FlatList,Alert,
 } from 'react-native';
+import {connect} from 'react-redux';
 
 import getApi from '../../api/getApi';
 import checkLogin from '../../api/checkLogin';
@@ -22,7 +23,7 @@ import requestIC from '../../../src/icon/ic-request.png';
 const {width,height} = Dimensions.get('window');
 
 
-export default class ListLocPer extends Component {
+class ListLocPer extends Component {
   constructor(props){
     super(props);
     this.state = {
@@ -122,7 +123,7 @@ export default class ListLocPer extends Component {
           <View style={headCatStyle}>
               <View style={headContent}>
                   <TouchableOpacity onPress={()=>{
-                    DeviceEventEmitter.emit('goback',  {isLogin:true})
+                    this.props.dispatch({type:'STOP_START_UPDATE_STATE',updateState:true})
                     goBack();
                   }}>
                   <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
@@ -249,3 +250,5 @@ export default class ListLocPer extends Component {
     );
   }
 }
+
+export default connect()(ListLocPer);

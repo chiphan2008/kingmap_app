@@ -2,10 +2,11 @@
 
 import React, { Component } from 'react';
 import {
-  View,Text,TouchableOpacity,Image,DeviceEventEmitter,
+  View,Text,TouchableOpacity,Image,
   TextInput,Dimensions,ScrollView,Alert,AsyncStorage,
   TouchableWithoutFeedback,Platform,
 } from 'react-native';
+import {connect} from 'react-redux';
 import Moment from 'moment';
 import ImagePicker from 'react-native-image-crop-picker';
 import postApi from '../../api/postApi';
@@ -27,7 +28,7 @@ const {width,height} = Dimensions.get('window');
 import {hasNumber,checkUrl} from '../../libs';
 
 
-export default class UpdateInfo extends Component {
+class UpdateInfo extends Component {
   constructor(props){
     super(props);
 
@@ -156,9 +157,9 @@ export default class UpdateInfo extends Component {
     }
   }
   closeModal () {
-    DeviceEventEmitter.emit('goback',  {isLogin:true})
+    this.props.dispatch({type:'STOP_START_UPDATE_STATE',updateState:true});
     this.props.navigation.goBack();
-   }
+  }
 
   render() {
     const {
@@ -353,3 +354,5 @@ export default class UpdateInfo extends Component {
     );
   }
 }
+
+export default connect()(UpdateInfo);

@@ -3,7 +3,8 @@
 import React, { Component } from 'react';
 import {
   Platform, View, Text, StyleSheet, Dimensions, Image, TextInput, TouchableOpacity,
-FlatList,AppState} from 'react-native';
+  FlatList,AppState,TouchableWithoutFeedback,Keyboard
+} from 'react-native';
 import Moment from 'moment';
 import PushNotification from 'react-native-push-notification';
 import Pusher from 'pusher-js/react-native';
@@ -158,12 +159,12 @@ class NotifyTab extends Component {
       headStyle, imgLogoTop,headContent,inputSearch,colorlbl,
       listAdd,imgShare,wrapContent,btnPress,marTop,colorNext,
     } = styles;
-    const {listNoti ,lang} = this.state;
+    const { listNoti, lang } = this.state;
     const { isLogin } =this.props;
     //console.log('isLoginNoti',isLogin);
     return (
+      <TouchableWithoutFeedback onPress={()=>Keyboard.dismiss()}>
       <View style={container}>
-
         <View style={headStyle}>
           <View style={headContent}>
             <View></View>
@@ -217,6 +218,7 @@ class NotifyTab extends Component {
           }
         </View>
       </View>
+      </TouchableWithoutFeedback>
     );
   }
 }

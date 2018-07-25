@@ -139,7 +139,7 @@ export default class SpaceContent extends Component {
                  this.setState({showVideo:true,linkVideo:item})
                }}>
                <Image style={{width:(width-50)/2,height:width/3,marginRight:10,resizeMode: 'cover'}}
-               source={{uri: getThumbVideo(item) }} />
+               source={{uri: item.thumbnail }} />
                </TouchableOpacity>
           )} />
 

@@ -56,19 +56,17 @@ class PersonalTab extends Component {
     this.refresh();
   }
   refresh(){
-    clearTimeout(timeoutUser);
     const {isLogin,user_profile} = this.props;
     isLogin && user_profile.id!==undefined && this.getUser(user_profile.id);
   }
   getUser(id){
-    getApi(`${global.url}${'user/get-static/'}${id}`)
-    .then(arrData => {
-        //console.log(arrData);
-        timeoutUser = setTimeout(()=>{
-          this.setState({ countEntry: arrData.data });
-        },1500)
-    })
-    .catch(err => console.log(err));
+    clearTimeout(timeoutUser);
+    timeoutUser = setTimeout(()=>{
+        getApi(`${global.url}${'user/get-static/'}${id}`)
+        .then(arrData => {
+              this.setState({ countEntry: arrData.data });
+        }).catch(err => console.log(err));
+    },1500)
   }
   logoutUser(){
     const {user_profile} = this.props;
@@ -81,7 +79,7 @@ class PersonalTab extends Component {
       remember_me:user_profile.remember_me,
       email:user_profile.remember_me ? user_profile.email : '',
       pwd:user_profile.remember_me ? user_profile.pwd : ''}))
-    .then(()=>this.props.navigation.navigate('MainScr'));
+    .then(()=>this.props.screenProps(this.props.slLang,'home'));
   }
 
   componentDidUpdate(){
@@ -348,6 +346,7 @@ const mapStateToProps = (state) => {
     isLogin:state.isLogin,
     user_profile:state.user_profile,
     updateState:state.updateState,
+    slLang:state.slLang
   }
 }
 

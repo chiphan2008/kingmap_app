@@ -187,7 +187,7 @@ class LoginScreen extends Component {
   }
   render() {
     var _this = this;
-    console.log('this.props',this.props);
+    //console.log('this.props',this.props);
     const {
       container, imgLogo, title, imgSoci,btnWrapSoci,txtInput,mrgTop,pullR, pullL,
       btn, colorPress,  btnWrap, contentWrap,wrapAdv, rememberClass, forgotpwd,

@@ -50,6 +50,9 @@ var timeoutLang;
 class HomeTab extends Component {
   constructor(props) {
     super(props);
+    YellowBox.ignoreWarnings(
+      ['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader'
+    ])
     this.state = {
       //permission: PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       Width_Layout:'',
@@ -186,7 +189,7 @@ class HomeTab extends Component {
      })
    }
   render() {
-    console.log('this.props',this.props);
+    //console.log('this.props',this.props);
     //const {height, width} = Dimensions.get('window');
     const {yourCurLoc} = this.props;
     const {navigate} = this.props.navigation;

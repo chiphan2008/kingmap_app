@@ -319,7 +319,18 @@ class SearchScreen extends Component {
     Keyboard.dismiss();
   }
   componentDidUpdate(){
-    console.log('componentDidUpdate');
+    //console.log('componentDidUpdate');
+  }
+  _onMarkerPressed(id) {
+    if(this.state.callout[`${id}`]===undefined || this.state.callout[`${id}`]){
+      this.setState({callout: Object.assign({},{[`${id}`]:false})},()=>{
+        this[`${id}`].showCallout();
+      })
+    }else {
+      this.setState({callout: Object.assign({},{[`${id}`]:true})},()=>{
+        this[`${id}`].hideCallout();
+      })
+    }
   }
   render() {
     const {
@@ -424,11 +435,11 @@ class SearchScreen extends Component {
               onPanDrag={()=>{Keyboard.dismiss();}}
               ref={(ref) => { this.mapRef = ref }}
               //this.mapRef.fitToCoordinates(markers, { edgePadding: { top: 50, right: 50, bottom: 50, left: 50 }, animated: false })
-              style={{width,height,zIndex:-1}}
+              style={{width,height,zIndex:-1,position:'relative'}}
               region={curLocation}
               //onPress={e => console.log(e.nativeEvent)}
               onPress={this._onPressMap}
-              onRegionChangeComplete={()=>this._onRegionChangeComplete}
+              onRegionChangeComplete={this._onRegionChangeComplete}
               customMapStyle={global.style_map}
               showsPointsOfInterest={false}
 
@@ -441,34 +452,24 @@ class SearchScreen extends Component {
                   latitude: Number(marker.latitude),
                   longitude: Number(marker.longitude),
                 }}
-
+                onPress={() => this._onMarkerPressed(marker.id)}
+                ref={(co) => { this[`${marker.id}`] = co}}
                 image={ Platform.OS==='android' ? {uri:`${marker.marker}`} : null}
-                onPress={()=>{
-                  //console.log('marker.id',marker.id);
-                  if(callout[marker.id] || callout[marker.id]===undefined){
-                    this.state.callout = {[marker.id]:false}
-                  }else {
-                    this.state.callout = {[marker.id]:false}
-                  }
-                  this.setState(this.state);
-                }}>
+                >
               {Platform.OS==='ios' &&
-                <Image source={{uri:`${marker.marker}`}} style={{width:48,height:54,resizeMode:"cover"}} />
+              <View>
+                <Image source={{uri:`${marker.marker}`}} style={{width:48,height:54,position:'relative',zIndex:9}} />
+              </View>
               }
-              <View style={callout[marker.id] || callout[marker.id]===undefined ? show : hide}>
-                <MapView.Callout tooltip={callout[marker.id] || callout[marker.id]==undefined ? false : true}
-                onPress={()=>{
-                  if(!callout[marker.id])
-                  navigation.navigate('DetailScr',{idContent:marker.id,lat:marker.latitude,lng:marker.longitude,curLoc,lang:lang.lang});
-                }}>
-                  <TouchableOpacity >
-                  <View style={{height: 45,width: 300,alignItems:'center',borderRadius:3}}>
-                  <Text numberOfLines={1} style={{fontWeight:'bold'}}>{marker.name}</Text>
-                  <Text numberOfLines={1}>{`${marker.address}`}</Text>
-                  </View>
-                  </TouchableOpacity>
-                </MapView.Callout>
-                </View>
+              <MapView.Callout
+              onPress={()=>{
+                navigate('DetailScr',{idContent:marker.id,lat:marker.latitude,lng:marker.longitude,curLoc,lang:lang.lang});
+              }}>
+              <View style={{height: 45,width: 300,alignItems:'center',borderRadius:3}}>
+              <Text numberOfLines={1} style={{fontWeight:'bold'}}>{marker.name}</Text>
+              <Text numberOfLines={1}>{`${marker.address}`}</Text>
+              </View>
+              </MapView.Callout>
 
               </MapView.Marker>
 
@@ -514,7 +515,7 @@ class SearchScreen extends Component {
           </TouchableOpacity>
 
           <MapFullScreen
-          closeModal={()=>this.setState({showFullScreen:false})}
+          closeModal={()=>this.setState({showFullScreen:false,callout:{} })}
           findCurrentLoc={()=>this.findCurrentLoc()}
           onPressZoom={(zoom)=>this.onPressZoom(zoom)}
           showFullScreen={showFullScreen}

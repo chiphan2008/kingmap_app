@@ -44,15 +44,19 @@ class OtherCat extends Component {
     getApi(url).then(arrCategory => {
         this.state.listCategory = skip===0?arrCategory.data:this.state.listCategory.concat(arrCategory.data);
         this.state.page = skip+limit;
-        this.state.loadMore = arrCategory.data.length<limit?false:true;
+        //this.state.loadMore = arrCategory.data.length<limit?false:true;
         this.setState(this.state);
+        setTimeout(()=>{
+          this.setState({ loadMore: arrCategory.data.length<limit?false:true})
+        },700)
     }).catch(err => console.log(err));
   }
 
-  componentDidMount(){
+  componentWillMount(){
+    //console.log('componentDidMount');
     this.getCategory();
   }
-
+  
   render() {
     //console.log('OtherCat');
     const {navigate, goBack} = this.props.navigation;
@@ -87,7 +91,6 @@ class OtherCat extends Component {
         <FlatList
            numColumns={3}
            extraData={this.state}
-           bounces={false}
            onEndReachedThreshold={0.01}
            onEndReached={() => {
             this.state.loadMore && this.setState({loadMore:false},()=>{

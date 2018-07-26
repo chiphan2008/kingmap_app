@@ -4,9 +4,12 @@ import React, { Component } from 'react';
 import {Keyboard,Platform, View, Text, StyleSheet, Dimensions, Image,
   TextInput, TouchableOpacity,FlatList,ActivityIndicator,
 } from 'react-native';
+import {connect} from 'react-redux';
 import SvgUri from 'react-native-svg-uri';
 const {height, width} = Dimensions.get('window');
 
+import lang_vn from '../../lang/vn/language';
+import lang_en from '../../lang/en/language';
 import {checkSVG} from '../../libs';
 import styles from '../../styles';
 import global from '../../global';
@@ -19,15 +22,13 @@ import infoIC from '../../../src/icon/ic-white/ic-analysis.png';
 import socialIC from '../../../src/icon/ic-white/ic-social.png';
 //import * as _ from 'lodash';
 
-export default class OtherCat extends Component {
+class OtherCat extends Component {
   constructor(props) {
     super(props);
+    const {lang} = this.props.navigation.state.params;
     this.state = {
       listCategory : [],
-      selectLang: {
-        valueLang : '',
-        labelLang : '',
-      },
+      lang:lang==='vn'?lang_vn:lang_en,
       loadMore:false,
       page:0,
     }
@@ -35,10 +36,10 @@ export default class OtherCat extends Component {
   }
 
   getCategory(page = null){
-    const { valueLang } = this.state.selectLang;
+    const {lang} = this.props.navigation.state.params;
     const limit = 20;
     const skip = page===null?0:page;
-    let url = `${global.url}${'categories?language='}${valueLang}${'&skip='}${skip}${'&limit='}${limit}`;
+    let url = `${global.url}${'categories?language='}${lang}${'&skip='}${skip}${'&limit='}${limit}`;
     //console.log(url);
     getApi(url).then(arrCategory => {
         this.state.listCategory = skip===0?arrCategory.data:this.state.listCategory.concat(arrCategory.data);
@@ -49,22 +50,14 @@ export default class OtherCat extends Component {
   }
 
   componentDidMount(){
-    getLanguage().then((e) => {
-      this.setState(
-        {selectLang:
-          {
-            valueLang : e.valueLang,
-            labelLang : e.labelLang,
-          },
-        },()=>{this.getCategory()})
-    });
+    this.getCategory();
   }
 
   render() {
     //console.log('OtherCat');
     const {navigate, goBack} = this.props.navigation;
     const {page, loadMore} = this.state;
-    const { curLoc } = this.props.navigation.state.params || {};
+    const { lang } = this.props.navigation.state.params || {};
     //console.log(curLoc);
     const {
       container,
@@ -83,7 +76,7 @@ export default class OtherCat extends Component {
               <Image source={closeIC} style={{width:20, height:20,marginTop:5}} />
               </TouchableOpacity>
               <TouchableOpacity style={{alignItems:'center'}}>
-                    <Text style={{color:'white',fontSize:18,paddingTop:5}}> Phân loại </Text>
+                    <Text style={{color:'white',fontSize:18,paddingTop:5}}> {this.state.lang.classify} </Text>
               </TouchableOpacity>
               <View></View>
           </View>
@@ -104,7 +97,10 @@ export default class OtherCat extends Component {
            data={this.state.listCategory}
            renderItem={({item}) =>(
              <TouchableOpacity
-              onPress={()=>navigate('SearchScr',{keyword:'',idCat:item.id,labelCat:item.name,service_items:item.service_items,lang:this.state.selectLang.valueLang,curLoc})}
+              onPress={()=> navigate('SearchScr',{
+                keyword:'',idCat:item.id,labelCat:item.name,
+                service_items:item.service_items,
+                lang,curLoc:this.props.yourCurLoc})}
               style={flatItem}>
                 {checkSVG(item.image)?
                   <SvgUri width="70" height="70" source={{uri:`${global.url_media}${item.image}`}} />
@@ -133,3 +129,12 @@ export default class OtherCat extends Component {
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    yourCurLoc:state.yourCurLoc,
+    // isLogin:state.isLogin,
+    // slLang:state.slLang,
+  }
+}
+export default connect(mapStateToProps)(OtherCat);

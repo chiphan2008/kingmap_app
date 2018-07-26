@@ -147,26 +147,25 @@ class DetailScreen extends Component {
   }
 
 
-  componentWillUnMount(){
-    //clearTimeout(timeoutCheckUser);
-  }
+  // componentWillUnMount(){
+  //   //clearTimeout(timeoutCheckUser);
+  // }
   saveLike(routing){
-    const {user_id} = this.state;
+    const {user_id,lang} = this.state;
     if(this.props.isLogin===false){ this.requestLogin();return;}
     getApi(`${global.url}${routing}${'?content='}${this.props.navigation.state.params.idContent}${'&user='}${user_id}`).then(e=>
       {this.setState({savelike:true,scroll:false});
         switch (routing) {
           case 'like':
           //console.log('e.data.is_like',e.data.is_like);
-
               this.setState({liked:e.data.like,hasLiked:e.data.is_like});
               if(e.data.is_like===1){
-                this.setState({notifyInfo:'Đã thích'});
+                this.setState({notifyInfo:lang.liked});
                 setTimeout(()=>{
                   this.setState({savelike:false,scroll:true})
                 },1500)
               }else{
-                this.setState({notifyInfo:'Đã bỏ thích'});
+                this.setState({notifyInfo:lang.unlike});
                 setTimeout(()=>{
                   this.setState({savelike:false,scroll:true})
                 },1500)
@@ -176,12 +175,12 @@ class DetailScreen extends Component {
               //hasCheckin
               //console.log('e.data.is_like',e.data.is_like);
               if(e.data.is_like===1){
-                this.setState({notifyInfo:'Đã lưu vào yêu thích',hasSaveLike:1});
+                this.setState({notifyInfo:lang.saved_to_favorites,hasSaveLike:1});
                 setTimeout(()=>{
                   this.setState({savelike:false,scroll:true})
                 },1500)
               }else{
-                this.setState({notifyInfo:'Đã bỏ yêu thích',hasSaveLike:0});
+                this.setState({notifyInfo:lang.dropped_favorites,hasSaveLike:0});
                 setTimeout(()=>{
                   this.setState({savelike:false,scroll:true})
                 },1500)
@@ -191,12 +190,12 @@ class DetailScreen extends Component {
           //console.log('e.data.is_like',e.data.is_like);
 
               if(e.data.is_like===1){
-                this.setState({notifyInfo:'Checkin thành công',hasCheckin:1});
+                this.setState({notifyInfo:lang.check_in_successfully,hasCheckin:1});
                 setTimeout(()=>{
                   this.setState({savelike:false,scroll:true})
                 },1500)
               }else{
-                this.setState({notifyInfo:'Đã bỏ checkin',hasCheckin:0});
+                this.setState({notifyInfo:lang.checked_out,hasCheckin:0});
                 setTimeout(()=>{
                   this.setState({savelike:false,scroll:true})
                 },1500)

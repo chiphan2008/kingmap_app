@@ -713,26 +713,18 @@ class FormCreate extends Component {
               <Text style={colorlbl}>{this.state.lang.location_map}</Text>
               </View>
           </View>
-            <View style={{flexDirection:'row'}}>
+            <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
             <Text>{Number(this.state.lat).toFixed(6)==='NaN' ? this.state.lat : Number(this.state.lat).toFixed(6)} - {Number(this.state.lng).toFixed(6)==='NaN' ? this.state.lng : Number(this.state.lng).toFixed(6)}</Text>
+
+            <TouchableOpacity style={listCreate} onPress={() => {
+              const { yourCurLoc } = this.props;
+              this.setState({lat:yourCurLoc.latitude,lng:yourCurLoc.longitude})
+              this.getAddress(yourCurLoc.latitude,yourCurLoc.longitude)
+            }}>
+              <Image source={currentLocIC} style={imgInfo} />
+            </TouchableOpacity>
             </View>
         </View>
-
-        <TouchableOpacity style={listCreate} onPress={() => {
-          const { yourCurLoc } = this.props;
-          this.setState({lat:yourCurLoc.latitude,lng:yourCurLoc.longitude})
-          this.getAddress(yourCurLoc.latitude,yourCurLoc.longitude)
-        }}>
-          <View style={{flexDirection:'row'}}>
-            <View style={widthLblCre}>
-              <Image source={currentLocIC} style={imgInfo} />
-            </View>
-              <View style={{paddingLeft:15}}>
-              <Text style={colorlbl}>{this.state.lang.yourlocation}</Text>
-              </View>
-          </View>
-        </TouchableOpacity>
-
 
         <View style={{height:15}}></View>
         <TouchableOpacity style={listCreate}

@@ -304,7 +304,9 @@ class SearchScreen extends Component {
     }
   }
   _onPressMap = (event) => {
+    //console.log(event.nativeEvent);
     const {latitude,longitude} = (event.nativeEvent.coordinate || this.state.curLocation);
+    //console.log(latitude,longitude);
     this.setState({
       circleLoc: {
         latitude,longitude,
@@ -316,7 +318,9 @@ class SearchScreen extends Component {
     })
     Keyboard.dismiss();
   }
-
+  componentDidUpdate(){
+    console.log('componentDidUpdate');
+  }
   render() {
     const {
       keyword, curLocation,markers,curLoc,lang,showFullScreen,
@@ -422,7 +426,8 @@ class SearchScreen extends Component {
               //this.mapRef.fitToCoordinates(markers, { edgePadding: { top: 50, right: 50, bottom: 50, left: 50 }, animated: false })
               style={{width,height,zIndex:-1}}
               region={curLocation}
-              onPress={()=>this._onPressMap}
+              //onPress={e => console.log(e.nativeEvent)}
+              onPress={this._onPressMap}
               onRegionChangeComplete={()=>this._onRegionChangeComplete}
               customMapStyle={global.style_map}
               showsPointsOfInterest={false}
@@ -438,36 +443,32 @@ class SearchScreen extends Component {
                 }}
 
                 image={ Platform.OS==='android' ? {uri:`${marker.marker}`} : null}
-                onPress={(e)=>{
-                  e.stopPropagation();
-                  if(callout[marker.id]){
-                    const newCallout = {[marker.id]:false};
-                    this.setState({ callout: newCallout});
+                onPress={()=>{
+                  //console.log('marker.id',marker.id);
+                  if(callout[marker.id] || callout[marker.id]===undefined){
+                    this.state.callout = {[marker.id]:false}
                   }else {
-                    const newCallout = {[marker.id]:true};
-                    this.setState({ callout: newCallout })
+                    this.state.callout = {[marker.id]:false}
                   }
-
+                  this.setState(this.state);
                 }}>
               {Platform.OS==='ios' &&
                 <Image source={{uri:`${marker.marker}`}} style={{width:48,height:54,resizeMode:"cover"}} />
               }
-                <View style={callout[marker.id] ? hide : show}>
-                  <MapView.Callout key={marker.id} tooltip={callout[marker.id] ? true : false}
-                  onPress={()=>{
-                    navigate('DetailScr',{
-                      idContent:marker.id,lat:marker.latitude,lng:marker.longitude,
-                      curLoc,lang:lang.lang
-                    });
-                  }}>
-                    <TouchableOpacity >
-                    <View style={{height: 45,width: 300,justifyContent: 'center',alignItems:'center',borderRadius:3}}>
-                    <Text numberOfLines={1} style={{fontWeight:'bold', fontSize: 13}}>{marker.name}</Text>
-                    <Text numberOfLines={1} style={{fontSize: 12}}>{`${marker.address}`}</Text>
-                    </View>
-                    </TouchableOpacity>
-                  </MapView.Callout>
-              </View>
+              <View style={callout[marker.id] || callout[marker.id]===undefined ? show : hide}>
+                <MapView.Callout tooltip={callout[marker.id] || callout[marker.id]==undefined ? false : true}
+                onPress={()=>{
+                  if(!callout[marker.id])
+                  navigation.navigate('DetailScr',{idContent:marker.id,lat:marker.latitude,lng:marker.longitude,curLoc,lang:lang.lang});
+                }}>
+                  <TouchableOpacity >
+                  <View style={{height: 45,width: 300,alignItems:'center',borderRadius:3}}>
+                  <Text numberOfLines={1} style={{fontWeight:'bold'}}>{marker.name}</Text>
+                  <Text numberOfLines={1}>{`${marker.address}`}</Text>
+                  </View>
+                  </TouchableOpacity>
+                </MapView.Callout>
+                </View>
 
               </MapView.Marker>
 
@@ -506,17 +507,6 @@ class SearchScreen extends Component {
           <Image source={currentLocIC} style={{width:30,height:30}} />
           </TouchableOpacity>
 
-          {/*<View style={[btnMap,btnMapZoom,curLocation.longitude!==undefined ? show :hide]}>
-            <TouchableOpacity style={btnZoom}
-            onPress={()=>this.onPressZoom('zoom_out')}>
-            <Image source={addIC} style={{width:24,height:24}} />
-            </TouchableOpacity>
-            {<View style={{width:12,borderColor:'#999',borderBottomWidth:1}}></View>}
-            <TouchableOpacity style={btnZoom}
-            onPress={()=>this.onPressZoom('zoom_in')}>
-            <Image source={minIC} style={{width:24,height:24}} />
-            </TouchableOpacity>
-          </View>*/}
 
           <TouchableOpacity style={[btnMap,btnMapFull,curLocation.longitude!==undefined ? show :hide]}
           onPress={()=>{this.setState({showFullScreen:true})}}>
@@ -535,7 +525,7 @@ class SearchScreen extends Component {
           lang={lang}
           navigation={this.props.navigation}
           data={markers}
-          onPressMap={(event)=>this._onPressMap(event)}
+          onPressMap={()=>this._onPressMap.bind(this)}
           />
 
           <Modal transparent onRequestClose={() => null}

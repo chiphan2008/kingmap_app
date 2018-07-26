@@ -57,10 +57,6 @@ class HomeTab extends Component {
       listCategory : [],
       listStatus : [],
       lang : lang_vn,
-      selectLang: {
-        valueLang : "vn",
-        labelLang : "VIE",
-      },
       showInfo : false,
       showShare : false,
       showCreate : false,
@@ -120,20 +116,19 @@ class HomeTab extends Component {
 
    getLang(){
      var _this = this;
+     //console.log('this.props.slLang',this.props.slLang);
      getLanguage().then((e) =>{
-       //console.log('lang.Location',e);
+      //console.log('lang.Location',e);
        if(e!==null){
-        timeoutLang = setTimeout(function () {
-          _this.setState({
-            selectLang:{
-              valueLang:e.valueLang,
-              labelLang:e.labelLang,
-            },
-            lang : e.valueLang==='vn' ? lang_vn : lang_en,
-          },()=>{
-            _this.getCategory(e.valueLang);
-          });
-        }, 1000);
+         const slLang ={
+           valueLang:e.valueLang,
+           labelLang:e.labelLang
+         }
+         this.props.dispatch({type:'UPDATE_LANG',slLang});
+         _this.getCategory(e.valueLang);
+         _this.setState({
+           lang : e.valueLang==='vn' ? lang_vn : lang_en,
+         });
 
       }
      });
@@ -142,10 +137,10 @@ class HomeTab extends Component {
    onSelectLang(valueLang,labelLang) {
      const slLang={valueLang,labelLang};
      if(this.props.slLang.valueLang!==valueLang){
-       this.props.screenProps(slLang);
-       //this.props.dispatch({type:'STOP_START_UPDATE_STATE',updateState:true});
        this.props.dispatch({type:'UPDATE_LANG',slLang});
-       AsyncStorage.setItem('@MyLanguage:key', JSON.stringify({valueLang,labelLang}) );
+       AsyncStorage.setItem('@MyLanguage:key', JSON.stringify(slLang)).then(()=>{
+         this.props.screenProps(slLang);
+       });
      }
    }
 
@@ -191,10 +186,11 @@ class HomeTab extends Component {
      })
    }
   render() {
-    //console.log('this.props',this.props);
+    console.log('this.props',this.props);
     //const {height, width} = Dimensions.get('window');
     const {yourCurLoc} = this.props;
     const {navigate} = this.props.navigation;
+    //console.log(this.props.navigation);
     const {listStatus,user_profile, slogan} = this.state;
     //console.log("this.props.Hometab=",util.inspect(this.state.listCategory,false,null));
     const {
@@ -218,7 +214,7 @@ class HomeTab extends Component {
               <Select
                     onClick={()=> this.setState({showInfo:false,showShare:false}) }
                     onSelect = {this.onSelectLang.bind(this)}
-                    defaultText  = {this.state.selectLang.labelLang}
+                    defaultText  = {this.props.slLang.labelLang}
                     style = {[selectBox]}
                     textStyle = {{color:'#fff'}}
                     optionListStyle={[optionListStyle, {right:50}]}
@@ -372,7 +368,10 @@ class HomeTab extends Component {
                       return (
                     <TouchableOpacity key={e.id}
                       style={{top:distance*0.55}}
-                      onPress={() => navigate('OtherCatScr',{name_module:e.name,lang:this.state.lang}) }
+                      onPress={() => {
+                        //console.log(this.state.lang.lang);
+                        navigate('OtherCatScr',{name_module:e.name,lang:this.state.lang.lang})
+                      }}
                       >
                       {/*<Text style={labelNum}>(25)</Text>*/}
                     <Image style={e.noibat===1?iconHome:imgContent} source={{uri:`${global.url_media}${e.image}`}} />

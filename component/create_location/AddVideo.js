@@ -27,11 +27,12 @@ export default class AddVideo extends Component {
   componentWillUpdate(){
     const {listVideo} = this.props;
     if(listVideo.length>0){
-      var imgVideo = [];
+      var imgVideo = [],lstVideo=[];
       listVideo.forEach((e)=>{
-        imgVideo = imgVideo.concat(getThumbVideo(e));
+        imgVideo = imgVideo.concat(e.thumbnail);
+        lstVideo = lstVideo.concat(e.link);;
       })
-      this.state.listVideo = listVideo;
+      this.state.listVideo = lstVideo;
       this.state.imgVideo = imgVideo;
       this.state.update && this.setState(this.state,()=>{
         this.setState({update:false});

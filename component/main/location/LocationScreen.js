@@ -12,6 +12,8 @@ import styles from '../../styles';
 import global from '../../global';
 import getApi from '../../api/getApi';
 import getLanguage from '../../api/getLanguage';
+import lang_vn from '../../lang/vn/language';
+import lang_en from '../../lang/en/language';
 
 import closeIC from '../../../src/icon/ic-white/ic-close.png';
 import searchIC from '../../../src/icon/ic-gray/ic-search.png';
@@ -28,6 +30,7 @@ export default class LocationScreen extends Component {
         valueLang : '',
         labelLang : '',
       },
+      lang:lang_vn,
     }
   }
 
@@ -49,10 +52,13 @@ export default class LocationScreen extends Component {
       clearTimeout(timeoutCat);
       //console.log(e.valueLang);
       this.getCategory(e.valueLang);
-      this.setState({selectLang: {
-        valueLang : e.valueLang,
-        labelLang : e.labelLang,
-      }})
+      this.setState({
+        selectLang: {
+          valueLang : e.valueLang,
+          labelLang : e.labelLang,
+        },
+        lang: e.valueLang==='vn'?lang_vn:lang_en
+    })
     });
   }
 
@@ -75,7 +81,7 @@ export default class LocationScreen extends Component {
                   style={{alignItems:'center'}}
                   onPress={()=>this.setState({showCat :!this.state.showCat})}
                   >
-                    <Text style={{color:'white',fontSize:18,paddingTop:5}}> Phân loại </Text>
+                    <Text style={{color:'white',fontSize:18,paddingTop:5}}> {this.state.lang.classify} </Text>
               </TouchableOpacity>
               <View></View>
           </View>

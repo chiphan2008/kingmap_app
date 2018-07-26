@@ -73,7 +73,7 @@ class LoginScreen extends Component {
               const { state,goBack,navigate } = this.props.navigation;
               const params = state.params || {};
               this.props.dispatch({type:'USER_LOGINED',isLogin:true,user_profile:e.data[0],updateState:true});
-              if(params.backScr===undefined) { goBack(); }else { navigate('MainScr'); }
+              if(params.backScr===undefined) { goBack(); }else { this.props.screenProps(this.props.slLang,'home'); }
             }else{
               this.setState({errMsg:e.message})
             }
@@ -112,7 +112,7 @@ class LoginScreen extends Component {
 
         this.props.dispatch({type:'USER_LOGINED',isLogin:true,user_profile:e.data[0],updateState:true});
         if(params.backScr===undefined) { goBack(); }else {
-          navigate('MainScr');
+          this.props.screenProps(this.props.slLang,'home');
         }
 
       }else{
@@ -162,12 +162,8 @@ class LoginScreen extends Component {
         if(params.backScr===undefined) {
           goBack();
         }else {
-          navigate('MainScr');
-          // const resetAction = StackActions.reset({
-          //   index: 0,
-          //   actions: [NavigationActions.navigate({ routeName: 'MainScr' })],
-          // });
-          // this.props.navigation.dispatch(resetAction);
+          //navigate('MainScr');
+          this.props.screenProps(this.props.slLang,'home');
         }
 
       }
@@ -191,6 +187,7 @@ class LoginScreen extends Component {
   }
   render() {
     var _this = this;
+    console.log('this.props',this.props);
     const {
       container, imgLogo, title, imgSoci,btnWrapSoci,txtInput,mrgTop,pullR, pullL,
       btn, colorPress,  btnWrap, contentWrap,wrapAdv, rememberClass, forgotpwd,
@@ -271,7 +268,10 @@ class LoginScreen extends Component {
   }
 }
 
-export default connect()(LoginScreen);
+const mapStateToProps = (state) => {
+  return {slLang:state.slLang}
+}
+export default connect(mapStateToProps)(LoginScreen);
 
 const styles = StyleSheet.create({
   container: {

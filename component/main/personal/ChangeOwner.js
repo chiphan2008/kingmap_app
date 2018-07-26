@@ -85,7 +85,7 @@ export default class ChangeOwner extends Component {
     if(showContent.length===0){return Alert.alert(lang.notify,lang.require_loc)}
     if(user_profile.id===undefined){return Alert.alert(lang.notify,lang.require_user)}
 
-    return Alert.alert(lang.notify,`${lang.confirm_change}${user_profile.text}?`,[
+    return Alert.alert(lang.notify,`${lang.confirm_change}\n${user_profile.text}?`,[
       {text: lang.cancel, style: 'cancel'},
       {text: lang.confirm, onPress: () => this.changeOwner(userId,user_profile.id)},
     ],

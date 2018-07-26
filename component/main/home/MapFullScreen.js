@@ -39,7 +39,7 @@ export default class MapFullScreen extends Component {
           provider={PROVIDER_GOOGLE}
           style={{width,height}}
           region={curLocation}
-          onPress={ (event) => this.props.onPressMap(event)}
+          onPress={this.props.onPressMap()}
           onRegionChangeComplete={(region)=>{
             this.props.onRegionChangeComplete(region);
           }}

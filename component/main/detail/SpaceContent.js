@@ -33,7 +33,7 @@ export default class SpaceContent extends Component {
       rowFlex,titleSpace,rowFlexImg,show,hide,
       colorNumPP,sizeTitle,spaceContent,imgSpace,
     } = styles;
-    const {listImgSpace,listImgMenu,listImgVideo,idContent,lang} = this.props;
+    const {listImgSpace,listImgMenu,listImgVideo,idContent,lang,moderation} = this.props;
     const {navigate} = this.props.navigation;
     const {showImgSpace,showImageMenu,index,showVideo,linkVideo} = this.state;
 
@@ -44,7 +44,7 @@ export default class SpaceContent extends Component {
               <TouchableOpacity
               style={listImgSpace.length>0 ? show : hide}
               onPress={()=>navigate('ListIMGScr',{
-                idContent,
+                idContent,moderation,
                 spaceTab:'active',menuTab:'',videoTab:'',lang})
               }>
               <Text>{lang.view_all} >></Text>
@@ -80,7 +80,7 @@ export default class SpaceContent extends Component {
               <TouchableOpacity
               style={listImgMenu.length>0 ? show : hide}
               onPress={()=>navigate('ListIMGScr',{
-                idContent,
+                idContent,moderation,
                 spaceTab:'',menuTab:'active',videoTab:'',lang})}
               >
               <Text>{lang.view_all} >></Text>
@@ -111,15 +111,12 @@ export default class SpaceContent extends Component {
           closeModal={()=>this.setState({showImageMenu:false,index:0})}
           />}
 
-
-
-
           <View style={titleSpace}>
               <Text style={[colorNumPP,sizeTitle]}>VIDEO ({listImgVideo.length})</Text>
               <TouchableOpacity
               style={listImgVideo.length>0 ? show : hide}
               onPress={()=>navigate('ListIMGScr',{
-                idContent, spaceTab:'',menuTab:'',videoTab:'active',lang})}
+                idContent,moderation,spaceTab:'',menuTab:'',videoTab:'active',lang})}
               >
               <Text>{lang.view_all} >></Text>
               </TouchableOpacity>

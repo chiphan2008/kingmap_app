@@ -43,8 +43,12 @@ export default class ListImageContent extends Component {
 
   getContent(idContent){
     //console.log('idContent',idContent);
-    getApi(`${global.url}${'content/'}${idContent}`)
+    //console.log(`${global.url}${'content/'}${idContent}`);
+    const {moderation} = this.props.navigation.state.params;
+    const act = moderation==='request_publish' ? 'content-update/' : 'content/';
+    getApi(`${global.url}${act}${idContent}`)
     .then(arrData => {
+      //console.log(arrData);
       arrData.data!==undefined && this.setState({
         listVideo:arrData.data.link_video,
         listSpace:arrData.data.image_space,

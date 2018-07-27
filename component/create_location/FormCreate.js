@@ -153,6 +153,7 @@ class FormCreate extends Component {
   }
 
   getContent(idContent){
+    // console.log('idContent',idContent);
     const url = `${global.url}${'content-update/'}${idContent}`;
     //console.log('url',url);
     getApi(url)
@@ -174,6 +175,10 @@ class FormCreate extends Component {
       content._category_items.forEach(e=>{
         this.setState({checkSubCat: Object.assign(this.state.checkSubCat,{[e.id]:e.id})});
       })
+      let img_video=[];
+      arrData.data.link_video.forEach(e=>{
+        img_video.push(e.link);
+      })
       //console.log('content._category_items.length',content._category_items.length);
       setTimeout(()=>{
         this.setState({
@@ -183,7 +188,7 @@ class FormCreate extends Component {
           },
           img_space:arrData.data.image_space,
           img_menu:arrData.data.image_menu,
-          img_video:arrData.data.link_video,
+          img_video,
           hasSubCat:content._category_items.length,
           txtName:content.name,
           txtAddress:content.address,
@@ -866,16 +871,17 @@ class FormCreate extends Component {
       </ScrollView>
     </View>}
 
-    {this.state.showOpenTime && <OpenTime
+    {/*this.state.showOpenTime && <OpenTime
     ListOpenTime={this.state.ListOpenTime}
     lang={this.state.lang}
-    closeModal={this.setOpenTime.bind(this)} />}
-      {/*<View style={[clockTime,this.state.showOpenTime ? show : hidden]}>
+    closeModal={this.setOpenTime.bind(this)} />*/}
+      <View style={[clockTime,this.state.showOpenTime ? show : hidden]}>
       <OpenTime
       ListOpenTime={this.state.ListOpenTime}
       lang={this.state.lang}
-      closeModal={this.setOpenTime.bind(this)} />
-      </View>*/}
+      closeModal={this.setOpenTime.bind(this)}
+      />
+      </View>
 
       {this.state.showUpdate &&
         <View style={[popoverLoc,centerVer]}>

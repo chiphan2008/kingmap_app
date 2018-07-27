@@ -222,6 +222,7 @@ class DetailScreen extends Component {
     const {lang,user_id,isLogin,scroll,hasCheckin,hasSaveLike,listData,hasCollection} = this.state;
     //console.log('lang',lang.lang);
     const { idContent, moderation } = this.props.navigation.state.params;
+    //console.log('idContent',idContent);
     //console.log('moderation',moderation);
     const {
       container, bgImg,colorWhite,likeIC,shareIC,imgIC,voteIC,
@@ -281,7 +282,7 @@ class DetailScreen extends Component {
         <SpaceContent
         lang={lang}
         navigation={this.props.navigation}
-        idContent={idContent}
+        idContent={idContent} moderation={moderation}
         listImgSpace={listData.image_space}
         listImgMenu={listData.image_menu}
         listImgVideo={listData.link_video}

@@ -423,7 +423,6 @@ class FormCreate extends Component {
     const {
       idContent,showUpdateMore,showImgSpace,showProduct,showImgMenu,
       showVideo,sub_cat,nameCat, serv_items, showService,hasService,
-
     } = this.state;
 
     return (
@@ -724,7 +723,7 @@ class FormCreate extends Component {
             <TouchableOpacity style={listCreate} onPress={() => {
               const { yourCurLoc } = this.props;
               this.setState({lat:yourCurLoc.latitude,lng:yourCurLoc.longitude})
-              this.getAddress(yourCurLoc.latitude,yourCurLoc.longitude)
+              //this.getAddress(yourCurLoc.latitude,yourCurLoc.longitude)
             }}>
               <Image source={currentLocIC} style={imgInfo} />
             </TouchableOpacity>
@@ -871,17 +870,17 @@ class FormCreate extends Component {
       </ScrollView>
     </View>}
 
-    {/*this.state.showOpenTime && <OpenTime
+    {this.state.showOpenTime && <OpenTime
     ListOpenTime={this.state.ListOpenTime}
     lang={this.state.lang}
-    closeModal={this.setOpenTime.bind(this)} />*/}
-      <View style={[clockTime,this.state.showOpenTime ? show : hidden]}>
+    closeModal={this.setOpenTime.bind(this)} />}
+      {/*<View style={[clockTime,this.state.showOpenTime ? show : hidden]}>
       <OpenTime
       ListOpenTime={this.state.ListOpenTime}
       lang={this.state.lang}
       closeModal={this.setOpenTime.bind(this)}
       />
-      </View>
+      </View>*/}
 
       {this.state.showUpdate &&
         <View style={[popoverLoc,centerVer]}>

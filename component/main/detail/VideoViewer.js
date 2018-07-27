@@ -28,8 +28,9 @@ export default class VideoViewer extends Component {
       newLink = newLink.split('&')[0];
       //console.log(newLink)
     } else{
-      newLink = `https://www.facebook.com/plugins/video.php?height=${'300'}&href=${link.link}`;
+      newLink = `<html><iframe src="https://www.facebook.com/plugins/video.php?href=${link.link}" width=${width-30} height=${width} style="border:none;overflow:hidden;height:100%" scrolling="no" frameborder="0" allowTransparency="true" allowFullScreen="true"></iframe></html>`;
     }
+
     return (
       link!=={} &&
       <Modal onRequestClose={() => null} visible={visible} transparent>
@@ -40,11 +41,12 @@ export default class VideoViewer extends Component {
       </TouchableOpacity>
       <View style={{width,height,backgroundColor:'#000',justifyContent:'center',alignItems:'center'}}>
 
-        <View style={{width:width-15,height:width,backgroundColor:'#000',alignSelf:'center',padding:0}}>
+        <View style={{width:width-15,height:width,backgroundColor:'#000',justifyContent: 'center',alignSelf:'center',padding:0}}>
           <WebView
+              style={{flex: 1, justifyContent: 'center'}}
               javaScriptEnabled={true}
               domStorageEnabled={true}
-              source={{uri: newLink }}
+              source={link.type === "youtube" ? { uri: newLink } : { html: newLink }}
           />
         </View>
       </View>

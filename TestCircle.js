@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import {
   Platform, StyleSheet, View, AsyncStorage, Image, Dimensions,
+  TouchableOpacity
 } from 'react-native';
 const {width,height} = Dimensions.get('window');
-import CircularSlider from 'react-native-circular-slider';
+import CircularSlider from './component/create_location/CircularSlider';
 import Svg, { G, Path } from 'react-native-svg';
 
 const WAKE_ICON = (
@@ -57,10 +58,12 @@ export default class TestCircle extends Component  {
     //const waketime = calculateTimeFromAngle(startAngle);
     //const bedtime = calculateTimeFromAngle((startAngle + angleLength) % (2 * Math.PI));
     return (
+      <View style={{backgroundColor:'#000',width,height,justifyContent:'center',alignItems:'center',position:'relative'}}>
       <CircularSlider
         startAngle={this.state.startAngle}
         angleLength={this.state.angleLength}
         onUpdate={({ startAngle, angleLength }) => {
+          console.log(startAngle, angleLength);
           this.setState({
             startAngle: roundAngleToFives(startAngle),
             angleLength: roundAngleToFives(angleLength)
@@ -77,9 +80,12 @@ export default class TestCircle extends Component  {
         showClockFace
         clockFaceColor="#fff"
         bgCircleColor="#2E3B51"
-        stopIcon={<G scale="1.1" x="-8" y="-8" transform={{ translate: "-8, -8" }}>{BEDTIME_ICON}</G>}
-        startIcon={<G scale="1.1"  x="-8" y="-8" transform={{ translate: "-8, -8" }}>{WAKE_ICON}</G>}
+        stopIcon={<G scale="1.1" x="-8" y="-8">
+        {BEDTIME_ICON}
+        </G>}
+        startIcon={<G scale="1.1"  x="-8" y="-8">{WAKE_ICON}</G>}
       />
+      </View>
     )
   }
 }

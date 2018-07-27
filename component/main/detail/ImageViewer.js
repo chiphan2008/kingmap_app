@@ -28,7 +28,7 @@ export default class ImageViewer extends Component {
 
   render() {
     const {visible,data,index} = this.props;
-    console.log('data',data.length,index,data[index]);
+    //console.log('data',data.length,index,data[index]);
     //const {index} = this.state;
     return (
       data.length>0 &&

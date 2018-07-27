@@ -47,7 +47,6 @@ class NotifyTab extends Component {
       lang : lang_vn,
       showInfo : false,
       showShare : false,
-      isLogin:false,
       curLoc:{},
       listNoti:[],
       //appState: AppState.currentState,
@@ -60,26 +59,21 @@ class NotifyTab extends Component {
     });
     checkLogin().then(e=>{
       //console.log('checkLogin',e);
-      if(e.id===undefined){
-        this.setState({isLogin:false})
-      }else {
+      //console.log('isLogin',this.props.isLogin);
+      if(e.id!==undefined){
         channelUserAll = socket.subscribe('get-new-notifi-all');
         channelUser = socket.subscribe(`${'get-new-notifi-'}${e.id}`);
-        this.setState({isLogin:true});
-        loginServer(e);
       }
     });
     this.getData();
   }
   getData(){
     const url = `${global.url}${'getlistnoti'}`;
-    //console.log(url);
-    getApi(url)
-    .then(arrData => {
+    // console.log(url);
+    getApi(url).then(arrData => {
       //console.log('arrData',arrData.data);
         this.setState({ listNoti: arrData.data });
-    })
-    .catch(err => console.log(err));
+    }).catch(err => console.log(err));
   }
 
   componentDidMount(){
@@ -161,7 +155,8 @@ class NotifyTab extends Component {
     } = styles;
     const { listNoti, lang } = this.state;
     const { isLogin } =this.props;
-    //console.log('isLoginNoti',isLogin);
+    // console.log('listNoti',isLogin);
+    // console.log('listNoti.notifications',listNoti.notifications);
     return (
       <TouchableWithoutFeedback onPress={()=>Keyboard.dismiss()}>
       <View style={container}>
@@ -189,7 +184,8 @@ class NotifyTab extends Component {
         </View>
 
         <View>
-        {listNoti.notifications !== undefined && isLogin ?
+        {/*console.log('listNoti.notifications',listNoti.notifications,isLogin)*/}
+        {listNoti.notifications !== undefined  && isLogin ?
           <FlatList
            extraData={this.state}
            data={listNoti.notifications}

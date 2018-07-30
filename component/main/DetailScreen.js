@@ -226,7 +226,7 @@ class DetailScreen extends Component {
     //console.log('lang',lang.lang);
     const { idContent, moderation } = this.props.navigation.state.params;
     //console.log('idContent',idContent);
-    //console.log('moderation',moderation);
+    console.log('listData.discounts',listData.discounts);
     const {
       container, bgImg,colorWhite,likeIC,shareIC,imgIC,voteIC,
       imgSocial, imgInfo,aligncenter,
@@ -246,6 +246,7 @@ class DetailScreen extends Component {
           hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
           <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
           </TouchableOpacity>
+              {/*<Image source={logoTop} style={imgLogoTop} />*/}
               <View style={{width:width-80,marginTop:3}}>
               <Text numberOfLines={1} style={{fontSize:16,color:'#fff'}}>{listData.content.name}</Text>
               </View>

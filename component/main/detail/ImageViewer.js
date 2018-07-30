@@ -28,7 +28,7 @@ export default class ImageViewer extends Component {
 
   render() {
     const {visible,data,index} = this.props;
-    //console.log('data',data.length,index,data[index]);
+    console.log('data',data.length,index,data[index]);
     //const {index} = this.state;
     return (
       data.length>0 &&
@@ -56,7 +56,7 @@ export default class ImageViewer extends Component {
            extraData={this.state}
            data={data}
            renderItem={({item,index}) => (
-             <Image source={{uri :`${item.url}`}} resizeMode = 'contain' style={{flex:1,width,height:'100%'}}/>
+             <Image source={{uri :item.url ? `${item.url}` : `${item.image}`}} resizeMode = 'contain' style={{flex:1,width,height:'100%'}}/>
         )} />
         <View onLayout={()=>{this.gotoItem(index,data)}}></View>
         </View>

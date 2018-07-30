@@ -23,8 +23,18 @@ export default class SpaceContent extends Component {
       showImageMenu:false,
       showImgSpace:false,
       showVideo:false,
+      showImageProduct: false,
       linkVideo:{},
+      listImgProduct: []
     }
+  }
+  getListImg(){
+    const {listProduct} = this.props;
+    let listImgProduct = [];
+    listProduct.map((item) => {
+      return listImgProduct.push({url :`${global.url_media}${item.image}`});
+    })
+    this.setState({listImgProduct: listImgProduct})
   }
 
   render() {
@@ -35,25 +45,25 @@ export default class SpaceContent extends Component {
     } = styles;
     const {listImgSpace,listImgMenu,listImgVideo,idContent,lang,moderation,listProduct} = this.props;
     const {navigate} = this.props.navigation;
-    const {showImgSpace,showImageMenu,index,showVideo,linkVideo} = this.state;
-
+    const {showImgSpace,showImageMenu,index,showVideo,linkVideo,listImgProduct,showImageProduct} = this.state;
+    // console.log('listProduct', listProduct)
     return (
       <View style={spaceContent}>
           <View style={titleSpace}>
               <Text style={[colorNumPP,sizeTitle]}>{lang.space.toUpperCase()} ({listImgSpace.length})</Text>
               <TouchableOpacity
-              style={listImgSpace.length>0 ? show : hide}
+              style={[listImgSpace.length>0 ? show : hide, {justifyContent: 'center'}]}
               onPress={()=>navigate('ListIMGScr',{
-                idContent,moderation,
-                spaceTab:'active',menuTab:'',videoTab:'',lang})
+                idContent,moderation,type: 'space',
+                spaceTab:'active',menuTab:'',videoTab:'',productTab: '',lang})
               }>
-              <Text>{lang.view_all} >></Text>
+              <Text style={{color:'#6587A8', fontSize: 13}}>{lang.view_all} >></Text>
               </TouchableOpacity>
           </View>
           <FlatList
              horizontal
              //pagingEnabled
-             ListEmptyComponent={<Text>{lang.updating}</Text>}
+             ListEmptyComponent={<Text style={{color:'#6587A8'}}>{lang.updating}</Text>}
              showsHorizontalScrollIndicator={false}
              keyExtractor={(item,index) => index.toString()}
              extraData={this.state}
@@ -78,19 +88,19 @@ export default class SpaceContent extends Component {
           <View style={titleSpace}>
               <Text style={[colorNumPP,sizeTitle]}>{lang.image.toUpperCase()} ({listImgMenu.length})</Text>
               <TouchableOpacity
-              style={listImgMenu.length>0 ? show : hide}
+              style={[listImgMenu.length>0 ? show : hide, {justifyContent: 'center'}]}
               onPress={()=>navigate('ListIMGScr',{
-                idContent,moderation,
-                spaceTab:'',menuTab:'active',videoTab:'',lang})}
+                idContent,moderation,type: 'menu',
+                spaceTab:'',menuTab:'active',videoTab:'',productTab: '',lang})}
               >
-              <Text>{lang.view_all} >></Text>
+              <Text style={{color:'#6587A8', fontSize: 13}}>{lang.view_all} >></Text>
               </TouchableOpacity>
           </View>
 
           <FlatList
              horizontal
              //pagingEnabled
-             ListEmptyComponent={<Text>{lang.updating}</Text>}
+             ListEmptyComponent={<Text style={{color:'#6587A8'}}>{lang.updating}</Text>}
              showsHorizontalScrollIndicator={false}
              keyExtractor={(item,index) => index.toString()}
              extraData={this.state}
@@ -114,18 +124,18 @@ export default class SpaceContent extends Component {
           <View style={titleSpace}>
               <Text style={[colorNumPP,sizeTitle]}>VIDEO ({listImgVideo.length})</Text>
               <TouchableOpacity
-              style={listImgVideo.length>0 ? show : hide}
+              style={[listImgVideo.length>0 ? show : hide, {justifyContent: 'center'}]}
               onPress={()=>navigate('ListIMGScr',{
-                idContent,moderation,spaceTab:'',menuTab:'',videoTab:'active',lang})}
+                idContent,moderation,spaceTab:'',type: 'video', menuTab:'',videoTab:'active',productTab: '',lang})}
               >
-              <Text>{lang.view_all} >></Text>
+              <Text style={{color:'#6587A8', fontSize: 13}}>{lang.view_all} >></Text>
               </TouchableOpacity>
           </View>
 
           <FlatList
              horizontal
              //pagingEnabled
-             ListEmptyComponent={<Text>{lang.updating}</Text>}
+             ListEmptyComponent={<Text style={{color:'#6587A8'}}>{lang.updating}</Text>}
              showsHorizontalScrollIndicator={false}
              keyExtractor={(item,index) => index.toString()}
              extraData={this.state}
@@ -140,41 +150,49 @@ export default class SpaceContent extends Component {
                </TouchableOpacity>
           )} />
 
-          <View style={titleSpace}>
-              <Text style={[colorNumPP,sizeTitle]}>SẢN PHẨM, DỊCH VỤ ({listImgVideo.length})</Text>
+          <View style={[titleSpace, {}]}>
+              <Text style={[colorNumPP,sizeTitle]}>SẢN PHẨM, DỊCH VỤ ({listProduct.length})</Text>
               <TouchableOpacity
-              style={listImgVideo.length>0 ? show : hide}
-              onPress={()=>{}}
+              style={[listProduct.length>0 ? show : hide, {justifyContent: 'center'}]}
+              onPress={()=>navigate('ListIMGScr',{
+                idContent,moderation,spaceTab:'',type: 'product', menuTab:'',videoTab:'',productTab: 'active',lang})}
               >
-              <Text>{lang.view_all} >></Text>
+              <Text style={{color:'#6587A8', fontSize: 13}}>{lang.view_all} >></Text>
               </TouchableOpacity>
           </View>
 
           <FlatList
              horizontal
              //pagingEnabled
-             ListEmptyComponent={<Text>{lang.updating}</Text>}
+             ListEmptyComponent={<Text style={{color:'#6587A8'}}>{lang.updating}</Text>}
              showsHorizontalScrollIndicator={false}
              keyExtractor={(item,index) => index.toString()}
              extraData={this.state}
              data={listProduct}
              renderItem={({item,index}) => (
-              <View style={{flexDirection:'row',justifyContent:'space-between',marginBottom:10,backgroundColor:'#fff', padding:10}}>
+              <View style={{flexDirection:'row',justifyContent:'space-between',marginBottom:10, paddingRight: 5}}>
                 <View style={[widthHafl]}>
                   <TouchableOpacity
-                  onPress={()=>{}}
+                  onPress={()=>{ this.setState({showImageProduct: true}, () => {
+                    this.setState({listImgProduct: []});
+                    this.getListImg();
+                  })}}
                   >
-                  <Image source={{uri :`${global.url_media}${item.image}`}} style={imgSpace}/>
+                  <Image source={{uri :`${global.url_media}${item.image}`}} style={[imgSpace]}/>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={()=>{}}
-                  >
                   <Text style={colorText} numberOfLines={2}>{item.name}</Text>
-                  </TouchableOpacity>
-                  <Text style={txtAddrOver} numberOfLines={1}>{`${item.price} VND`}</Text>
+                  <Text style={txtAddrOver} numberOfLines={1}>{`${item.price} ${item.currency}`}</Text>
                 </View>
 
               </View>
           )} />
+          {showImageProduct &&
+            <ImageViewer
+          visible={showImageProduct}
+          data={listImgProduct}
+          index={index}
+          closeModal={()=>this.setState({showImageProduct:false,index:0})}
+          />}
 
           <VideoViewer
           visible={showVideo}
@@ -195,8 +213,8 @@ const styles = StyleSheet.create({
   titleSpace:{flexDirection:'row',justifyContent:'space-between',paddingTop:30,paddingBottom:30,paddingLeft:0,paddingRight:0},
   colorText :{color:'#303B50',fontSize:17,marginTop:7},
   colorNumPP :{fontWeight: 'bold',color:'#2F353F'},
-  sizeTitle:{fontSize:20},
-  widthHafl:{width:(width-40)/2,overflow:'hidden'},
+  sizeTitle:{fontSize:17},
+  widthHafl:{width:(width-30)/2,overflow:'hidden'},
   txtAddrOver:{color:'#6587A8',fontSize:14,overflow:'hidden',marginTop:5},
   imgSpace:{
     width:(width-50)/2,

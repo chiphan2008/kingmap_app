@@ -257,12 +257,13 @@ class ListLocation extends Component {
     }
   }
   renderFooter = () => {
-    if (!this.state.isLoad) return null;
+    //if (!this.state.isLoad) return null;
     return (
-    this.state.isLoad &&
+    this.state.isLoad ?
     <View style={{alignItems:'center'}}>
       <ActivityIndicator color="#d0021b" size="large" />
-    </View>)
+    </View>
+    : null)
   }
   componentDidUpdate(){
     if(this.props.updateState){
@@ -306,13 +307,13 @@ class ListLocation extends Component {
             this.props.dispatch({type:'STOP_START_UPDATE_STATE',updateState:false})
         }
       }}>
-      {scrollToTop && <TouchableOpacity style={btnScrollTop}
+      {scrollToTop ? <TouchableOpacity style={btnScrollTop}
       onPress={()=>{
         this.refs.listPro.scrollToOffset({x: 0, y: 0, animated: true});
         this.setState({scrollToTop:false});
       }}>
       <Image source={topIC} style={{width:40,height:40}} />
-      </TouchableOpacity>}
+      </TouchableOpacity> : null}
       <View style={headStyle}>
           <View style={headContent}>
           <TouchableOpacity

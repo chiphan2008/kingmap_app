@@ -279,56 +279,6 @@ export default class CreateBuySell extends Component {
           </View>
         </View>
 
-        {/*<View style={wrapItems}>
-          <View style={widthLable}>
-            <Text style={colorlbl}>Số lượng </Text>
-          </View>
-          <View style={widthContentItem}>
-            <View>
-            <TextInput underlineColorAndroid='transparent'
-            onSubmitEditing={(event) => {}}
-            placeholder={'------'} style={{width:width-15-(width/3),padding:0}}
-            onChangeText={(quantity) => this.setState({quantity})}
-            value={quantity}
-             />
-            </View>
-            <View></View>
-          </View>
-        </View>
-
-        <View style={wrapItems}>
-          <View style={widthLable}>
-            <Text style={colorlbl}>Kích thước </Text>
-          </View>
-          <View style={widthContentItem}>
-            <View>
-            <TextInput underlineColorAndroid='transparent'
-            onSubmitEditing={(event) => {}}
-            placeholder={'------'} style={{width:width-15-(width/3),padding:0}}
-            onChangeText={(size) => this.setState({size})}
-            value={size}
-             />
-            </View>
-            <View></View>
-          </View>
-        </View>
-
-        <View style={wrapItems}>
-          <View style={widthLable}>
-            <Text style={colorlbl}>Chất liệu </Text>
-          </View>
-          <View style={widthContentItem}>
-            <View>
-            <TextInput underlineColorAndroid='transparent'
-            onSubmitEditing={(event) => {}}
-            placeholder={'------'} style={{width:width-15-(width/3),padding:0}}
-            onChangeText={(material) => this.setState({material})}
-            value={material}
-             />
-            </View>
-            <View></View>
-          </View>
-        </View>*/}
 
         <TouchableOpacity style={wrapItems}
         onPress={()=>this.setState({showCat:true})}>
@@ -426,7 +376,7 @@ export default class CreateBuySell extends Component {
               </TouchableOpacity>
               </View>
         )} />
-        {/*<Image style={[imgUpBuySell,imgUpInfo]} source={upDD} />*/}
+        
 
         </View>
 

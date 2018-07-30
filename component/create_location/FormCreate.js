@@ -477,7 +477,6 @@ class FormCreate extends Component {
             <Image source={arrowNextIC} style={imgShare}/>
           </View>
         </TouchableOpacity>
-        {/*<View style={{height:15}}></View>*/}
 
 
         <View style={{padding:15,flexDirection:'row',justifyContent:'space-between'}}>
@@ -834,24 +833,6 @@ class FormCreate extends Component {
           listVideo={this.state.img_video}
           closeModal={()=>this.setState({showVideo:false})} />
 
-
-
-        {/*<View style={listCreate}>
-          <View style={widthLblCre}>
-          <Image source={codeIC} style={imgInfo} />
-          </View>
-          <TextInput underlineColorAndroid='transparent'
-          onChangeText={(txtCode) => this.setState({txtCode})}
-          value={this.state.txtCode}
-          ref='Code'
-          returnKeyType = {"done"}
-          placeholder={this.state.lang.referral_code} style={wrapInputCreImg} />
-          <View style={{width:15}}>
-          <TouchableOpacity style={this.state.txtCode!=='' ? show : hide} onPress={()=>{this.setState({txtCode:''})}}>
-          <Image source={closeIC} style={imgShare} />
-          </TouchableOpacity>
-          </View>
-        </View>*/}
         <View style={{height:15}}></View>
         {this.state.editLoc &&
           <View>
@@ -874,13 +855,7 @@ class FormCreate extends Component {
     ListOpenTime={this.state.ListOpenTime}
     lang={this.state.lang}
     closeModal={this.setOpenTime.bind(this)} />}
-      {/*<View style={[clockTime,this.state.showOpenTime ? show : hidden]}>
-      <OpenTime
-      ListOpenTime={this.state.ListOpenTime}
-      lang={this.state.lang}
-      closeModal={this.setOpenTime.bind(this)}
-      />
-      </View>*/}
+
 
       {this.state.showUpdate &&
         <View style={[popoverLoc,centerVer]}>
@@ -946,13 +921,6 @@ class FormCreate extends Component {
                 </View>
             </View>
 
-            {/*<View style={{flexDirection:'row',padding:15}}>
-            <TextInput underlineColorAndroid='transparent'
-            placeholder={this.state.lang.add_classify} style={{borderColor:'#DFE7ED',borderWidth:1,borderRadius:3,marginRight:10,padding:5,width:width-100,backgroundColor:'#fff'}} />
-            <TouchableOpacity style={{backgroundColor:'#D0021B',borderRadius:3,padding:8,paddingLeft:18,paddingRight:18}}>
-            <Text style={{color:'white',fontSize:18,fontWeight:'bold'}}>+</Text>
-            </TouchableOpacity>
-            </View>*/}
             <FlatList
                extraData={this.state}
                data={sub_cat}
@@ -996,13 +964,6 @@ class FormCreate extends Component {
                   </View>
               </View>
 
-              {/*<View style={{flexDirection:'row',padding:15}}>
-              <TextInput underlineColorAndroid='transparent'
-              placeholder={this.state.lang.add_utilities} style={{borderColor:'#DFE7ED',borderWidth:1,borderRadius:3,marginRight:10,padding:5,width:width-100,backgroundColor:'#fff'}} />
-              <TouchableOpacity style={{backgroundColor:'#D0021B',borderRadius:3,padding:8,paddingLeft:18,paddingRight:18}}>
-              <Text style={{color:'white',fontSize:18,fontWeight:'bold'}}>+</Text>
-              </TouchableOpacity>
-              </View>*/}
 
               <FlatList
                 extraData={this.state}

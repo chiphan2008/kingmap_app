@@ -106,33 +106,7 @@ export default class Wallet extends Component {
           <Image source={historyIC} style={imgContent} />
           <Text style={colorTitle}>Lịch sử giao dịch</Text>
           </TouchableOpacity>
-          {/*
-            <View style={{padding:20}}>
-              <Text>Địa điểm mới: {this.state.listLoc.new_location}</Text>
-              <Text>Bạn đang có: {this.state.listLoc.make_money} kcoin</Text>
-              <Text>Thống kê chi phí trong tháng: </Text>
-              <Text>- Phí quảng cáo:  {this.state.listLoc.pay_money.quang_cao}</Text>
-              <Text>- Phí rao vặt:  {this.state.listLoc.pay_money.rao_vat}</Text>
-              <Text>- Phí tạo khuyến mãi:  {this.state.listLoc.pay_money.khuyen_mai}</Text>
-              <Text>- Phí thuê website:  {this.state.listLoc.pay_money.thue_web}</Text>
-              <Text>- Phí mua phần mềm:  {this.state.listLoc.pay_money.phan_mem}</Text>
-            </View>
-            <Select
-                  onSelect = {this.onSelectLoc.bind(this)}
-                  defaultText={lang.choose_loc}
-                  style = {[selectBox,selectBoxCity]}
-                  textStyle = {{color:'#5b89ab'}}
-                  optionListStyle={[optionListStyle,optionListStyleCity]}
-                  transparent
-                  indicatorColor="#5b89ab"
-                  indicator="down"
-                  indicatorSize={7}
-                >
-                {this.state.listLoc.your_location.map((e)=>(
-                  <Option numberOfLines={1} value={e.id} key={e.id}>{e.name}</Option>
-                ))}
-
-            </Select>*/}
+          
         </View>
 
         </View>

@@ -1,12 +1,17 @@
-import React, { Component } from 'react';
-import {
-  Platform, StyleSheet, View, AsyncStorage, Image, Dimensions,
-  TouchableOpacity
-} from 'react-native';
-const {width,height} = Dimensions.get('window');
-import CircularSlider from './component/create_location/CircularSlider';
-import Svg, { G, Path } from 'react-native-svg';
+/**
+ * Sample React Native App
+ * https://github.com/facebook/react-native
+ *
+ * @format
+ * @flow
+ */
 
+import React, {Component} from 'react';
+import {Platform, StyleSheet, Text, View, Dimensions} from 'react-native';
+import CircularSlider from 'react-native-circular-slider';
+
+import Svg, { G, Path } from 'react-native-svg';
+const {width,height} = Dimensions.get('window');
 const WAKE_ICON = (
   <G>
     <Path d="M2,12.9h1.7h3h2.7h3H14c0.4,0,0.7-0.3,0.7-0.7c0-0.4-0.3-0.7-0.7-0.7c-0.9,0-1.7-0.7-1.7-1.7v-4
@@ -25,52 +30,27 @@ const BEDTIME_ICON = (
     <Path d="M9.4,3l1.1-1.4h-1V1.3H11v0.4L9.9,3H11v0.4H9.4V3z"/>
   </G>
 );
-function calculateTimeFromAngle(angle) {
-  const minutes = calculateMinutesFromAngle(angle);
-  const h = Math.floor(minutes / 60);
-  const m = minutes - h * 60;
 
-  return { h, m };
-}
-function roundAngleToFives(angle) {
-  const fiveMinuteAngle = 2 * Math.PI / 144;
-  //console.log('fiveMinuteAngle',fiveMinuteAngle);
-  return Math.round(angle / fiveMinuteAngle) * fiveMinuteAngle;
-}
-
-function padMinutes(min) {
-  if (`${min}`.length < 2) {
-    return `0${min}`;
-  }
-  return min;
-}
-
-export default class TestCircle extends Component  {
-  constructor(props) {
+//type Props = {};
+export default class TestCircle extends Component{
+  constructor(props){
     super(props);
     this.state = {
-      startAngle: Math.PI * 10/6,
-      angleLength: Math.PI * 7/6,
+      startAngle: 5.235987755982989,
+      angleLength: 3.665191429188092,
     }
   }
-
-  render(){
-    //const waketime = calculateTimeFromAngle(startAngle);
-    //const bedtime = calculateTimeFromAngle((startAngle + angleLength) % (2 * Math.PI));
+  onPressIn =  () => {
+    console.log('Pressed on G')
+  }
+  render() {
     return (
-      <View style={{backgroundColor:'#000',width,height,justifyContent:'center',alignItems:'center',position:'relative'}}>
       <CircularSlider
         startAngle={this.state.startAngle}
         angleLength={this.state.angleLength}
         onUpdate={({ startAngle, angleLength }) => {
           console.log(startAngle, angleLength);
-          this.setState({
-            startAngle: roundAngleToFives(startAngle),
-            angleLength: roundAngleToFives(angleLength)
-          });
-          //var f_hour = calculateTimeFromAngle(startAngle);
-          //var t_hour = calculateTimeFromAngle((startAngle + angleLength) % (2 * Math.PI));
-
+          this.setState({ startAngle, angleLength })
         }}
         segments={5}
         strokeWidth={40}
@@ -80,12 +60,28 @@ export default class TestCircle extends Component  {
         showClockFace
         clockFaceColor="#fff"
         bgCircleColor="#2E3B51"
-        stopIcon={<G scale="1.1" x="-8" y="-8">
-        {BEDTIME_ICON}
-        </G>}
-        startIcon={<G scale="1.1"  x="-8" y="-8">{WAKE_ICON}</G>}
+        stopIcon={<G onLongPress={()=>console.log('Pressed on G')} scale="1.1" x="-8" y="-8">{BEDTIME_ICON}</G>}
+        startIcon={<G onLongPress={()=>console.log('Pressed on G')} scale="1.1"  x="-8" y="-8">{WAKE_ICON}</G>}
       />
-      </View>
-    )
+    );
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF',
+  },
+  welcome: {
+    fontSize: 20,
+    textAlign: 'center',
+    margin: 10,
+  },
+  instructions: {
+    textAlign: 'center',
+    color: '#333333',
+    marginBottom: 5,
+  },
+});

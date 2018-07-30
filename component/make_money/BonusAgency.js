@@ -209,7 +209,6 @@ export default class BonusAgency extends Component {
                    <View style={{paddingLeft:5,paddingRight:5,borderRadius:3,backgroundColor:item.role==='ctv'?'green':'red'}}>
                     <Text numberOfLines={1} style={[colorlbl,{color:'#fff'}]}>{item.role==='ctv'?'CTV':'TĐL'}</Text>
                    </View>
-                   {/*itemCTVChoose[item.id] && <Image source={checkIC} style={{width:20,height:20}} />*/}
                 </TouchableOpacity>
              )} />
             </View>

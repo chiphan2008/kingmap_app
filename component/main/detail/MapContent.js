@@ -111,7 +111,6 @@ class MapContent extends Component {
 
           {yourCurLoc.latitude!==undefined &&
             <MapView.Marker coordinate={{latitude: Number(yourCurLoc.latitude),longitude: Number(yourCurLoc.longitude)}}>
-            {/*<View><Text>{lang.your_current_location}</Text></View>*/}
             </MapView.Marker>
           }
 
@@ -125,7 +124,6 @@ class MapContent extends Component {
             }}
             image={ Platform.OS==='android' ? logoMap : null}
             >
-            {/*<Text>{distance}</Text>*/}
             {Platform.OS==='ios' && <Image source={logoMap} style={{width:57,height:50}} />}
           </MapView.Marker>
           </MapView>}

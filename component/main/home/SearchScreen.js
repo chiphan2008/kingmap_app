@@ -424,9 +424,7 @@ class SearchScreen extends Component {
                 </View>
           </View>}
 
-          {/*<TouchableOpacity onPress={()=>navigate('ListCatScr',{keyword:this.state.valSearch,idCat:'',lat:curLoc.lat,lng:curLoc.lng,lang:lang.lang})} style={[btnMap,btnList]}>
-            <Image source={listmapIC} style={{width:25,height:25}} />
-          </TouchableOpacity>*/}
+
 
           <MapView
               provider={PROVIDER_GOOGLE}
@@ -499,9 +497,7 @@ class SearchScreen extends Component {
           </View>
         }
 
-          {/*<TouchableOpacity style={plusStyle}>
-              <Image source={plusIC} style={imgPlusStyle} />
-          </TouchableOpacity>*/}
+        
 
           <TouchableOpacity style={[btnMap,btnMapZoom,curLocation.longitude!==undefined ? show :hide]}
           onPress={()=>{this.findCurrentLoc()}}>

@@ -319,9 +319,7 @@ export default class App extends Component {
       UpdateInfoScr: { screen : UpdateInfo },
       LikeLocationScr: { screen : LikeLocation },
       ListCheckinScr: { screen : ListCheckin },
-      FormCreateScr: {
-        screen: FormCreate,
-      },
+      FormCreateScr: { screen: FormCreate},
       LoginScr: {
         screen: LoginScreen,
       },

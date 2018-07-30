@@ -337,29 +337,7 @@ export default class OpenTime extends Component {
       </View>
       </ScrollView>
 
-      {/*<CircularSlider
-        startAngle={this.state.startAngle}
-        angleLength={this.state.angleLength}
-        onUpdate={({ startAngle, angleLength }) => {
-          this.setState({
-            startAngle: roundAngleToFives(startAngle),
-            angleLength: roundAngleToFives(angleLength)
-          });
-          //var f_hour = calculateTimeFromAngle(startAngle);
-          //var t_hour = calculateTimeFromAngle((startAngle + angleLength) % (2 * Math.PI));
 
-        }}
-        segments={5}
-        strokeWidth={40}
-        radius={width>320?140:120}
-        gradientColorFrom="#8db9da"
-        gradientColorTo="#5b89ab"
-        showClockFace
-        clockFaceColor="#fff"
-        bgCircleColor="#2E3B51"
-        stopIcon={<G scale="1.1" x="-8" y="-8" transform={{ translate: "-8, -8" }}>{BEDTIME_ICON}</G>}
-        startIcon={<G scale="1.1"  x="-8" y="-8" transform={{ translate: "-8, -8" }}>{WAKE_ICON}</G>}
-      />*/}
 
       {this.state.showClock && <Clock
       index={index_clock}
@@ -534,7 +512,7 @@ export class Clock extends Component {
         {showClock && <CircularSlider
           startAngle={startAngle}
           angleLength={angleLength}
-          onUpdate={()=>this.onUpdate.bind(this)}
+          onUpdate={this.onUpdate}
           segments={5}
           strokeWidth={40}
           radius={width>320?140:120}

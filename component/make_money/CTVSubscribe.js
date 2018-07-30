@@ -474,7 +474,6 @@ export default class AddImageMore extends Component {
                   <Text style={[titleCreate, {width: width * 0.33}]}> {this.state.lang.cmnd_image.toUpperCase()} </Text>
 
                 <TouchableOpacity onPress={()=>this.setState({showCMND:false})}>
-                {/*<Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />*/}
                 <Text style={[titleCreate, {width: width * 0.33, left: Platform.OS==='ios'? 35: 50}]}> {this.state.lang.done} </Text>
                 </TouchableOpacity>
               </View>

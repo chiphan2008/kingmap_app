@@ -90,35 +90,6 @@ export default class Header extends Component {
         </View>
       </View>
 
-      {/*<Modal onRequestClose={() => null}transparent
-      animationType={'slide'} visible={showOption}>
-        <TouchableOpacity style={[actionSheetWrap]}
-        onPress={()=>this.setState({showOption:false})}>
-          <View style={[actionSheetContent,actionSheetRadius]}>
-
-            <TouchableOpacity onPress={()=>{this.socialShare()}} style={pad15}>
-            <Text style={colorTxt}>Email</Text>
-            </TouchableOpacity>
-
-            <View style={line}></View>
-            <TouchableOpacity style={pad15}>
-            <Text style={colorTxt}>Facbook</Text>
-            </TouchableOpacity>
-
-            <View style={line}></View>
-            <TouchableOpacity style={pad15}>
-            <Text style={colorTxt}>Twitter</Text>
-            </TouchableOpacity>
-
-
-          </View>
-          <View style={[actionSheetContent,actionSheetRadius,marTop10]}>
-            <TouchableOpacity onPress={()=>this.setState({showOption:false})} style={pad15}>
-            <Text style={colorTxt}>{lang.cancel}</Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      </Modal>*/}
       </View>
     );
   }

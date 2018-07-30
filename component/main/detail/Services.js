@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
   rowFlex:{flexDirection:'row',padding:5,paddingRight:10},
   colorContent:{color:'#6587A8',overflow:'hidden',fontSize:15,},
   colorHide:{color:'#adc4d5',overflow:'hidden',fontSize:15,},
-  widthHafl:{width:(width-50)/2,overflow:'hidden'},
+  widthHafl:{width:(width-50)/2},
   colorBlack:{color:'#303B50',overflow:'hidden',fontSize:15,},
   colorTextPP :{color:'#B8BBC0'},
   wrapContentDetail:{flexWrap:'wrap',padding:10,backgroundColor:'#fff'},

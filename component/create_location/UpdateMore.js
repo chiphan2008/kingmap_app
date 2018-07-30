@@ -515,10 +515,7 @@ export default class UpdateMore extends Component {
           {showLoc &&
 
             <View style={[popoverLoc,centerVer]}>
-                {/*<TouchableOpacity onPress={()=>{this.setState({showLoc:false})}}
-                style={{position:'absolute',top:15,right:15}}>
-                  <Image source={closeIC} style={[imgShare]} />
-                </TouchableOpacity>*/}
+                
                 <View style={[overLayout,pad10]}>
                 <Image source={LogoHome} style={{height:45,width:45,marginBottom:10}} />
                 <Text numberOfLines={1} style={{color:'#2A2D37',fontSize:17}}>{lang.add_branch.toUpperCase()}</Text>

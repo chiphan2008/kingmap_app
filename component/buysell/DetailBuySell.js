@@ -144,11 +144,7 @@ export default class DetailBuySell extends Component {
             </View>}
           </View>
         </View>
-        {/*<View style={{padding:15,paddingLeft:0,}}>
-        <Text style={{fontSize:16,color:'#000',lineHeight:25}} numberOfLines={1}>Kích thước: {listData.size}</Text>
-        <Text style={{fontSize:16,color:'#000',lineHeight:25}} numberOfLines={1}>Chất liệu: {listData.material}</Text>
-        <Text style={{fontSize:16,color:'#000',lineHeight:25}} numberOfLines={1}>Số lượng: {listData.quantity}</Text>
-        </View>*/}
+        
 
         <View>
           <Text style={{fontSize:16,color:'#333',lineHeight:25}}>

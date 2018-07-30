@@ -190,7 +190,6 @@ export default class AddAgency extends Component {
                          <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.address}`}</Text>
                        </View>
                    </View>
-                   {/*itemCTVChoose[item.id] && <Image source={checkIC} style={{width:20,height:20}} />*/}
                 </TouchableOpacity>
              )} />
             </View>

@@ -477,7 +477,6 @@ class MakeMoney extends Component {
           </View>
 
           <View>
-          {/*console.log('user_profile',user_profile)*/}
           {(isCTV || isAgency) && <TouchableOpacity style={wrapWhite}
           onPress={()=>{
             navigate('CTVDetailScr',{

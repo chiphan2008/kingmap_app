@@ -68,17 +68,7 @@ export default class Content extends Component {
           <Image style={[imgICLocation,marRight]} source={locationDarkIC} />
           <Text numberOfLines={2} style={[colorContent,width30]}>{`${listContent.address}${', '}${listContent._district.name}${', '}${listContent._city.name}`}</Text>
         </View>
-        {/*listContent.open_time*/}
-        {/*listContent.phone!=='' &&
-        <View style={rowFlex}>
-          <Image style={[imgContentIC,marRight]} source={phoneIC} />
-          <Text style={colorContent}>{`${listContent.phone}`}</Text>
-        </View>}
-        {listContent.email!=='' &&
-        <View style={rowFlex}>
-          <Image style={{width:16,height:12,marginTop:2,marginRight:10}} source={emailIC} />
-          <Text style={colorContent}>{`${listContent.email}`}</Text>
-        </View>*/}
+
         <View style={rowFlex}>
           <Image style={[imgContentIC,marRight]} source={timeIC} />
           <View>
@@ -88,7 +78,6 @@ export default class Content extends Component {
           </View>
         </View>
         <View style={rowFlex}>
-          {/*<Image style={[imgContentIC,marRight]} source={priceIC} />*/}
           <Text numberOfLines={5} style={[colorContent,{width:width-35}]}>{`${listContent.description}`}</Text>
         </View>
 

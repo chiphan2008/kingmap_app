@@ -69,7 +69,7 @@ export default class ManageBuySell extends Component {
                      <View style={{minWidth:width-50}}>
                        <Text numberOfLines={1} style={colorlbl}>{item.name}</Text>
                        <Text numberOfLines={1} style={{fontSize:12}}>{Moment(item.created_at).format('DD/MM/YYYY')}</Text>
-                       {/*<Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.price} ${item.currency}`}</Text>*/}
+                       
                      </View>
                  </TouchableOpacity>
                  <TouchableOpacity onPress={()=>{

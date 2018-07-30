@@ -184,7 +184,6 @@ class NotifyTab extends Component {
         </View>
 
         <View>
-        {/*console.log('listNoti.notifications',listNoti.notifications,isLogin)*/}
         {listNoti.notifications !== undefined  && isLogin ?
           <FlatList
            extraData={this.state}

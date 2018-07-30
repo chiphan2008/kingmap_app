@@ -129,7 +129,6 @@ export default class RequestTransfer extends Component {
                 <Text style={{color:'#fff',fontWeight:'bold',fontSize:16}}>{`${'Xác nhận'}`.toUpperCase()}</Text>
               </TouchableOpacity>
             </View>
-            {/*onPress={()=>this.setState({ showCode:false }) }*/}
         </View>
         </Modal>
 

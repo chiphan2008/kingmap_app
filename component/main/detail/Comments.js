@@ -340,19 +340,7 @@ export default class Comments extends Component {
             :
             <View></View>
           }
-          {/*
-
-          <Modal onRequestClose={() => null} visible={showImgCommentChild} transparent>
-            <TouchableOpacity onPress={()=>this.setState({showImgCommentChild:false})}
-            style={{position:'absolute',padding:10,alignSelf:'flex-end',zIndex:9999}}>
-              <Image source={closeIC} style={{width:18,height:18}} />
-            </TouchableOpacity>
-            <ImageViewer
-            imageUrls={arrImageChild}
-            index={index} enableImageZoom saveToLocalByLongPress={false}
-            onChange={(index) => console.log(index)}
-            enableSwipeDown />
-          </Modal>*/}
+          
 
       </View>
     );

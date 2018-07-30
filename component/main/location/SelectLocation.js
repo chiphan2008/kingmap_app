@@ -115,7 +115,6 @@ export default class SelectLocation extends Component {
                        }}
                      >
                     <Text style={styles.txtItem} >{item.name}</Text>
-                    {/*<Image style={[styles.imgCheck,this.state.showCheckDistrict===item.id ? styles.show : styles.hide]} source={checkIC}/>*/}
                     </TouchableOpacity>
                     </View>
 
@@ -157,7 +156,6 @@ export default class SelectLocation extends Component {
                      }}
                    >
                   <Text style={styles.txtItem} >{item.name}</Text>
-                  {/*<Image style={[styles.imgCheck,this.state.showCheckCountry===item.id ? styles.show : styles.hide]} source={checkIC}/>*/}
                   </TouchableOpacity>
                   </View>
                 )} />
@@ -198,7 +196,6 @@ export default class SelectLocation extends Component {
                      }}
                    >
                   <Text style={styles.txtItem} >{item.name}</Text>
-                  {/*<Image style={[styles.imgCheck,this.state.showCheckCity===item.id ? styles.show : styles.hide]} source={checkIC}/>*/}
                   </TouchableOpacity>
                   </View>
                 )} />

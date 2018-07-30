@@ -247,7 +247,6 @@ class LocationTab extends Component {
                       }
 
                       <Text style={labelCat}>{e.name}</Text>
-                      {/*<Text style={labelNum}>(25)</Text>*/}
                     </TouchableOpacity>);
                     break;
                   }

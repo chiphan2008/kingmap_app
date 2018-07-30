@@ -293,7 +293,6 @@ class HomeTab extends Component {
                             }
                           }}
                           >
-                          {/*<Text style={labelNum}>{x}</Text>*/}
                         <Image style={e.noibat===1?iconHome:imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                         <Text style={labelCat}>{e.name}</Text>
                       </TouchableOpacity>);
@@ -310,7 +309,7 @@ class HomeTab extends Component {
 
                           }}
                           >
-                          {/*<Text style={labelNum}>(25)</Text>*/}
+
                         <Image style={e.noibat===1?iconHome:imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                         <Text style={labelCat}>{e.name}</Text>
                       </TouchableOpacity>);
@@ -328,7 +327,7 @@ class HomeTab extends Component {
                             }
                           }}
                           >
-                          {/*<Text style={labelNum}>(25)</Text>*/}
+
                         <Image style={e.noibat===1?iconHome:imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                         <Text style={labelCat}>{e.name}</Text>
                       </TouchableOpacity>);
@@ -346,7 +345,7 @@ class HomeTab extends Component {
                               navigate('MakeMoneyScr',{user_profile,icon:`${global.url_media}${e.image}`,name_module:e.name,lang:this.state.lang}) }}
                             }
                           >
-                          {/*<Text style={labelNum}>(25)</Text>*/}
+
                         <Image style={e.noibat===1?iconHome:imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                         <Text style={labelCat}>{e.name}</Text>
                       </TouchableOpacity>);
@@ -359,8 +358,7 @@ class HomeTab extends Component {
                         onPress={()=>navigate('WalletScr',{code_user:this.state.code_user,lang:this.state.lang})}
                         style={{position:'absolute',alignItems:'center',top:pos.y,left :pos.x,overflow: 'visible'}}
                         >
-                        {/*<Text style={labelNum}>(25)</Text>*/}
-                        {/*<Image style={e.noibat===1?iconHome:imgContent} source={logoHome} />*/}
+
                         <Image style={e.noibat===1?iconHome:imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                         <Text style={labelCat}>{e.name}</Text>
 
@@ -376,7 +374,7 @@ class HomeTab extends Component {
                         navigate('OtherCatScr',{name_module:e.name,lang:this.state.lang.lang})
                       }}
                       >
-                      {/*<Text style={labelNum}>(25)</Text>*/}
+
                     <Image style={e.noibat===1?iconHome:imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                     <Text style={labelCat}>{e.name}</Text>
                   </TouchableOpacity>);
@@ -391,7 +389,7 @@ class HomeTab extends Component {
                         >
                       <Image style={e.noibat===1?iconHome:imgContent} source={{uri:`${global.url_media}${e.image}`}} />
                       <Text style={labelCat}>{e.name}</Text>
-                      {/*<Text style={labelNum}>(25)</Text>*/}
+
                     </TouchableOpacity>);
                     break;
 

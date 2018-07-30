@@ -88,10 +88,7 @@ export default class Suggest extends Component {
                           <Text>{item.vote}</Text>
                        </View>
 
-                       {/*<View  style={{flexDirection:'row',paddingRight:5}}>
-                         <Image source={item.vote>0 ? favoriteFullIcon : favoriteIcon } style={favIC} />
-                         <Text>{item.vote}</Text>
-                       </View>*/}
+                       
                    </View>
                  </View>
 

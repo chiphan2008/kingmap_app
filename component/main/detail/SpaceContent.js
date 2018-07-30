@@ -30,10 +30,10 @@ export default class SpaceContent extends Component {
   render() {
     //console.log('this.props.listContent.vote',this.props.listContent.has_vote);
     const {
-      rowFlex,titleSpace,rowFlexImg,show,hide,
-      colorNumPP,sizeTitle,spaceContent,imgSpace,
+      rowFlex,titleSpace,rowFlexImg,show,hide,widthHafl,colorText,
+      colorNumPP,sizeTitle,spaceContent,imgSpace,txtAddrOver,
     } = styles;
-    const {listImgSpace,listImgMenu,listImgVideo,idContent,lang,moderation} = this.props;
+    const {listImgSpace,listImgMenu,listImgVideo,idContent,lang,moderation,listProduct} = this.props;
     const {navigate} = this.props.navigation;
     const {showImgSpace,showImageMenu,index,showVideo,linkVideo} = this.state;
 
@@ -138,6 +138,42 @@ export default class SpaceContent extends Component {
                <Image style={{width:(width-50)/2,height:width/3,marginRight:10,resizeMode: 'cover'}}
                source={{uri: item.thumbnail }} />
                </TouchableOpacity>
+          )} />
+
+          <View style={titleSpace}>
+              <Text style={[colorNumPP,sizeTitle]}>SẢN PHẨM, DỊCH VỤ ({listImgVideo.length})</Text>
+              <TouchableOpacity
+              style={listImgVideo.length>0 ? show : hide}
+              onPress={()=>{}}
+              >
+              <Text>{lang.view_all} >></Text>
+              </TouchableOpacity>
+          </View>
+
+          <FlatList
+             horizontal
+             //pagingEnabled
+             ListEmptyComponent={<Text>{lang.updating}</Text>}
+             showsHorizontalScrollIndicator={false}
+             keyExtractor={(item,index) => index.toString()}
+             extraData={this.state}
+             data={listProduct}
+             renderItem={({item,index}) => (
+              <View style={{flexDirection:'row',justifyContent:'space-between',marginBottom:10,backgroundColor:'#fff', padding:10}}>
+                <View style={[widthHafl]}>
+                  <TouchableOpacity
+                  onPress={()=>{}}
+                  >
+                  <Image source={{uri :`${global.url_media}${item.image}`}} style={imgSpace}/>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={()=>{}}
+                  >
+                  <Text style={colorText} numberOfLines={2}>{item.name}</Text>
+                  </TouchableOpacity>
+                  <Text style={txtAddrOver} numberOfLines={1}>{`${item.price} VND`}</Text>
+                </View>
+
+              </View>
           )} />
 
           <VideoViewer

@@ -109,18 +109,6 @@ export default class MapFullScreen extends Component {
         <Image source={currentLocIC} style={{width:30,height:30}} />
         </TouchableOpacity>
 
-        {/*<View style={[btn,btnMapZoom,curLocation.longitude!==undefined ? show :hide]}>
-          <TouchableOpacity style={btnZoom}
-          onPress={()=>this.props.onPressZoom('zoom_out')}>
-          <Image source={addIC} style={{width:24,height:24}} />
-          </TouchableOpacity>
-          {<View style={{width:12,borderColor:'#999',borderBottomWidth:1}}></View>}
-          <TouchableOpacity style={btnZoom}
-          onPress={()=>this.props.onPressZoom('zoom_in')}>
-          <Image source={minIC} style={{width:24,height:24}} />
-          </TouchableOpacity>
-        </View>*/}
-
         <TouchableOpacity style={[btn,btnMapFull,curLocation.latitude!==undefined ? show : hide]}
         onPress={()=>{this.props.closeModal()}}>
         <Image source={normalScreenIC} style={{width:30,height:30}} />

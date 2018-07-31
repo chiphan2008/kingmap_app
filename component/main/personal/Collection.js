@@ -56,11 +56,17 @@ class Collection extends Component {
   getData(page=null){
     this.setState({loading:false});
     if(page===null) page=0;
-    const url = `${global.url}${'collection/get/user/'}${this.state.user_profile.id}${'?skip='}${page}${'&limit=20'}`;
+    const limit=20;
+    const url = `${global.url}${'collection/get/user/'}${this.state.user_profile.id}${'?skip='}${page}${'&limit='}${limit}`;
     //console.log(url);
     getApi(url).then(arrData => {
-      this.state.listData = page!==null?this.state.listData.concat(arrData.data):arrData.data;
+      // if(this.state.page<page){
+      //   this.state.listData.slice(-20);
+      //   this.setState(this.state);
+      // }
+      this.state.listData = page>0?this.state.listData.concat(arrData.data):arrData.data;
       this.state.loading = arrData.data.length<20?false:true;
+      this.state.page = page>0?(page+limit):limit;
       this.setState(this.state);
     }).catch(err => console.log(err));
   }
@@ -83,18 +89,21 @@ class Collection extends Component {
 
   }
 
-  editCollection(idCollection){
+  editCollection(idCollection,index){
     //console.log();
     const arr = new FormData();
     arr.append('collection_id',idCollection);
     arr.append('name',this.state.name_coll);
     arr.append('user_id',this.state.user_profile.id);
+    this.state.listData[index].name=this.state.name_coll;
+    this.setState(this.state);
     const url = `${global.url}${'collection/edit'}`;
     //console.log(arr);
     postApi(url,arr).then(e => {
       if(e.code===200){
         this.setState({name_coll:'',},()=>{
-          this.getData();
+          //const skip=this.state.page>0?this.state.page-20:0;
+          //this.getData(skip);
         })
       }
     }).catch(err => console.log(err));
@@ -174,15 +183,13 @@ class Collection extends Component {
              onEndReachedThreshold={0.5}
              onEndReached={() => {
                if(this.state.loading){
-                 this.state.page +=20;
-                 this.setState(this.state,()=>{
-                   //console.log('onEndReached');
+                 this.setState({loading:false},()=>{
                    this.getData(this.state.page);
                  });
                }
              }}
              data={this.state.listData}
-             renderItem={({item}) => (
+             renderItem={({item,index}) => (
                <View key={item.id}>
                  <View style={{backgroundColor:'#fff'}}>
                      <View style={listCreate}>
@@ -199,15 +206,15 @@ class Collection extends Component {
                             </View>
                            <TouchableOpacity style={{padding:5}} onPress={()=>{
                              if(isFocus){
-                               this.editCollection(item.id);
-                               this.setState({isFocus:false,showInput:Object.assign(showInput,{[item.id]:!item.id})});
+                               this.editCollection(item.id,index);
+                               this.setState({isFocus:false,showInput:Object.assign({},{[item.id]:!item.id})});
                              }else {
                                this.setState({
                                  isFocus:true,name_coll:item.name,
-                                 showInput:Object.assign(showInput,{[item.id]:item.id})})
+                                 showInput:Object.assign({},{[item.id]:item.id})})
                              }
                            }}>
-                             <Image source={isFocus && showInput[item.id] ? saveBlueIC : editBlueIC} style={{width:15,height:15}} />
+                             <Image source={(isFocus && showInput[item.id]) ? saveBlueIC : editBlueIC} style={{width:15,height:15}} />
                            </TouchableOpacity>
                        </View>
                        <TouchableOpacity onPress={()=>{
@@ -225,7 +232,8 @@ class Collection extends Component {
                            <Image source={removeIC} style={{width:20,height:20}} />
                          </TouchableOpacity>
 
-                         <TouchableOpacity hitSlop={{top: 10, bottom: 10, left: 5, right: 10}} onPress={()=>this.setState({showEdit:!showEdit,})}>
+                         <TouchableOpacity hitSlop={{top: 10, bottom: 10, left: 5, right: 10}}
+                         onPress={()=>this.setState({showEdit:!showEdit,})}>
                            <Image source={showPopup[item.id] && showEdit===false ? editIC : doneIC} style={{width:20,height:20}} />
                          </TouchableOpacity>
                        </View>
@@ -235,7 +243,7 @@ class Collection extends Component {
                        return (<View key={el.id.toString()} style={{marginRight:Platform.OS === 'ios'?15:4,padding:10,width:(width)/2}}>
 
                          <TouchableOpacity onPress={()=>{
-                           console.log(`${global.url_media}${el.avatar}`);
+                           //console.log(`${global.url_media}${el.avatar}`);
                              navigate('DetailScr',{idContent:el.id,lat:el.lat,lng:el.lng,curLoc,lang:lang.lang})
                          }}>
                          <Image source={{uri:`${global.url_media}${el.avatar}`}} style={{width:width/2,minHeight:width/3,marginBottom:10}} />

@@ -54,6 +54,7 @@ class DetailScreen extends Component {
         discounts:[],
         content:{
           alias:'',
+          _branchs:[],
           _district:{name:''},
           _city:{name:''},
           _country:{name:''},
@@ -329,7 +330,7 @@ class DetailScreen extends Component {
           moderation={moderation}
           />
 
-          {listData.list_group.length>0 &&
+          {listData.content._branchs.length>0 &&
           <View>
           <View style={titleSpace}>
               <Text style={[colorNumPP,sizeTitle]}>{lang.other_branch.toUpperCase()}</Text>
@@ -337,7 +338,7 @@ class DetailScreen extends Component {
           <OtherBranch
             lang={lang}
             curLoc={this.props.yourCurLoc}
-            listGroup={listData.list_group}
+            listGroup={listData.content._branchs}
             navigation={this.props.navigation}
             />
           </View>

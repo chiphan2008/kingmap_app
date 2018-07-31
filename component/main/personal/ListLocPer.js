@@ -57,7 +57,7 @@ class ListLocPer extends Component {
     const {user_profile,page} = this.state;
     if(detailBack==='UpdateLocation' && user_profile.id!==undefined){
       this.props.dispatch({type:'DETAIL_BACK',detailBack:''});
-      const skip = page>0?page-20:0;
+      //const skip = page>0?page-20:0;
       this.getData();
     }
   }

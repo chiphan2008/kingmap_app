@@ -200,7 +200,7 @@ class HomeTab extends Component {
       container, bgImg,colorlbl,flexRow,
       headStyle, headContent,imgLogoTop,imgSocial, imgWidthGoogle, imgShare,wrapIcRight,
       selectBox,optionListStyle,OptionItem,inputSearch,show,hide,colorTextPP,colorWhite,marRight,itemCreate,
-      wrapContent,imgContent,iconHome,square,wrapCircle,logoCenter,circle1,circle2,circle3,circle4,circle5,circle6,circle7,circle8,labelCat,labelNum,
+      wrapContent,iconHomeTab,iconHome,square,wrapCircle,logoCenter,circle1,circle2,circle3,circle4,circle5,circle6,circle7,circle8,labelCat,labelNum,
       plusStyle,imgPlusStyle,popover,overLayout,listOver,popoverShare,popoverCreate,overLayoutShare,listOverShare,imgMargin,imgUpHome,imgUpInfo,imgUpShare
     } = styles;
     let i=0;
@@ -293,7 +293,7 @@ class HomeTab extends Component {
                             }
                           }}
                           >
-                        <Image style={e.noibat===1?iconHome:imgContent} source={{uri:`${global.url_media}${e.image}`}} />
+                        <Image style={e.noibat===1?iconHome:iconHomeTab} source={{uri:`${global.url_media}${e.image}`}} />
                         <Text style={labelCat}>{e.name}</Text>
                       </TouchableOpacity>);
                         break;
@@ -310,7 +310,7 @@ class HomeTab extends Component {
                           }}
                           >
 
-                        <Image style={e.noibat===1?iconHome:imgContent} source={{uri:`${global.url_media}${e.image}`}} />
+                        <Image style={e.noibat===1?iconHome:iconHomeTab} source={{uri:`${global.url_media}${e.image}`}} />
                         <Text style={labelCat}>{e.name}</Text>
                       </TouchableOpacity>);
                         break;
@@ -328,7 +328,7 @@ class HomeTab extends Component {
                           }}
                           >
 
-                        <Image style={e.noibat===1?iconHome:imgContent} source={{uri:`${global.url_media}${e.image}`}} />
+                        <Image style={e.noibat===1?iconHome:iconHomeTab} source={{uri:`${global.url_media}${e.image}`}} />
                         <Text style={labelCat}>{e.name}</Text>
                       </TouchableOpacity>);
                         break;
@@ -346,7 +346,7 @@ class HomeTab extends Component {
                             }
                           >
 
-                        <Image style={e.noibat===1?iconHome:imgContent} source={{uri:`${global.url_media}${e.image}`}} />
+                        <Image style={e.noibat===1?iconHome:iconHomeTab} source={{uri:`${global.url_media}${e.image}`}} />
                         <Text style={labelCat}>{e.name}</Text>
                       </TouchableOpacity>);
                         break;
@@ -359,7 +359,7 @@ class HomeTab extends Component {
                         style={{position:'absolute',alignItems:'center',top:pos.y,left :pos.x,overflow: 'visible'}}
                         >
 
-                        <Image style={e.noibat===1?iconHome:imgContent} source={{uri:`${global.url_media}${e.image}`}} />
+                        <Image style={e.noibat===1?iconHome:iconHomeTab} source={{uri:`${global.url_media}${e.image}`}} />
                         <Text style={labelCat}>{e.name}</Text>
 
                         </TouchableOpacity>);
@@ -375,7 +375,7 @@ class HomeTab extends Component {
                       }}
                       >
 
-                    <Image style={e.noibat===1?iconHome:imgContent} source={{uri:`${global.url_media}${e.image}`}} />
+                    <Image style={e.noibat===1?iconHome:iconHomeTab} source={{uri:`${global.url_media}${e.image}`}} />
                     <Text style={labelCat}>{e.name}</Text>
                   </TouchableOpacity>);
                         break;
@@ -387,7 +387,7 @@ class HomeTab extends Component {
                         style={{position:'absolute',alignItems:'center',top:pos.y,left :pos.x,}}
                         onPress={() => navigate('CatScr') }
                         >
-                      <Image style={e.noibat===1?iconHome:imgContent} source={{uri:`${global.url_media}${e.image}`}} />
+                      <Image style={e.noibat===1?iconHome:iconHomeTab} source={{uri:`${global.url_media}${e.image}`}} />
                       <Text style={labelCat}>{e.name}</Text>
 
                     </TouchableOpacity>);

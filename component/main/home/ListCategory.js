@@ -153,10 +153,10 @@ export default class CategoryScreen extends Component {
      DeviceEventEmitter.addListener('goback', (e)=>{
        if(e.isLogin) this.refresh();
      })
-     DeviceEventEmitter.addListener('detailBack', ()=>{
-       //console.log('detailBack');
-       this.setState({pullToRefresh:true});
-     })
+     // DeviceEventEmitter.addListener('detailBack', ()=>{
+     //   //console.log('detailBack');
+     //   this.setState({pullToRefresh:true});
+     // })
    }
   requestLogin(){
     const {navigate} = this.props.navigation;

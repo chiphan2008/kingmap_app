@@ -322,8 +322,8 @@ class FormCreate extends Component {
       this.setState({showLoading:false,errMsg:''},()=>{
         this.state.showLoading===false && setTimeout(()=>{
           if(e.code===200){
-
             if(this.state.editLoc){
+              this.props.dispatch({type:'DETAIL_BACK',detailBack:'UpdateLocation'});
               Platform.OS==='android' ?
               Alert.alert(this.state.lang.notify,this.state.lang.update_success,[
                 {text: '', style: 'cancel'},
@@ -336,11 +336,6 @@ class FormCreate extends Component {
              ])
             }else {
               this.setState({idContent:e.data.content.id,showUpdate:true})
-             //  Alert.alert(this.state.lang.notify,this.state.lang.create_success,[
-             //    {text: '', style: 'cancel'},
-             //    {text: 'OK', onPress: () => this.setState({idContent:e.data.content.id,showUpdate:true})}
-             //  ],
-             // {cancelable: false });
             }
 
           }else {
@@ -385,7 +380,7 @@ class FormCreate extends Component {
       let arrDataLoc = e.results[0].geometry.location;
       //console.log(arrDataAddr,arrDataLoc);
       if(txtAddress.trim()!=='' && txtAddress.trim()!==undefined){
-        this.state.txtAddress=`${arrDataAddr[0].long_name} ${arrDataAddr[1].long_name}`;
+        //this.state.txtAddress=`${arrDataAddr[0].long_name} ${arrDataAddr[1].long_name}`;
       }
       this.state.lat=arrDataLoc.lat;
       this.state.lng=arrDataLoc.lng;

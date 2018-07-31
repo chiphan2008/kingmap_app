@@ -98,8 +98,8 @@ export default class LocationScreen extends Component {
                       onPress={()=>navigate('ListLocScr',{idCat:item.id,labelCat:item.name,sub_cat:item.sub_category,serv_items:item.service_items,lang:this.state.selectLang.valueLang})}
                       style={flatItem}>
                       {/*<SvgUri width="70" height="70" source={{uri:`${global.url_media}${item.image}`}} />*/}
-                      {!!checkSVG(item.image) ?
-                        <SvgUri width="70" height="70" svgXmlData={`${global.url_media}${item.image}`} source={{isStatic:true,uri:`${global.url_media}${item.image}`}} />
+                      {checkSVG(item.image) ?
+                        <SvgUri width="70" height="70" source={{uri:`${global.url_media}${item.image}`}} />
                         :
                         <Image style={imgFlatItemLoc} source={{uri:`${global.url_media}${item.image}`}} />
                       }

@@ -94,7 +94,7 @@ export default class AddImgSpace extends Component {
       <Modal onRequestClose={() => null} transparent
       animationType={'slide'} visible={this.props.visible}
       >
-      <ScrollView style={container}>
+      <View style={container}>
           <View style={headCatStyle}>
               <View style={headContent}>
                   <TouchableOpacity onPress={()=>{
@@ -114,7 +114,7 @@ export default class AddImgSpace extends Component {
           </View>
 
 
-          <View style={[container]}>
+          <ScrollView>
           <View style={{justifyContent:'center',alignItems:'center',backgroundColor:'#FFFEFF',padding:50,borderColor:'#ECEEF3',borderBottomWidth:1,marginBottom:5}}>
             <TouchableOpacity
             onPress={()=>this.uploadSpace()}>
@@ -206,9 +206,8 @@ export default class AddImgSpace extends Component {
             :
             <View></View>
           }
+          </ScrollView>
           </View>
-
-        </ScrollView>
         </Modal>
 
     );

@@ -77,7 +77,7 @@ export default class AddVideo extends Component {
       <Modal onRequestClose={() => null} transparent
       animationType={'slide'}
       visible={this.props.visible} >
-      <ScrollView style={container}>
+      <View style={container}>
 
           <View style={headCatStyle}>
               <View style={headContent}>
@@ -93,7 +93,7 @@ export default class AddVideo extends Component {
 
           </View>
 
-          <View style={[container]}>
+          <ScrollView>
           <View style={{backgroundColor:'#FFFEFF',paddingTop:30,paddingBottom:30,paddingLeft:15,paddingRight:15,marginBottom:5,borderColor:'#ECEEF3',borderBottomWidth:1}}>
           <Text style={{fontSize:20}}>{lang.enter_video_link}</Text>
           <View style={{flexDirection:'row',marginTop:10}}>
@@ -133,12 +133,9 @@ export default class AddVideo extends Component {
             :
             <View></View>
           }
+          </ScrollView>
           </View>
-
-
-        </ScrollView>
         </Modal>
-
     );
   }
 }

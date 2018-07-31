@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import {
   View,Text,TouchableOpacity,Image,TouchableWithoutFeedback,
-  TextInput,Dimensions,ScrollView,StyleSheet,
+  TextInput,Dimensions,ScrollView,StyleSheet,Platform,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import styles from '../styles';
@@ -472,9 +472,9 @@ export class Clock extends Component {
       <TouchableOpacity onPress={()=>{
         this.props.updateFTHour(`${apmFrom?f_hour.h+12:f_hour.h}:${padMinutes(f_hour.m)}`,`${apmTo?t_hour.h+12:t_hour.h}:${padMinutes(t_hour.m)}`,startAngle,angleLength);
         this.props.closeModal()}}
-      style={{position:'absolute',top:10,right:10}}
-      hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
-      <Image source={closeIC} style={{width:18, height:18}} />
+        style={{position:'absolute',top:Platform.OS==='ios'?20:10,right:10}}
+        hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
+      <Image source={closeIC} style={{width:20, height:20}} />
       </TouchableOpacity>
       <View style={timeContainer}>
       <View style={time}>

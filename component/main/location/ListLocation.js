@@ -183,9 +183,6 @@ class ListLocation extends Component {
 
    componentWillMount(){
      this.props.isLogin && this.refresh();
-     this.props.detailBack && this.setState({pullToRefresh:true},()=>{
-       this.props.dispatch({type:'DETAIL_BACK',detailBack:false});
-     });
    }
 
    componentDidMount(){
@@ -271,6 +268,9 @@ class ListLocation extends Component {
         const {latitude,longitude} = this.props.yourCurLoc;
         this.getPosition(latitude,longitude);
     }
+    this.props.detailBack==='DetailScreen' && this.setState({pullToRefresh:true},()=>{
+      this.props.dispatch({type:'DETAIL_BACK',detailBack:''});
+    });
   }
   render() {
     //console.log('pullToRefresh',this.state.pullToRefresh);

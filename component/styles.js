@@ -210,6 +210,9 @@ module.exports = {
   imgLogoTop : {
       width: 138,height: 25,
   },
+  iconHomeTab : {
+      width: 55,height: 55,marginBottom:10,
+  },
   imgContent : {
       width: 65,height: 65,marginBottom:10,
   },

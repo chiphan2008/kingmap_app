@@ -11,7 +11,7 @@ import VideoViewer from './VideoViewer';
 //
 //import FacebookPlayer from 'react-facebook-player';
 import global from '../../global';
-import {getThumbVideo} from '../../libs';
+import {getThumbVideo,format_number} from '../../libs';
 const {width,height} = Dimensions.get('window');
 
 
@@ -32,7 +32,7 @@ export default class SpaceContent extends Component {
     const {listProduct} = this.props;
     let listImgProduct = [];
     listProduct.map((item) => {
-      return listImgProduct.push({url :`${global.url_media}${item.image}`});
+      return listImgProduct.push({url :`${global.url_media}${item.image}`,description : item.description,name:item.name,id:item.id});
     })
     this.setState({listImgProduct: listImgProduct})
   }
@@ -46,7 +46,7 @@ export default class SpaceContent extends Component {
     const {listImgSpace,listImgMenu,listImgVideo,idContent,lang,moderation,listProduct} = this.props;
     const {navigate} = this.props.navigation;
     const {showImgSpace,showImageMenu,index,showVideo,linkVideo,listImgProduct,showImageProduct} = this.state;
-    // console.log('listProduct', listProduct)
+    console.log('listProduct', listProduct)
     return (
       <View style={spaceContent}>
           <View style={titleSpace}>
@@ -173,7 +173,7 @@ export default class SpaceContent extends Component {
               <View style={{flexDirection:'row',justifyContent:'space-between',marginBottom:10, paddingRight: 5}}>
                 <View style={[widthHafl]}>
                   <TouchableOpacity
-                  onPress={()=>{ this.setState({showImageProduct: true}, () => {
+                  onPress={()=>{ this.setState({showImageProduct: true,index}, () => {
                     this.setState({listImgProduct: []});
                     this.getListImg();
                   })}}
@@ -181,7 +181,7 @@ export default class SpaceContent extends Component {
                   <Image source={{uri :`${global.url_media}${item.image}`}} style={[imgSpace]}/>
                   </TouchableOpacity>
                   <Text style={colorText} numberOfLines={2}>{item.name}</Text>
-                  <Text style={txtAddrOver} numberOfLines={1}>{`${item.price} ${item.currency}`}</Text>
+                  <Text style={txtAddrOver} numberOfLines={1}>{`${format_number(item.price)} ${item.currency}`}</Text>
                 </View>
 
               </View>
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
   titleSpace:{flexDirection:'row',justifyContent:'space-between',paddingTop:30,paddingBottom:30,paddingLeft:0,paddingRight:0},
   colorText :{color:'#303B50',fontSize:17,marginTop:7},
   colorNumPP :{fontWeight: 'bold',color:'#2F353F'},
-  sizeTitle:{fontSize:17},
+  sizeTitle:{fontSize:16},
   widthHafl:{width:(width-30)/2,overflow:'hidden'},
   txtAddrOver:{color:'#6587A8',fontSize:14,overflow:'hidden',marginTop:5},
   imgSpace:{

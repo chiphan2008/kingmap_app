@@ -92,7 +92,7 @@ export default class AddImgMenu extends Component {
       <Modal onRequestClose={() => null} transparent
       animationType={'slide'} visible={this.props.visible}
       >
-      <ScrollView style={container}>
+      <View style={container}>
           <View style={headCatStyle}>
               <View style={headContent}>
                   <TouchableOpacity onPress={()=>{
@@ -108,11 +108,10 @@ export default class AddImgMenu extends Component {
                     <Text style={titleCreate}> {lang.add_gallery} </Text>
                   <View></View>
               </View>
-
           </View>
 
 
-          <View style={[container]}>
+          <ScrollView>
           <View style={{justifyContent:'center',alignItems:'center',backgroundColor:'#FFFEFF',padding:50,marginBottom:5,borderColor:'#ECEEF3',borderBottomWidth:1}}>
             <TouchableOpacity
             onPress={()=>this.uploadSpace()}>
@@ -120,6 +119,7 @@ export default class AddImgMenu extends Component {
             </TouchableOpacity>
             <Text style={{fontSize:20}}>{lang.upload_image.toUpperCase()}</Text>
           </View>
+
           {this.state.imgMenu.length > 0 ?
             <View>
             {this.state.imgMenu.map((e,index)=>(
@@ -202,9 +202,10 @@ export default class AddImgMenu extends Component {
             :
             <View></View>
           }
+          </ScrollView>
           </View>
 
-        </ScrollView>
+
         </Modal>
 
     );

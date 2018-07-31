@@ -3,10 +3,10 @@ package com.kingmap_app;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.horcrux.svg.SvgPackage;
 import co.apptailor.googlesignin.RNGoogleSigninPackage;
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 import com.magus.fblogin.FacebookLoginPackage;
-import com.horcrux.svg.SvgPackage;
 import com.airbnb.android.react.maps.MapsPackage;
 
 import com.reactnative.ivpusic.imagepicker.PickerPackage;

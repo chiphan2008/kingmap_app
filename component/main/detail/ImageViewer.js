@@ -6,6 +6,8 @@ import {
 } from 'react-native';
 import closeIC from '../../../src/icon/ic-white/ic-close.png';
 const {width,height} = Dimensions.get('window');
+import global from '../../global';
+import * as lib from '../../libs';
 
 export default class ImageViewer extends Component {
   constructor(props){
@@ -27,7 +29,7 @@ export default class ImageViewer extends Component {
   );
 
   render() {
-    const {visible,data,index} = this.props;
+    const {visible,data,index, local} = this.props;
     console.log('data',data.length,index,data[index]);
     //const {index} = this.state;
     return (
@@ -36,8 +38,8 @@ export default class ImageViewer extends Component {
       <View style={{height,width,backgroundColor:'#000'}}>
 
         <TouchableOpacity onPress={()=>this.props.closeModal()}
-        style={{position:'absolute',top:Platform.OS==='ios'?25:15,right:15,zIndex:9999, }}
-        hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
+        style={{position:'absolute',top:Platform.OS==='ios'?35:25,right:15,zIndex:9999, }}
+        hitSlop={{top: 25, bottom: 25, left: 25, right: 25}}>
           <Image source={closeIC} style={{width:22,height:22}} />
         </TouchableOpacity>
 
@@ -56,7 +58,17 @@ export default class ImageViewer extends Component {
            extraData={this.state}
            data={data}
            renderItem={({item,index}) => (
-             <Image source={{uri :item.url ? `${item.url}` : `${item.image}`}} resizeMode = 'contain' style={{flex:1,width,height:'100%'}}/>
+             <View>
+               <Image 
+               source={local ? {uri :`${global.url_media}${item.image}`} : {uri :item.url ? `${item.url}` : `${item.image}`}} 
+               resizeMode = 'contain' 
+               style={{flex:1,width,height:'100%'}}/>
+               <View style={{flexDirection: 'column',width, height: height*0.2, position: 'absolute', zIndex: 999,alignItems: 'center',justifyContent: 'center', marginTop: height*0.75, backgroundColor: 'rgba(0,0,0,.7)'}}>
+                <Text style={{color: '#fff'}}>{item.name ? item.name : item.title ? item.title : ''}</Text>
+                <Text style={{color: '#fff'}}>{item.url && item.description ? item.description : item.price ? `${lib.format_number(item.price)} ${item.currency}` : ''}</Text>
+               </View>
+             </View>
+             
         )} />
         <View onLayout={()=>{this.gotoItem(index,data)}}></View>
         </View>

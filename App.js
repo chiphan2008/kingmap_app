@@ -93,7 +93,7 @@ const defaultState = {
   updateState:false,
   user_profile:{},
   isLogin:false,
-  detailBack:false,
+  detailBack:'',
 };
 const reducer = (state = defaultState, action) => {
   switch (action.type) {
@@ -120,7 +120,7 @@ const reducer = (state = defaultState, action) => {
       break;
 
     case 'DETAIL_BACK':
-      return {...state, detailBack:action.detailBack}
+      return {...state,detailBack:action.detailBack}
       break;
 
     default:

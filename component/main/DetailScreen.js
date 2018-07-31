@@ -210,7 +210,7 @@ class DetailScreen extends Component {
     );
   }
   backList(){
-    this.props.dispatch({type:'DETAIL_BACK',detailBack:true});
+    this.props.dispatch({type:'DETAIL_BACK',detailBack:'DetailScreen'});
     this.props.navigation.goBack();
   }
   scrollTop = () => {

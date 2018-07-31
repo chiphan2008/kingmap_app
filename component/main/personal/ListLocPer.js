@@ -52,7 +52,15 @@ class ListLocPer extends Component {
       }
     });
   }
-
+  componentDidUpdate(){
+    const {detailBack} = this.props;
+    const {user_profile,page} = this.state;
+    if(detailBack==='UpdateLocation' && user_profile.id!==undefined){
+      this.props.dispatch({type:'DETAIL_BACK',detailBack:''});
+      const skip = page>0?page-20:0;
+      this.getData();
+    }
+  }
   renderFooter = () => {
     if (!this.state.isLoad) return null;
     return (
@@ -65,7 +73,7 @@ class ListLocPer extends Component {
   getData(page=null){
     if(page===null) page=0;
     let url = `${global.url}${'user/list-location/'}${this.state.user_profile.id}${'?skip='}${page}${'&limit=20'}`;
-    //console.log(url);
+    console.log(url);
     getApi(url).then(arrData => {
         this.state.listData=page!==0?this.state.listData.concat(arrData.data):arrData.data;
         this.state.page = page===0 ? 20 : page+20;
@@ -250,5 +258,10 @@ class ListLocPer extends Component {
     );
   }
 }
+const mapStateToProps = (state) => {
+  return {
+    detailBack:state.detailBack,
+  }
+}
 
-export default connect()(ListLocPer);
+export default connect(mapStateToProps)(ListLocPer);

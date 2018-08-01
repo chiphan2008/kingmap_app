@@ -82,7 +82,7 @@ class Collection extends Component {
         _.remove(listData, function(item) {
           return item.id === idCollection;
         });
-        this.setState({listData: listData})
+        this.setState({listData})
         // this.getData();
       }
     }).catch(err => console.log(err));
@@ -101,10 +101,7 @@ class Collection extends Component {
     //console.log(arr);
     postApi(url,arr).then(e => {
       if(e.code===200){
-        this.setState({name_coll:'',},()=>{
-          //const skip=this.state.page>0?this.state.page-20:0;
-          //this.getData(skip);
-        })
+        this.setState({name_coll:'',})
       }
     }).catch(err => console.log(err));
 

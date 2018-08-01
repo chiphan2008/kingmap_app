@@ -57,8 +57,8 @@ class ListLocPer extends Component {
     const {user_profile,page} = this.state;
     if(detailBack==='UpdateLocation' && user_profile.id!==undefined){
       this.props.dispatch({type:'DETAIL_BACK',detailBack:''});
-      //const skip = page>0?page-20:0;
-      this.getData();
+      const skip = page>0?page-20:0;
+      this.getData(skip);
     }
   }
   renderFooter = () => {
@@ -74,8 +74,13 @@ class ListLocPer extends Component {
     if(page===null) page=0;
     let url = `${global.url}${'user/list-location/'}${this.state.user_profile.id}${'?skip='}${page}${'&limit=20'}`;
     console.log(url);
+    let arr = this.state.listData;
     getApi(url).then(arrData => {
-        this.state.listData=page!==0?this.state.listData.concat(arrData.data):arrData.data;
+        if(this.state.page>page && arr.length>20){
+          arr.splice(-20);
+          console.log('splice');
+        }
+        this.state.listData=page>0? arr.concat(arrData.data):arrData.data;
         this.state.page = page===0 ? 20 : page+20;
         this.state.loading = arrData.data.length<20?false:true;
         this.setState(this.state);

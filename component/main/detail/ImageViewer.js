@@ -30,7 +30,7 @@ export default class ImageViewer extends Component {
 
   render() {
     const {visible,data,index, local} = this.props;
-    console.log('data',data.length,index,data[index]);
+    //console.log('data',data.length,index,data[index]);
     //const {index} = this.state;
     return (
       data.length>0 &&
@@ -38,9 +38,9 @@ export default class ImageViewer extends Component {
       <View style={{height,width,backgroundColor:'#000'}}>
 
         <TouchableOpacity onPress={()=>this.props.closeModal()}
-        style={{position:'absolute',top:Platform.OS==='ios'?35:25,right:15,zIndex:9999, }}
+        style={{position:'absolute',top:Platform.OS==='ios'?25:20,right:15,zIndex:9999, }}
         hitSlop={{top: 25, bottom: 25, left: 25, right: 25}}>
-          <Image source={closeIC} style={{width:22,height:22}} />
+          <Image source={closeIC} style={{width:20,height:20}} />
         </TouchableOpacity>
 
         <FlatList
@@ -59,16 +59,18 @@ export default class ImageViewer extends Component {
            data={data}
            renderItem={({item,index}) => (
              <View>
-               <Image 
-               source={local ? {uri :`${global.url_media}${item.image}`} : {uri :item.url ? `${item.url}` : `${item.image}`}} 
-               resizeMode = 'contain' 
+               <Image
+               source={local ? {uri :`${global.url_media}${item.image}`} : {uri :item.url ? `${item.url}` : `${item.image}`}}
+               resizeMode = 'contain'
                style={{flex:1,width,height:'100%'}}/>
-               <View style={{flexDirection: 'column',width, height: height*0.2, position: 'absolute', zIndex: 999,alignItems: 'center',justifyContent: 'center', marginTop: height*0.75, backgroundColor: 'rgba(0,0,0,.7)'}}>
-                <Text style={{color: '#fff'}}>{item.name ? item.name : item.title ? item.title : ''}</Text>
-                <Text style={{color: '#fff'}}>{item.url && item.description ? item.description : item.price ? `${lib.format_number(item.price)} ${item.currency}` : ''}</Text>
+               <View style={{width, height: height*0.2, position: 'absolute',bottom:10,zIndex: 999,alignItems: 'center',justifyContent: 'center'}}>
+                <Text numberOfLines={1} style={{color: '#fff',fontSize:18,fontWeight:'bold',marginBottom:5}}>
+                {item.name ? item.name : item.title ? item.title : ''}
+                </Text>
+                <Text numberOfLines={2} style={{color: '#fff',fontSize:17}}>{item.url && item.description ? item.description : item.price ? `${lib.format_number(item.price)} ${item.currency}` : ''}</Text>
                </View>
              </View>
-             
+
         )} />
         <View onLayout={()=>{this.gotoItem(index,data)}}></View>
         </View>

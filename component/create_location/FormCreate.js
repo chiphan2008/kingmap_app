@@ -105,6 +105,7 @@ class FormCreate extends Component {
       showImgMenu:false,
       img_space:[],
       img_menu:[],
+      link_video:[],
       img_video:[],
       //addGroupProduct:[],
       index:0,
@@ -176,9 +177,10 @@ class FormCreate extends Component {
       content._category_items.forEach(e=>{
         this.setState({checkSubCat: Object.assign(this.state.checkSubCat,{[e.id]:e.id})});
       })
-      let img_video=[];
+      let link_video=[],img_video=[];
       arrData.data.link_video.forEach(e=>{
-        img_video.push(e.link);
+        link_video.push(e.link);
+        img_video.push(e.thumbnail);
       })
       //console.log('content._category_items.length',content._category_items.length);
       setTimeout(()=>{
@@ -189,7 +191,7 @@ class FormCreate extends Component {
           },
           img_space:arrData.data.image_space,
           img_menu:arrData.data.image_menu,
-          img_video,
+          link_video,img_video,
           hasSubCat:content._category_items.length,
           region:{
             latitude:content.lat,
@@ -314,7 +316,7 @@ class FormCreate extends Component {
       e.path!==undefined && arr.append(`des_menu[]`, des_menu);
     })
 
-    this.state.img_video.length>0 && this.state.img_video.forEach((e)=>{
+    this.state.link_video.length>0 && this.state.link_video.forEach((e)=>{
       arr.append('link[]',e);
     })
     Object.entries(this.state.checkService).length>0 && Object.entries(this.state.checkService).forEach((e)=>{
@@ -853,7 +855,7 @@ class FormCreate extends Component {
                 </View>
             </View>
           <View style={{flexDirection:'row',alignItems:'center'}}>
-            <Image source={selectedIC} style={[imgShare,this.state.img_video.length>0 ? show : hide]}/>
+            <Image source={selectedIC} style={[imgShare,this.state.link_video.length>0 ? show : hide]}/>
             <View style={imgCamera} >
             <Image source={movieIC} style={imgShare}/>
             </View>
@@ -885,12 +887,13 @@ class FormCreate extends Component {
           <AddVideo
           lang={this.state.lang}
           editLoc={this.state.editLoc}
-          submitImage={(img_video)=>{
-            //console.log(img_video);
-            this.setState({img_video})
+          submitImage={(link_video,img_video)=>{
+            //console.log(link_video);
+            this.setState({link_video,img_video})
           }}
           visible={showVideo}
-          listVideo={this.state.img_video}
+          link_video={this.state.link_video}
+          img_video={this.state.img_video}
           closeModal={()=>this.setState({showVideo:false})} />
 
         <View style={{height:15}}></View>
@@ -906,7 +909,7 @@ class FormCreate extends Component {
         }
       </View>
       </TouchableWithoutFeedback>
-
+      <View style={{height:30}}></View>
 
       </ScrollView>
     </View>}

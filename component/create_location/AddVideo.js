@@ -25,16 +25,11 @@ export default class AddVideo extends Component {
     }
   }
   componentWillUpdate(){
-    const {listVideo} = this.props;
-    console.log('listVideo',listVideo);
-    if(listVideo.length>0){
-      var imgVideo = [],lstVideo=[];
-      listVideo.forEach((e)=>{
-        imgVideo = imgVideo.concat(getThumbVideo(e));
-        lstVideo = lstVideo.concat(e);;
-      })
-      this.state.listVideo = lstVideo;
-      this.state.imgVideo = imgVideo;
+    const {img_video,link_video} = this.props;
+    //console.log('listVideo',listVideo);
+    if(link_video.length>0){
+      this.state.listVideo = link_video;
+      this.state.imgVideo = img_video;
       this.state.update && this.setState(this.state,()=>{
         this.setState({update:false});
       })
@@ -84,7 +79,7 @@ export default class AddVideo extends Component {
           <View style={headCatStyle}>
               <View style={headContent}>
                   <TouchableOpacity onPress={()=>{
-                    this.props.submitImage(this.state.listVideo);
+                    this.props.submitImage(this.state.listVideo,this.state.imgVideo);
                     this.props.closeModal();
                   }}>
                   <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />

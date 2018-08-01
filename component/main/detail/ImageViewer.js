@@ -7,7 +7,7 @@ import {
 import closeIC from '../../../src/icon/ic-white/ic-close.png';
 const {width,height} = Dimensions.get('window');
 import global from '../../global';
-import * as lib from '../../libs';
+import {format_number} from '../../libs';
 
 export default class ImageViewer extends Component {
   constructor(props){
@@ -63,11 +63,12 @@ export default class ImageViewer extends Component {
                source={local ? {uri :`${global.url_media}${item.image}`} : {uri :item.url ? `${item.url}` : `${item.image}`}}
                resizeMode = 'contain'
                style={{flex:1,width,height:'100%'}}/>
-               <View style={{width, height: height*0.2, position: 'absolute',bottom:10,zIndex: 999,alignItems: 'center',justifyContent: 'center'}}>
+               <View style={{width, height: height*0.25, position: 'absolute',bottom:20,zIndex: 999,alignItems: 'center',justifyContent: 'center'}}>
                 <Text numberOfLines={1} style={{color: '#fff',fontSize:18,fontWeight:'bold',marginBottom:5}}>
                 {item.name ? item.name : item.title ? item.title : ''}
                 </Text>
-                <Text numberOfLines={2} style={{color: '#fff',fontSize:17}}>{item.url && item.description ? item.description : item.price ? `${lib.format_number(item.price)} ${item.currency}` : ''}</Text>
+                <Text numberOfLines={6} style={{color: '#fff',fontSize:15, marginLeft:20, marginRight:20}}>{item.description ? item.description : ''}</Text>
+                <Text numberOfLines={2} style={{color: '#d0021b',fontSize:17, marginTop:6}}>{ item.price ? `${format_number(item.price)} ${item.currency}` : '' }</Text>
                </View>
              </View>
 

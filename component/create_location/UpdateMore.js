@@ -90,7 +90,7 @@ export default class UpdateMore extends Component {
         if(des===''){Alert.alert(lang.notify,lang.plz_des);return false;}
         if(price===''){Alert.alert(lang.notify,lang.plz_price);return false;}
         if(img.path===undefined){Alert.alert(lang.notify,lang.choose_img);return false;}
-        if(Platform.OS==='ios'&&!onlyNumber(price)){Alert.alert(lang.notify,lang.plz_format_price);return false;}
+        if(Platform.OS==='ios'&&!onlyNumber(price)&&price<1){Alert.alert(lang.notify,lang.plz_format_price);return false;}
       })
     }else {
       arr.append('content_id',content_id);
@@ -189,7 +189,7 @@ export default class UpdateMore extends Component {
     let limit = 20;
     if(page===null) page = 0;
     const url = `${global.url}${'branch/list-content/'}${content_id}?skip=${page}&limit=${limit}`;
-    console.log(url);
+    //console.log(url);
     getApi(url)
     .then(arrData => {
         this.setState({
@@ -515,7 +515,7 @@ export default class UpdateMore extends Component {
           {showLoc &&
 
             <View style={[popoverLoc,centerVer]}>
-                
+
                 <View style={[overLayout,pad10]}>
                 <Image source={LogoHome} style={{height:45,width:45,marginBottom:10}} />
                 <Text numberOfLines={1} style={{color:'#2A2D37',fontSize:17}}>{lang.add_branch.toUpperCase()}</Text>

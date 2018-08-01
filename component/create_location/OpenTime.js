@@ -512,7 +512,12 @@ export class Clock extends Component {
         {showClock && <CircularSlider
           startAngle={startAngle}
           angleLength={angleLength}
-          onUpdate={this.onUpdate}
+          onUpdate={({ startAngle, angleLength }) => {
+            this.setState({
+              startAngle: roundAngleToFives(startAngle),
+              angleLength: roundAngleToFives(angleLength)
+            });
+          }}
           segments={5}
           strokeWidth={40}
           radius={width>320?140:120}

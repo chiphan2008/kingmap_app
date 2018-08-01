@@ -11,7 +11,7 @@ import VideoViewer from './VideoViewer';
 //
 //import FacebookPlayer from 'react-facebook-player';
 import global from '../../global';
-import {getThumbVideo,format_number} from '../../libs';
+import {getThumbVideo, format_number} from '../../libs';
 const {width,height} = Dimensions.get('window');
 
 
@@ -31,8 +31,9 @@ export default class SpaceContent extends Component {
   getListImg(){
     const {listProduct} = this.props;
     let listImgProduct = [];
+    console.log('listProduct',listProduct)
     listProduct.map((item) => {
-      return listImgProduct.push({url :`${global.url_media}${item.image}`,description : item.description,name:item.name,id:item.id});
+      return listImgProduct.push({url :`${global.url_media}${item.image}`,description:item.description,name:item.name,id:item.id,price: item.price,currency:item.currency});
     })
     this.setState({listImgProduct: listImgProduct})
   }
@@ -46,7 +47,7 @@ export default class SpaceContent extends Component {
     const {listImgSpace,listImgMenu,listImgVideo,idContent,lang,moderation,listProduct} = this.props;
     const {navigate} = this.props.navigation;
     const {showImgSpace,showImageMenu,index,showVideo,linkVideo,listImgProduct,showImageProduct} = this.state;
-    console.log('listProduct', listProduct)
+    // console.log('listProduct', listProduct)
     return (
       <View style={spaceContent}>
           <View style={titleSpace}>

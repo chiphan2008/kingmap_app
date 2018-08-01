@@ -10,8 +10,8 @@ import {
 import Rating from './Rating';
 import global from '../../global';
 import getApi from '../../api/getApi';
-import {format_number} from '../../libs';
-import Moment from 'moment';
+ import * as lib from '../../libs';
+ import Moment from 'moment';
 
 import likeIcon from '../../../src/icon/ic-like.png';
 import likeFullIcon from '../../../src/icon/ic-like-full.png';
@@ -81,8 +81,8 @@ export default class Discounts extends Component {
                    </TouchableOpacity>
                    <TouchableOpacity onPress={()=>{}}>
                     <Text style={colorText} numberOfLines={2}>{item.name}</Text>
-                    <Text style={txtAddrOver} numberOfLines={1}>{`${format_number(item.price)} ${item.currency}`}</Text>
-                    <Text style={colorText} numberOfLines={1}>{item.description}</Text>
+                    {/* <Text style={txtAddrOver} numberOfLines={1}>{`${lib.format_number(item.price)} ${item.currency}`}</Text> */}
+                    <Text style={[colorText, {fontSize: 13,color:'#6587A8'}]} numberOfLines={2}>{item.description}</Text>
                    </TouchableOpacity>
 
                    <View style={{flexDirection:'row',marginTop:5,alignItems:'flex-end'}}>

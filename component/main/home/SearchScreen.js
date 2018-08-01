@@ -304,9 +304,8 @@ class SearchScreen extends Component {
     }
   }
   _onPressMap = (event) => {
-    //console.log(event.nativeEvent);
+    //console.log('_onPressMap');
     const {latitude,longitude} = (event.nativeEvent.coordinate || this.state.curLocation);
-    //console.log(latitude,longitude);
     this.setState({
       circleLoc: {
         latitude,longitude,
@@ -322,6 +321,7 @@ class SearchScreen extends Component {
     //console.log('componentDidUpdate');
   }
   _onMarkerPressed(id) {
+    //console.log('_onMarkerPressed');
     if(this.state.callout[`${id}`]===undefined || this.state.callout[`${id}`]){
       this.setState({callout: Object.assign({},{[`${id}`]:false})},()=>{
         this[`${id}`].showCallout();
@@ -431,13 +431,13 @@ class SearchScreen extends Component {
               //showsUserLocation
               zoomEnabled
               onPanDrag={()=>{Keyboard.dismiss();}}
-              ref={(ref) => { this.mapRef = ref }}
+              //ref={(ref) => { this.mapRef = ref }}
               //this.mapRef.fitToCoordinates(markers, { edgePadding: { top: 50, right: 50, bottom: 50, left: 50 }, animated: false })
-              style={{width,height,zIndex:-1,position:'relative'}}
+              style={{width,height}}
               region={curLocation}
               //onPress={e => console.log(e.nativeEvent)}
-              onPress={this._onPressMap}
-              onRegionChangeComplete={this._onRegionChangeComplete}
+              onPress={(e)=>this._onPressMap(e)}
+              onRegionChangeComplete={this._onRegionChangeComplete.bind(this)}
               customMapStyle={global.style_map}
               showsPointsOfInterest={false}
 
@@ -450,13 +450,16 @@ class SearchScreen extends Component {
                   latitude: Number(marker.latitude),
                   longitude: Number(marker.longitude),
                 }}
-                onPress={() => this._onMarkerPressed(marker.id)}
+                onPress={(e) => {
+                  e.stopPropagation();
+                  this._onMarkerPressed(marker.id)
+                }}
                 ref={(co) => { this[`${marker.id}`] = co}}
                 image={ Platform.OS==='android' ? {uri:`${marker.marker}`} : null}
                 >
               {Platform.OS==='ios' &&
               <View>
-                <Image source={{uri:`${marker.marker}`}} style={{width:48,height:54,position:'relative',zIndex:9}} />
+                <Image source={{uri:`${marker.marker}`}} style={{width:48,height:54}} />
               </View>
               }
               <MapView.Callout
@@ -497,7 +500,7 @@ class SearchScreen extends Component {
           </View>
         }
 
-        
+
 
           <TouchableOpacity style={[btnMap,btnMapZoom,curLocation.longitude!==undefined ? show :hide]}
           onPress={()=>{this.findCurrentLoc()}}>

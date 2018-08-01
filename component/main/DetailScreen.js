@@ -227,7 +227,7 @@ class DetailScreen extends Component {
     //console.log('lang',lang.lang);
     const { idContent, moderation } = this.props.navigation.state.params;
     //console.log('idContent',idContent);
-    console.log('listData.discounts',listData.discounts);
+    //console.log('listData.discounts',listData.discounts);
     const {
       container, bgImg,colorWhite,likeIC,shareIC,imgIC,voteIC,
       imgSocial, imgInfo,aligncenter,

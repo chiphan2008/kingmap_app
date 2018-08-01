@@ -3,9 +3,9 @@
 import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image,
   TextInput, TouchableOpacity,ScrollView,Modal,FlatList,
-  Alert,ActivityIndicator,
+  Alert,ActivityIndicator,Keyboard, TouchableWithoutFeedback
 } from 'react-native';
-
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 //import * as _ from 'lodash';
 import {connect} from 'react-redux';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -125,7 +125,8 @@ class FormCreate extends Component {
       showUpdate:false,
       showUpdateMore:false,
       editLoc:false,
-
+      region:{},
+      addrMarker:'',
     };
     checkLogin().then(e=>{
       //console.log('e11',e);
@@ -190,6 +191,13 @@ class FormCreate extends Component {
           img_menu:arrData.data.image_menu,
           img_video,
           hasSubCat:content._category_items.length,
+          region:{
+            latitude:content.lat,
+            longitude:content.lng,
+            latitudeDelta:  0.004422,
+            longitudeDelta: 0.001121,
+          },
+          addrMarker:`${content.address}, ${content._district.name}, ${content._city.name}, ${content._country.name}`,
           txtName:content.name,
           txtAddress:content.address,
           ListOpenTime:content._date_open_api,
@@ -376,17 +384,13 @@ class FormCreate extends Component {
     //console.log(url);
     getApi(url).then(e=>{
 
-      let arrDataAddr = e.results[0].address_components;
       let arrDataLoc = e.results[0].geometry.location;
-      //console.log(arrDataAddr,arrDataLoc);
-      if(txtAddress.trim()!=='' && txtAddress.trim()!==undefined){
-        //this.state.txtAddress=`${arrDataAddr[0].long_name} ${arrDataAddr[1].long_name}`;
-      }
-      this.state.lat=arrDataLoc.lat;
-      this.state.lng=arrDataLoc.lng;
+      const res = e.results[0].address_components;
+      const newAddress = `${res[0].long_name}, ${res[1].long_name}, ${res[2].long_name}, ${res[3].long_name}`;
       timeoutLatLng = setTimeout(()=>{
-        this.setState(this.state);
-      },3000)
+        this.setState({addrMarker: newAddress})
+        this.setRegion(arrDataLoc.lat,arrDataLoc.lng);
+      },700)
 
     })
   }
@@ -395,10 +399,21 @@ class FormCreate extends Component {
     let url = `${'https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyCCCOoPlN2D-mfrYEMWkz-eN7MZnOsnZ44&sensor=true&latlng='}${lat},${lng}`;
     //console.log(url);
     getApi(url).then(e=>{
-      const res = e.results[0];
-      const newAddress = res.address_components[0].long_name + ' ' + res.address_components[1].long_name;
-      this.setState({txtAddress: newAddress})
+      const res = e.results[0].address_components;
+      const newAddress = `${res[0].long_name}, ${res[1].long_name}, ${res[2].long_name}, ${res[3].long_name}`;
+      this.setState({addrMarker: newAddress})
     })
+  }
+  setRegion = (latitude,longitude) => {
+    this.setState({
+      lat:latitude,lng:longitude,
+      region:{
+        latitude,longitude,
+        latitudeDelta:  0.004422,
+        longitudeDelta: 0.001121,
+      }
+    });
+    //this.getAddress(yourCurLoc.latitude,yourCurLoc.longitude)
   }
 
   render() {
@@ -418,6 +433,7 @@ class FormCreate extends Component {
     const {
       idContent,showUpdateMore,showImgSpace,showProduct,showImgMenu,
       showVideo,sub_cat,nameCat, serv_items, showService,hasService,
+      region,addrMarker
     } = this.state;
 
     return (
@@ -437,8 +453,8 @@ class FormCreate extends Component {
           </View>
       </View>
 
-      <ScrollView keyboardShouldPersistTaps={'never'}>
-
+      <ScrollView keyboardShouldPersistTaps='handled'>
+      <TouchableWithoutFeedback onPress={()=>Keyboard.dismiss()}>
     <View>
         <TouchableOpacity style={listCreate}
         onPress={()=>this.setState({showSubCat:!this.state.showSubCat})}>
@@ -493,7 +509,9 @@ class FormCreate extends Component {
             value={this.state.txtName}
            />
           <View style={{width:15}}>
-          <TouchableOpacity style={this.state.txtName!=='' && this.state.txtName!==null ? show : hide} onPress={()=>{this.setState({txtName:''})}}>
+          <TouchableOpacity
+          hitSlop={{top: 25, bottom: 25, left: 25, right: 25}}
+          style={this.state.txtName!=='' && this.state.txtName!==null ? show : hide} onPress={()=>{this.setState({txtName:''})}}>
           <Image source={closeIC} style={imgShare} />
           </TouchableOpacity>
           </View>
@@ -520,11 +538,51 @@ class FormCreate extends Component {
           placeholder={`${this.state.lang.address}`} style={wrapInputCreImg} />
           <View style={{width:15}}>
           <TouchableOpacity style={this.state.txtAddress!=='' && this.state.txtAddress!==null ? show : hide}
-          onPress={()=>{this.setState({txtAddress:'',lat:'Lat 0.0',lng:'Lng 0.0',})}}>
+          onPress={()=>{this.setState({txtAddress:'',lat:'Lat 0.0',lng:'Lng 0.0',})}}
+          hitSlop={{top: 25, bottom: 25, left: 25, right: 25}}>
           <Image source={closeIC} style={imgShare} />
           </TouchableOpacity>
           </View>
         </View>
+
+        <View style={region.latitude!==undefined?show:hide}>
+        {region.latitude!==undefined &&
+            <MapView
+              style={{width,height:width,zIndex:10,alignSelf:'stretch'}}
+              region={region}
+              onPress={(event)=>{
+                const {latitude,longitude} = event.nativeEvent.coordinate;
+                this.getAddress(latitude,longitude);
+                this.setRegion(latitude,longitude);
+              }}
+              customMapStyle={global.style_map_ios}
+              showsPointsOfInterest={false}
+            >
+            <MapView.Marker
+              coordinate={{
+                latitude: Number(region.latitude),
+                longitude: Number(region.longitude),
+              }}
+              showsCalloutOnLoad
+            >
+            <MapView.Callout>
+            <View style={{height: 30,width: width-60,alignItems:'center',justifyContent:'center',borderRadius:3}}>
+            <Text numberOfLines={1}>{`${addrMarker}`}</Text>
+            </View>
+            </MapView.Callout>
+
+            </MapView.Marker>
+            </MapView>}
+            <TouchableOpacity style={{position:'absolute',zIndex:999,bottom:10,right:10,backgroundColor:'rgba(254,254,254,.8)'}}
+            onPress={() => {
+              const { latitude,longitude } = this.props.yourCurLoc;
+              this.getAddress(latitude,longitude);
+              this.setRegion(latitude,longitude);
+            }}>
+              <Image source={currentLocIC} style={{width:30,height:30}} />
+            </TouchableOpacity>
+          </View>
+
 
         <TouchableOpacity style={listCreate}
         onPress={()=>this.setState({showOpenTime:!this.state.showOpenTime})}>
@@ -558,7 +616,9 @@ class FormCreate extends Component {
           onSubmitEditing={(event) => {  this.refs.UserWifi.focus();  }}
           placeholder={this.state.lang.description} style={wrapInputCreImg} />
           <View style={{width:15}}>
-          <TouchableOpacity style={this.state.txtDes!=='' && this.state.txtDes!==null ? show : hide} onPress={()=>{this.setState({txtDes:''})}}>
+          <TouchableOpacity
+          hitSlop={{top: 25, bottom: 25, left: 25, right: 25}}
+          style={this.state.txtDes!=='' && this.state.txtDes!==null ? show : hide} onPress={()=>{this.setState({txtDes:''})}}>
           <Image source={closeIC} style={imgShare} />
           </TouchableOpacity>
           </View>
@@ -600,7 +660,9 @@ class FormCreate extends Component {
             value={this.state.txtUserWifi}
            />
           <View style={{width:15}}>
-          <TouchableOpacity style={this.state.txtUserWifi!=='' && this.state.txtUserWifi!==null ? show : hide} onPress={()=>{this.setState({txtUserWifi:''})}}>
+          <TouchableOpacity
+          hitSlop={{top: 25, bottom: 25, left: 25, right: 25}}
+          style={this.state.txtUserWifi!=='' && this.state.txtUserWifi!==null ? show : hide} onPress={()=>{this.setState({txtUserWifi:''})}}>
           <Image source={closeIC} style={imgShare} />
           </TouchableOpacity>
           </View>
@@ -618,7 +680,9 @@ class FormCreate extends Component {
             value={this.state.txtPassWifi}
            />
           <View style={{width:15}}>
-          <TouchableOpacity style={this.state.txtPassWifi!=='' && this.state.txtUserWifi!==null ? show : hide} onPress={()=>{this.setState({txtPassWifi:''})}}>
+          <TouchableOpacity
+          hitSlop={{top: 25, bottom: 25, left: 25, right: 25}}
+          style={this.state.txtPassWifi!=='' && this.state.txtUserWifi!==null ? show : hide} onPress={()=>{this.setState({txtPassWifi:''})}}>
           <Image source={closeIC} style={imgShare} />
           </TouchableOpacity>
           </View>
@@ -637,7 +701,9 @@ class FormCreate extends Component {
             maxLength={20}
            />
           <View style={{width:15}}>
-          <TouchableOpacity style={this.state.txtPhone!=='' && this.state.txtPhone!==null ? show : hide} onPress={()=>{this.setState({txtPhone:''})}}>
+          <TouchableOpacity
+          hitSlop={{top: 25, bottom: 25, left: 25, right: 25}}
+          style={this.state.txtPhone!=='' && this.state.txtPhone!==null ? show : hide} onPress={()=>{this.setState({txtPhone:''})}}>
           <Image source={closeIC} style={imgShare} />
           </TouchableOpacity>
           </View>
@@ -655,7 +721,9 @@ class FormCreate extends Component {
             value={this.state.txtEmail}
            />
           <View style={{width:15}}>
-          <TouchableOpacity style={this.state.txtEmail!=='' && this.state.txtEmail!==null ? show : hide} onPress={()=>{this.setState({txtEmail:''})}}>
+          <TouchableOpacity
+          hitSlop={{top: 25, bottom: 25, left: 25, right: 25}}
+          style={this.state.txtEmail!=='' && this.state.txtEmail!==null ? show : hide} onPress={()=>{this.setState({txtEmail:''})}}>
           <Image source={closeIC} style={imgShare} />
           </TouchableOpacity>
           </View>
@@ -694,7 +762,9 @@ class FormCreate extends Component {
           placeholder={`${this.state.lang.keyword}`} style={wrapInputCreImg} />
 
           <View style={{width:15}}>
-            <TouchableOpacity style={this.state.txtKW!=='' && this.state.txtKW!==null ? show : hide} onPress={()=>{this.setState({txtKW:''})}}>
+            <TouchableOpacity
+            hitSlop={{top: 25, bottom: 25, left: 25, right: 25}}
+            style={this.state.txtKW!=='' && this.state.txtKW!==null ? show : hide} onPress={()=>{this.setState({txtKW:''})}}>
             <Image source={closeIC} style={imgShare} />
             </TouchableOpacity>
           </View>
@@ -713,14 +783,6 @@ class FormCreate extends Component {
           </View>
             <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
             <Text>{Number(this.state.lat).toFixed(6)==='NaN' ? this.state.lat : Number(this.state.lat).toFixed(6)} - {Number(this.state.lng).toFixed(6)==='NaN' ? this.state.lng : Number(this.state.lng).toFixed(6)}</Text>
-
-            <TouchableOpacity style={listCreate} onPress={() => {
-              const { yourCurLoc } = this.props;
-              this.setState({lat:yourCurLoc.latitude,lng:yourCurLoc.longitude})
-              //this.getAddress(yourCurLoc.latitude,yourCurLoc.longitude)
-            }}>
-              <Image source={currentLocIC} style={imgInfo} />
-            </TouchableOpacity>
             </View>
         </View>
 
@@ -823,7 +885,10 @@ class FormCreate extends Component {
           <AddVideo
           lang={this.state.lang}
           editLoc={this.state.editLoc}
-          submitImage={(img_video)=>this.setState({img_video})}
+          submitImage={(img_video)=>{
+            //console.log(img_video);
+            this.setState({img_video})
+          }}
           visible={showVideo}
           listVideo={this.state.img_video}
           closeModal={()=>this.setState({showVideo:false})} />
@@ -840,7 +905,7 @@ class FormCreate extends Component {
           </View>
         }
       </View>
-
+      </TouchableWithoutFeedback>
 
 
       </ScrollView>

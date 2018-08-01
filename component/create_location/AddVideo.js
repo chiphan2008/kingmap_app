@@ -26,11 +26,12 @@ export default class AddVideo extends Component {
   }
   componentWillUpdate(){
     const {listVideo} = this.props;
+    console.log('listVideo',listVideo);
     if(listVideo.length>0){
       var imgVideo = [],lstVideo=[];
       listVideo.forEach((e)=>{
-        imgVideo = imgVideo.concat(e.thumbnail);
-        lstVideo = lstVideo.concat(e.link);;
+        imgVideo = imgVideo.concat(getThumbVideo(e));
+        lstVideo = lstVideo.concat(e);;
       })
       this.state.listVideo = lstVideo;
       this.state.imgVideo = imgVideo;
@@ -40,6 +41,7 @@ export default class AddVideo extends Component {
     }
   }
   uploadVideo(link){
+    //console.log('link',link);
     const {lang} = this.props;
     if(link!==''){
       var youtube_video_id = getThumbVideo(link);

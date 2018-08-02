@@ -388,7 +388,7 @@ class FormCreate extends Component {
 
       let arrDataLoc = e.results[0].geometry.location;
       const res = e.results[0].address_components;
-      const newAddress = `${res[0].long_name}, ${res[1].long_name}, ${res[2].long_name}, ${res[3].long_name}`;
+      const newAddress = `${res[0].long_name} ${res[1].long_name}, ${res[2].long_name}, ${res[3].long_name}, ${res[4].long_name}, ${res[5].long_name}`;
       timeoutLatLng = setTimeout(()=>{
         this.setState({addrMarker: newAddress})
         this.setRegion(arrDataLoc.lat,arrDataLoc.lng);
@@ -402,8 +402,10 @@ class FormCreate extends Component {
     //console.log(url);
     getApi(url).then(e=>{
       const res = e.results[0].address_components;
-      const newAddress = `${res[0].long_name}, ${res[1].long_name}, ${res[2].long_name}, ${res[3].long_name}`;
-      this.setState({addrMarker: newAddress})
+      const newAddress = `${res[0].long_name} ${res[1].long_name}, ${res[2].long_name}, ${res[3].long_name}, ${res[4].long_name}, ${res[5].long_name}`;
+      this.setState({
+        addrMarker: newAddress,
+      },()=>this.setRegion(lat,lng))
     })
   }
   setRegion = (latitude,longitude) => {
@@ -554,8 +556,13 @@ class FormCreate extends Component {
               region={region}
               onPress={(event)=>{
                 const {latitude,longitude} = event.nativeEvent.coordinate;
+                this.myMar.hideCallout();
                 this.getAddress(latitude,longitude);
-                this.setRegion(latitude,longitude);
+
+              }}
+              //onReady={()=>{console.log('onReady');}}
+              onRegionChange={()=>{
+                this.myMar.showCallout();
               }}
               customMapStyle={global.style_map_ios}
               showsPointsOfInterest={false}
@@ -565,9 +572,11 @@ class FormCreate extends Component {
                 latitude: Number(region.latitude),
                 longitude: Number(region.longitude),
               }}
-              showsCalloutOnLoad
+              ref={(co) => { this.myMar = co}}
             >
-            <MapView.Callout>
+            <MapView.Callout onLayout={()=>{
+              Platform.OS==='android' && this.myMar.showCallout();
+            }}>
             <View style={{height: 30,width: width-60,alignItems:'center',justifyContent:'center',borderRadius:3}}>
             <Text numberOfLines={1}>{`${addrMarker}`}</Text>
             </View>
@@ -578,8 +587,9 @@ class FormCreate extends Component {
             <TouchableOpacity style={{position:'absolute',zIndex:999,bottom:10,right:10,backgroundColor:'rgba(254,254,254,.8)'}}
             onPress={() => {
               const { latitude,longitude } = this.props.yourCurLoc;
+              this.myMar.hideCallout();
               this.getAddress(latitude,longitude);
-              this.setRegion(latitude,longitude);
+
             }}>
               <Image source={currentLocIC} style={{width:30,height:30}} />
             </TouchableOpacity>

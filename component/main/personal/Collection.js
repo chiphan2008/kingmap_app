@@ -90,13 +90,18 @@ class Collection extends Component {
   }
 
   editCollection(idCollection,index){
-    //console.log();
+    // console.log('this.state.name_coll',this.state.name_coll, index);
+    const { listData } = this.state;
     const arr = new FormData();
     arr.append('collection_id',idCollection);
     arr.append('name',this.state.name_coll);
     arr.append('user_id',this.state.user_profile.id);
-    this.state.listData[index].name=this.state.name_coll;
-    this.setState(this.state);
+    listData.forEach((item) => {
+      if(item.id === idCollection) {
+        item.name = this.state.name_coll;
+      }
+    });
+    this.setState({listData: listData});
     const url = `${global.url}${'collection/edit'}`;
     //console.log(arr);
     postApi(url,arr).then(e => {
@@ -152,7 +157,6 @@ class Collection extends Component {
     const { showPopup,showInput,showEdit,isFocus,name_coll } = this.state;
     const { lang,curLoc } = this.props.navigation.state.params;
     const { goBack,navigate } = this.props.navigation;
-    //console.log('this.state.listData',this.state.listData);
     const {
       container,headCatStyle,headContent,titleCreate,
       titleTab,titleActive,listCreate,widthLblCre,show,hide,popup,
@@ -202,14 +206,23 @@ class Collection extends Component {
                             <Text numberOfLines={1} style={txtTitleOverCat}>{item.name} ({item._contents.length})</Text>
                             </View>
                            <TouchableOpacity style={{padding:5}} onPress={()=>{
-                             if(isFocus){
-                               this.editCollection(item.id,index);
-                               this.setState({isFocus:false,showInput:Object.assign({},{[item.id]:!item.id})});
-                             }else {
-                               this.setState({
-                                 isFocus:true,name_coll:item.name,
-                                 showInput:Object.assign({},{[item.id]:item.id})})
+                            //  console.log('showInput cha',this.state.showInput[item.id])
+                             if(this.state.showInput[item.id] === item.id){
+                              if(isFocus){
+                                 this.editCollection(item.id,index);
+                                
+                                 this.setState({isFocus:false,showInput:Object.assign({},{[item.id]:!item.id})});
+                               }else {
+                                 this.setState({
+                                   isFocus:true,name_coll:item.name,
+                                   showInput:Object.assign({},{[item.id]:item.id})})
+                               }
+                             } else {
+                              this.setState({
+                                isFocus:true,name_coll:item.name,
+                                showInput:Object.assign({},{[item.id]:item.id})})
                              }
+                             
                            }}>
                              <Image source={(isFocus && showInput[item.id]) ? saveBlueIC : editBlueIC} style={{width:15,height:15}} />
                            </TouchableOpacity>

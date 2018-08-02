@@ -26,13 +26,13 @@ const postApi = async (url,param) => {
 
     //console.log('url, params',url, param);
     let response = await fetch(url, params);
-    console.log('responseawait',response);
+    //console.log('responseawait',response);
 
     let responseJson = await response.json();
     // if (Platform.OS === 'android') {
     //   responseJson = responseJson.replace(/\r?\n/g, '').replace(/[\u0080-\uFFFF]/g, ''); // If android , I've removed unwanted chars.
     // }
-    console.log('responseJson',responseJson);
+    //console.log('responseJson',responseJson);
     //
     return responseJson;
     // return await fetch(url, params).then((response) => response.json())

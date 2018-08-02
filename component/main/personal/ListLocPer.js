@@ -248,10 +248,10 @@ class ListLocPer extends Component {
             </View>
 
           }
-          <View style={line}></View>
+          {/*<View style={line}></View>
           <TouchableOpacity onPress={()=>this.confirmDel(id_content)} style={pad15}>
           <Text style={colorTxt}>{lang.delete}</Text>
-          </TouchableOpacity>
+          </TouchableOpacity>*/}
         </View>
         <View style={[actionSheetContent,actionSheetRadius,marTop10]}>
           <TouchableOpacity onPress={()=>this.setState({showOption:false})} style={pad15}>

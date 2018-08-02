@@ -256,7 +256,7 @@ export default class GrantRight extends Component {
             <Text numberOfLines={1} style={[colorTitle, {fontWeight: 'bold', fontSize:14}]}>{`${lang.des_work}`}</Text>
             </View>
             <TextInput underlineColorAndroid='transparent'
-            maxHeight={65} multiline numberOfLines={4}
+            multiline numberOfLines={12}
             placeholder={lang.enter_des}
             style={{marginTop:5,width:width-30,backgroundColor:'#EDEDED',borderRadius:3,padding:5,textAlignVertical:'top'}}
             onChangeText={(desWork) => this.setState({desWork})}

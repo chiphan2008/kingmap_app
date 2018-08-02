@@ -19,7 +19,7 @@ export default class VideoViewer extends Component {
 
   render() {
     const {visible,link} = this.props;
-    //console.log('data',link);
+    console.log('data',link);
     let newLink;
     if(link.type === "youtube"){
       newLink = link.link.replace('watch?v=', 'embed/');
@@ -27,20 +27,19 @@ export default class VideoViewer extends Component {
       newLink = newLink.split('&')[0];
       //console.log(newLink)
     } else{
-      newLink = `<html><iframe src="https://www.facebook.com/plugins/video.php?href=${link.link}" width="100%" height="100% scrolling="no" style="overflow:hidden;height:100%;width:100%;background-color:'#000'" frameborder="0" allowFullScreen="true"></iframe></html>`;
+      newLink = `<html><iframe src="https://www.facebook.com/plugins/video.php?href=${link.link}" width="100%" height="100% scrolling="no" style="overflow:hidden;height:100%;width:100%;background-color:'#000'" frameborder="0" allowFullScreen="false"></iframe></html>`;
     }
-    
     return (
       link!=={} &&
       <Modal onRequestClose={() => null} visible={visible} transparent>
-      <TouchableOpacity style={{position:'absolute',zIndex:999,top:14,left:5}}
+      <TouchableOpacity style={{position:'absolute',zIndex:999,top:18,left:8}}
       onPress={()=>{this.props.closeModal()}}
-      hitSlop={{top: 28, bottom: 28, left: 28, right: 28}}>
+      hitSlop={{top: 30, bottom: 28, left: 30, right: 28}}>
       <Image source={arrowLeft} style={{width:22, height:22}} />
       </TouchableOpacity>
       <View style={{flex: 1,width,backgroundColor:'#000',justifyContent:'center',alignItems:'center'}}>
 
-      <View style={{flex:0.6,width:width,backgroundColor:'#000',justifyContent: 'center',alignSelf:'center',padding:0}}>
+      <View style={{flex:1,width:width,backgroundColor:'#000',justifyContent: 'center',alignSelf:'center',padding:0}}>
         <WebView
             style={{flex: 1, justifyContent: 'center',backgroundColor:'#000'}}
             javaScriptEnabled={true}
@@ -49,7 +48,7 @@ export default class VideoViewer extends Component {
         />
       </View>
       </View>
-      
+
       </Modal>
     );
   }

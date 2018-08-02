@@ -126,15 +126,13 @@ export default class GrantRight extends Component {
 
         <ScrollView>
         <View style={wrapWhite} >
-            <View>
-            <Text numberOfLines={1} style={[colorTitle, {fontWeight: 'bold', fontSize:14}]}>{isCeo?`${lang.choose_agency}`:`${lang.choose_coll}`}</Text>
-            </View>
-            <View style={{paddingTop:10,marginTop:10,borderColor:'#E0E8ED',borderTopWidth:1}}>
+            <View style={{paddingTop:10,marginTop:10}}>
                 <TextInput underlineColorAndroid='transparent'
                 style={{width:width-30,backgroundColor:'#EDEDED',borderRadius:3,padding:5}}
                 onFocus={()=>this.setState({focus:true},()=>{
                   //console.log(focus);
                 })}
+                placeholder={isCeo?`${lang.choose_agency}`:`${lang.choose_coll}`}
                 onBlur={()=>this.setState({focus:false},()=>{
                   //console.log(focus);
                 })}
@@ -177,10 +175,6 @@ export default class GrantRight extends Component {
          </View>}
 
          <View style={wrapWhite} >
-           <View>
-           <Text numberOfLines={1} style={[colorTitle, {fontWeight: 'bold', fontSize:14}]}>{`${lang.choose_area}`}</Text>
-           </View>
-           <View style={{paddingTop:10,marginTop:10,borderColor:'#E0E8ED',borderTopWidth:1}}></View>
            <TouchableOpacity style={{flexDirection:'row',justifyContent:'space-between'}}
           onPress={()=>{
             if(!isCeo){
@@ -252,9 +246,6 @@ export default class GrantRight extends Component {
 
         <View style={{height:5}}></View>
         <View style={wrapWhite} >
-            <View>
-            <Text numberOfLines={1} style={[colorTitle, {fontWeight: 'bold', fontSize:14}]}>{`${lang.des_work}`}</Text>
-            </View>
             <TextInput underlineColorAndroid='transparent'
             multiline numberOfLines={12}
             placeholder={lang.enter_des}

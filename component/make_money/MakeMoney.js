@@ -87,7 +87,7 @@ class MakeMoney extends Component {
       isPend: temp_daily_code===''?false:true,
       user_profile:{},
       loadMore:true,
-      page:0,des_mm:'',
+      page:0,des_mm:'',let_mm:'',
       index_ctv_pending:'',
       static_notes:'',
       noData:'',
@@ -165,15 +165,17 @@ class MakeMoney extends Component {
       const month = Moment().format('MM');
       const year = Moment().format('YYYY');
       //let isCeo=false,isAgency=false,isCTV=false,isNormal=true;
-      let let_mm='';
+      let let_mm='',des_mm='';
       const arr = new FormData();
       if(isCTV) {
         arr.append('ctv_id',user_profile.id);
-        let_mm='tieu_de_make_money_ctv';
+        let_mm='mo_ta_ctv';
+        des_mm='tieu_de_make_money_ctv';
       }
       if(isAgency){
         arr.append('daily_id',user_profile.id);
-        let_mm='tieu_de_make_money_tdl';
+        let_mm='mo_ta_tdl';
+        des_mm='tieu_de_make_money_tdl';
       }
       if(isCeo) {
         arr.append('ceo_id',user_profile.id);
@@ -181,12 +183,14 @@ class MakeMoney extends Component {
       }
       arr.append('month',month);
       arr.append('year',year);
-      console.log(`${global.url}${'static?'}${'block_text='}${let_mm}${'&block_text=luu_y_make_money&lang='}${lang.lang}`);
+      //console.log(`${global.url}${'static?'}${'block_text='}${let_mm}${'&block_text=luu_y_make_money&lang='}${lang.lang}`);
       //console.log(arr);
-      user_profile._roles.length>0 && postApi(`${global.url}${'static?'}${'block_text='}${let_mm}${',luu_y_make_money&lang='}${lang.lang}`,arr).then(e => {
-      //console.log('e.data',e.data);
+      user_profile._roles.length>0 &&
+      postApi(`${global.url}${'static?'}${'block_text='}${let_mm},${des_mm},${',luu_y_make_money&lang='}${lang.lang}`,arr).then(e => {
+      //console.log('e.data',e.block_text);
       this.state.static_notes=e.block_text.luu_y_make_money;
-      this.state.des_mm=e.block_text[let_mm];
+      !isCeo && (this.state.des_mm=e.block_text[des_mm]);
+      this.state.let_mm=e.block_text[let_mm];
       this.state.listData=e.data;
         this.setState(this.state,()=>{
           if(this.state.isAgency){
@@ -411,7 +415,7 @@ class MakeMoney extends Component {
       itemChoose,showCoin,showLoc,showLocPop,showCTV,showCTVCeo,showCTVPop,showTDLPop,showTDLCTVPop,showArea,listData,index_ctv_pending,noData,
       listAgency,listLoc,isCeo,isAgency,isNormal,isCTV,assign,listDistrict,labelArea,ListPend,suggestPend,
       ListLocPend,suggestLoc,showListLocPend,showListCTVPend,loadMore,page,static_notes,des_mm,
-      content,searchCTV
+      content,searchCTV,let_mm
     } = this.state;
     const {yourCurLoc} = this.props;
     const _this = this;
@@ -473,7 +477,9 @@ class MakeMoney extends Component {
           <Image source={makeMoneyIC} style={{width:60,height:60}} />
           </View>
           <Text style={titleHead}> {`${name_module}`.toUpperCase()} </Text>
-          <Text style={titleNormal}> {des_mm} </Text>
+
+          <Text style={titleNormal}> {let_mm} </Text>
+          <Text style={titleNormal,{fontWeight:'bold',color:'#497E98',marginTop:10}}> {des_mm.toUpperCase()} </Text>
           </View>
 
           <View>
@@ -725,12 +731,12 @@ class MakeMoney extends Component {
           <View style={[marTop,wrapDes]}>
           {content!=='' &&
             <View>
-              <Text style={{color:'#748EAB',fontSize:17,lineHeight:28, fontWeight: 'bold'}}>{lang.obligation}</Text>
-              <Text style={{color:'#748EAB',fontSize:17,lineHeight:28}}>{`${content}`}</Text>
+              <Text style={{color:'#497E98',fontSize:17,lineHeight:28, fontWeight: 'bold'}}>{lang.obligation}</Text>
+              <Text style={{color:'#497E98',fontSize:17,lineHeight:28}}>{`${content}`}</Text>
             </View>
           }
-          <Text style={{color:'#748EAB',fontSize:17,lineHeight:28, fontWeight: 'bold'}}>{lang.jurisdiction}</Text>
-          <Text style={{color:'#748EAB',fontSize:17,lineHeight:28}}>{`${static_notes}`}</Text>
+          <Text style={{color:'#497E98',fontSize:17,lineHeight:28, fontWeight: 'bold'}}>{lang.jurisdiction}</Text>
+          <Text style={{color:'#497E98',fontSize:17,lineHeight:28}}>{`${static_notes}`}</Text>
           </View>
 
           </View>
@@ -1088,7 +1094,7 @@ const styles = StyleSheet.create({
   wrapSetting: {width,height,backgroundColor:'#F1F2F5',position:'absolute',zIndex:99,top:0,left:0},
   btnTransfer:{width:width-40,alignItems:'center',justifyContent:'center',backgroundColor:'#d0021b',padding:10,borderRadius:5},
   titleHead:{fontSize:20,fontWeight:'bold',color:'#2F353F'},
-  titleNormal:{fontSize:15,color:'#2F353F',marginTop:5,lineHeight:22,textAlign:'center'},
+  titleNormal:{fontSize:15,color:'#2F353F',marginTop:0,lineHeight:18,textAlign:'center'},
   imgLogoTop : {
       width: 138,height: 25,
   },

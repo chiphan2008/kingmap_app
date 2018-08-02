@@ -39,7 +39,7 @@ export default class VideoViewer extends Component {
       </TouchableOpacity>
       <View style={{flex: 1,width,backgroundColor:'#000',justifyContent:'center',alignItems:'center'}}>
 
-      <View style={{flex:1,width:width,backgroundColor:'#000',justifyContent: 'center',alignSelf:'center',padding:0}}>
+      <View style={{flex:0.6,width:width,backgroundColor:'#000',justifyContent: 'center',alignSelf:'center',padding:0}}>
         <WebView
             style={{flex: 1, justifyContent: 'center',backgroundColor:'#000'}}
             javaScriptEnabled={true}
@@ -48,7 +48,7 @@ export default class VideoViewer extends Component {
         />
       </View>
       </View>
-
+      
       </Modal>
     );
   }

@@ -383,12 +383,12 @@ class FormCreate extends Component {
     //if(nameCountry.trim()!=='' && nameCountry.trim()!==undefined) {params += nameCountry;}
     //console.log('params',params);
     let url = `${'https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyCCCOoPlN2D-mfrYEMWkz-eN7MZnOsnZ44&sensor=true&address='}${params}`;
-    //console.log(url);
+    console.log(url);
     getApi(url).then(e=>{
 
       let arrDataLoc = e.results[0].geometry.location;
       const res = e.results[0].address_components;
-      const newAddress = `${res[0].long_name} ${res[1].long_name}, ${res[2].long_name}, ${res[3].long_name}, ${res[4].long_name}, ${res[5].long_name}`;
+      const newAddress = `${res[0].long_name} ${res[1].long_name}, ${res[2].long_name}, ${res[3].long_name}, ${res[4].long_name}`;
       timeoutLatLng = setTimeout(()=>{
         this.setState({addrMarker: newAddress})
         this.setRegion(arrDataLoc.lat,arrDataLoc.lng);
@@ -402,7 +402,7 @@ class FormCreate extends Component {
     //console.log(url);
     getApi(url).then(e=>{
       const res = e.results[0].address_components;
-      const newAddress = `${res[0].long_name} ${res[1].long_name}, ${res[2].long_name}, ${res[3].long_name}, ${res[4].long_name}, ${res[5].long_name}`;
+      const newAddress = `${res[0].long_name} ${res[1].long_name}, ${res[2].long_name}, ${res[3].long_name}, ${res[4].long_name}`;
       this.setState({
         addrMarker: newAddress,
       },()=>this.setRegion(lat,lng))

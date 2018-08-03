@@ -1,27 +1,24 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import {Platform, View, Text, StyleSheet, Dimensions, Image, TextInput,ScrollView,
-  TouchableOpacity,PermissionsAndroid, AsyncStorage, Modal,Keyboard,YellowBox } from 'react-native';
-import RNSettings from 'react-native-settings';
+import {Platform, View, Text, StyleSheet, Dimensions, Image, TextInput,ScrollView,Alert,
+  TouchableOpacity,PermissionsAndroid, AsyncStorage, Modal,Keyboard,YellowBox,
+  TouchableWithoutFeedback
+} from 'react-native';
+import { connect } from 'react-redux';
+//import RNSettings from 'react-native-settings';
 import SvgUri from 'react-native-svg-uri';
-YellowBox.ignoreWarnings(['Class RCTCxxModule']);
-YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader']);
 const {height, width} = Dimensions.get('window');
-import {connect} from 'react-redux';
-//import Geolocation from '../../api/Geolocation';
-//import hasLocationPermission from '../../api/hasLocationPermission';
 
+import loginApi from '../../api/loginApi';
 import getApi from '../../api/getApi';
-//import reqLatLng from '../../api/reqLatLng';
 import getLanguage from '../../api/getLanguage';
 import accessLocation from '../../api/accessLocation';
-//import getLocationByIP from '../../api/getLocationByIP';
+import getLocationByIP from '../../api/getLocationByIP';
 
 import global from '../../global';
 import loginServer from '../../api/loginServer';
 import checkLogin from '../../api/checkLogin';
-import checkLocation from '../../api/checkLocation';
 import lang_vn from '../../lang/vn/language';
 import lang_en from '../../lang/en/language';
 import styles from '../../styles.js';
@@ -41,12 +38,21 @@ import checkDD from '../../../src/icon/ic-gray/ic-check-gray.png';
 import likeDD from '../../../src/icon/ic-gray/ic-like.png';
 import socialDD from '../../../src/icon/ic-gray/ic-social.png';
 import userDD from '../../../src/icon/ic-gray/ic-user.png';
+import icProfileWhite from '../../../src/icon/ic-profile-white.png';
+import icUserProfile from '../../../src/icon/ic-user-profile.png';
+import {format_number,checkUrl,checkSVG} from '../../libs';
+YellowBox.ignoreWarnings(['Class RCTCxxModule']);
+YellowBox.ignoreWarnings(['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader']);
+
 import {Select, Option} from "react-native-chooser";
-import {format_number,checkSVG} from '../../libs';
+var timeoutLang;
 
 class LocationTab extends Component {
   constructor(props) {
     super(props);
+    YellowBox.ignoreWarnings(
+      ['Warning: isMounted(...) is deprecated', 'Module RCTImageLoader'
+    ])
     this.state = {
       //permission: PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       Width_Layout:'',
@@ -54,10 +60,6 @@ class LocationTab extends Component {
       listCategory : [],
       listStatus : [],
       lang : lang_vn,
-      selectLang: {
-        valueLang : "vn",
-        labelLang : "VIE",
-      },
       showInfo : false,
       showShare : false,
       showCreate : false,
@@ -68,9 +70,10 @@ class LocationTab extends Component {
       isLogin:false,
       user_id:0,
       avatar:'',
+      user_profile:{},
       valSearch:'',
+      slogan:'',
     };
-
     accessLocation();
     checkLogin().then(e=>{
       //console.log(e);
@@ -78,15 +81,34 @@ class LocationTab extends Component {
         this.setState({isLogin:false})
       }else {
         loginServer(e);
-        this.setState({user_id:e.id,avatar:e.avatar,code_user:e.phone,isLogin:true});
+        this.props.dispatch({type:'USER_LOGINED',isLogin:true,user_profile:e});
+        const params = {username:e.email,password:e.pwd};
+        var _this = this;
+        _this.setState({user_profile:e,user_id:e.id,avatar:e.avatar,code_user:e.phone,isLogin:true});
       }
     })
-
-    //this.findLoc();
+    //console.log(this.props.yourCurLoc);
+    this.props.yourCurLoc.latitude==='' && this.findLoc();
     this.getLang();
     Keyboard.dismiss();
     arrLang = [{name:'VIE',v:'vn'},{name:'ENG',v:'en'}];
   }
+
+  findLoc(){
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const {latitude,longitude} = position.coords;
+        this.props.dispatch({type:'FIND_CURRENT_LOCATION',yourCurLoc:position.coords,updateState:true});
+      },
+      (error) => {
+        getLocationByIP().then((e) => {
+          const {latitude,longitude} = e;
+          this.props.dispatch({type:'FIND_CURRENT_LOCATION',yourCurLoc:e,updateState:true});
+        });
+      },
+      { timeout: 5000,maximumAge: 60000 },
+    );
+   }
 
   requestLogin(){
     if(this.state.isLogin===false){
@@ -95,74 +117,79 @@ class LocationTab extends Component {
   }
 
   getLang(){
+    var _this = this;
     getLanguage().then((e) =>{
-      //console.log('lang.Location',e);
       if(e!==null){
-          this.setState({
-            selectLang:{
-              valueLang:e.valueLang,
-              labelLang:e.labelLang,
-            },
-            lang : e.valueLang==='vn' ? lang_vn : lang_en,
-          },()=>{
-            this.getCategory(e.valueLang);
-          });
+        const slLang ={
+          valueLang:e.valueLang,
+          labelLang:e.labelLang
+        }
+        this.props.dispatch({type:'UPDATE_LANG',slLang});
+        _this.getCategory(e.valueLang);
+        _this.setState({
+          lang : e.valueLang==='vn' ? lang_vn : lang_en,
+        });
+
      }
     });
   }
 
-  onSelectLang(value, label) {
-    AsyncStorage.setItem('@MyLanguage:key',JSON.stringify({valueLang:value,labelLang :label}));
-    value==='vn' ?  this.setState({lang : lang_vn}) : this.setState({lang : lang_en});
-    //this.getCategory(value);
-    this.setState({
-      selectLang: {
-        valueLang : value,
-        labelLang : label,
-      },
-      showShare:false,
-      showInfo:false,
-    });
-
-    setTimeout(() => {
-        this.props.screenProps();
-    }, 1000);
+  onSelectLang(valueLang,labelLang) {
+    const slLang={valueLang,labelLang};
+    if(this.props.slLang.valueLang!==valueLang){
+      this.props.dispatch({type:'UPDATE_LANG',slLang});
+      AsyncStorage.setItem('@MyLanguage:key', JSON.stringify(slLang)).then(()=>{
+        this.props.screenProps(slLang);
+      });
+    }
   }
+
   getCategory(lang){
-    getApi(global.url+'categories?language='+lang+'&limit=10')
+    //console.log(global.url+'modules?language='+lang+'&limit=100');
+    getApi(global.url+'categories?language='+lang+'&limit=100&block_text=slogan_home')
     .then(arrCategory => {
       //console.log('arrCategory',arrCategory);
       if(arrCategory!==undefined){setTimeout(() => {
-          this.setState({ listCategory: arrCategory.data });
-          this.getListStatus();
-      }, 1000);}
-    })
-    .catch(err => console.log(err));
+          this.setState({ listCategory: arrCategory.data,slogan:arrCategory.block_text.slogan_home },()=>{
+            this.getListStatus();
+          });
+      }, 100);}
+    }).catch(err => console.log(err));
   }
   getListStatus(){
     getApi(global.url+'get-static')
     .then(arrData => {
-      setTimeout(() => {
-          this.state.listStatus= arrData.data;
-          this.setState(this.state);
-      }, 1000);
+      this.setState({ listStatus: arrData.data });
     }).catch(err => console.log(err));
   }
 
-  findNewPoint(x, y, angle, distance) {
-      let result = {};
+ findNewPoint(x, y, angle, distance) {
+      let result = {};angle+=13;
       result.x = Math.round(Math.cos(angle * Math.PI / 180) * distance + x);
       result.y = Math.round(Math.sin(angle * Math.PI / 180) * distance + y);
       return result;
   }
+
+  gotoCreate = () => {
+    checkLogin().then(e=>{
+      //console.log(e);
+      //dang cho duyet
+      if(e.temp_daily_code!==''){
+        Alert.alert(this.state.lang.notify,this.state.lang.approve_ctv);
+      }else if(e.count_area===0 && e.api_roles!==null && e.api_roles.cong_tac_vien!==undefined ){
+        //chua phan kv
+        Alert.alert(this.state.lang.notify,this.state.lang.approve_area_ctv);
+      }else if(e.api_roles!==null && e.api_roles.cong_tac_vien!==undefined && e.api_roles.cong_tac_vien.active===0){
+        // tk CTV bi khoa
+        Alert.alert(this.state.lang.notify,this.state.lang.approve_acc_ctv);
+      }else {this.props.navigation.navigate('ChooseCatScr',{lang:this.state.lang.lang}) }
+    })
+  }
+
   render() {
-    //console.log('Location');
-    const {height, width} = Dimensions.get('window');
+    const {yourCurLoc} = this.props;
     const {navigate,state} = this.props.navigation;
-    //console.log('this.props.navigation',this.props.navigation);
-    const {listStatus,listCategory} = this.state;
-    const { yourCurLoc } = this.props;
-    //console.log("this.props.Hometab=",util.inspect(this.state.listCategory,false,null));
+    const {listStatus,listCategory,user_profile,slogan} = this.state;
     const {
       container, bgImg,colorlbl,flexRow,
       headStyle, headContent,imgLogoTop,imgSocial, imgWidthGoogle, imgShare,wrapIcRight,
@@ -171,6 +198,7 @@ class LocationTab extends Component {
       plusStyle,imgPlusStyle,popover,overLayout,listOver,popoverShare,popoverCreate,overLayoutShare,listOverShare,imgMargin,imgUpHome,imgUpInfo,imgUpShare
     } = styles;
     let i=0;
+    const x=85;const y=70;const distance=(width/10)<60?120:140;
     return (
       <View style={container} >
 
@@ -181,23 +209,37 @@ class LocationTab extends Component {
                 <Image source={logoTop} style={imgLogoTop} />
             </TouchableOpacity>
 
-            <Select
-                  onClick={()=> this.setState({showInfo:false,showShare:false}) }
-                  onSelect = {this.onSelectLang.bind(this)}
-                  defaultText  = {this.state.selectLang.labelLang}
-                  style = {selectBox}
-                  textStyle = {{color:'#fff'}}
-                  optionListStyle={optionListStyle}
-                  indicatorColor="#fff"
-                  indicator="down"
-                  indicatorSize={7}
-                  transparent
-                >
-                {arrLang.map((e,i)=>(
-                    <Option style={OptionItem} key={i} value ={e.v}>{e.name}</Option>
-                ))}
-            </Select>
-
+            <View style={{justifyContent: 'space-between',flexDirection: 'row', width: 90}}>
+              <Select
+                    onClick={()=> this.setState({showInfo:false,showShare:false}) }
+                    onSelect = {this.onSelectLang.bind(this)}
+                    defaultText  = {this.props.slLang.labelLang}
+                    style = {[selectBox]}
+                    textStyle = {{color:'#fff'}}
+                    optionListStyle={[optionListStyle, {right:50}]}
+                    indicatorColor="#fff"
+                    indicator="down"
+                    indicatorSize={7}
+                    transparent
+                  >
+                  {arrLang.map((e,i)=>(
+                      <Option style={OptionItem} key={i} value ={e.v}>{e.name}</Option>
+                  ))}
+              </Select>
+              <View style={{width:30,borderColor:'transparent',position:'relative'}}>
+                {this.props.isLogin ?
+                  <Image
+                  source={{uri: checkUrl(`${user_profile.avatar}`) ? `${user_profile.avatar}` : `${global.url_media}/${user_profile.avatar}`}}
+                  style={{width:30,height:30,borderRadius:15}} />
+                  :
+                  <TouchableOpacity onPress={()=>{
+                    navigate('LoginScr',{backScr:'MainScr'});
+                  }}>
+                  <Image source={icProfileWhite} style={{width: 30, height: 30}} />
+                  </TouchableOpacity>
+                }
+              </View>
+            </View>
           </View>
           <TextInput underlineColorAndroid='transparent'
           placeholder={this.state.lang.search} style={inputSearch}
@@ -219,17 +261,22 @@ class LocationTab extends Component {
           </TouchableOpacity>
         </View>
 
-        <ScrollView>
-        <View style={wrapContent}>
 
+        <View style={wrapContent}>
+        <View style={{alignItems: 'center', justifyContent: 'center', position:'relative',top:(width/10)<60?-60:-(width/10)}}>
+            <Text numberOfLines={1} style={{fontSize: 21, fontWeight: 'bold', color: '#2e3c52'}}>{slogan ? slogan : ''}</Text>
+        </View>
             <View style={square}>
             {
               listCategory.map((e,index)=>{
-                const x=118;const y=120;const distance=140;
-                let items = listCategory.length-1>8 ? 8 : listCategory.length-1;
+
+                //let angle = (360/(this.state.listCategory.length-1));
+
+                //const x=118;const y=120;const distance=140;
+                let items = listCategory.length-1>7 ? 7 : listCategory.length-1;
                 let angle = (360/items);
                 let pos = this.findNewPoint(x, y, angle, distance);
-                if(index<8){
+                if(index<7){
                   switch (e.alias) {
 
                     default:
@@ -237,7 +284,7 @@ class LocationTab extends Component {
                     pos = this.findNewPoint(x, y, angle, distance);
                     return (<TouchableOpacity
                         key={e.id}
-                        style={{position:'absolute',flex:1,alignItems:'center',top:pos.y,left :pos.x,}}
+                        style={{position:'absolute',alignItems:'center',top:pos.y,left :pos.x,overflow: 'visible'}}
                         onPress={()=>navigate('SearchScr',{idCat:e.id,labelCat:e.name,service_items:e.service_items, keyword:this.state.valSearch,lat:yourCurLoc.latitude,lng:yourCurLoc.longitude,lang:this.state.lang.lang}) }
                         >
                       {checkSVG(e.image)?
@@ -253,14 +300,14 @@ class LocationTab extends Component {
                 }
               })
             }
-            <TouchableOpacity style={[wrapCircle,logoCenter]}
-              onPress={() => navigate('OtherCatScr',{name_module:'AAA',lang:this.state.lang,yourCurLoc}) }>
+            <TouchableOpacity style={{top:distance*0.55}}
+              onPress={() => navigate('OtherCatScr',{name_module:'AAA',lang:this.props.slLang.valueLang,yourCurLoc}) }>
             <Image style={imgContent} source={logoHome} />
             <Text style={labelCat}>{this.state.lang.other}</Text>
             </TouchableOpacity>
             </View>
         </View>
-        </ScrollView>
+
 
         <TouchableOpacity
         onPress={()=>{
@@ -297,11 +344,12 @@ class LocationTab extends Component {
         </Modal>
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false}
-        style={{width,backgroundColor:'#2e3c52',paddingRight:10,paddingLeft:5}}>
-
+        style={{width,backgroundColor:'#2e3c52',alignSelf:'center',maxHeight:30,position:'absolute',bottom:0}}>
+        <TouchableWithoutFeedback>
+        <View style={{paddingLeft:5,paddingRight:5,justifyContent:'center',flexDirection:'row'}}>
         <View style={flexRow}>
             <Image style={[imgShare,imgMargin]} source={locationDD} />
-            <Text style={colorTextPP}><Text style={colorWhite}>{format_number(listStatus.countContent)}k</Text></Text>
+            <Text style={colorTextPP}><Text style={colorWhite}>{format_number(listStatus.countContent)}</Text></Text>
         </View>
         <View style={flexRow}>
             <Image style={[imgShare,imgMargin]} source={onlineDD} />
@@ -309,21 +357,22 @@ class LocationTab extends Component {
         </View>
         <View style={flexRow}>
             <Image style={[imgShare,imgMargin]} source={checkDD} />
-            <Text style={colorTextPP}><Text style={colorWhite}>{format_number(listStatus.newContent)}k</Text></Text>
+            <Text style={colorTextPP}><Text style={colorWhite}>{format_number(listStatus.newContent)}</Text></Text>
         </View>
         <View style={flexRow}>
             <Image style={[imgShare,imgMargin]} source={likeDD} />
-            <Text style={colorTextPP}><Text style={colorWhite}>{format_number(listStatus.countLike)}k</Text></Text>
+            <Text style={colorTextPP}><Text style={colorWhite}>{format_number(listStatus.countLike)}</Text></Text>
         </View>
         <View style={flexRow}>
             <Image style={[imgShare,imgMargin]} source={socialDD} />
-            <Text style={colorTextPP}><Text style={colorWhite}>{format_number(listStatus.countShare)}k</Text></Text>
+            <Text style={colorTextPP}><Text style={colorWhite}>{format_number(listStatus.countShare)}</Text></Text>
         </View>
         <View style={flexRow}>
             <Image style={[imgShare,imgMargin]} source={userDD} />
             <Text style={colorTextPP}><Text style={colorWhite}>{format_number(listStatus.countUser)}</Text></Text>
         </View>
-
+        </View>
+        </TouchableWithoutFeedback>
        </ScrollView>
 
       </View>
@@ -332,7 +381,12 @@ class LocationTab extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return {yourCurLoc:state.yourCurLoc}
+  return {
+    yourCurLoc:state.yourCurLoc,
+    isLogin:state.isLogin,
+    slLang:state.slLang,
+    user_profile:state.user_profile,
+  }
 }
 
 export default connect(mapStateToProps)(LocationTab);

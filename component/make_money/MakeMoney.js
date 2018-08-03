@@ -93,6 +93,7 @@ class MakeMoney extends Component {
       noData:'',
       content:'',
       searchCTV:false,
+      showQLNBPop: false
     }
     loginServer(this.props.navigation.state.params.user_profile,'fgdjk')
     temp_daily_code==='' && this.getStatic();
@@ -412,7 +413,7 @@ class MakeMoney extends Component {
     } = styles;
 
     const {
-      itemChoose,showCoin,showLoc,showLocPop,showCTV,showCTVCeo,showCTVPop,showTDLPop,showTDLCTVPop,showArea,listData,index_ctv_pending,noData,
+      itemChoose,showCoin,showLoc,showLocPop,showCTV,showCTVCeo,showCTVPop,showTDLPop,showTDLCTVPop,showQLNBPop,showArea,listData,index_ctv_pending,noData,
       listAgency,listLoc,isCeo,isAgency,isNormal,isCTV,assign,listDistrict,labelArea,ListPend,suggestPend,
       ListLocPend,suggestLoc,showListLocPend,showListCTVPend,loadMore,page,static_notes,des_mm,
       content,searchCTV,let_mm
@@ -479,7 +480,7 @@ class MakeMoney extends Component {
           <Text style={titleHead}> {`${name_module}`.toUpperCase()} </Text>
 
           <Text style={titleNormal}> {let_mm} </Text>
-          <Text style={titleNormal,{fontWeight:'bold',color:'#497E98',marginTop:10}}> {des_mm.toUpperCase()} </Text>
+          <Text style={[titleNormal,{fontWeight:'bold',color:'#497E98',marginTop:10}]}> {des_mm.toUpperCase()} </Text>
           </View>
 
           <View>
@@ -689,7 +690,7 @@ class MakeMoney extends Component {
                 </View>
             </View>}
 
-            {(isAgency || isCeo) &&
+            {(isAgency) &&
               <TouchableOpacity style={wrapWhite} onPress={()=>{
                 this.setState({assign:true,listAgency:[],itemChoose:{},listDistrict:{},showCTV:false,showCTVCeo:false,valCTV:''});
               }}>
@@ -701,23 +702,14 @@ class MakeMoney extends Component {
 
             {isCeo &&
               <TouchableOpacity style={wrapWhite} onPress={()=>{
-                this.setState({showTDLCTVPop:true});
+                navigate('InternalManagementScr',{user_profile:user_profile, lang: lang})
               }}>
                 <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-                  <Text numberOfLines={1} style={colorTitle}>{`${lang.bonus_ctv}`}</Text>
+                  <Text numberOfLines={1} style={colorTitle}>{`${lang.internal_management}`}</Text>
                   <Image source={filterIC} style={{width:35,height:35}} />
                 </View>
             </TouchableOpacity>}
-
-            {isCeo &&
-              <TouchableOpacity style={wrapWhite} onPress={()=>{
-                this.setState({showTDLPop:true});
-              }}>
-                <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-                  <Text numberOfLines={1} style={colorTitle}>{`${lang.add_agency}`}</Text>
-                  <Image source={filterIC} style={{width:35,height:35}} />
-                </View>
-            </TouchableOpacity>}
+            
 
             {isCTV && <View style={{alignItems:'center'}}>
               <TouchableOpacity style={[marTop,btnTransfer]}
@@ -764,6 +756,50 @@ class MakeMoney extends Component {
         />
       }
 
+      {showQLNBPop&& <Modal
+      onRequestClose={()=>null} transparent animationType={'slide'}
+      visible={showQLNBPop}>
+        <View style={container}>
+          <View style={headCatStyle}>
+            <View style={headContent}>
+                <TouchableOpacity onPress={()=>this.setState({showQLNBPop:false})} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
+                  <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
+                </TouchableOpacity>
+                <Text style={titleCreate}>{lang.internal_management} </Text>
+                <View></View>
+              </View>
+          </View>
+          <View>
+            <TouchableOpacity style={wrapWhite} onPress={()=>{
+                  this.setState({assign:true,listAgency:[],itemChoose:{},listDistrict:{},showCTV:false,showCTVCeo:false,valCTV:''});
+                }}>
+                  <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+                    <Text numberOfLines={1} style={colorTitle}>{`${lang.assign}`}</Text>
+                    <Image source={filterIC} style={{width:35,height:35}} />
+                  </View>
+            </TouchableOpacity>
+            <TouchableOpacity style={wrapWhite} onPress={()=>{
+                this.setState({showTDLCTVPop:true});
+              }}>
+                <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+                  <Text numberOfLines={1} style={colorTitle}>{`${'Quản lý nội bộ'}`}</Text>
+                  <Image source={filterIC} style={{width:35,height:35}} />
+                </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={wrapWhite} onPress={()=>{
+                this.setState({showTDLPop:true});
+              }}>
+                <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+                  <Text numberOfLines={1} style={colorTitle}>{`${lang.add_agency}`}</Text>
+                  <Image source={filterIC} style={{width:35,height:35}} />
+                </View>
+            </TouchableOpacity>
+          </View>
+            
+        </View>
+      </Modal>}
+
       {showTDLPop &&
         <AddAgency
         closeModal={()=>this.setState({showTDLPop:false})}
@@ -794,7 +830,8 @@ class MakeMoney extends Component {
          keyExtractor={(item,index) => index.toString()}
          renderItem={({item,index}) =>(
            <TouchableOpacity
-           onPress={()=>{navigate('CTVDetailScr',{
+           onPress={()=>{
+            navigate('CTVDetailScr',{role_id: true,
              lang,content,ctv_id:searchCTV?item.id:'',_daily:item._daily!==undefined?item._daily.full_name:'',daily_id:searchCTV?'':item.id,name:item.full_name,address:item.address,
            avatar:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`})}}
            style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>

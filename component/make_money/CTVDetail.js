@@ -62,15 +62,16 @@ export default class CTVDetail extends Component {
   }
   render() {
     const {
-      wrapper,headCatStyle,headContent,titleCreate,
+      container,headCatStyle,headContent,titleCreate,
+      wrapper,
       imgLogoTop,colorlbl,wrapWhite,titleCoin,colorTitle,
       popoverLoc,overLayout,shadown,listOverService,imgShare
     } = styles;
     const {listData,showArea,content} = this.state;
     const {goBack} = this.props.navigation;
-    const {avatar,name,address,lang,ctv_id,content_id,user_profile,_daily} = this.props.navigation.state.params;
+    const {avatar,name,address,lang,ctv_id,content_id,user_profile,_daily,role_id} = this.props.navigation.state.params;
 
-    // console.log('content_id',content_id);
+    console.log('listData',listData);
     // console.log('_daily',_daily);
     return (
       <View>
@@ -123,13 +124,20 @@ export default class CTVDetail extends Component {
                   </View>
                   <View style={{height:1}}></View>
                   </View> }
-
-                 <View style={wrapWhite}>
+                {!!role_id && <View style={wrapWhite}>
                    <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                      <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14}]}>{`${lang.total_MM}`}</Text>
                      <Text style={titleCoin}>{`${format_number(listData.total)}`}</Text>
                    </View>
-                 </View>
+                 </View>}
+                 <View style={{height:1}}></View>
+                 {!!role_id &&<View style={wrapWhite}>
+                   <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+                     <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14}]}>{`${lang.total_location}`}</Text>
+                     <Text style={titleCoin}>{`${format_number(listData.count_location)}`}</Text>
+                   </View>
+                 </View> }
+                 
                  <View style={{height:1}}></View>
                  {listData.static!==undefined && listData.static.length>0 &&
                    <View style={wrapWhite}>
@@ -143,7 +151,7 @@ export default class CTVDetail extends Component {
                         <TouchableWithoutFeedback>
                         <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginBottom:5}}>
                           <Text style={{color:'#2F3C51',fontWeight:'500'}}>{item.name}</Text>
-                          <Text style={{color:'#5782A4'}}>{format_number(item.value)}</Text>
+                          <Text style={{color:'#5782A4'}}>{`${format_number(item.value)}`}</Text>
                        </View>
                        </TouchableWithoutFeedback>
                       )} />

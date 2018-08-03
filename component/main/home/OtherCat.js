@@ -53,16 +53,13 @@ class OtherCat extends Component {
   }
 
   componentWillMount(){
-    //console.log('componentDidMount');
     this.getCategory();
   }
-  
+
   render() {
-    //console.log('OtherCat');
     const {navigate, goBack} = this.props.navigation;
     const {page, loadMore} = this.state;
     const { lang } = this.props.navigation.state.params || {};
-    //console.log(curLoc);
     const {
       container,
       headCatStyle,headContent, wrapDistribute,shadown,wrapFilter,

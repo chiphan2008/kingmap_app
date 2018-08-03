@@ -55,15 +55,15 @@ module.exports = {
   selected_user:'Người dùng đã được chọn:',
   total_agency:'Tổng số TĐL',
   total_coll:'Tổng số CTV',
-  choose_coll:'Chọn CTV',
+  choose_coll:'Nhập tên CTV',
   plz_choose_coll:'Vui lòng chọn CTV',
   add_coll:'Thêm CTV',
   assign_work:'Công việc được giao',
   confirm_assign:'Bạn có chắc muốn phân quyền cho tài khoản này?',
-  enter_des:'Viết mô tả',
+  enter_des:'Nhập nội dung mô tả công việc',
   des_work:'Mô tả công việc',
   selected_coll:'CTV đã chọn',
-  choose_agency:'Chọn TĐL',
+  choose_agency:'Nhập tên TĐL',
   selected_agency:'TĐL đã chọn',
   approve_area_ctv:'Tài khoản CTV của bạn chưa được phân khu vực hoạt động. Vui lòng liên hệ TĐL để biết thêm thông tin.',
   approve_acc_ctv:'Tài khoản CTV của bạn đang tạm khoá. Vui lòng liên hệ TĐL để biết thêm thông tin.',
@@ -234,6 +234,7 @@ module.exports = {
   selected_locations:'Địa điểm đã chọn:',
   obligation: "Nghĩa vụ",
   jurisdiction: 'Quyền hạn',
+  internal_management: 'Quản lý nội bộ',
 
   lang:'vn'
 };

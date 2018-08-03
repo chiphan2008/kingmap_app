@@ -234,6 +234,7 @@ module.exports = {
   selected_locations:'Selected locations:',
   obligation: "Obligation",
   jurisdiction: 'Jurisdiction',
+  internal_management: 'Internal Management',
 
   lang:'en',
 };

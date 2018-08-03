@@ -57,16 +57,9 @@ class NotifyTab extends Component {
           e.valueLang==='vn' ?  this.setState({lang : lang_vn}) : this.setState({lang : lang_en});
      }
     });
-    checkLogin().then(e=>{
-      //console.log('checkLogin',e);
-      //console.log('isLogin',this.props.isLogin);
-      if(e.id!==undefined){
-        channelUserAll = socket.subscribe('get-new-notifi-all');
-        channelUser = socket.subscribe(`${'get-new-notifi-'}${e.id}`);
-      }
-    });
     this.getData();
   }
+
   getData(){
     const url = `${global.url}${'getlistnoti'}`;
     // console.log(url);
@@ -93,14 +86,22 @@ class NotifyTab extends Component {
   componentWillUnmount() {
     AppState.removeEventListener('change');
   }
-
   componentWillUpdate(){
-    //clearTimeout(NotiTimeout);
-    //console.log('componentWillUpdate');
+    // console.log('isLogin',this.props.isLogin);
+    // console.log('user_profile',this.props.user_profile);
 
+      const {user_profile,isLogin} = this.props;
+      if(isLogin && user_profile.id!==undefined){
+        channelUserAll = socket.subscribe('get-new-notifi-all');
+        channelUser = socket.subscribe(`${'get-new-notifi-'}${user_profile.id}`);
+      }
+
+
+  }
+  componentDidUpdate(){
       countNoti = 0;
+      clearTimeout(NotiTimeout);
       channelNews.bind(`${'App\\Events\\getNotifi'}`, function(data) {
-        //console.log(data);
         countNoti += 1;
         if(countNoti === 3){
           const {title,contentText} = data.data;
@@ -113,36 +114,30 @@ class NotifyTab extends Component {
           countNoti=0;
         }
       });
-      this.state.isLogin && channelUserAll.bind(`${'App\\Events\\getNotifi'}`,function(data) {
-        //console.log(data);
-        const {title,contentText} = data.data;
-          PushNotification.localNotificationSchedule({
-            data:data.data,
-            title,
-            message: contentText,
-            date: new Date(Date.now()) // in 60 secs  + (3 * 1000)
+      NotiTimeout = setTimeout(()=>{
+          this.props.isLogin && channelUserAll.bind(`${'App\\Events\\getNotifi'}`,function(data) {
+            //console.log(data);
+            const {title,contentText} = data.data;
+              PushNotification.localNotificationSchedule({
+                data:data.data,
+                title,
+                message: contentText,
+                date: new Date(Date.now()) // in 60 secs  + (3 * 1000)
+              });
           });
-      });
 
-      this.state.isLogin && channelUser.bind(`${'App\\Events\\getNotifi'}`,function(data) {
-        //console.log(data);
-        const {title,contentText} = data.data;
-          PushNotification.localNotificationSchedule({
-            data:data.data,
-            title,
-            message: contentText,
-            date: new Date(Date.now()) // in 60 secs  + (3 * 1000)
+          this.props.isLogin && channelUser.bind(`${'App\\Events\\getNotifi'}`,function(data) {
+            //console.log(data);
+            const {title,contentText} = data.data;
+              PushNotification.localNotificationSchedule({
+                data:data.data,
+                title,
+                message: contentText,
+                date: new Date(Date.now()) // in 60 secs  + (3 * 1000)
+              });
           });
-      });
+      },1500);
 
-    // channelNews.bind(`${'App\\Events\\getNotifi'}`, function(data) {
-    //   console.log('data.message',data);
-    //   PushNotification.localNotificationSchedule({
-    //     message: data.message, // (required)
-    //     //date: new Date(Date.now() + (3 * 1000)) // in 60 secs
-    //   });
-    // });
-    // console.log('channelNews',channelNews);
 
   }
   render() {
@@ -155,8 +150,9 @@ class NotifyTab extends Component {
     } = styles;
     const { listNoti, lang } = this.state;
     const { isLogin } =this.props;
+
     // console.log('listNoti',isLogin);
-    // console.log('listNoti.notifications',listNoti.notifications);
+    console.log('listNoti',listNoti.notifications);
     return (
       <TouchableWithoutFeedback onPress={()=>Keyboard.dismiss()}>
       <View style={container}>
@@ -222,9 +218,7 @@ const mapStateToProps = (state) => {
   return {
     yourCurLoc:state.yourCurLoc,
     isLogin:state.isLogin,
-    user_profile:state.user_profile,
-    //updateState:state.updateState,
-
+    user_profile:state.user_profile
   }
 }
 

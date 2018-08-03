@@ -502,16 +502,19 @@ class SearchScreen extends Component {
 
 
 
-          <TouchableOpacity style={[btnMap,btnMapZoom,curLocation.longitude!==undefined ? show :hide]}
-          onPress={()=>{this.findCurrentLoc()}}>
-          <Image source={currentLocIC} style={{width:30,height:30}} />
-          </TouchableOpacity>
+          {circleLoc.latitude!==undefined &&
+            <TouchableOpacity style={[btnMap,btnMapZoom,curLocation.longitude!==undefined ? show :hide]}
+            onPress={()=>{this.findCurrentLoc()}}>
+            <Image source={currentLocIC} style={{width:30,height:30}} />
+            </TouchableOpacity>
+          }
 
-
-          <TouchableOpacity style={[btnMap,btnMapFull,curLocation.longitude!==undefined ? show :hide]}
-          onPress={()=>{this.setState({showFullScreen:true})}}>
-          <Image source={fullScreenIC} style={{width:30,height:30}} />
-          </TouchableOpacity>
+          {circleLoc.latitude!==undefined &&
+            <TouchableOpacity style={[btnMap,btnMapFull,curLocation.longitude!==undefined ? show :hide]}
+            onPress={()=>{this.setState({showFullScreen:true})}}>
+            <Image source={fullScreenIC} style={{width:30,height:30}} />
+            </TouchableOpacity>
+          }
 
           <MapFullScreen
           closeModal={()=>this.setState({showFullScreen:false,callout:{} })}

@@ -73,7 +73,6 @@ class HomeTab extends Component {
       user_profile:{},
       valSearch:'',
       slogan:'',
-
     };
     accessLocation();
     checkLogin().then(e=>{
@@ -119,9 +118,7 @@ class HomeTab extends Component {
 
    getLang(){
      var _this = this;
-     //console.log('this.props.slLang',this.props.slLang);
      getLanguage().then((e) =>{
-      //console.log('lang.Location',e);
        if(e!==null){
          const slLang ={
            valueLang:e.valueLang,
@@ -189,13 +186,9 @@ class HomeTab extends Component {
      })
    }
   render() {
-    //console.log('this.props',this.props);
-    //const {height, width} = Dimensions.get('window');
     const {yourCurLoc} = this.props;
     const {navigate} = this.props.navigation;
-    //console.log(this.props.navigation);
     const {listStatus,user_profile, slogan} = this.state;
-    //console.log("this.props.Hometab=",util.inspect(this.state.listCategory,false,null));
     const {
       container, bgImg,colorlbl,flexRow,
       headStyle, headContent,imgLogoTop,imgSocial, imgWidthGoogle, imgShare,wrapIcRight,

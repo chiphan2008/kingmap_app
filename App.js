@@ -78,6 +78,7 @@ import Setting from './component/main/personal/Setting';
 import Collection from './component/main/personal/Collection';
 import ListCheckin from './component/main/personal/ListCheckin';
 import AppInfo from './component/main/personal/AppInfo';
+import InternalManagement from './component/make_money/InternalManagement';
 
 const {width,height} = Dimensions.get('window');
 
@@ -174,8 +175,8 @@ export default class App extends Component {
     });
     const {lang} =this.state;
     const HomeScreen = StackNavigator({
-      HomeTabs: { screen: HomeTab },
-      //HomeTabs: { screen:LocationTab},
+      //HomeTabs: { screen: HomeTab },
+      HomeTabs: { screen:LocationTab},
 
       //ListCatScr: { screen: ListCategory },
 
@@ -316,6 +317,9 @@ export default class App extends Component {
       CollectionScr: { screen : Collection },
       SettingScr: { screen : Setting },
       AppInfoScr: { screen: AppInfo },
+      InternalManagementScr: {
+        screen: InternalManagement
+      },
       UpdateInfoScr: { screen : UpdateInfo },
       LikeLocationScr: { screen : LikeLocation },
       ListCheckinScr: { screen : ListCheckin },

@@ -392,7 +392,7 @@ class SearchScreen extends Component {
         </View>
         {curLocation.longitude!==undefined ?
           <View>
-          {<View style={{left:0,top:7,position:'absolute',alignItems:'center',width}}>
+          <View style={{left:0,top:10,position:'absolute',alignItems:'center',width,height:100}}>
                   <View style={{width:width-40,flexDirection:'row',justifyContent:'space-between'}}>
                   <TouchableOpacity
                     onPress={()=>this.setState({ showLoc:true,showCat:false,showSer:false })}
@@ -415,32 +415,25 @@ class SearchScreen extends Component {
                     }else {
                       Alert.alert(lang.notify,lang.plz_choose_cat)
                     }
-
                   }}
                   style = {[selectBoxBuySell,widthLoc]}>
                       <Text numberOfLines={1} style={{color:'#303B50'}}>{labelSer}</Text>
                       <Image source={sortDownIC} style={{width:12,height:13,top:13,right:5,position:'absolute'}} />
                   </TouchableOpacity>
                 </View>
-          </View>}
-
-
+          </View>
 
           <MapView
               provider={PROVIDER_GOOGLE}
               //showsUserLocation
               zoomEnabled
               onPanDrag={()=>{Keyboard.dismiss();}}
-              //ref={(ref) => { this.mapRef = ref }}
-              //this.mapRef.fitToCoordinates(markers, { edgePadding: { top: 50, right: 50, bottom: 50, left: 50 }, animated: false })
-              style={{width,height}}
+              style={{width,height,zIndex:-1}}
               region={curLocation}
-              //onPress={e => console.log(e.nativeEvent)}
               onPress={(e)=>this._onPressMap(e)}
               onRegionChangeComplete={this._onRegionChangeComplete.bind(this)}
               customMapStyle={global.style_map}
               showsPointsOfInterest={false}
-
             >
             {markers.length>0 &&
               markers.map((marker,index) => (
@@ -502,14 +495,14 @@ class SearchScreen extends Component {
 
 
 
-          {circleLoc.latitude!==undefined &&
+          {curLocation.latitude!==undefined &&
             <TouchableOpacity style={[btnMap,btnMapZoom,curLocation.longitude!==undefined ? show :hide]}
             onPress={()=>{this.findCurrentLoc()}}>
             <Image source={currentLocIC} style={{width:30,height:30}} />
             </TouchableOpacity>
           }
 
-          {circleLoc.latitude!==undefined &&
+          {curLocation.latitude!==undefined &&
             <TouchableOpacity style={[btnMap,btnMapFull,curLocation.longitude!==undefined ? show :hide]}
             onPress={()=>{this.setState({showFullScreen:true})}}>
             <Image source={fullScreenIC} style={{width:30,height:30}} />

@@ -152,7 +152,7 @@ class NotifyTab extends Component {
     const { isLogin } =this.props;
 
     // console.log('listNoti',isLogin);
-    console.log('listNoti',listNoti.notifications);
+    //console.log('listNoti',listNoti.notifications);
     return (
       <TouchableWithoutFeedback onPress={()=>Keyboard.dismiss()}>
       <View style={container}>

@@ -5,7 +5,7 @@ const w = width>height ? width : height;
 const h = width>height ? height : width;
 
 module.exports = {
-  container: {flex: 1,backgroundColor:'#F1F2F5'},
+  container: {flex: 1,backgroundColor:'#F1F2F5',},
   wrapper: {width,height,backgroundColor:'#F1F2F5'},
   wrapSetting: {width,height,backgroundColor:'#F1F2F5',position:'absolute',zIndex:9999,top:0,left:0},
   bgImg : {
@@ -84,7 +84,7 @@ module.exports = {
       position:'relative',zIndex:5,
   },
   popupLocChange:{
-    padding:10,width:width-30,height:(height/2)-120,
+    paddingTop:10,width:width-30,height:(height/2)-120,
     top:119,right:15,backgroundColor:'#f0f0f0',
     position:'absolute',borderColor:'#e0e8ed',borderWidth:1,
     zIndex:999,

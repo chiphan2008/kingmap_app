@@ -46,7 +46,7 @@ export default class ChangeOwner extends Component {
     if(kw==='') return;
 
     const url = `${global.url}${router}${'?query='}${kw}${'&id_user='}${userId}`;
-    console.log(url);
+    //console.log(url);
     timeoutLoc = setTimeout(()=>{
       getApi(url)
       .then(arrData => {
@@ -150,6 +150,11 @@ export default class ChangeOwner extends Component {
                   }
                 });
               }}
+              onSubmitEditing={() => {
+                if(this.state.txtLoc.length>1){
+                  this.search('content');
+                }
+              }}
               value={txtLoc}
                />
 
@@ -162,6 +167,11 @@ export default class ChangeOwner extends Component {
                      this.search('user');
                    }
                  })
+               }}
+               onSubmitEditing={() => {
+                 if(this.state.txtUser.length>1){
+                   this.search('user');
+                 }
                }}
                value={txtUser}/>
 
@@ -194,41 +204,51 @@ export default class ChangeOwner extends Component {
          </View>}
 
 
-         {showLoc && <View style={[popupLocChange,topLocChange]}>
+         {showLoc && <View style={[popupLocChange,topLocChange,{height:(listContent.length>4)?(height/2)-120:40*(listContent.length+1)}]}>
+         <TouchableWithoutFeedback onPress={()=>this.setState({showLoc:true})}>
+         <View>
          <FlatList
             extraData={this.state}
             data={listContent}
             ListEmptyComponent={<Text>{noData!=='' ? noData : '' }</Text> }
             keyExtractor={(item,index) => index.toString()}
             renderItem={({item,index}) =>(
-              <TouchableOpacity onPress={()=>{this.chooseLoc(item.id,item,index,'kfd')}} style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
+              <TouchableOpacity onPress={()=>{this.chooseLoc(item.id,item,index,'kfd')}}
+              style={{width:width-40,paddingLeft:10,paddingRight:10,flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
                   <View style={{flexDirection:'row',maxWidth:width-50}}>
                       <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:40,marginRight:10}} />
-                      <View>
+                      <View style={{width:width-110}}>
                         <Text numberOfLines={1} style={colorlbl}>{item.name}</Text>
                         <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${item.address}`}</Text>
                       </View>
                   </View>
               </TouchableOpacity>
             )} />
+            </View>
+          </TouchableWithoutFeedback>
          </View>}
 
-         {showUser && <View style={[popupLocChange,topUserChange]}>
+         {showUser && <View style={[popupLocChange,topUserChange,{height:(listUser.length>4)?(height/2)-120:40*(listUser.length+1)}]}>
+         <TouchableWithoutFeedback>
+         <View>
          <FlatList
             extraData={this.state}
             data={listUser}
             ListEmptyComponent={<Text>{noData!=='' ? noData : '' }</Text> }
-            keyExtractor={(item,index) => index}
+            keyExtractor={(item,index) => index.toString()}
             renderItem={({item}) =>(
-              <TouchableOpacity onPress={()=>{clearTimeout(timeoutLoc);this.setState({ user_profile:item,showUser:false,txtUser:item.text })}} style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
+              <TouchableOpacity onPress={()=>{clearTimeout(timeoutLoc);this.setState({ user_profile:item,showUser:false,txtUser:item.text })}}
+              style={{width:width-40,paddingLeft:10,paddingRight:10,flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
                   <View style={{flexDirection:'row',maxWidth:width-50}}>
                       <Image source={{uri:checkUrl(item.avatar) ? item.avatar : `${global.url_media}${item.avatar}`}} style={{width:50,height:40,marginRight:10}} />
-                      <View>
+                      <View style={{width:width-110}}>
                         <Text numberOfLines={1} style={colorlbl}>{item.text}</Text>
                       </View>
                   </View>
               </TouchableOpacity>
             )} />
+            </View>
+          </TouchableWithoutFeedback>
          </View>}
 
 

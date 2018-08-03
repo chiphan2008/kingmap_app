@@ -56,8 +56,7 @@ export default class FadeView extends Component {
 
           <Animated.View                 // Special animatable View
             style={{
-              width,
-              height,
+              width,height,
               justifyContent: 'center',
               alignItems: 'center',
               //backgroundColor: '#fff',

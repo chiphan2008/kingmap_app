@@ -261,7 +261,6 @@ class LocationTab extends Component {
           </TouchableOpacity>
         </View>
 
-
         <View style={wrapContent}>
         <View style={{alignItems: 'center', justifyContent: 'center', position:'relative',top:(width/10)<60?-60:-(width/10)}}>
             <Text numberOfLines={1} style={{fontSize: 21, fontWeight: 'bold', color: '#2e3c52'}}>{slogan ? slogan : ''}</Text>
@@ -307,7 +306,6 @@ class LocationTab extends Component {
             </TouchableOpacity>
             </View>
         </View>
-
 
         <TouchableOpacity
         onPress={()=>{

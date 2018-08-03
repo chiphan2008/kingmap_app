@@ -538,7 +538,13 @@ class FormCreate extends Component {
               this.getLatLng()
             }
           }}
-          onSubmitEditing={(event) => {  this.refs.Des.focus(); clearTimeout(timeoutLatLng);this.getLatLng();  }}
+          onSubmitEditing={(event) => {
+            this.refs.Des.focus();
+            if(this.state.txtAddress!==''){
+              clearTimeout(timeoutLatLng);
+              this.getLatLng()
+            }
+          }}
           placeholder={`${this.state.lang.address}`} style={wrapInputCreImg} />
           <View style={{width:15}}>
           <TouchableOpacity style={this.state.txtAddress!=='' && this.state.txtAddress!==null ? show : hide}
@@ -633,6 +639,46 @@ class FormCreate extends Component {
           style={this.state.txtDes!=='' && this.state.txtDes!==null ? show : hide} onPress={()=>{this.setState({txtDes:''})}}>
           <Image source={closeIC} style={imgShare} />
           </TouchableOpacity>
+          </View>
+        </View>
+        
+        <View style={listCreate}>
+          <View style={widthLblCre}>
+            <Image source={keywordsIC} style={imgInfo} />
+          </View>
+          <Text style={colorErr}>{'(*)'}</Text>
+          <TextInput underlineColorAndroid='transparent' autoCorrect={false}
+          multiline numberOfLines={4} maxHeight={100}
+          onChangeText={(text) => {
+            let formattedText = text.split(' ').join('');
+            //if(formattedText.trim().substr(-1,1)===',') alert(formattedText.trim().substr(-1,1)===',');
+            if(formattedText.trim().substr(-1,1)===','){
+              if(!checkKeyword(formattedText))  this.setState({txtKW:text})
+              else {
+                var arr = this.state.txtKW.split(',');
+                arr.splice(-1);
+                this.setState({txtKW:arr.toString()})
+              }
+            }else {
+              this.setState({txtKW:text})
+            }
+          }}
+          onBlur={()=>{
+              if(checkKeyword(this.state.txtKW)){
+                var arr = this.state.txtKW.split(',');
+                arr.splice(-1);
+                this.setState({txtKW:arr.toString()})
+              }
+          }}
+          value={this.state.txtKW} ref='KW' returnKeyType = {"done"}
+          placeholder={`${this.state.lang.keyword}`} style={wrapInputCreImg} />
+
+          <View style={{width:15}}>
+            <TouchableOpacity
+            hitSlop={{top: 25, bottom: 25, left: 25, right: 25}}
+            style={this.state.txtKW!=='' && this.state.txtKW!==null ? show : hide} onPress={()=>{this.setState({txtKW:''})}}>
+            <Image source={closeIC} style={imgShare} />
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -741,46 +787,6 @@ class FormCreate extends Component {
           </View>
         </View>
 
-        <View style={listCreate}>
-          <View style={widthLblCre}>
-            <Image source={keywordsIC} style={imgInfo} />
-          </View>
-          <Text style={colorErr}>{'(*)'}</Text>
-          <TextInput underlineColorAndroid='transparent' autoCorrect={false}
-          multiline numberOfLines={4} maxHeight={65}
-          onChangeText={(text) => {
-            let formattedText = text.split(' ').join('');
-            //if(formattedText.trim().substr(-1,1)===',') alert(formattedText.trim().substr(-1,1)===',');
-            if(formattedText.trim().substr(-1,1)===','){
-              if(!checkKeyword(formattedText))  this.setState({txtKW:text})
-              else {
-                var arr = this.state.txtKW.split(',');
-                arr.splice(-1);
-                this.setState({txtKW:arr.toString()})
-              }
-            }else {
-              this.setState({txtKW:text})
-            }
-          }}
-          onBlur={()=>{
-              if(checkKeyword(this.state.txtKW)){
-                var arr = this.state.txtKW.split(',');
-                arr.splice(-1);
-                this.setState({txtKW:arr.toString()})
-              }
-          }}
-
-          value={this.state.txtKW} ref='KW' returnKeyType = {"done"}
-          placeholder={`${this.state.lang.keyword}`} style={wrapInputCreImg} />
-
-          <View style={{width:15}}>
-            <TouchableOpacity
-            hitSlop={{top: 25, bottom: 25, left: 25, right: 25}}
-            style={this.state.txtKW!=='' && this.state.txtKW!==null ? show : hide} onPress={()=>{this.setState({txtKW:''})}}>
-            <Image source={closeIC} style={imgShare} />
-            </TouchableOpacity>
-          </View>
-        </View>
 
         <View style={{height:15}}></View>
 

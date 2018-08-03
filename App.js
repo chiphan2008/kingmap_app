@@ -185,6 +185,7 @@ export default class App extends Component {
       //DistributeTabScr: { screen: DistributeTab },
     },{
       headerMode: 'none',
+      header: null,
     });
 
     const LocScreen = StackNavigator({
@@ -195,6 +196,7 @@ export default class App extends Component {
       //DistributeTabScr: { screen: DistributeTab },
     },{
       headerMode: 'none',
+      header: null,
     });
 
 
@@ -343,7 +345,7 @@ export default class App extends Component {
     },
     {
       headerMode: 'none',
-      initialRouteName: this.state.initApp ? 'MainScr' : 'IntroSrc',
+      initialRouteName: this.state.initApp ? 'MainScr' : 'IntroSrc',//'MainScr',//
     });
     //const {setVal} = this.state;
     return (

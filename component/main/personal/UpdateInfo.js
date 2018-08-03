@@ -187,64 +187,67 @@ class UpdateInfo extends Component {
               </View>
           </View>
           <ScrollView horizontalScroll={disable}>
-         <View style={{height:150,justifyContent:'center',alignItems:'center'}}>
-          {this.state.avatar!=='' && <Image source={{isStatic:true,uri:this.state.avatar}} style={{width:90,height:90,borderRadius:45}} />}
-          <TouchableOpacity style={{position:'absolute',top:90,right:(width/2)-45,padding:6,borderRadius:13,backgroundColor:'#fff',}}
-          onPress={()=>this.uploadAvatar()}>
-          <Image source={cameraIC} style={{width:16,height:16,}} />
-          </TouchableOpacity>
-         </View>
+          <TouchableWithoutFeedback>
+           <View style={{height:150,justifyContent:'center',alignItems:'center'}}>
+            {this.state.avatar!=='' && <Image source={{isStatic:true,uri:this.state.avatar}} style={{width:90,height:90,borderRadius:45}} />}
+            <TouchableOpacity style={{position:'absolute',top:90,right:(width/2)-45,padding:6,borderRadius:13,backgroundColor:'#fff',}}
+            onPress={()=>this.uploadAvatar()}>
+            <Image source={cameraIC} style={{width:16,height:16,}} />
+            </TouchableOpacity>
+           </View>
+           </TouchableWithoutFeedback>
 
-         <View style={listCreate}>
-             <View style={widthLblCre}>
-             <Image source={nameLocationIC} style={imgInfo} />
+           <TouchableWithoutFeedback>
+             <View style={listCreate}>
+                 <View style={widthLblCre}>
+                 <Image source={nameLocationIC} style={imgInfo} />
+                 </View>
+                 <TextInput underlineColorAndroid='transparent'
+                 returnKeyType = {"next"}
+                 onSubmitEditing={(event) => {this.refs.address.focus();}}
+                 style={wrapInputCreImg}
+                 placeholder={lang.full_name}
+                 onChangeText={(full_name) => this.setState({full_name})}
+                 value={this.state.full_name}
+                  />
+                  <View style={{width:15}}></View>
              </View>
-             <TextInput underlineColorAndroid='transparent'
-             returnKeyType = {"next"}
-             onSubmitEditing={(event) => {this.refs.address.focus();}}
-             style={wrapInputCreImg}
-             placeholder={lang.full_name}
-             onChangeText={(full_name) => this.setState({full_name})}
-             value={this.state.full_name}
-              />
-              <View style={{width:15}}></View>
-         </View>
-         <View style={listCreate}>
-             <View style={widthLblCre}>
-             <Image source={dateIC} style={imgInfo} />
+             </TouchableWithoutFeedback>
+           <TouchableWithoutFeedback>
+             <View style={listCreate}>
+                 <View style={widthLblCre}>
+                 <Image source={dateIC} style={imgInfo} />
+                 </View>
+
+                  <View style={{flexDirection:'row',width:width-100,alignItems:'center',overflow:'visible'}}>
+
+                    <TouchableOpacity style={btnInfo}
+                    onPress={()=>{
+                      this.setState({disable:showDay,showDay:!showDay,showMonth:false,showYear:false})
+                    }}>
+                        <Text style={colourTitle}>{this.state.dDay}</Text>
+                        <Image source={sortDownIC} style={{width:12,height:12}} />
+                    </TouchableOpacity>
+                    <Text> / </Text>
+
+                    <TouchableOpacity style={btnInfo}
+                    onPress={()=>{this.setState({showDay:false,disable:showMonth,showMonth:!showMonth,showYear:false});
+                    }}>
+                        <Text style={colourTitle}>{this.state.mDay}</Text>
+                        <Image source={sortDownIC} style={{width:12,height:12}} />
+                    </TouchableOpacity>
+                    <Text> / </Text>
+
+                    <TouchableOpacity style={btnYInfo}
+                    onPress={()=>{this.setState({showDay:false,showMonth:false,disable:showYear,showYear:!showYear});
+                    }}>
+                        <Text style={colourTitle}>{this.state.yDay}</Text>
+                        <Image source={sortDownIC} style={{width:12,height:12}} />
+                    </TouchableOpacity>
+                </View>
+                  <View style={{width:15}}></View>
              </View>
-
-              <View style={{flexDirection:'row',width:width-100,alignItems:'center',overflow:'visible'}}>
-
-                <TouchableOpacity style={btnInfo}
-                onPress={()=>{
-                  this.setState({disable:showDay,showDay:!showDay,showMonth:false,showYear:false})
-                }}>
-                    <Text style={colourTitle}>{this.state.dDay}</Text>
-                    <Image source={sortDownIC} style={{width:12,height:12}} />
-                </TouchableOpacity>
-                <Text> / </Text>
-
-                <TouchableOpacity style={btnInfo}
-                onPress={()=>{this.setState({showDay:false,disable:showMonth,showMonth:!showMonth,showYear:false});
-                }}>
-                    <Text style={colourTitle}>{this.state.mDay}</Text>
-                    <Image source={sortDownIC} style={{width:12,height:12}} />
-                </TouchableOpacity>
-                <Text> / </Text>
-
-                <TouchableOpacity style={btnYInfo}
-                onPress={()=>{this.setState({showDay:false,showMonth:false,disable:showYear,showYear:!showYear});
-                }}>
-                    <Text style={colourTitle}>{this.state.yDay}</Text>
-                    <Image source={sortDownIC} style={{width:12,height:12}} />
-                </TouchableOpacity>
-
-              </View>
-
-
-              <View style={{width:15}}></View>
-         </View>
+           </TouchableWithoutFeedback>
 
          {showDay && <View style={[wrapSelect,wrapBtnInfo,{top:Platform.OS==='ios'?245:275,left:Platform.OS==='ios'?52:57}]}>
          <ScrollView>
@@ -285,72 +288,75 @@ class UpdateInfo extends Component {
             </TouchableOpacity>
          )})}
          </View>
+
          </ScrollView>
          </View>}
 
-
-
-         <View style={[listCreate,marTop]}>
-             <View style={widthLblCre}>
-             <Image source={locationIC} style={imgInfo} />
+         <TouchableWithoutFeedback>
+           <View style={[listCreate,marTop]}>
+               <View style={widthLblCre}>
+               <Image source={locationIC} style={imgInfo} />
+               </View>
+               <TextInput underlineColorAndroid='transparent'
+               returnKeyType = {"next"} ref='address' placeholder={lang.address}
+               onSubmitEditing={(event) => {this.refs.phone.focus();}}
+               style={wrapInputCreImg}
+               onChangeText={(address) => this.setState({address})}
+               value={this.state.address}
+                />
+                <View style={{width:15}}></View>
+           </View>
+           </TouchableWithoutFeedback>
+           <TouchableWithoutFeedback>
+             <View style={listCreate}>
+                 <View style={widthLblCre}>
+                 <Image source={phoneIC} style={imgInfo} />
+                 </View>
+                 <TextInput underlineColorAndroid='transparent'
+                 returnKeyType = {"next"} ref='phone'
+                 maxLength={12} keyboardType={'numeric'}
+                 placeholder={lang.phone}
+                 onSubmitEditing={(event) => {this.refs.description.focus();}}
+                 style={wrapInputCreImg}
+                 onChangeText={(text)=>this.handlePhone(text,'phone')}
+                 value={this.state.phone}
+                  />
+                  <View style={{width:15}}></View>
              </View>
-             <TextInput underlineColorAndroid='transparent'
-             returnKeyType = {"next"} ref='address' placeholder={lang.address}
-             onSubmitEditing={(event) => {this.refs.phone.focus();}}
-             style={wrapInputCreImg}
-             onChangeText={(address) => this.setState({address})}
-             value={this.state.address}
-              />
-              <View style={{width:15}}></View>
-         </View>
-
-         <View style={listCreate}>
-             <View style={widthLblCre}>
-             <Image source={phoneIC} style={imgInfo} />
-             </View>
-             <TextInput underlineColorAndroid='transparent'
-             returnKeyType = {"next"} ref='phone'
-             maxLength={12} keyboardType={'numeric'}
-             placeholder={lang.phone}
-             onSubmitEditing={(event) => {this.refs.description.focus();}}
-             style={wrapInputCreImg}
-             onChangeText={(text)=>this.handlePhone(text,'phone')}
-             value={this.state.phone}
-              />
-              <View style={{width:15}}></View>
-         </View>
-
-         <View style={listCreate}>
-             <View style={widthLblCre}>
-             <Image source={descriptionIC} style={imgInfo} />
-             </View>
-             <TextInput underlineColorAndroid='transparent'
-             multiline
-             numberOfLines={4}
-             maxHeight={65}
-             placeholder={lang.description_persional}
-             returnKeyType = {"next"}
-             ref='description'
-             onSubmitEditing={(event) => {this.refs.email.focus();}}
-             style={wrapInputCreImg}
-             onChangeText={(description) => this.setState({description})}
-             value={this.state.description}
-              />
-              <View style={{width:15}}></View>
-         </View>
-
-         <View style={[listCreate, {marginBottom: 20}]}>
-             <View style={widthLblCre}>
-             <Image source={emailIC} style={imgInfo} />
-             </View>
-             <Text numberOfLines={1} style={[wrapInputCreImg, {color: 'black'}]}>{this.state.email}</Text>
-             <View style={{width:15}}></View>
-         </View>
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback>
+           <View style={listCreate}>
+               <View style={widthLblCre}>
+               <Image source={descriptionIC} style={imgInfo} />
+               </View>
+               <TextInput underlineColorAndroid='transparent'
+               multiline
+               numberOfLines={4}
+               maxHeight={65}
+               placeholder={lang.description_persional}
+               returnKeyType = {"next"}
+               ref='description'
+               onSubmitEditing={(event) => {this.refs.email.focus();}}
+               style={wrapInputCreImg}
+               onChangeText={(description) => this.setState({description})}
+               value={this.state.description}
+                />
+                <View style={{width:15}}></View>
+           </View>
+           </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback>
+           <View style={[listCreate, {marginBottom: 20}]}>
+               <View style={widthLblCre}>
+               <Image source={emailIC} style={imgInfo} />
+               </View>
+               <Text numberOfLines={1} style={[wrapInputCreImg, {color: 'black'}]}>{this.state.email}</Text>
+               <View style={{width:15}}></View>
+           </View>
+           </TouchableWithoutFeedback>
+         <View style={{height:15}}></View>
          </ScrollView>
       </View>
       </TouchableWithoutFeedback>
-
-
     );
   }
 }

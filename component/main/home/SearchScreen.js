@@ -431,7 +431,7 @@ class SearchScreen extends Component {
               style={{width,height,zIndex:-1}}
               region={curLocation}
               onPress={(e)=>this._onPressMap(e)}
-              onRegionChangeComplete={this._onRegionChangeComplete.bind(this)}
+              onRegionChangeComplete={this._onRegionChangeComplete}
               customMapStyle={global.style_map}
               showsPointsOfInterest={false}
             >
@@ -517,11 +517,12 @@ class SearchScreen extends Component {
           curLocation={curLocation}
           circleLoc={circleLoc}
           curLoc={curLoc}
-          onRegionChangeComplete={()=>this._onRegionChangeComplete}
           lang={lang}
           navigation={this.props.navigation}
           data={markers}
-          onPressMap={()=>this._onPressMap.bind(this)}
+          onPressMap={(e)=>this._onPressMap(e)}
+          onRegionChangeComplete={this._onRegionChangeComplete}
+
           />
 
           <Modal transparent onRequestClose={() => null}

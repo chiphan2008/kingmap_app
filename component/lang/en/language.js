@@ -90,6 +90,7 @@ module.exports = {
   list_location:'List location',
   sys_kingmap:'System KingMap',
   setting_account:'Account setting',
+  about_app:'About',
   choose_time:'Choose time',
   create_location:'Create location',
   edit_location:'Edit location',

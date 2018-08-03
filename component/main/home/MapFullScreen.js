@@ -50,7 +50,7 @@ export default class MapFullScreen extends Component {
           provider={PROVIDER_GOOGLE}
           style={{width,height,zIndex:-1}}
           region={curLocation}
-          onPress={this.props.onPressMap()}
+          onPress={(e)=>this.props.onPressMap(e)}
           onRegionChangeComplete={(region)=>{
             this.props.onRegionChangeComplete(region);
           }}
@@ -66,7 +66,10 @@ export default class MapFullScreen extends Component {
             }}
             image={Platform.OS!=='ios' ? {uri: marker.marker} : null}
             //ref={ref => { this.markerRef = ref; }}
-            onPress={() => this.onMarkerPressed(marker.id)}
+            onPress={(e) => {
+              e.stopPropagation();
+              this.onMarkerPressed(marker.id)
+            }}
             ref={(co) => { this[`${marker.id}`] = co}}
           >
           {Platform.OS==='ios' && <Image source={{uri:`${marker.marker}`}} style={{width:48,height:54,position:'relative'}} />}

@@ -34,6 +34,7 @@ import starIC from '../../../src/icon/ic-white/ic-star1.png';
 import collectionIC from '../../../src/icon/ic-white/ic-collection.png';
 import menuIC from '../../../src/icon/ic-white/ic-menu.png';
 import settingIC from '../../../src/icon/ic-white/ic-setting.png';
+import aboutIC from '../../../src/icon/ic-white/ic-info.png';
 import logoutIC from '../../../src/icon/ic-white/ic-logout.png';
 import changeIC from '../../../src/icon/ic-white/ic-change.png';
 import {checkUrl} from '../../libs';
@@ -66,7 +67,7 @@ class PersonalTab extends Component {
         .then(arrData => {
               this.setState({ countEntry: arrData.data });
         }).catch(err => console.log(err));
-    },1500)
+    },500)
   }
   logoutUser(){
     const {user_profile} = this.props;
@@ -221,7 +222,6 @@ class PersonalTab extends Component {
                 </TouchableOpacity>
               </View>
               <View style={borderItemInfoPer}></View>
-
             </View>
 
             <View>
@@ -236,9 +236,11 @@ class PersonalTab extends Component {
 
             </View>
 
+              <TouchableWithoutFeedback>
               <View style={[rowItem,marTop]}>
               <Text style={titlePer}>{`${lang.sys_kingmap}`.toUpperCase()}</Text>
               </View>
+              </TouchableWithoutFeedback>
               <View style={[borderItemInfoPer,marTop]}></View>
 
               <View>
@@ -254,9 +256,9 @@ class PersonalTab extends Component {
 
               <View>
                 <View style={[rowItem]}>
-                  <Image source={settingIC} style={imgIconPerInfo} />
+                  <Image source={aboutIC} style={imgIconPerInfo} />
                   <TouchableOpacity style={padPerInfo} onPress={()=>navigate('AppInfoScr',{lang})}>
-                  <Text style={titlePer}>{`Thông tin ứng dụng`}</Text>
+                  <Text style={titlePer}>{`${lang.about_app}`}</Text>
                   </TouchableOpacity>
 
                 </View>

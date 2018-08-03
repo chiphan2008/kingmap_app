@@ -27,7 +27,8 @@ export default class ChooseArea extends Component {
       this.setState({idCountry:e.idCountry, nameCountry:e.nameCountry,idCity:e.idCity, nameCity:e.nameCity,})
     });
     checkLogin().then(el=>{
-      if(el.api_roles!==null){
+      //console.log('el',el);
+      if(el.api_roles!==null && el.api_roles!==undefined){
         el.api_roles.tong_dai_ly!==undefined && this.setState({daily_id:el.id});
         el.api_roles.cong_tac_vien!==undefined && this.setState({ctv_id:el.id});
       }

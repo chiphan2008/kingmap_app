@@ -75,12 +75,14 @@ class SearchScreen extends Component {
       showNotFound:false,
       callout:{},
       onClick:false,
+      callData:false,
     }
     Keyboard.dismiss();
     accessLocation();
   }
 
   getCategory(lat=null,lng=null){
+    //console.log('getCategory');
     const {id_district,id_cat,id_sub,id_serv,keyword,kw,curLoc} = this.state;
     let url = `${global.url}${'search-content?'}${'distance=500'}`;
     if(lat===null || lng===null) {
@@ -147,22 +149,22 @@ class SearchScreen extends Component {
           data.push(obj);
         })
 
-          this.setState({ markers: data,onchange:true,showInfoOver:true,initLoad:true,
-            curLocation : {
-              latitude:lat,
-              longitude: lng,
-              lat:lat,
-              lng: lng,
-              latitudeDelta: isNaN(line-line1) || (line-line1)<500 ? 0.008757 : (line-line1)*0.008757/500,
-              longitudeDelta: isNaN(line-line1) || (line-line1)<500 ? 0.010066 : (line-line1)*0.010066/500,
-              latlng:`${lat},${lng}`,
-            },
-            // circleLoc: {
-            //   latitude:curLoc.latitude,
-            //   longitude:curLoc.longitude,
-            // },
+        this.setState({ markers: data,callData:true,showInfoOver:true,initLoad:true,
+          curLocation : {
+            latitude:lat,
+            longitude: lng,
+            lat:lat,
+            lng: lng,
+            latitudeDelta: isNaN(line-line1) || (line-line1)<500 ? 0.008757 : (line-line1)*0.008757/500,
+            longitudeDelta: isNaN(line-line1) || (line-line1)<500 ? 0.010066 : (line-line1)*0.010066/500,
+            latlng:`${lat},${lng}`,
+          },
+          // circleLoc: {
+          //   latitude:curLoc.latitude,
+          //   longitude:curLoc.longitude,
+          // },
 
-           });
+         });
       })
       .catch(err => console.log(err));
   }
@@ -247,6 +249,7 @@ class SearchScreen extends Component {
     },700)
   }
   onPressZoom(zoom) {
+    //console.log(zoom);
       clearTimeout(timeoutZoom);
       const {latitude,longitude,lat,lng,latlng,latitudeDelta,longitudeDelta} = this.state.curLocation;
       let latDelta = zoom==='zoom_in' ? latitudeDelta*1.8 : latitudeDelta/1.8;
@@ -296,20 +299,23 @@ class SearchScreen extends Component {
     if(service_items!==undefined) this.setState({service_items});
   }
   _onRegionChangeComplete = (region) => {
-    console.log('_onRegionChangeComplete');
+    //console.log('_onRegionChangeComplete1');
     region.latitudeDelta > 0.002 && this.setState({ curLocation:region, });
     if(this.state.onClick===false) {
+      //console.log('_onRegionChangeComplete2');
       this.getPosition(region.latitude,region.longitude);
       this.setState({ onClick:true });
     }
   }
   _onPressMap = (event) => {
+    //console.log('_onPressMap');
     const {latitude,longitude} = (event.nativeEvent.coordinate || this.state.curLocation);
     this.setState({
       circleLoc: {
         latitude,longitude,
       },
       onClick:true,
+
     },()=>{
       this.getPosition(latitude,longitude);
       this.getCategory(latitude,longitude);
@@ -334,7 +340,7 @@ class SearchScreen extends Component {
   render() {
     const {
       keyword, curLocation,markers,curLoc,lang,showFullScreen,
-      labelLoc,labelSer,labelCat,fitCoord,id_cat,circleLoc,
+      labelLoc,labelSer,labelCat,fitCoord,id_cat,circleLoc,callData,
       showNotFound,showLoc,showCat,showSer,service_items,callout,onClick
      } = this.state;
     //console.log(';showNotFound',showNotFound);
@@ -518,11 +524,11 @@ class SearchScreen extends Component {
               circleLoc={circleLoc}
               curLoc={curLoc} lang={lang}
               navigation={this.props.navigation}
-              data={markers}
-              getCategory={(lat,lng)=>this.getCategory(lat,lng)}
+              data={markers} callData={callData}
+              stopData={()=>{this.setState({callData:false})}}
               onMarkerPressed={(id)=>this._onMarkerPressed(id)}
               onPressMap={(e)=>this._onPressMap(e)}
-              onRegionChangeComplete={(region)=>this._onRegionChangeComplete(region)}
+              onRegionChangeComplete={(region)=>{this._onRegionChangeComplete(region)}}
             />
           }
 

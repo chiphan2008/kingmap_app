@@ -19,23 +19,10 @@ export default class MapFullScreen extends Component {
     this.state = {
       callout:{},
       curLocation:{},
-      circleLoc:{},
     }
   }
-
-  onRegionChangeComplete = (curLocation) => {
-    this.setState({ curLocation });
-  }
-  onPressMap = (event) => {
-    const {latitude,longitude} = (event.nativeEvent.coordinate || this.state.curLocation);
-    this.setState({
-      circleLoc: {
-        latitude,longitude,
-      }
-    },()=>{
-      this.props.getCategory(latitude,longitude);
-    })
-    //Keyboard.dismiss();
+  _onRegionChangeComplete = (curLocation) => {
+    curLocation.latitudeDelta > 0.002 && this.setState({ curLocation });
   }
   onMarkerPressed(id) {
     this.props.onMarkerPressed(id);
@@ -49,20 +36,27 @@ export default class MapFullScreen extends Component {
       })
     }
   }
-  componentDidMount(){
-    this.setState({
-      curLocation:this.props.curLocation,
-      circleLoc:this.props.circleLoc,
-    })
+  componentWillMount(){
+    this.setState({curLocation:this.props.curLocation});
+  }
+  componentWillUpdate(){
+    if(this.props.callData){
+      const {latitude,longitude,latitudeDelta,longitudeDelta} = this.props.curLocation;
+      this.setState({
+        curLocation:{
+          latitude,longitude,latitudeDelta,longitudeDelta
+        }
+      },()=>this.props.stopData())
+    }
   }
   render() {
     const {
       showFullScreen,
       data,
       navigation,
-      curLoc,lang,
+      circleLoc,curLoc,lang,
     } = this.props;
-    const {circleLoc,curLocation,callout}=this.state;
+    const {callout,curLocation}=this.state;
     //console.log('curLocation',curLocation);
     const {btn,btnMap,btnMapZoom,btnMapFull,btnZoom,btnMapLoc,show,hide} = styles;
     return (
@@ -73,8 +67,8 @@ export default class MapFullScreen extends Component {
           provider={PROVIDER_GOOGLE}
           style={{width,height,zIndex:-1}}
           region={curLocation}
-          onPress={(e)=>this.onPressMap(e)}
-          onRegionChangeComplete={this.onRegionChangeComplete}
+          onPress={(e)=>this.props.onPressMap(e)}
+          onRegionChangeComplete={this._onRegionChangeComplete}
           customMapStyle={global.style_map}
           showsPointsOfInterest={false}
         >

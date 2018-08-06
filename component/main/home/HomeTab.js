@@ -264,8 +264,40 @@ class HomeTab extends Component {
         <View style={{alignItems: 'center', justifyContent: 'center', position:'relative',top:(width/10)<60?-60:-(width/10)}}>
             <Text numberOfLines={1} style={{fontSize: 21, fontWeight: 'bold', color: '#2e3c52'}}>{slogan ? slogan : ''}</Text>
         </View>
-            <View style={square}>
-            {
+            <View style={{width:260,height:140,alignItems:'center',flexDirection:'row',justifyContent:'space-between'}}>
+            {this.state.listCategory.map((e,index)=>{
+              switch (e.machine_name) {
+                case 'dia_diem':
+                  return (
+                  <TouchableOpacity key={e.id}
+                    //style={{top:distance*0.55}}
+                    onPress={() => {
+                      //console.log(this.state.lang.lang);
+                      navigate('OtherCatScr',{name_module:e.name,lang:this.state.lang.lang})
+                    }}
+                    >
+
+                  <Image style={e.noibat===1?iconHome:iconHomeTab} source={{uri:`${global.url_media}${e.image}`}} />
+                  <Text style={labelCat}>{e.name}</Text>
+                </TouchableOpacity>);
+                break;
+                case 'make_money':
+                return (<TouchableOpacity key={e.id}
+                    //style={{position:'absolute',alignItems:'center',top:pos.y,left :pos.x,overflow: 'visible'}}
+                    onPress={() => {
+                      this.requestLogin();
+                      if(this.props.isLogin){
+                        navigate('MakeMoneyScr',{user_profile,icon:`${global.url_media}${e.image}`,name_module:e.name,lang:this.state.lang}) }}
+                      }
+                    >
+
+                  <Image style={e.noibat===1?iconHome:iconHomeTab} source={{uri:`${global.url_media}${e.image}`}} />
+                  <Text style={labelCat}>{e.name}</Text>
+                </TouchableOpacity>);
+                  break;
+              }
+            })}
+            {/*
               this.state.listCategory.map((e,index)=>{
                 const x=85;const y=70;const distance=(width/10)<60?120:140;
                 let angle = (360/(this.state.listCategory.length-1));
@@ -388,7 +420,7 @@ class HomeTab extends Component {
 
                 }
               })
-            }
+            */}
 
             </View>
         </View>

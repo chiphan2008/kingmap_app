@@ -15,6 +15,7 @@ import styles from '../../styles';
 import arrowLeft from '../../../src/icon/ic-white/arrow-left.png';
 import moreIC from '../../../src/icon/ic-create/ic-more.png';
 import favoriteIC from '../../../src/icon/ic-favorite.png';
+import favoriteFullIC from '../../../src/icon/ic-favorite-full.png';
 import closeIC from '../../../src/icon/ic-create/ic-close.png';
 import closingIC from '../../../src/icon/ic-closing.png';
 import openingIC from '../../../src/icon/ic-opening.png';
@@ -55,7 +56,7 @@ class ListLocPer extends Component {
   componentDidUpdate(){
     const {detailBack} = this.props;
     const {user_profile,page} = this.state;
-    if(detailBack==='UpdateLocation' && user_profile.id!==undefined){
+    if((detailBack==='UpdateLocation' || detailBack==='DetailScreen') && user_profile.id!==undefined){
       this.props.dispatch({type:'DETAIL_BACK',detailBack:''});
       const skip = page>0?page-20:0;
       this.getData(skip);
@@ -73,7 +74,7 @@ class ListLocPer extends Component {
   getData(page=null){
     if(page===null) page=0;
     let url = `${global.url}${'user/list-location/'}${this.state.user_profile.id}${'?skip='}${page}${'&limit=20'}`;
-    console.log(url);
+    //console.log(url);
     let arr = this.state.listData;
     getApi(url).then(arrData => {
         if(this.state.page>page && arr.length>20){
@@ -168,7 +169,6 @@ class ListLocPer extends Component {
                  <Image source={{uri:`${global.url_media}${item.avatar}`}} style={{width:width,minHeight:200,marginBottom:10}} />
                </TouchableOpacity>
 
-
                  <View style={listCreate}>
                    <View style={{width:width-80}}>
                      <TouchableOpacity onPress={()=>{
@@ -180,7 +180,7 @@ class ListLocPer extends Component {
                        <Text numberOfLines={1} style={{color:'#6587A8',lineHeight:24}}>{`${item.address}, ${item._district.name}, ${item._city.name}, ${item._country.name}`}</Text>
                        {item.moderation==='request_publish' &&
                          <View style={{flexDirection:'row'}}>
-                         <Image source={favoriteIC} style={{width:16,height:16,marginTop:2}} />
+                         <Image source={item.vote?favoriteFullIC:favoriteIC} style={{width:16,height:16,marginTop:2}} />
                          <Text numberOfLines={1} style={{color:'#313B50',lineHeight:24}}> ({item.vote}) | </Text>
                          <Image source={requestIC} style={{width:14,height:14,marginRight:3,marginTop:5}} />
                          <Text numberOfLines={1} style={{color:'#313B50',lineHeight:24}}> {`${lang.pending}`}</Text>
@@ -189,24 +189,20 @@ class ListLocPer extends Component {
                        }
                        {item.moderation==='publish' &&
                          <View style={{flexDirection:'row'}}>
-                         <Image source={favoriteIC} style={{width:16,height:16,marginTop:2}} />
+                         <Image source={item.vote?favoriteFullIC:favoriteIC} style={{width:16,height:16,marginTop:2}} />
                          <Text numberOfLines={1} style={{color:'#313B50',lineHeight:24}}> ({item.vote}) | </Text>
                          <Image source={openingIC} style={{width:14,height:14,marginRight:3,marginTop:5}} />
                          <Text numberOfLines={1} style={{color:'#313B50',lineHeight:24}}> {`${lang.opening}`}</Text>
                          </View>
-
                        }
                        {item.moderation==='un_publish' &&
                          <View style={{flexDirection:'row'}}>
-                         <Image source={favoriteIC} style={{width:16,height:16,marginTop:2}} />
+                         <Image source={item.vote?favoriteFullIC:favoriteIC} style={{width:16,height:16,marginTop:2}} />
                          <Text numberOfLines={1} style={{color:'#313B50',lineHeight:24}}> ({item.vote}) | </Text>
                          <Image source={closingIC} style={{width:14,height:14,marginRight:3,marginTop:5}} />
                          <Text numberOfLines={1} style={{color:'#313B50',lineHeight:24}}> {`${lang.closing}`}</Text>
                          </View>
-
                        }
-
-
                    </View>
                    <TouchableOpacity onPress={()=>this.setState({
                      showOption:true,
@@ -246,7 +242,6 @@ class ListLocPer extends Component {
             <Text style={colorTxt}>{lang.reopen}</Text>
             </TouchableOpacity>
             </View>
-
           }
           {/*<View style={line}></View>
           <TouchableOpacity onPress={()=>this.confirmDel(id_content)} style={pad15}>

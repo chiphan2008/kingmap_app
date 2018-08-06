@@ -19,7 +19,7 @@ export default class VideoViewer extends Component {
 
   render() {
     const {visible,link} = this.props;
-    console.log('data',link);
+    //console.log('data',link);
     let newLink;
     if(link.type === "youtube"){
       newLink = link.link.replace('watch?v=', 'embed/');
@@ -48,7 +48,7 @@ export default class VideoViewer extends Component {
         />
       </View>
       </View>
-      
+
       </Modal>
     );
   }

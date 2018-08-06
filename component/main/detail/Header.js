@@ -10,7 +10,7 @@ import {
 
 import global from '../../global';
 
-import arrowLeft from '../../../src/icon/ic-white/arrow-left.png';
+//import arrowLeft from '../../../src/icon/ic-white/arrow-left.png';
 import logoTop from '../../../src/icon/ic-white/Logo-ngang.png';
 import searchIC from '../../../src/icon/ic-gray/ic-search.png';
 

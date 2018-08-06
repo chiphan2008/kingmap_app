@@ -19,16 +19,17 @@ export default class VideoViewer extends Component {
 
   render() {
     const {visible,link} = this.props;
-    //console.log('data',link);
     let newLink;
     if(link.type === "youtube"){
       newLink = link.link.replace('watch?v=', 'embed/');
       newLink = newLink.replace('https://m', 'https://www')
       newLink = newLink.split('&')[0];
+      newLink = `<html><iframe width="100%" height="100%" src=${newLink} frameborder="0" allow="autoplay; encrypted-media" allowfullscreen="0" fs="1"></iframe></html>`;
       //console.log(newLink)
     } else{
-      newLink = `<html><iframe src="https://www.facebook.com/plugins/video.php?href=${link.link}" width="100%" height="100% scrolling="no" style="overflow:hidden;height:100%;width:100%;background-color:'#000'" frameborder="0" allowFullScreen="false"></iframe></html>`;
+      newLink = `<html><iframe src="https://www.facebook.com/plugins/video.php?href=${link.link}" width="100%" height="100% scrolling="no" style="overflow:hidden;height:100%;width:100%;background-color:'#000'" frameborder="0" allowFullScreen="0" fs="1"></iframe></html>`;
     }
+    // newLink = `<html><iframe width="100%" height="100%" src="https://www.youtube.com/embed/XrYG5aG4QKI" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen="0" fs="1"></iframe></html>`;
     return (
       link!=={} &&
       <Modal onRequestClose={() => null} visible={visible} transparent>
@@ -44,11 +45,11 @@ export default class VideoViewer extends Component {
             style={{flex: 1, justifyContent: 'center',backgroundColor:'#000'}}
             javaScriptEnabled={true}
             domStorageEnabled={true}
-            source={link.type === "youtube" ? { uri: newLink } : { html: newLink }}
+            source={{ html: newLink }}
         />
       </View>
       </View>
-
+      
       </Modal>
     );
   }

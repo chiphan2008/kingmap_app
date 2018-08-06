@@ -62,14 +62,8 @@ export default class AddImgMenu extends Component {
       getApi(url);
   }
   componentWillUpdate(){
-    const {img_menu} = this.props;
+    const {img_menu,title_menu,des_menu} = this.props;
     if(img_menu.length>0){
-      let title_menu={};
-      let des_menu={};
-      img_menu.forEach((e,index)=>{
-        title_menu = Object.assign(title_menu,{[`${'title_'}${index}`]:e.title,[`${'id_'}${e.id}`]:e.id});
-        des_menu = Object.assign(des_menu,{[`${'des_'}${index}`]:e.description,[`${'id_'}${e.id}`]:e.id});
-      })
       this.state.title_menu=title_menu;
       this.state.des_menu=des_menu;
       this.state.imgMenu=img_menu;
@@ -97,9 +91,9 @@ export default class AddImgMenu extends Component {
               <View style={headContent}>
                   <TouchableOpacity onPress={()=>{
                     if(imgMenuUpdate.length>0){
-                      this.props.submitImage(imgMenuUpdate,Object.entries(title_menu_update),Object.entries(des_menu_update));
+                      this.props.submitImage(imgMenuUpdate,title_menu_update,des_menu_update);
                     }else {
-                      this.props.submitImage(imgMenu,Object.entries(title_menu),Object.entries(des_menu));
+                      this.props.submitImage(imgMenu,title_menu,des_menu);
                     }
                     this.props.closeModal();
                   }} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
@@ -130,7 +124,7 @@ export default class AddImgMenu extends Component {
                 this.state.imgMenu.splice(index, 1);
                 Object.entries(this.state.title_menu).splice(index, 1);
                 Object.entries(this.state.des_menu).splice(index, 1);
-                if(update && e.url!==undefined) {
+                if(editLoc && e.url!==undefined) {
                   this.ImageDelete(des_menu[`${'id_'}${e.id}`]);
                   this.state.imgMenuUpdate.splice(index, 1);
                   Object.entries(this.state.title_menu_update).splice(index, 1);
@@ -144,6 +138,7 @@ export default class AddImgMenu extends Component {
               <View style={{backgroundColor:'#fff',marginBottom:20,width,paddingLeft:30,paddingRight:30}}>
               <TextInput underlineColorAndroid='transparent'
                 placeholder={'Chủ đề'}
+                maxLength={128}
                 placeholderTextColor={'#A9BFD0'}
                 onChangeText={(text) => {
                   if(update && e.url!==undefined){
@@ -157,25 +152,26 @@ export default class AddImgMenu extends Component {
                   this.setState(this.state);
                 }}
                 onBlur={()=>{
-                  if(update && e.url!==undefined){
+                  if(editLoc && e.url!==undefined){
                     clearTimeout(timeoutUpdate);
                     this.ImageUpdate(des_menu[`${'id_'}${e.id}`],title_menu[`${'title_'}${e.id}`],null);
                   }
                 }}
                 onSubmitEditing={()=>{
-                  if(update && e.url!==undefined){
+                  if(editLoc && e.url!==undefined){
                     clearTimeout(timeoutUpdate);
                     this.ImageUpdate(des_menu[`${'id_'}${e.id}`],title_menu[`${'title_'}${e.id}`],null);
                   }
                 }}
-                value={update?this.state.title_menu[`${'title_'}${e.id}`]:this.state.title_menu[`${'title_'}${index}`]}
+                value={editLoc?this.state.title_menu[`${'title_'}${e.id}`]:this.state.title_menu[`${'title_'}${index}`]}
                />
                <View style={{width:width-60,borderBottomWidth:1,borderColor:'#E0E8ED'}}></View>
                <TextInput underlineColorAndroid='transparent'
                  placeholder={'Viết mô tả'}
+                 maxLength={128}
                  placeholderTextColor={'#A9BFD0'}
                  onChangeText={(text) => {
-                   if(update && e.url!==undefined){
+                   if(editLoc && e.url!==undefined){
                      clearTimeout(timeoutUpdate);
                      this.ImageUpdate(des_menu[`${'id_'}${e.id}`],null,text);
                      this.state.des_menu = Object.assign(this.state.des_menu,{[`${'des_'}${e.id}`]:text})
@@ -187,13 +183,13 @@ export default class AddImgMenu extends Component {
                  }}
                  onBlur={()=>{
                    clearTimeout(timeoutUpdate);
-                   if(update && e.url!==undefined) this.ImageUpdate(des_menu[`${'id_'}${e.id}`],null,des_menu[`${'des_'}${e.id}`]);
+                   if(editLoc && e.url!==undefined) this.ImageUpdate(des_menu[`${'id_'}${e.id}`],null,des_menu[`${'des_'}${e.id}`]);
                  }}
                  onSubmitEditing={()=>{
                    clearTimeout(timeoutUpdate);
-                   if(update && e.url!==undefined) this.ImageUpdate(des_menu[`${'id_'}${e.id}`],null,des_menu[`${'des_'}${e.id}`]);
+                   if(editLoc && e.url!==undefined) this.ImageUpdate(des_menu[`${'id_'}${e.id}`],null,des_menu[`${'des_'}${e.id}`]);
                  }}
-                 value={update?this.state.des_menu[`${'des_'}${e.id}`]:this.state.des_menu[`${'des_'}${index}`]}
+                 value={editLoc?this.state.des_menu[`${'des_'}${e.id}`]:this.state.des_menu[`${'des_'}${index}`]}
                 />
                 </View>
               </View>

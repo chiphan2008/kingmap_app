@@ -78,7 +78,7 @@ export default class Content extends Component {
           </View>
         </View>
         <View style={rowFlex}>
-          <Text numberOfLines={5} style={[colorContent,{width:width-35}]}>{`${listContent.description}`}</Text>
+          <Text numberOfLines={8} style={[colorContent,{width:width-35}]}>{`${listContent.description}`}</Text>
         </View>
 
 

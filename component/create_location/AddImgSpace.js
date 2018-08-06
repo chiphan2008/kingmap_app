@@ -64,14 +64,9 @@ export default class AddImgSpace extends Component {
       getApi(url);
   }
   componentWillUpdate(){
-    const {img_space} = this.props;
+    const {img_space,des_space,title_space} = this.props;
     if(img_space.length>0){
-      let title_space={};
-      let des_space={};
-      img_space.forEach((e,index)=>{
-        title_space = Object.assign(title_space,{[`${'title_'}${e.id}`]:e.title,[`${'id_'}${e.id}`]:e.id});
-        des_space = Object.assign(des_space,{[`${'des_'}${e.id}`]:e.description,[`${'id_'}${e.id}`]:e.id});
-      })
+      //console.log(this.state.title_space[`${'title_0'}`]);
       this.state.title_space=title_space;
       this.state.des_space=des_space;
       this.state.imgSpace=img_space;
@@ -99,9 +94,9 @@ export default class AddImgSpace extends Component {
               <View style={headContent}>
                   <TouchableOpacity onPress={()=>{
                     if(imgSpaceUpdate.length>0){
-                      this.props.submitImage(imgSpaceUpdate,Object.entries(title_space_update),Object.entries(des_space_update));
+                      this.props.submitImage(imgSpaceUpdate,title_space_update,des_space_update);
                     }else {
-                      this.props.submitImage(imgSpace,Object.entries(title_space),Object.entries(des_space));
+                      this.props.submitImage(imgSpace,title_space,des_space);
                     }
                     this.props.closeModal();
                   }} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
@@ -116,8 +111,7 @@ export default class AddImgSpace extends Component {
 
           <ScrollView>
           <View style={{justifyContent:'center',alignItems:'center',backgroundColor:'#FFFEFF',padding:50,borderColor:'#ECEEF3',borderBottomWidth:1,marginBottom:5}}>
-            <TouchableOpacity
-            onPress={()=>this.uploadSpace()}>
+            <TouchableOpacity onPress={()=>this.uploadSpace()}>
             <Image source={cameraLargeIC} style={{width:60,height:60,marginBottom:10}}/>
             </TouchableOpacity>
             <Text style={{fontSize:20}}>{lang.upload_image.toUpperCase()}</Text>
@@ -132,7 +126,7 @@ export default class AddImgSpace extends Component {
                 this.state.imgSpace.splice(index, 1);
                 Object.entries(this.state.title_space).splice(index, 1);
                 Object.entries(this.state.des_space).splice(index, 1);
-                if(update && e.url!==undefined) {
+                if(editLoc && e.url!==undefined) {
                   this.ImageDelete(des_space[`${'id_'}${e.id}`]);
                   this.state.imgSpaceUpdate.splice(index, 1);
                   Object.entries(this.state.title_space_update).splice(index, 1);
@@ -142,14 +136,14 @@ export default class AddImgSpace extends Component {
               }}>
               <Image source={closeLargeIC} style={{width:22,height:22}}/>
               </TouchableOpacity>
-
+              {console.log(this.state.title_space[`${'title_'}${index}`])}
               <View style={{backgroundColor:'#fff',marginBottom:20,width,paddingLeft:30,paddingRight:30}}>
               <TextInput underlineColorAndroid='transparent'
                 placeholder={'Chủ đề'}
-                maxLength={512}
+                maxLength={128}
                 placeholderTextColor={'#A9BFD0'}
                 onChangeText={(text) => {
-                  if(update && e.url!==undefined){
+                  if(editLoc && e.url!==undefined){
                     clearTimeout(timeoutUpdate);
                     this.ImageUpdate(des_space[`${'id_'}${e.id}`],text,null);
                     this.state.title_space = Object.assign(this.state.title_space,{[`${'title_'}${e.id}`]:text})
@@ -160,26 +154,26 @@ export default class AddImgSpace extends Component {
                   this.setState(this.state);
                 }}
                 onBlur={()=>{
-                  if(update && e.url!==undefined){
+                  if(editLoc && e.url!==undefined){
                     clearTimeout(timeoutUpdate);
                     this.ImageUpdate(des_space[`${'id_'}${e.id}`],title_space[`${'title_'}${e.id}`],null);
                   }
                 }}
                 onSubmitEditing={()=>{
-                  if(update && e.url!==undefined){
+                  if(editLoc && e.url!==undefined){
                     clearTimeout(timeoutUpdate);
                     this.ImageUpdate(des_space[`${'id_'}${e.id}`],title_space[`${'title_'}${e.id}`],null);
                   }
                 }}
-                value={update?this.state.title_space[`${'title_'}${e.id}`]:this.state.title_space[`${'title_'}${index}`]}
+                value={editLoc?this.state.title_space[`${'title_'}${e.id}`]:this.state.title_space[`${'title_'}${index}`]}
                />
                <View style={{width:width-60,borderBottomWidth:1,borderColor:'#E0E8ED'}}></View>
                <TextInput underlineColorAndroid='transparent'
                  placeholder={'Viết mô tả'}
                  placeholderTextColor={'#A9BFD0'}
-                 maxLength={512}
+                 maxLength={128}
                  onChangeText={(text) => {
-                   if(update && e.url!==undefined){
+                   if(editLoc && e.url!==undefined){
                      clearTimeout(timeoutUpdate);
                      this.ImageUpdate(des_space[`${'id_'}${e.id}`],null,text);
                      this.state.des_space = Object.assign(this.state.des_space,{[`${'des_'}${e.id}`]:text})
@@ -191,13 +185,13 @@ export default class AddImgSpace extends Component {
                  }}
                  onBlur={()=>{
                    clearTimeout(timeoutUpdate);
-                   if(update && e.url!==undefined) this.ImageUpdate(des_space[`${'id_'}${e.id}`],null,des_space[`${'des_'}${e.id}`]);
+                   if(editLoc && e.url!==undefined) this.ImageUpdate(des_space[`${'id_'}${e.id}`],null,des_space[`${'des_'}${e.id}`]);
                  }}
                  onSubmitEditing={()=>{
                    clearTimeout(timeoutUpdate);
-                   if(update && e.url!==undefined) this.ImageUpdate(des_space[`${'id_'}${e.id}`],null,des_space[`${'des_'}${e.id}`]);
+                   if(editLoc && e.url!==undefined) this.ImageUpdate(des_space[`${'id_'}${e.id}`],null,des_space[`${'des_'}${e.id}`]);
                  }}
-                 value={update?this.state.des_space[`${'des_'}${e.id}`]:this.state.des_space[`${'des_'}${index}`]}
+                 value={editLoc?this.state.des_space[`${'des_'}${e.id}`]:this.state.des_space[`${'des_'}${index}`]}
                 />
                 </View>
               </View>

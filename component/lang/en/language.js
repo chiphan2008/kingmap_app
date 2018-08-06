@@ -236,6 +236,7 @@ module.exports = {
   obligation: "Obligation",
   jurisdiction: 'Jurisdiction',
   internal_management: 'Internal Management',
+  total_MMDD: 'Earnings this month of area in charge',
 
   lang:'en',
 };

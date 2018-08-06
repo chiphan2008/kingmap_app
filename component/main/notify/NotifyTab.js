@@ -137,8 +137,13 @@ class NotifyTab extends Component {
               });
           });
       },1500);
+  }
 
-
+  requestOwner(route){
+    const url = `${global.url_media}${route}`;
+    getApi(url).then(arrData => {
+      this.getData();
+    }).catch(err => console.log(err));
   }
   render() {
     const {navigate} = this.props.navigation;
@@ -192,7 +197,22 @@ class NotifyTab extends Component {
              <Image source={{uri: `${global.url_media}${item.image}`}}
              style={{width:35,height:35,marginRight:5}} />
              <View style={{paddingRight:30,}}>
-             <Text numberOfLines={1} style={{color:'#000'}}>{item.contentText}</Text>
+             <Text style={{color:'#000'}}>{item.contentText}</Text>
+             {item.data!==null && <View style={{flexDirection:'row',marginTop:5,marginBottom:5}}>
+              <TouchableOpacity onPress={(e)=>{
+                e.stopPropagation();
+                this.requestOwner(item.data.link_apply)
+              }}
+              style={{backgroundColor:'#86be57',borderRadius:3,padding:3,marginRight:5}}>
+                <Text numberOfLines={1} style={{fontSize:12,color:'#fff'}}>{`${lang.accept}`}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={(e)=>{
+                e.stopPropagation();
+                this.requestOwner(item.data.link_decline)}}
+              style={{backgroundColor:'#fff',borderColor:'#DDD',borderWidth:1,borderRadius:3,padding:3,marginRight:3}}>
+                <Text numberOfLines={1} style={{fontSize:12,color:'#000'}}>{`${lang.reject}`}</Text>
+              </TouchableOpacity>
+             </View>}
              <Text numberOfLines={1} style={{fontSize:12}}>{Moment(item.created_at).format("DD/MM/YYYY h:m:s")}</Text>
              </View>
              </TouchableOpacity>

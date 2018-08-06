@@ -111,10 +111,10 @@ class FormCreate extends Component {
       index:0,
 
       category_item:[],
-      des_space:[],
-      title_space:[],
-      des_menu:[],
-      title_menu:[],
+      des_space:{},
+      title_space:{},
+      des_menu:{},
+      title_menu:{},
       errArea:false,
       errMsg:'',
       ma_dinh_danh:'',
@@ -182,6 +182,18 @@ class FormCreate extends Component {
         link_video.push(e.link);
         img_video.push(e.thumbnail);
       })
+      arrData.data.image_space.forEach((e,index)=>{
+        this.setState({
+          title_space: Object.assign(this.state.title_space,{[`${'title_'}${e.id}`]:e.title}),
+          des_space: Object.assign(this.state.des_space,{[`${'des_'}${e.id}`]:e.description})
+        })
+      })
+      arrData.data.image_menu.forEach((e,index)=>{
+        this.setState({
+          title_menu: Object.assign(this.state.title_menu,{[`${'title_'}${e.id}`]:e.title}),
+          des_menu: Object.assign(this.state.des_menu,{[`${'des_'}${e.id}`]:e.description})
+        })
+      })
       //console.log('content._category_items.length',content._category_items.length);
       setTimeout(()=>{
         this.setState({
@@ -224,10 +236,7 @@ class FormCreate extends Component {
   }
 
   confirmPostData(){
-    //console.log('this.state.title_space',this.state.title_space);
-    //console.log('this.state.des_space',this.state.des_space);
-    //return;
-    //console.log('confirmPostData1',this.state.hasSubCat);
+
     if(this.state.hasSubCat===0){this.setState({errMsg:this.state.lang.enter_classify});return false;}
     //console.log('confirmPostData2');
     if(this.state.txtName===''){this.setState({errMsg:this.state.lang.enter_name});return false;}
@@ -296,9 +305,8 @@ class FormCreate extends Component {
         name: `${index}_image_space.jpg`,
         type: `${e.mime}`
       });
-
-      let title_space = this.state.title_space[index]===undefined ? '':this.state.title_space[index][1];
-      let des_space = this.state.des_space[index]===undefined ? '':this.state.des_space[index][1];
+      let title_space = this.state.title_space[`${'title_'}${index}`]===undefined ? '':this.state.title_space[`${'title_'}${index}`];
+      let des_space = this.state.des_space[`${'des_'}${index}`]===undefined ? '':this.state.des_space[`${'des_'}${index}`];
       e.path!==undefined && arr.append(`title_space[]`, title_space);
       e.path!==undefined && arr.append(`des_space[]`, des_space);
     });
@@ -310,8 +318,8 @@ class FormCreate extends Component {
         type: `${e.mime}`
       });
 
-      let title_menu = this.state.title_menu[index]===undefined ? '':this.state.title_menu[index][1];
-      let des_menu = this.state.des_menu[index]===undefined ? '':this.state.des_menu[index][1];
+      let title_menu = this.state.title_menu[`${'title_'}${index}`]===undefined ? '':this.state.title_menu[`${'title_'}${index}`];
+      let des_menu = this.state.des_menu[`${'des_'}${index}`]===undefined ? '':this.state.des_menu[`${'des_'}${index}`];
       e.path!==undefined && arr.append(`title_menu[]`, title_menu);
       e.path!==undefined && arr.append(`des_menu[]`, des_menu);
     })
@@ -325,8 +333,8 @@ class FormCreate extends Component {
       }
     });
     const act = this.state.editLoc?'update-location':'create-location';
-    //console.log('arr',arr);
-    //console.log('e',`${global.url}${act}`);
+    console.log('arr',arr);
+    // console.log('e',`${global.url}${act}`);
     postApi(`${global.url}${act}`,arr).then((e)=>{
       console.log('postApi-e',e);
       this.setState({showLoading:false,errMsg:''},()=>{
@@ -626,8 +634,9 @@ class FormCreate extends Component {
         </View>
           <TextInput underlineColorAndroid='transparent'
           multiline
-          numberOfLines={4}
-          maxHeight={65}
+          numberOfLines={5}
+          maxHeight={85}
+          maxLength={512}
           onChangeText={(txtDes) => this.setState({txtDes})}
           value={this.state.txtDes}
           ref='Des' returnKeyType = {"next"}
@@ -882,10 +891,12 @@ class FormCreate extends Component {
 
           <AddImgSpace
           submitImage={(img_space,title_space,des_space)=>{
-            //console.log(img_space,title_space,des_space);
-            this.setState({img_space,title_space,des_space})}}
+            this.setState({img_space,title_space,des_space})
+          }}
           visible={showImgSpace}
           img_space={this.state.img_space}
+          title_space={this.state.title_space}
+          des_space={this.state.des_space}
           lang={this.state.lang}
           editLoc={this.state.editLoc}
           closeModal={()=>this.setState({showImgSpace:false})} />
@@ -893,9 +904,12 @@ class FormCreate extends Component {
           <AddImgMenu
           submitImage={(img_menu,title_menu,des_menu)=>{
             //console.log(img_menu,title_menu,des_menu);
-            this.setState({img_menu,title_menu,des_menu})}}
+            this.setState({img_menu,title_menu,des_menu})
+          }}
           visible={showImgMenu}
           img_menu={this.state.img_menu}
+          title_menu={this.state.title_menu}
+          des_menu={this.state.des_menu}
           lang={this.state.lang}
           editLoc={this.state.editLoc}
           closeModal={()=>this.setState({showImgMenu:false})} />

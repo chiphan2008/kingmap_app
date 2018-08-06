@@ -180,7 +180,7 @@ class ListLocPer extends Component {
                        <Text numberOfLines={1} style={{color:'#6587A8',lineHeight:24}}>{`${item.address}, ${item._district.name}, ${item._city.name}, ${item._country.name}`}</Text>
                        {item.moderation==='request_publish' &&
                          <View style={{flexDirection:'row'}}>
-                         <Image source={item.vote?favoriteFullIC:favoriteIC} style={{width:16,height:16,marginTop:2}} />
+                         <Image source={item.vote?favoriteFullIC:favoriteIC} style={{width:16,height:16,marginTop:4}} />
                          <Text numberOfLines={1} style={{color:'#313B50',lineHeight:24}}> ({item.vote}) | </Text>
                          <Image source={requestIC} style={{width:14,height:14,marginRight:3,marginTop:5}} />
                          <Text numberOfLines={1} style={{color:'#313B50',lineHeight:24}}> {`${lang.pending}`}</Text>
@@ -189,7 +189,7 @@ class ListLocPer extends Component {
                        }
                        {item.moderation==='publish' &&
                          <View style={{flexDirection:'row'}}>
-                         <Image source={item.vote?favoriteFullIC:favoriteIC} style={{width:16,height:16,marginTop:2}} />
+                         <Image source={item.vote?favoriteFullIC:favoriteIC} style={{width:16,height:16,marginTop:4}} />
                          <Text numberOfLines={1} style={{color:'#313B50',lineHeight:24}}> ({item.vote}) | </Text>
                          <Image source={openingIC} style={{width:14,height:14,marginRight:3,marginTop:5}} />
                          <Text numberOfLines={1} style={{color:'#313B50',lineHeight:24}}> {`${lang.opening}`}</Text>
@@ -197,7 +197,7 @@ class ListLocPer extends Component {
                        }
                        {item.moderation==='un_publish' &&
                          <View style={{flexDirection:'row'}}>
-                         <Image source={item.vote?favoriteFullIC:favoriteIC} style={{width:16,height:16,marginTop:2}} />
+                         <Image source={item.vote?favoriteFullIC:favoriteIC} style={{width:16,height:16,marginTop:4}} />
                          <Text numberOfLines={1} style={{color:'#313B50',lineHeight:24}}> ({item.vote}) | </Text>
                          <Image source={closingIC} style={{width:14,height:14,marginRight:3,marginTop:5}} />
                          <Text numberOfLines={1} style={{color:'#313B50',lineHeight:24}}> {`${lang.closing}`}</Text>

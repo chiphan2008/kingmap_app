@@ -55,6 +55,7 @@ class MakeMoney extends Component {
     const { _roles,api_roles,temp_daily_code } = this.props.navigation.state.params.user_profile;
     this.state = {
       showCoin:false,
+      showCoinTKV:false,
       showLoc:false,
       showLocPop:false,
       showCTV:false,
@@ -133,8 +134,8 @@ class MakeMoney extends Component {
     arr.append('keyword',keyword);
     arr.append('skip', page);
     arr.append('limit', 20);
-    // console.log(`${global.url}${'static/'}${route}`);
-    // console.log(arr);
+    console.log(`${global.url}${'static/'}${route}`);
+    console.log(arr);
 
     postApi(url,arr).then(e => {
       this.state.noData = e.data.length>0?'':lang.not_found;
@@ -416,11 +417,10 @@ class MakeMoney extends Component {
       itemChoose,showCoin,showLoc,showLocPop,showCTV,showCTVCeo,showCTVPop,showTDLPop,showTDLCTVPop,showQLNBPop,showArea,listData,index_ctv_pending,noData,
       listAgency,listLoc,isCeo,isAgency,isNormal,isCTV,assign,listDistrict,labelArea,ListPend,suggestPend,
       ListLocPend,suggestLoc,showListLocPend,showListCTVPend,loadMore,page,static_notes,des_mm,
-      content,searchCTV,let_mm
+      content,searchCTV,let_mm,showCoinTKV
     } = this.state;
     const {yourCurLoc} = this.props;
     const _this = this;
-    //console.log(user_profile);
     return (
       <View>
       {isNormal &&
@@ -509,21 +509,49 @@ class MakeMoney extends Component {
 
 
 
-            {listData.total!==undefined &&
+            {listData.revenue!==undefined &&
               <View style={wrapWhite}>
               <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                 <View>
                   <Text numberOfLines={1} style={colorTitle}>{`${lang.total_MM}`}</Text>
-                  <Text style={titleCoin}>{`${listData.total ? format_number(listData.total) : 0}`}</Text>
+                  <Text style={titleCoin}>{`${listData.revenue ? format_number(listData.revenue) : 0}`}</Text>
                 </View>
                 <TouchableOpacity onPress={()=>{
-                  listData.total>0 && this.setState({showCoin:!this.state.showCoin})
+                  listData.revenue>0 && this.setState({showCoin:!this.state.showCoin})
                 }}>
                 <Image source={showCoin?subIC:plusIC} style={{width:35,height:35}} />
               </TouchableOpacity>
               </View>
 
               {showCoin &&
+                <FlatList
+                extraData={this.state}
+                data={listData.static}
+                style={{borderColor:'#E0E8ED',borderTopWidth:1,marginTop:5}}
+                keyExtractor={(item,index) => index.toString()}
+                renderItem={({item,index}) =>(
+                  <View style={{marginTop:5,width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+                    <Text style={{color:'#2F3C51'}}>{item.name}</Text>
+                    <Text style={{color:'#5782A4'}}>{item.value ? format_number(item.value) : 0}</Text>
+                  </View>
+                )} />}
+
+            </View>}
+            {listData.total!==undefined &&
+              <View style={wrapWhite}>
+              <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+                <View>
+                  <Text numberOfLines={1} style={colorTitle}>{`${lang.total_MMDD}`}</Text>
+                  <Text style={titleCoin}>{`${listData.total ? format_number(listData.total) : 0}`}</Text>
+                </View>
+                <TouchableOpacity onPress={()=>{
+                  listData.total>0 && this.setState({showCoinTKV:!this.state.showCoinTKV})
+                }}>
+                <Image source={showCoinTKV?subIC:plusIC} style={{width:35,height:35}} />
+              </TouchableOpacity>
+              </View>
+
+              {showCoinTKV &&
                 <FlatList
                 extraData={this.state}
                 data={listData.static}
@@ -709,7 +737,7 @@ class MakeMoney extends Component {
                   <Image source={filterIC} style={{width:35,height:35}} />
                 </View>
             </TouchableOpacity>}
-            
+
 
             {isCTV && <View style={{alignItems:'center'}}>
               <TouchableOpacity style={[marTop,btnTransfer]}
@@ -796,7 +824,7 @@ class MakeMoney extends Component {
                 </View>
             </TouchableOpacity>
           </View>
-            
+
         </View>
       </Modal>}
 

@@ -150,7 +150,7 @@ module.exports = {
   location_map:'Vị trí',
   address:'Địa chỉ',
   description:'Giới thiệu ngắn về địa điểm của bạn',
-  keyword:'Nhập từ khóa tên các sản phẩm, dịch vụ, địa chỉ hoặc ngành nghề bạn đang hoạt động (mỗi từ khóa cách nhau bởi dấu phẩy ",")',
+  keyword:'Nhập từ khoá: nhập tên các sản phẩm, dịch vụ, địa chỉ hoặc ngành nghề bạn đang hoạt động. Lưu ý: mỗi từ khoá cách nhau bởi dấu phẩy ","',
   avatar:'Ảnh đại diện',
   add_gallery:'Thêm hình ảnh',
   yourlocation:'Vị trí hiện tại của bạn',

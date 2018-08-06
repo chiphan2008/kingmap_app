@@ -641,14 +641,14 @@ class FormCreate extends Component {
           </TouchableOpacity>
           </View>
         </View>
-        
+
         <View style={listCreate}>
           <View style={widthLblCre}>
             <Image source={keywordsIC} style={imgInfo} />
           </View>
           <Text style={colorErr}>{'(*)'}</Text>
           <TextInput underlineColorAndroid='transparent' autoCorrect={false}
-          multiline numberOfLines={4} maxHeight={100}
+          multiline numberOfLines={8} maxHeight={120}
           onChangeText={(text) => {
             let formattedText = text.split(' ').join('');
             //if(formattedText.trim().substr(-1,1)===',') alert(formattedText.trim().substr(-1,1)===',');

@@ -247,7 +247,6 @@ class SearchScreen extends Component {
     },700)
   }
   onPressZoom(zoom) {
-    //console.log(zoom);
       clearTimeout(timeoutZoom);
       const {latitude,longitude,lat,lng,latlng,latitudeDelta,longitudeDelta} = this.state.curLocation;
       let latDelta = zoom==='zoom_in' ? latitudeDelta*1.8 : latitudeDelta/1.8;
@@ -297,6 +296,7 @@ class SearchScreen extends Component {
     if(service_items!==undefined) this.setState({service_items});
   }
   _onRegionChangeComplete = (region) => {
+    console.log('_onRegionChangeComplete');
     region.latitudeDelta > 0.002 && this.setState({ curLocation:region, });
     if(this.state.onClick===false) {
       this.getPosition(region.latitude,region.longitude);
@@ -304,7 +304,6 @@ class SearchScreen extends Component {
     }
   }
   _onPressMap = (event) => {
-    //console.log('_onPressMap');
     const {latitude,longitude} = (event.nativeEvent.coordinate || this.state.curLocation);
     this.setState({
       circleLoc: {
@@ -509,21 +508,23 @@ class SearchScreen extends Component {
             </TouchableOpacity>
           }
 
-          <MapFullScreen
-          closeModal={()=>this.setState({showFullScreen:false,callout:{} })}
-          findCurrentLoc={()=>this.findCurrentLoc()}
-          onPressZoom={(zoom)=>this.onPressZoom(zoom)}
-          showFullScreen={showFullScreen}
-          curLocation={curLocation}
-          circleLoc={circleLoc}
-          curLoc={curLoc}
-          lang={lang}
-          navigation={this.props.navigation}
-          data={markers}
-          onPressMap={(e)=>this._onPressMap(e)}
-          onRegionChangeComplete={this._onRegionChangeComplete}
-
-          />
+          {curLocation.longitude!==undefined &&
+            <MapFullScreen
+              closeModal={()=>this.setState({showFullScreen:false,callout:{} })}
+              findCurrentLoc={()=>this.findCurrentLoc()}
+              onPressZoom={(zoom)=>this.onPressZoom(zoom)}
+              showFullScreen={showFullScreen}
+              curLocation={curLocation}
+              circleLoc={circleLoc}
+              curLoc={curLoc} lang={lang}
+              navigation={this.props.navigation}
+              data={markers}
+              getCategory={(lat,lng)=>this.getCategory(lat,lng)}
+              onMarkerPressed={(id)=>this._onMarkerPressed(id)}
+              onPressMap={(e)=>this._onPressMap(e)}
+              onRegionChangeComplete={(region)=>this._onRegionChangeComplete(region)}
+            />
+          }
 
           <Modal transparent onRequestClose={() => null}
           visible={showNotFound}

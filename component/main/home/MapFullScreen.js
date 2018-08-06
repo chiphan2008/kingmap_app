@@ -18,9 +18,27 @@ export default class MapFullScreen extends Component {
     super(props);
     this.state = {
       callout:{},
+      curLocation:{},
+      circleLoc:{},
     }
   }
+
+  onRegionChangeComplete = (curLocation) => {
+    this.setState({ curLocation });
+  }
+  onPressMap = (event) => {
+    const {latitude,longitude} = (event.nativeEvent.coordinate || this.state.curLocation);
+    this.setState({
+      circleLoc: {
+        latitude,longitude,
+      }
+    },()=>{
+      this.props.getCategory(latitude,longitude);
+    })
+    //Keyboard.dismiss();
+  }
   onMarkerPressed(id) {
+    this.props.onMarkerPressed(id);
     if(this.state.callout[`${id}`]===undefined || this.state.callout[`${id}`]){
       this.setState({callout: Object.assign({},{[`${id}`]:false})},()=>{
         this[`${id}`].showCallout();
@@ -31,15 +49,20 @@ export default class MapFullScreen extends Component {
       })
     }
   }
+  componentDidMount(){
+    this.setState({
+      curLocation:this.props.curLocation,
+      circleLoc:this.props.circleLoc,
+    })
+  }
   render() {
     const {
       showFullScreen,
-      curLocation,
       data,
       navigation,
-      circleLoc,curLoc,lang,
+      curLoc,lang,
     } = this.props;
-    const {callout}=this.state;
+    const {circleLoc,curLocation,callout}=this.state;
     //console.log('curLocation',curLocation);
     const {btn,btnMap,btnMapZoom,btnMapFull,btnZoom,btnMapLoc,show,hide} = styles;
     return (
@@ -50,10 +73,8 @@ export default class MapFullScreen extends Component {
           provider={PROVIDER_GOOGLE}
           style={{width,height,zIndex:-1}}
           region={curLocation}
-          onPress={(e)=>this.props.onPressMap(e)}
-          onRegionChangeComplete={(region)=>{
-            this.props.onRegionChangeComplete(region);
-          }}
+          onPress={(e)=>this.onPressMap(e)}
+          onRegionChangeComplete={this.onRegionChangeComplete}
           customMapStyle={global.style_map}
           showsPointsOfInterest={false}
         >
@@ -68,7 +89,7 @@ export default class MapFullScreen extends Component {
             //ref={ref => { this.markerRef = ref; }}
             onPress={(e) => {
               e.stopPropagation();
-              this.onMarkerPressed(marker.id)
+              this.onMarkerPressed(marker.id);
             }}
             ref={(co) => { this[`${marker.id}`] = co}}
           >

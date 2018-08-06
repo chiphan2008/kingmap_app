@@ -134,8 +134,8 @@ class MakeMoney extends Component {
     arr.append('keyword',keyword);
     arr.append('skip', page);
     arr.append('limit', 20);
-    console.log(`${global.url}${'static/'}${route}`);
-    console.log(arr);
+    // console.log(`${global.url}${'static/'}${route}`);
+    // console.log(arr);
 
     postApi(url,arr).then(e => {
       this.state.noData = e.data.length>0?'':lang.not_found;
@@ -513,7 +513,7 @@ class MakeMoney extends Component {
               <View style={wrapWhite}>
               <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                 <View>
-                  <Text numberOfLines={1} style={colorTitle}>{`${lang.total_MM}`}</Text>
+                  <Text  style={colorTitle}>{`${lang.total_MM}`}</Text>
                   <Text style={titleCoin}>{`${listData.revenue ? format_number(listData.revenue) : 0}`}</Text>
                 </View>
                 <TouchableOpacity onPress={()=>{
@@ -539,9 +539,9 @@ class MakeMoney extends Component {
             </View>}
             {listData.total!==undefined &&
               <View style={wrapWhite}>
-              <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+              <View style={{width:width-61,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                 <View>
-                  <Text numberOfLines={1} style={colorTitle}>{`${lang.total_MMDD}`}</Text>
+                  <Text  style={colorTitle}>{`${lang.total_MMDD}`}</Text>
                   <Text style={titleCoin}>{`${listData.total ? format_number(listData.total) : 0}`}</Text>
                 </View>
                 <TouchableOpacity onPress={()=>{

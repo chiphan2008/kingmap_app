@@ -34,10 +34,11 @@ export default class CTVDetail extends Component {
   }
 
   assignWork(){
-    const { daily_id, ctv_id, lang } = this.props.navigation.state.params;
+    const { daily_id, ctv_id,lang,content_id } = this.props.navigation.state.params;
+    console.log('content_id',content_id);
     const userId = daily_id!==''?daily_id:ctv_id;
     //console.log(`${global.url}${'static/giaoviec/'}${userId}${'?lang='}${lang.lang}`);
-    getApi(`${global.url}${'static/giaoviec/'}${userId}${'?lang='}${lang.lang}`).then(arr => {
+    content_id===undefined && getApi(`${global.url}${'static/giaoviec/'}${userId}${'?lang='}${lang.lang}`).then(arr => {
         arr.data!==null && this.setState({ content:arr.data[0].content });
     }).catch(err => console.log(err));
   }
@@ -71,7 +72,7 @@ export default class CTVDetail extends Component {
     const {goBack} = this.props.navigation;
     const {avatar,name,address,lang,ctv_id,content_id,user_profile,_daily,role_id} = this.props.navigation.state.params;
 
-    console.log('listData',listData);
+    console.log('role_id',role_id);
     // console.log('_daily',_daily);
     return (
       <View>
@@ -124,7 +125,7 @@ export default class CTVDetail extends Component {
                   </View>
                   <View style={{height:1}}></View>
                   </View> }
-                {!!role_id && <View style={wrapWhite}>
+                {!!(role_id || content_id!==undefined) && <View style={wrapWhite}>
                    <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                      <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14}]}>{`${lang.total_MM}`}</Text>
                      <Text style={titleCoin}>{`${format_number(listData.total)}`}</Text>
@@ -137,7 +138,7 @@ export default class CTVDetail extends Component {
                      <Text style={titleCoin}>{`${format_number(listData.count_location)}`}</Text>
                    </View>
                  </View> }
-                 
+
                  <View style={{height:1}}></View>
                  {listData.static!==undefined && listData.static.length>0 &&
                    <View style={wrapWhite}>

@@ -198,7 +198,7 @@ class NotifyTab extends Component {
              style={{width:35,height:35,marginRight:5}} />
              <View style={{paddingRight:30,}}>
              <Text style={{color:'#000'}}>{item.contentText}</Text>
-             {item.data!==null && <View style={{flexDirection:'row',marginTop:5,marginBottom:5}}>
+             {item.data!==null && item.data.link_apply!==undefined && <View style={{flexDirection:'row',marginTop:5,marginBottom:5}}>
               <TouchableOpacity onPress={(e)=>{
                 e.stopPropagation();
                 this.requestOwner(item.data.link_apply)

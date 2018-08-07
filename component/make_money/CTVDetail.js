@@ -26,6 +26,8 @@ export default class CTVDetail extends Component {
       listData:{},
       showArea:false,
       content:'',
+      quyenloi: '',
+      showQuyenloi: false
     }
   }
   componentWillMount(){
@@ -34,11 +36,13 @@ export default class CTVDetail extends Component {
   }
 
   assignWork(){
-    const { daily_id, ctv_id,lang,content_id } = this.props.navigation.state.params;
-    console.log('content_id',content_id);
+    const { daily_id, ctv_id, lang,content_id } = this.props.navigation.state.params;
     const userId = daily_id!==''?daily_id:ctv_id;
+    const block_text = daily_id !== '' ? 'quyen_loi_va_nghia_vu_cua_tdl' : 'quyen_loi_va_nghia_vu_cua_ctv'
     //console.log(`${global.url}${'static/giaoviec/'}${userId}${'?lang='}${lang.lang}`);
-    content_id===undefined && getApi(`${global.url}${'static/giaoviec/'}${userId}${'?lang='}${lang.lang}`).then(arr => {
+    content_id===undefined && getApi(`${global.url}${'static/giaoviec/'}${userId}${'?lang='}${lang.lang}${'&block_text='}${block_text}`).then(arr => {
+      console.log('arr.block_text', arr)
+      this.setState({quyenloi: daily_id !== '' ? arr.block_text.quyen_loi_va_nghia_vu_cua_tdl : arr.block_text.quyen_loi_va_nghia_vu_cua_ctv })
         arr.data!==null && this.setState({ content:arr.data[0].content });
     }).catch(err => console.log(err));
   }
@@ -57,7 +61,6 @@ export default class CTVDetail extends Component {
     //console.log(`${global.url}${'static'}${'?lang='}${lang.lang}`,arr);
     postApi(`${global.url}${'static'}${'?lang='}${lang.lang}`,arr)
     .then(arr => {
-      //console.log(arr);
         this.setState({ listData:arr.data });
     }).catch(err => console.log(err));
   }
@@ -68,11 +71,10 @@ export default class CTVDetail extends Component {
       imgLogoTop,colorlbl,wrapWhite,titleCoin,colorTitle,
       popoverLoc,overLayout,shadown,listOverService,imgShare
     } = styles;
-    const {listData,showArea,content} = this.state;
+    const {listData,showArea,content,quyenloi,showQuyenloi} = this.state;
     const {goBack} = this.props.navigation;
     const {avatar,name,address,lang,ctv_id,content_id,user_profile,_daily,role_id} = this.props.navigation.state.params;
 
-    console.log('role_id',role_id);
     // console.log('_daily',_daily);
     return (
       <View>
@@ -168,8 +170,23 @@ export default class CTVDetail extends Component {
                        </View>
                   </View>
                  </View>}
-
-                         <View style={{height:15}}></View>
+                  <View style={{height:3}}></View>
+                 <View style={wrapWhite}>
+                    <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+                      <View>
+                        <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14}]}>{`${'Quyền lợi và Nghĩa vụ của bạn:'}`}</Text>
+                      </View>
+                      <TouchableOpacity onPress={()=>{
+                        this.setState({showQuyenloi: !this.state.showQuyenloi})}}>
+                        <Image source={plusIC} style={{width:35,height:35}} />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                {showQuyenloi && quyenloi !== null &&
+                <View style={{maxHeight: height*1.8, margin:8,marginBottom:20}}>
+                  <Text style={{color: '#000'}}>{quyenloi}</Text>
+                </View>}
+                <View style={{height:15}}></View>
 
             </ScrollView>
 

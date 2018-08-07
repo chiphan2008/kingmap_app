@@ -80,7 +80,7 @@ export default class AddImgMenu extends Component {
     } = styles;
     const {imgMenu,des_menu,title_menu,update,
     imgMenuUpdate,des_menu_update,title_menu_update,} = this.state;
-    const {lang} = this.props;
+    const {lang,editLoc} = this.props;
     return (
 
       <Modal onRequestClose={() => null} transparent

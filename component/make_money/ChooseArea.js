@@ -30,6 +30,7 @@ export default class ChooseArea extends Component {
       idCity:'',nameCity:'',listCity:[],showCity:false,chooseCity:{},
       idDist:'',nameDist:'Quận/Huyện',listDist:[],showDist:false,
       update:true,ctv_id:'',daily_id:'',chooseDist:{},showListDist:{},
+      chooseAll: false
     }
     checkLocation().then(e=>{
       this.setState({
@@ -112,14 +113,14 @@ export default class ChooseArea extends Component {
 
   render() {
     const {
-      container,headCatStyle,headContent,
+      container,headCatStyle,headContent,show, hide,
       listAdd,titleCreate,colorlbl,imgShare
     } = styles;
     const { lang,visible,itemChoose } = this.props;
     //console.log('itemChoose',itemChoose);
     const {
       listCity,chooseCity,chooseDist,listDist,idCountry,nameCountry,nameCity,nameDist,listCountry,
-      showCountry,showCity,showDist,showListDist,
+      showCountry,showCity,showDist,showListDist,chooseAll
     } = this.state;
     //console.log(itemChoose)
     return (
@@ -259,21 +260,41 @@ export default class ChooseArea extends Component {
                     <Text style={colorlbl}>{item.city.name}</Text>
                     <Image source={showListDist[item.city.id]?arrowbottomIC:arrowNextIC} style={[imgShare]} />
                   </TouchableOpacity>
-                  {item.districts.map(e=>(
-                    showListDist[item.city.id] && <TouchableOpacity  key={e.id} onPress={()=>{
-                    if(chooseDist[e.id]){
-                      this.state.chooseDist = Object.assign(this.state.chooseDist,{[e.id]:!e.id});
-                    }else {
-                      this.state.chooseDist = Object.assign(this.state.chooseDist,{[e.id]:e.id});
-                    }
-                    this.setState(this.state,()=>{});
-                  }} style={listAdd}>
-                    <Text style={colorlbl}>{e.name}</Text>
-                    <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
-                    {chooseDist[e.id] && <Image source={checkIC} style={[imgShare]} />}
+                  { showListDist[item.city.id] && <View>
+                    <TouchableOpacity style={listAdd} onPress={()=>{ 
+                      if(chooseAll){
+                        let chooseDists = [];
+                        this.setState({chooseAll: !this.state.chooseAll,chooseDist: chooseDists})
+                      } else {
+                        let chooseDists = [];
+                        item.districts.forEach((item) => {
+                          chooseDists=Object.assign(chooseDists,{[item.id]:item.id});
+                        })
+                        this.setState({chooseAll: !this.state.chooseAll,chooseDist: chooseDists})
+                      }
+                      
+                    }}
+                  >
+                        <Text style={{color:'#2F353F',fontSize:16,}}>{'Tất cả'}</Text>
+                        <Image source={checkIC} style={[imgShare, chooseAll ? show : hide]} />
+                    </TouchableOpacity>
+                      {item.districts.map(e=>(
+                      showListDist[item.city.id] && <TouchableOpacity  key={e.id} onPress={()=>{
+                      if(chooseDist[e.id]){
+                        this.state.chooseDist = Object.assign(this.state.chooseDist,{[e.id]:!e.id});
+                      }else {
+                        this.state.chooseDist = Object.assign(this.state.chooseDist,{[e.id]:e.id});
+                      }
+                      this.setState(this.state,()=>{});
+                    }} style={listAdd}>
+                      <Text style={colorlbl}>{e.name}</Text>
+                      <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
+                      {chooseDist[e.id] && <Image source={checkIC} style={[imgShare]} />}
 
-                    </View>
-                  </TouchableOpacity>) )}
+                      </View>
+                    </TouchableOpacity>) )}
+                  </View>}
+                  
 
                </View>
              )}

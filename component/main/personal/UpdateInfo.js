@@ -12,6 +12,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import postApi from '../../api/postApi';
 import encodeApi from '../../api/encodeApi';
 import checkLogin from '../../api/checkLogin';
+//import loginServer from '../../api/loginServer';
 import global from '../../global';
 import styles from '../../styles';
 
@@ -138,6 +139,8 @@ class UpdateInfo extends Component {
       postApi(`${global.url}${'user/update/'}${userId}`,arr).then(e=>{
         //console.log(e);
         if(e.code===200){
+          //loginServer(e.data)
+          this.props.dispatch({type:'USER_LOGINED',isLogin:true,user_profile:e.data});
           encodeApi(`${global.url_node}${'person'}`,'POST',e.data);
           AsyncStorage.setItem('@MyAccount:key', JSON.stringify(Object.assign(e.data,{'pwd':this.state.pwd})));
           Alert.alert(lang.notify,lang.update_success,

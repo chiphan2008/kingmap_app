@@ -16,6 +16,7 @@ import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
 import logoTop from '../../src/icon/ic-white/Logo-ngang.png';
 import checkIC from '../../src/icon/ic-create/ic-check.png';
 import plusIC from '../../src/icon/ic-plus.png';
+import closeIC from '../../src/icon/ic-create/ic-close.png';
 
 const {width,height} = Dimensions.get('window');
 
@@ -140,7 +141,6 @@ export default class CTVDetail extends Component {
                      <Text style={titleCoin}>{`${format_number(listData.count_location)}`}</Text>
                    </View>
                  </View> }
-
                  <View style={{height:1}}></View>
                  {listData.static!==undefined && listData.static.length>0 &&
                    <View style={wrapWhite}>
@@ -159,6 +159,19 @@ export default class CTVDetail extends Component {
                        </TouchableWithoutFeedback>
                       )} />
                  </View>}
+                 
+                 {quyenloi !== null && content_id===undefined &&
+                 <View style={wrapWhite}>
+                 <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+                   <View>
+                     <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14,color:'#6791AF', fontWeight: 'bold'}]}>{`${lang.rightsand_obligations}`}</Text>
+                   </View>
+                   <TouchableOpacity onPress={()=>{
+                     this.setState({showQuyenloi: !this.state.showQuyenloi})}}>
+                     <Image source={plusIC} style={{width:35,height:35}} />
+                   </TouchableOpacity>
+                 </View>
+               </View>}
 
                  {content!==null && content_id===undefined &&
                    <View>
@@ -170,22 +183,21 @@ export default class CTVDetail extends Component {
                        </View>
                   </View>
                  </View>}
-                  <View style={{height:3}}></View>
-                 <View style={wrapWhite}>
-                    <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-                      <View>
-                        <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14}]}>{`${'Quyền lợi và Nghĩa vụ của bạn:'}`}</Text>
-                      </View>
-                      <TouchableOpacity onPress={()=>{
-                        this.setState({showQuyenloi: !this.state.showQuyenloi})}}>
-                        <Image source={plusIC} style={{width:35,height:35}} />
-                      </TouchableOpacity>
-                    </View>
-                  </View>
+
+
                 {showQuyenloi && quyenloi !== null &&
-                <View style={{maxHeight: height*1.8, margin:8,marginBottom:20}}>
-                  <Text style={{color: '#000'}}>{quyenloi}</Text>
-                </View>}
+                <Modal onRequestClose={() => null} transparent visible={showQuyenloi}
+                style={{maxHeight: height*1.8, margin:8, backgroundColor: '#fff'}}>
+                  <View style={{flex: 1,maxHeight: height*1.8, backgroundColor: '#fff', paddingBottom: 3}}>
+                    <TouchableOpacity style={{alignItems:'flex-end'}}
+                    onPress={() => this.setState({showQuyenloi: false})}>
+                       <Image source={closeIC} style={{width:35,height:35}} />
+                    </TouchableOpacity>
+                    <ScrollView style={{maxHeight: height*1.8, marginLeft: 6, marginRight: 6, paddingLeft: 10, paddingRight: 10}}>
+                      <Text style={{color: '#000'}}>{quyenloi}</Text>
+                    </ScrollView>
+                  </View>
+                </Modal>}
                 <View style={{height:15}}></View>
 
             </ScrollView>

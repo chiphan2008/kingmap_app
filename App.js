@@ -1,7 +1,7 @@
 
 import React, { Component } from 'react';
 import {
-  Platform, StyleSheet, View, AsyncStorage, Image, Dimensions,
+  Platform, StyleSheet, View, AsyncStorage, Image, Dimensions,Text
 } from 'react-native';
 import { StackNavigator,TabNavigator,Animated,NavigationActions } from 'react-navigation';
 import {createStore} from 'redux';
@@ -17,6 +17,7 @@ import infoIC from './src/icon/ic-home/ic-info.png';
 import notifyIC from './src/icon/ic-home/ic-notification.png';
 import moreIC from './src/icon/ic-home/ic-more.png';
 import personalIC from './src/icon/ic-home/ic-personal.png';
+import global from './component/global';
 
 //import Chat
 import Contact from './component/conversation/Contact';
@@ -79,6 +80,7 @@ import Collection from './component/main/personal/Collection';
 import ListCheckin from './component/main/personal/ListCheckin';
 import AppInfo from './component/main/personal/AppInfo';
 import InternalManagement from './component/make_money/InternalManagement';
+import getApi from './component/api/getApi';
 
 const {width,height} = Dimensions.get('window');
 
@@ -95,6 +97,7 @@ const defaultState = {
   user_profile:{},
   isLogin:false,
   detailBack:'',
+  listNoti: 0,
 };
 const reducer = (state = defaultState, action) => {
   switch (action.type) {
@@ -123,6 +126,8 @@ const reducer = (state = defaultState, action) => {
     case 'DETAIL_BACK':
       return {...state,detailBack:action.detailBack}
       break;
+    case 'GET_NOTIFY':
+      return {...state, listNoti: action.listNoti}
 
     default:
       break;
@@ -141,6 +146,7 @@ export default class App extends Component {
       isLogin : false,
       lang : lang_vn,
       setVal:false,
+      listNoti: 0,
     }
     getLanguage().then(e=>{
       //console.log('e',e);
@@ -163,6 +169,17 @@ export default class App extends Component {
     this.setState(this.state);
   }
 
+  componentDidMount(){
+    const url = `${global.url}${'getlistnoti'}`;
+    getApi(url).then(arrData => {
+      //console.log('arrData',arrData);
+      let listNoti = arrData.data.count_notifications;
+      arrData.data.count_notifications!==undefined && this.props.dispatch({type:'GET_NOTIFY',listNoti});
+      arrData.data.count_notifications!==undefined && this.props.navigation.setParams({ listNoti });
+      this.setState({listNoti})
+    }).catch(err => console.log(err));
+  }
+
   render(){
     const styles = StyleSheet.create({
       container: {
@@ -173,7 +190,7 @@ export default class App extends Component {
         height: 24,
       },
     });
-    const {lang} =this.state;
+    const {lang, listNoti} =this.state;
     const HomeScreen = StackNavigator({
       HomeTabs: { screen: HomeTab },
       //HomeTabs: { screen:LocationTab},
@@ -227,9 +244,6 @@ export default class App extends Component {
         screen: NotifyTab,
         navigationOptions: {
           tabBarLabel: `${lang.notify}`,
-          tabBarIcon: ({ tintColor }) => (
-            <Image source={notifyIC} style={[styles.icon, {tintColor}]} />
-          ),
         },
       },
       PersonalT: {
@@ -248,7 +262,7 @@ export default class App extends Component {
     }, {
       initialRouteName:this.state.initRoute,
       tabBarPosition: 'bottom',
-      animationEnabled: false,
+      //animationEnabled: false,
       allowFontScaling:true,
       swipeEnabled:false,
       scrollEnabled:false,
@@ -260,6 +274,10 @@ export default class App extends Component {
           fontSize: 9.6,
           width:(width-40)/4,
         },
+        iconStyle: {
+          width:(width-40)/4,
+        },
+        containerStyle:'#fff',
         activeTintColor: '#fff',
         inactiveTintColor: '#B8BBC0',
         activeBackgroundColor:'#D0021B',

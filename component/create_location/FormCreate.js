@@ -184,14 +184,14 @@ class FormCreate extends Component {
       })
       arrData.data.image_space.forEach((e,index)=>{
         this.setState({
-          title_space: Object.assign(this.state.title_space,{[`${'title_'}${e.id}`]:e.title}),
-          des_space: Object.assign(this.state.des_space,{[`${'des_'}${e.id}`]:e.description})
+          title_space: Object.assign(this.state.title_space,{[`${'title_'}${e.id}`]:e.title,[`${'id_'}${e.id}`]:e.id}),
+          des_space: Object.assign(this.state.des_space,{[`${'des_'}${e.id}`]:e.description,[`${'id_'}${e.id}`]:e.id})
         })
       })
       arrData.data.image_menu.forEach((e,index)=>{
         this.setState({
-          title_menu: Object.assign(this.state.title_menu,{[`${'title_'}${e.id}`]:e.title}),
-          des_menu: Object.assign(this.state.des_menu,{[`${'des_'}${e.id}`]:e.description})
+          title_menu: Object.assign(this.state.title_menu,{[`${'title_'}${e.id}`]:e.title,[`${'id_'}${e.id}`]:e.id}),
+          des_menu: Object.assign(this.state.des_menu,{[`${'des_'}${e.id}`]:e.description,[`${'id_'}${e.id}`]:e.id})
         })
       })
       //console.log('content._category_items.length',content._category_items.length);
@@ -797,7 +797,7 @@ class FormCreate extends Component {
         </View>
 
 
-        <View style={{height:15}}></View>
+        {/*<View style={{height:15}}></View>
 
         <View style={listCreate}>
           <View style={{flexDirection:'row'}}>
@@ -811,7 +811,7 @@ class FormCreate extends Component {
             <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
             <Text>{Number(this.state.lat).toFixed(6)==='NaN' ? this.state.lat : Number(this.state.lat).toFixed(6)} - {Number(this.state.lng).toFixed(6)==='NaN' ? this.state.lng : Number(this.state.lng).toFixed(6)}</Text>
             </View>
-        </View>
+        </View>*/}
 
         <View style={{height:15}}></View>
         <TouchableOpacity style={listCreate}

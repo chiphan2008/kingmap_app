@@ -172,8 +172,7 @@ class HomeTab extends Component {
 
    gotoCreate = () => {
      checkLogin().then(e=>{
-       //console.log(e);
-       //dang cho duyet
+      //console.log(e);
        if(e.temp_daily_code!==''){
          Alert.alert(this.state.lang.notify,this.state.lang.approve_ctv);
        }else if(e.count_area===0 && e.api_roles!==null && e.api_roles.cong_tac_vien!==undefined ){

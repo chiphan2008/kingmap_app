@@ -94,7 +94,8 @@ class MakeMoney extends Component {
       noData:'',
       content:'',
       searchCTV:false,
-      showQLNBPop: false
+      showQLNBPop: false,
+      chooseAll: false
     }
     loginServer(this.props.navigation.state.params.user_profile,'fgdjk')
     temp_daily_code==='' && this.getStatic();
@@ -181,6 +182,7 @@ class MakeMoney extends Component {
       }
       if(isCeo) {
         arr.append('ceo_id',user_profile.id);
+        des_mm='bao_cao_danh_cho_ceo';
         let_mm='tieu_de_make_money_ceo';
       }
       arr.append('month',month);
@@ -188,10 +190,10 @@ class MakeMoney extends Component {
       //console.log(`${global.url}${'static?'}${'block_text='}${let_mm}${'&block_text=luu_y_make_money&lang='}${lang.lang}`);
       //console.log(arr);
       user_profile._roles.length>0 &&
-      postApi(`${global.url}${'static?'}${'block_text='}${let_mm},${des_mm},${',luu_y_make_money&lang='}${lang.lang}`,arr).then(e => {
+      postApi(`${global.url}${'static?'}${'block_text='}${let_mm},${des_mm},${'&lang='}${lang.lang}`,arr).then(e => {
       //console.log('e.data',e.block_text);
-      this.state.static_notes=e.block_text.luu_y_make_money;
-      !isCeo && (this.state.des_mm=e.block_text[des_mm]);
+      //this.state.static_notes=e.block_text.luu_y_make_money;
+      this.state.des_mm=e.block_text[des_mm];
       this.state.let_mm=e.block_text[let_mm];
       this.state.listData=e.data;
         this.setState(this.state,()=>{
@@ -417,8 +419,9 @@ class MakeMoney extends Component {
       itemChoose,showCoin,showLoc,showLocPop,showCTV,showCTVCeo,showCTVPop,showTDLPop,showTDLCTVPop,showQLNBPop,showArea,listData,index_ctv_pending,noData,
       listAgency,listLoc,isCeo,isAgency,isNormal,isCTV,assign,listDistrict,labelArea,ListPend,suggestPend,
       ListLocPend,suggestLoc,showListLocPend,showListCTVPend,loadMore,page,static_notes,des_mm,
-      content,searchCTV,let_mm,showCoinTKV
+      content,searchCTV,let_mm,showCoinTKV, chooseAll
     } = this.state;
+    console.log('listDistrict listDistrict',listDistrict)
     const {yourCurLoc} = this.props;
     const _this = this;
     return (
@@ -508,7 +511,6 @@ class MakeMoney extends Component {
           </View>
 
 
-
             {listData.revenue!==undefined &&
               <View style={wrapWhite}>
               <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
@@ -537,7 +539,7 @@ class MakeMoney extends Component {
                 )} />}
 
             </View>}
-            {listData.total!==undefined &&
+            {listData.total!==undefined && isAgency && 
               <View style={wrapWhite}>
               <View style={{width:width-61,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                 <View>
@@ -738,7 +740,6 @@ class MakeMoney extends Component {
                 </View>
             </TouchableOpacity>}
 
-
             {isCTV && <View style={{alignItems:'center'}}>
               <TouchableOpacity style={[marTop,btnTransfer]}
               onPress={()=>this.gotoCreate()}>
@@ -748,7 +749,7 @@ class MakeMoney extends Component {
             </View>}
           </View>
 
-          <View style={[marTop,wrapDes]}>
+          {/*<View style={[marTop,wrapDes]}>
           {content!=='' &&
             <View>
               <Text style={{color:'#497E98',fontSize:17,lineHeight:28, fontWeight: 'bold'}}>{lang.obligation}</Text>
@@ -757,7 +758,7 @@ class MakeMoney extends Component {
           }
           <Text style={{color:'#497E98',fontSize:17,lineHeight:28, fontWeight: 'bold'}}>{lang.jurisdiction}</Text>
           <Text style={{color:'#497E98',fontSize:17,lineHeight:28}}>{`${static_notes}`}</Text>
-          </View>
+          </View>*/}
 
           </View>
           <View style={{height:height/6}}></View>
@@ -824,7 +825,6 @@ class MakeMoney extends Component {
                 </View>
             </TouchableOpacity>
           </View>
-
         </View>
       </Modal>}
 
@@ -1090,10 +1090,34 @@ class MakeMoney extends Component {
         onPress={()=>this.setState({showArea:false})} style={[popoverLoc,padBuySell]}>
         <TouchableWithoutFeedback>
         <View style={[overLayout,shadown]}>
+
           <FlatList
              keyExtractor={(item,index) => index.toString()}
              extraData={this.state}
              data={listData.area}
+             ListHeaderComponent={() => {
+              return (
+                <View style={listOverService}>
+                  <TouchableOpacity onPress={()=>{
+                    if(chooseAll){
+                      let listDistricts = [];
+                      this.setState({chooseAll: !this.state.chooseAll,listDistrict: listDistricts})
+                    } else {
+                      let listDistricts = [];
+                      listData.area.forEach((item) => {
+                        listDistricts=Object.assign(listDistrict,{[item.id]:item.id});
+                      })
+                      this.setState({chooseAll: !this.state.chooseAll,listDistrict: listDistricts})
+                    }
+
+                   }}
+                style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',padding:15}}>
+                      <Text style={{color:'#2F353F',fontSize:16,}}>{'Tất cả'}</Text>
+                      <Image source={checkIC} style={[imgShare, chooseAll ? show : hide]} />
+                  </TouchableOpacity>
+                </View>
+              )
+             }}
              renderItem={({item}) => (
                <View style={listOverService}>
                 <TouchableOpacity onPress={()=>{

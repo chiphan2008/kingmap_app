@@ -169,16 +169,7 @@ export default class App extends Component {
     this.setState(this.state);
   }
 
-  componentDidMount(){
-    const url = `${global.url}${'getlistnoti'}`;
-    getApi(url).then(arrData => {
-      //console.log('arrData',arrData);
-      let listNoti = arrData.data.count_notifications;
-      arrData.data.count_notifications!==undefined && this.props.dispatch({type:'GET_NOTIFY',listNoti});
-      arrData.data.count_notifications!==undefined && this.props.navigation.setParams({ listNoti });
-      this.setState({listNoti})
-    }).catch(err => console.log(err));
-  }
+  
 
   render(){
     const styles = StyleSheet.create({

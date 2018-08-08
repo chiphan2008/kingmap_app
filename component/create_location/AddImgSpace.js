@@ -37,15 +37,20 @@ export default class AddImgSpace extends Component {
       maxFiles: 50
     }).then(img => {
         //console.log(img);
-      if(this.state.update){
-        img.forEach(e=>{
-          //this.state.imgSpace.unshift(e);
-          this.state.imgSpace.push(e);
-        })
-        this.state.imgSpaceUpdate=this.state.imgSpace;
-      }else {
-        this.state.imgSpace=img;
-      }
+      // if(this.state.update){
+      //   img.forEach(e=>{
+      //     //this.state.imgSpace.unshift(e);
+      //     this.state.imgSpace.push(e);
+      //   })
+      //   this.state.imgSpaceUpdate=this.state.imgSpace;
+      // }else {
+      //   this.state.imgSpace=img;
+      // }
+      img.forEach(e=>{
+        //this.state.imgSpace.unshift(e);
+        this.state.imgSpace.push(e);
+      })
+      this.state.imgSpaceUpdate=this.state.imgSpace;
       this.setState(this.state,()=>{
         this.gotoEndScroll();
       })

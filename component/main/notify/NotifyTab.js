@@ -12,6 +12,7 @@ import {connect} from 'react-redux';
 const {height, width} = Dimensions.get('window');
 
 import getApi from '../../api/getApi';
+//import postApi from '../../api/postApi';
 import global from '../../global';
 import styles from '../../styles';
 import getLanguage from '../../api/getLanguage';
@@ -68,19 +69,23 @@ class NotifyTab extends Component {
     // console.log('navigation',state)
     return {
       tabBarIcon: ({ tintColor }) => (
-        <View>
+        Platform.OS==='ios'?
           <Image source={notifyIC} style={[{width: 24, height: 24}, {tintColor}]} />
-          {state.params!==undefined && state.params.listNoti>0 && <View style={[{
-            position: 'absolute', zIndex:999, right: -14, bottom: 6,
-            backgroundColor: '#fff', opacity:1,borderRadius: 9, width: 18, height: 18,
-            justifyContent: 'center', alignItems: 'center'}]}>
-                <Text style={{fontWeight:'bold',color: '#000',fontSize:11,padding:2}}>{state.params.listNoti}</Text>
-            </View>
-          }
-
+        :
+        <View>
+            <Image source={notifyIC} style={[{width: 24, height: 24}, {tintColor}]} />
+            {state.params!==undefined && state.params.listNoti>0 &&
+              <View style={[{
+              position: 'absolute', zIndex:999, right: -14, bottom: 6,
+              backgroundColor: '#fff', opacity:1,borderRadius: 9, width: 18, height: 18,
+              justifyContent: 'center', alignItems: 'center'}]}>
+                  <Text style={{fontWeight:'bold',color: '#000',fontSize:11,padding:2}}>{state.params.listNoti}</Text>
+              </View>
+            }
         </View>
       ),
     }
+
   };
 
 
@@ -94,15 +99,22 @@ class NotifyTab extends Component {
   getData(page=null){
     if(page===null) page=0;
     const url = `${global.url}${'getlistnoti'}?skip=${page}&limit=20`;
-    // console.log(url);
+    //console.log(url);
     getApi(url).then(arrData => {
-      //console.log('arrData',arrData.data);
-      let listNoti = arrData.data.notifications;
+      // console.log('arrData',arrData.data);
+      // console.log('page',page);
+      let listNoti = [];
       //arrData.data.notifications!==undefined && this.props.dispatch({type:'GET_NOTIFY',listNoti:arrData.data.count_notifications});
-        this.setState({
-            listNoti: page===0? arrData.data : this.state.listNoti.concat(arrData.data),
+      if(page === 0){
+        listNoti = arrData.data
+      } else {
+        this.state.listNoti.notifications = this.state.listNoti.notifications.concat(arrData.data.notifications);
+        listNoti = this.state.listNoti;
+      }
+      this.setState({
+            listNoti: listNoti,
             page: page===0?20:this.state.page+20,
-          loadMore: arrData.data.length===20?true:false
+            loadMore: arrData.data.notifications.length===20?true:false
         });
     }).catch(err => console.log(err));
   }
@@ -179,8 +191,8 @@ class NotifyTab extends Component {
   }
 
   requestOwner(route){
-    const url = `${global.url_media}${route}`;
-    getApi(url).then(arrData => {
+    const url = `${global.url}${'apply-owner?'}${route}`;
+    getApi(url).then(e => {
       this.getData();
     }).catch(err => console.log(err));
   }
@@ -237,17 +249,18 @@ class NotifyTab extends Component {
              <View style={{paddingRight:30,}}>
              <Text style={{color:'#000'}}>{item.contentText}</Text>
 
-             {item.data!==null && <View style={{flexDirection:'row',marginTop:5,marginBottom:5}}>
+             {item.type==='change_owner' && <View style={{flexDirection:'row',marginTop:5,marginBottom:5}}>
               <TouchableOpacity onPress={(e)=>{
                 e.stopPropagation();
-                this.requestOwner(item.data.link_apply)
+                this.requestOwner(`${'h='}${item.data.code}`)
               }}
               style={{backgroundColor:'#86be57',borderRadius:3,padding:3,marginRight:5,minWidth:80,alignItems:'center'}}>
                 <Text numberOfLines={1} style={{fontSize:14,color:'#fff'}}>{`${lang.accept}`}</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={(e)=>{
                 e.stopPropagation();
-                this.requestOwner(item.data.link_decline)}}
+                this.requestOwner(`${'d='}${item.data.code}`)
+              }}
               style={{backgroundColor:'#fff',borderColor:'#DDD',borderWidth:1,borderRadius:3,padding:3,marginRight:3,minWidth:80,alignItems:'center'}}>
                 <Text numberOfLines={1} style={{fontSize:14,color:'#000'}}>{`${lang.reject}`}</Text>
               </TouchableOpacity>

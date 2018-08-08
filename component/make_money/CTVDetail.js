@@ -42,7 +42,7 @@ export default class CTVDetail extends Component {
     const block_text = daily_id !== '' ? 'quyen_loi_va_nghia_vu_cua_tdl' : 'quyen_loi_va_nghia_vu_cua_ctv'
     //console.log(`${global.url}${'static/giaoviec/'}${userId}${'?lang='}${lang.lang}`);
     content_id===undefined && getApi(`${global.url}${'static/giaoviec/'}${userId}${'?lang='}${lang.lang}${'&block_text='}${block_text}`).then(arr => {
-      console.log('arr.block_text', arr)
+      //console.log('arr.block_text', arr)
       this.setState({quyenloi: daily_id !== '' ? arr.block_text.quyen_loi_va_nghia_vu_cua_tdl : arr.block_text.quyen_loi_va_nghia_vu_cua_ctv })
         arr.data!==null && this.setState({ content:arr.data[0].content });
     }).catch(err => console.log(err));
@@ -62,6 +62,7 @@ export default class CTVDetail extends Component {
     //console.log(`${global.url}${'static'}${'?lang='}${lang.lang}`,arr);
     postApi(`${global.url}${'static'}${'?lang='}${lang.lang}`,arr)
     .then(arr => {
+      console.log('listData',arr.data)
         this.setState({ listData:arr.data });
     }).catch(err => console.log(err));
   }
@@ -116,7 +117,7 @@ export default class CTVDetail extends Component {
                   <View style={wrapWhite}>
                     <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                       <View>
-                        <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14}]}>{`${lang.area_charge}`}</Text>
+                        <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14}]}>{role_id ? 'Khu vực phụ trách' : `${lang.area_charge}`}</Text>
                         <Text style={titleCoin}>{listData.area!==undefined && format_number(listData.area.length)}</Text>
                       </View>
                       <TouchableOpacity onPress={()=>{
@@ -128,16 +129,26 @@ export default class CTVDetail extends Component {
                   </View>
                   <View style={{height:1}}></View>
                   </View> }
+                  {listData.count_ctv !== undefined && content_id===undefined && <View>
+                    <View style={wrapWhite}>
+                      <View style={{width:width-30,flexDirection: 'row', justifyContent: 'space-between',alignItems:'center'}}>
+                        <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14}]}>{role_id?'Tổng số CTV':`${lang.total_coll}`}</Text>
+                        <Text style={[titleCoin]}>{listData.count_ctv}</Text>
+                      </View>
+                    </View>
+                    <View style={{height:1}}></View>
+                  </View>}
+
                 {!!(role_id || content_id!==undefined) && <View style={wrapWhite}>
                    <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-                     <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14}]}>{`${lang.total_MM}`}</Text>
+                     <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14}]}>{role_id ? 'Tổng thu nhập tháng này' : `${lang.total_MM}`}</Text>
                      <Text style={titleCoin}>{`${format_number(listData.total)}`}</Text>
                    </View>
                  </View>}
                  <View style={{height:1}}></View>
                  {!!role_id &&<View style={wrapWhite}>
                    <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-                     <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14}]}>{`${lang.total_location}`}</Text>
+                     <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14}]}>{role_id ? 'Tổng số địa điểm' : `${lang.total_location}`}</Text>
                      <Text style={titleCoin}>{`${format_number(listData.count_location)}`}</Text>
                    </View>
                  </View> }
@@ -159,21 +170,20 @@ export default class CTVDetail extends Component {
                        </TouchableWithoutFeedback>
                       )} />
                  </View>}
-                 
-                 {quyenloi !== null && content_id===undefined &&
-                 <View style={wrapWhite}>
-                 <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-                   <View>
-                     <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14,color:'#6791AF', fontWeight: 'bold'}]}>{`${lang.rightsand_obligations}`}</Text>
-                   </View>
-                   <TouchableOpacity onPress={()=>{
-                     this.setState({showQuyenloi: !this.state.showQuyenloi})}}>
-                     <Image source={plusIC} style={{width:35,height:35}} />
-                   </TouchableOpacity>
-                 </View>
-               </View>}
-
-                 {content!==null && content_id===undefined &&
+                {quyenloi !== null && content_id===undefined &&
+                <View style={wrapWhite}>
+                <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+                  <View>
+                    <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14,color:'#6791AF', fontWeight: 'bold'}]}>{role_id ? 'Quyền lợi và Nghĩa vụ' : `${lang.rightsand_obligations}`}</Text>
+                  </View>
+                  <TouchableOpacity onPress={()=>{
+                    this.setState({showQuyenloi: !this.state.showQuyenloi})}}>
+                    <Image source={plusIC} style={{width:35,height:35}} />
+                  </TouchableOpacity>
+                </View>
+              </View>}
+              <View style={{height:3}}></View>
+              {content!==null && content_id===undefined &&
                    <View>
                    <View style={{height:1}}></View>
                    <View style={wrapWhite} >
@@ -183,7 +193,6 @@ export default class CTVDetail extends Component {
                        </View>
                   </View>
                  </View>}
-
 
                 {showQuyenloi && quyenloi !== null &&
                 <Modal onRequestClose={() => null} transparent visible={showQuyenloi}

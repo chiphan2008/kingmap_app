@@ -261,7 +261,7 @@ export default class ChooseArea extends Component {
                     <Image source={showListDist[item.city.id]?arrowbottomIC:arrowNextIC} style={[imgShare]} />
                   </TouchableOpacity>
                   { showListDist[item.city.id] && <View>
-                    <TouchableOpacity style={listAdd} onPress={()=>{ 
+                    <TouchableOpacity style={listAdd} onPress={()=>{
                       if(chooseAll){
                         let chooseDists = [];
                         this.setState({chooseAll: !this.state.chooseAll,chooseDist: chooseDists})
@@ -272,11 +272,11 @@ export default class ChooseArea extends Component {
                         })
                         this.setState({chooseAll: !this.state.chooseAll,chooseDist: chooseDists})
                       }
-                      
+
                     }}
                   >
-                        <Text style={{color:'#2F353F',fontSize:16,}}>{'Tất cả'}</Text>
-                        <Image source={checkIC} style={[imgShare, chooseAll ? show : hide]} />
+                        <Text style={{color:'#2F353F',fontSize:16,}}>{lang.all}</Text>
+
                     </TouchableOpacity>
                       {item.districts.map(e=>(
                       showListDist[item.city.id] && <TouchableOpacity  key={e.id} onPress={()=>{
@@ -294,7 +294,7 @@ export default class ChooseArea extends Component {
                       </View>
                     </TouchableOpacity>) )}
                   </View>}
-                  
+
 
                </View>
              )}

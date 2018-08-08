@@ -327,14 +327,14 @@ export default class UpdateMore extends Component {
 
               <View style={{justifyContent:'center',alignItems:'center'}}>
               <TextInput autoCorrect={false} autoCapitalize={'none'}
-              underlineColorAndroid='transparent'
+              underlineColorAndroid='transparent' maxLength={128}
               onChangeText={(nameProduct) => this.setState({nameProduct})}
               placeholder={`${lang.name}`} value={nameProduct}
               style={{
                 paddingLeft:0,paddingTop:5,paddingBottom:5,fontSize:16,width:width-150,borderBottomWidth:1,borderColor:'#E1E7EC',marginRight:10}}
                 />
               <TextInput autoCorrect={false} autoCapitalize={'none'}
-              underlineColorAndroid='transparent'
+              underlineColorAndroid='transparent' maxLength={128}
               onChangeText={(desProduct) => this.setState({desProduct})}
               placeholder={`${lang.des}`} value={desProduct}
               style={{
@@ -406,14 +406,14 @@ export default class UpdateMore extends Component {
 
               <View style={{justifyContent:'center',alignItems:'center'}}>
               <TextInput
-              underlineColorAndroid='transparent'
+              underlineColorAndroid='transparent' maxLength={128}
               onChangeText={(nameKM) => this.setState({nameKM})}
               placeholder={`${lang.name}`} value={nameKM.toString()}
               style={{
                 paddingLeft:0,paddingTop:5,paddingBottom:5,fontSize:16,width:width-150,borderBottomWidth:1,borderColor:'#E1E7EC',marginRight:10}}
                 />
               <TextInput
-              underlineColorAndroid='transparent'
+              underlineColorAndroid='transparent' maxLength={128}
               onChangeText={(desKM) => this.setState({desKM})}
               placeholder={`${lang.des}`} value={desKM}
               style={{

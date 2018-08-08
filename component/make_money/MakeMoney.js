@@ -504,18 +504,18 @@ class MakeMoney extends Component {
           <View style={wrapWhite} >
               <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                 <View>
-                  <Text numberOfLines={1} style={colorTitle}>{`${lang.my_coin}`}</Text>
+                  <Text numberOfLines={1} style={colorTitle}>{isCeo ? 'Số tiền đang có trong ví' : `${lang.my_coin}`}</Text>
                   <Text style={titleCoin}>{`${format_number(user_profile.coin)}`}</Text>
                 </View>
               </View>
           </View>
 
 
-            {listData.revenue!==undefined &&
+            {(listData.revenue!==undefined) &&
               <View style={wrapWhite}>
               <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                 <View>
-                  <Text  style={colorTitle}>{`${lang.total_MM}`}</Text>
+                  <Text  style={colorTitle}>{ isCeo ? 'Tổng doanh thu tháng này' : `${lang.total_MM}`}</Text>
                   <Text style={titleCoin}>{`${listData.revenue ? format_number(listData.revenue) : 0}`}</Text>
                 </View>
                 <TouchableOpacity onPress={()=>{
@@ -539,10 +539,10 @@ class MakeMoney extends Component {
                 )} />}
 
             </View>}
-            {listData.total!==undefined && isAgency && 
+            {listData.total!==undefined && isAgency &&
               <View style={wrapWhite}>
-              <View style={{width:width-61,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-                <View>
+              <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+                <View style={{width:width-65}}>
                   <Text  style={colorTitle}>{`${lang.total_MMDD}`}</Text>
                   <Text style={titleCoin}>{`${listData.total ? format_number(listData.total) : 0}`}</Text>
                 </View>
@@ -574,7 +574,7 @@ class MakeMoney extends Component {
                   onPress={()=>{listData.count_location>0 && this.setState({listLoc:[],noData:''},()=>{
                      this.searchContent('search-content','');
                   })}}>
-                    <Text numberOfLines={1} style={colorTitle}>{`${lang.total_location}`}</Text>
+                    <Text numberOfLines={1} style={colorTitle}>{isCeo ? 'Tổng số địa điểm' : `${lang.total_location}`}</Text>
                     <Text style={titleCoin}>{`${listData.count_location ? format_number(listData.count_location) : 0}`}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity onPress={()=>{listData.count_location>0 && this.setState({showLoc:!this.state.showLoc,listLoc:[],noData:''})}}>
@@ -657,7 +657,7 @@ class MakeMoney extends Component {
                   onPress={()=>this.setState({listAgency:[]},()=>{
                       this.searchContent('find-ctv','');
                   })}>
-                    <Text numberOfLines={1} style={colorTitle}>{`${lang.total_coll}`}</Text>
+                    <Text numberOfLines={1} style={colorTitle}>{`${'Tổng số CTV'}`}</Text>
                     <Text style={titleCoin}>{isCeo?`${listData.count_ctv ? format_number(listData.count_ctv) : 0}`:`${listData.count_ctv ? format_number(listData.count_ctv) : 0}`}</Text>
                   </TouchableOpacity>
 
@@ -1112,8 +1112,8 @@ class MakeMoney extends Component {
 
                    }}
                 style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',padding:15}}>
-                      <Text style={{color:'#2F353F',fontSize:16,}}>{'Tất cả'}</Text>
-                      <Image source={checkIC} style={[imgShare, chooseAll ? show : hide]} />
+                      <Text style={{color:'#2F353F',fontSize:16,}}>{lang.all}</Text>
+
                   </TouchableOpacity>
                 </View>
               )

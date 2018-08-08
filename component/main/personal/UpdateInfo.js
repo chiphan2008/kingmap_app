@@ -137,12 +137,11 @@ class UpdateInfo extends Component {
       //console.log(arr);
       //console.log(`${global.url}${'user/update/'}${userId}`);
       postApi(`${global.url}${'user/update/'}${userId}`,arr).then(e=>{
-        //console.log(e);
         if(e.code===200){
           //loginServer(e.data)
-          this.props.dispatch({type:'USER_LOGINED',isLogin:true,user_profile:e.data});
-          encodeApi(`${global.url_node}${'person'}`,'POST',e.data);
-          AsyncStorage.setItem('@MyAccount:key', JSON.stringify(Object.assign(e.data,{'pwd':this.state.pwd})));
+          this.props.dispatch({type:'USER_LOGINED',isLogin:true,user_profile:e.data[0]});
+          encodeApi(`${global.url_node}${'person'}`,'POST',e.data[0]);
+          AsyncStorage.setItem('@MyAccount:key', JSON.stringify(Object.assign(e.data[0],{'pwd':this.state.pwd})));
           Alert.alert(lang.notify,lang.update_success,
           [
             {text: 'OK', onPress: ()=>this.closeModal()}

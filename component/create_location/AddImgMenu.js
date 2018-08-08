@@ -36,16 +36,19 @@ export default class AddImgMenu extends Component {
       maxFiles: 50
     }).then(img => {
 
-      if(this.state.update){
-        img.forEach((e)=>{
-          //this.state.imgMenu.unshift(e);
-          this.state.imgMenu.push(e);
-        })
-        //this.state.imgMenu.concat(img);
-        this.state.imgMenuUpdate = this.state.imgMenu;
-      }else {
-        this.state.imgMenu = img;
-      }
+      // if(this.state.update){
+      //   img.forEach((e)=>{
+      //     this.state.imgMenu.push(e);
+      //   })
+      //   this.state.imgMenuUpdate = this.state.imgMenu;
+      // }else {
+      //   this.state.imgMenu = img;
+      // }
+      img.forEach((e)=>{
+        this.state.imgMenu.push(e);
+      })
+      this.state.imgMenuUpdate = this.state.imgMenu;
+      
       this.setState(this.state,()=>{
         this.gotoEndScroll();
       })

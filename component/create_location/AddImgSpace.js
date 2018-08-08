@@ -137,13 +137,13 @@ export default class AddImgSpace extends Component {
               <TouchableOpacity style={{position:'absolute',right:5,top:5}}
               onPress={()=>{
                 this.state.imgSpace.splice(index, 1);
-                Object.entries(this.state.title_space).splice(index, 1);
-                Object.entries(this.state.des_space).splice(index, 1);
+                delete this.state.title_space[`${'title_'}${index}`];
+                delete this.state.des_space[`${'des_'}${index}`];
+                delete this.state.title_space_update[`${'title_'}${index}`];
+                delete this.state.des_space_update[`${'des_'}${index}`];
                 if(editLoc && e.url!==undefined) {
                   this.ImageDelete(des_space[`${'id_'}${e.id}`]);
                   this.state.imgSpaceUpdate.splice(index, 1);
-                  Object.entries(this.state.title_space_update).splice(index, 1);
-                  Object.entries(this.state.des_space_update).splice(index, 1);
                 }
                 this.setState(this.state)
               }}>

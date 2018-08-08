@@ -144,14 +144,15 @@ export default class AddImgMenu extends Component {
               <TouchableOpacity style={{position:'absolute',right:5,top:5}}
               onPress={()=>{
                 this.state.imgMenu.splice(index, 1);
-                Object.entries(this.state.title_menu).splice(index, 1);
-                Object.entries(this.state.des_menu).splice(index, 1);
-                console.log(Object.entries(this.state.title_menu).splice(index, 1));
+                // Object.entries(this.state.title_menu).splice(index, 1);
+                // Object.entries(this.state.des_menu).splice(index, 1);
+                delete this.state.title_menu[`${'title_'}${index}`];
+                delete this.state.des_menu[`${'des_'}${index}`];
+                delete this.state.title_menu_update[`${'title_'}${index}`];
+                delete this.state.des_menu_update[`${'des_'}${index}`];
                 if(editLoc && e.url!==undefined) {
                   this.ImageDelete(des_menu[`${'id_'}${e.id}`]);
                   this.state.imgMenuUpdate.splice(index, 1);
-                  Object.entries(this.state.title_menu_update).splice(index, 1);
-                  Object.entries(this.state.des_menu_update).splice(index, 1);
                 }
                 this.setState(this.state)
               }}>

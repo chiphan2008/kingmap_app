@@ -34,6 +34,7 @@ export default class GrantRight extends Component {
       showAddCTV:false,
       itemCTVChoose:{},
       noDataUser:'',
+      height: 0
     }
   }
   postContent(){
@@ -245,13 +246,17 @@ export default class GrantRight extends Component {
         </View>}
 
         <View style={{height:5}}></View>
-        <View style={wrapWhite} >
+        <View style={[wrapWhite, {alignItems: 'center', paddingTop: 5,paddingBottom:5}]} >
             <TextInput underlineColorAndroid='transparent'
-            multiline numberOfLines={12}
+            multiline numberOfLines={8}
             placeholder={lang.enter_des}
-            style={{marginTop:5,width:width-30,backgroundColor:'#EDEDED',borderRadius:3,padding:5,textAlignVertical:'top'}}
+            onContentSizeChange={(event) => {
+              this.setState({ height: event.nativeEvent.contentSize.height })
+            }}
+            style={{marginTop:5,width:width-30,backgroundColor:'#EDEDED',borderRadius:3,padding:5,textAlignVertical:'top',height: Math.max(150, this.state.height)}}
             onChangeText={(desWork) => this.setState({desWork})}
             value={this.state.desWork} />
+            <View style={{height:5}}></View>
        </View>
 
         <View style={{alignItems:'center',marginTop:10,marginBottom:height/3}}>

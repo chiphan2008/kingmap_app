@@ -1,5 +1,4 @@
 /* @flow */
-
 import React, { Component } from 'react';
 import {
   View,Text,StyleSheet,Image,TextInput,
@@ -152,8 +151,6 @@ export default class Comments extends Component {
             <Text style={{color:'#5b89ab',padding:5}}>{lang.notify_comment}</Text>
             </View>
 
-            <View style={{flexDirection:'row', flexWrap:'wrap'}}>
-
             <FlatList
                horizontal
                showsHorizontalScrollIndicator={false}
@@ -171,7 +168,7 @@ export default class Comments extends Component {
                  </View>
                )}
             />
-            </View>
+
 
 
 
@@ -238,8 +235,9 @@ export default class Comments extends Component {
 
               <View style={this.state.showComments===e.id ? show : hide}>
               <View>
-                <TextInput onFocus={()=>{this.props.requestLogin(); }} style={[txtComments,padLeft]} underlineColorAndroid='transparent'
-                placeholder={lang.your_comment}
+                <TextInput onFocus={()=>{this.props.requestLogin(); }}
+                style={[txtComments, {paddingLeft: 20}]} underlineColorAndroid='transparent'
+                placeholder={`    ${lang.your_comment}`}
                 onChangeText={(cm) => this.setState({inputChildComment: cm})}
                 value={this.state.inputChildComment}
                  />
@@ -258,7 +256,6 @@ export default class Comments extends Component {
                 <Text style={{color:'#5b89ab',padding:5}}>{lang.notify_comment}</Text>
                 </View>
 
-                <View style={{flexDirection:'row', flexWrap:'wrap'}}>
                 <FlatList
                    horizontal showsHorizontalScrollIndicator={false}
                    data={arrImageChild} extraData={this.state}
@@ -274,7 +271,6 @@ export default class Comments extends Component {
                      </View>
                    )}
                 />
-                </View>
 
               </View>
               </View>
@@ -340,8 +336,8 @@ export default class Comments extends Component {
             :
             <View></View>
           }
-          
 
+          <View style={{width,display:'flex'}}></View>
       </View>
     );
   }

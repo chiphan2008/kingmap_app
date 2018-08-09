@@ -421,7 +421,7 @@ const styles = StyleSheet.create({
   rowFlexImg:{flexDirection:'row',marginBottom:20},
   rowFlexBottom:{flexDirection:'row',padding:5,paddingLeft:10,marginTop:15,marginBottom:15,alignItems:'flex-end'},
   padLeft:{paddingLeft:15},
-  wrapContentDetail:{flexWrap:'wrap',padding:10,backgroundColor:'#fff'},
+  wrapContentDetail:{padding:10,backgroundColor:'#fff'},
 
   imgContent : {
       width: 65,height: 65,marginBottom:10,resizeMode : 'cover',

@@ -474,7 +474,7 @@ class FormCreate extends Component {
             <View style={widthLblCre}>
             <Image source={cateLocationIC} style={imgInfo} />
             </View>
-            <Text style={colorErr}>{'(*)'}</Text>
+            <Text style={colorErr}>{' (*)'}</Text>
               <View style={{paddingLeft:15,flexDirection:'row'}}>
                 <Text style={colorlbl}>{this.state.lang.classify}</Text>
               </View>
@@ -616,7 +616,7 @@ class FormCreate extends Component {
             <View style={widthLblCre}>
               <Image source={timeIC} style={imgInfo} />
             </View>
-            <Text style={colorErr}>{'(*)'}</Text>
+            <Text style={colorErr}>{' (*)'}</Text>
             <View style={{paddingLeft:15,flexDirection:'row'}}>
               <Text style={colorlbl}>{this.state.lang.open_time}</Text>
               <Text style={colorErr}></Text>
@@ -693,8 +693,8 @@ class FormCreate extends Component {
 
         <View style={{padding:15,flexDirection:'row',justifyContent:'space-between'}}>
           <View style={{flexDirection:'row'}}>
-            <Text style={colorErr}>{' (*) '}</Text>
             <Text style={colorlbl}>{this.state.lang.choose_area}</Text>
+            <Text style={colorErr}>{' (*) '}</Text>
           </View>
         <View style={this.state.errArea ? show : hide}>
             <Text style={colorErr}>{this.state.lang.plz_choose_area}</Text>

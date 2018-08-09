@@ -421,7 +421,7 @@ class MakeMoney extends Component {
       ListLocPend,suggestLoc,showListLocPend,showListCTVPend,loadMore,page,static_notes,des_mm,
       content,searchCTV,let_mm,showCoinTKV, chooseAll
     } = this.state;
-    console.log('listDistrict listDistrict',listDistrict)
+    //console.log('listDistrict listDistrict',listDistrict)
     const {yourCurLoc} = this.props;
     const _this = this;
     return (

@@ -107,7 +107,7 @@ export default class CTVDetail extends Component {
                 {(_daily!=='' && _daily!==undefined) && <View>
                 <View style={wrapWhite}>
                   <View>
-                    <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14}]}>{`${lang.agency}`}</Text>
+                    <Text numberOfLines={1} style={[colorTitle, {fontWeight: 'bold', fontSize:14}]}>{`${lang.agency}`}</Text>
                     {<Text style={titleCoin}>{_daily}</Text>}
                   </View>
                 </View>
@@ -117,7 +117,7 @@ export default class CTVDetail extends Component {
                   <View style={wrapWhite}>
                     <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                       <View>
-                        <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14}]}>{role_id ? 'Khu vực phụ trách' : `${lang.area_charge}`}</Text>
+                        <Text numberOfLines={1} style={[colorTitle, {fontWeight: 'bold', fontSize:14}]}>{role_id ? 'Khu vực phụ trách' : `${lang.area_charge}`}</Text>
                         <Text style={titleCoin}>{listData.area!==undefined && format_number(listData.area.length)}</Text>
                       </View>
                       <TouchableOpacity onPress={()=>{
@@ -132,28 +132,19 @@ export default class CTVDetail extends Component {
                   {listData.count_ctv !== undefined && content_id===undefined && <View>
                     <View style={wrapWhite}>
                       <View style={{width:width-30,flexDirection: 'row', justifyContent: 'space-between',alignItems:'center'}}>
-                        <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14}]}>{role_id?'Tổng số CTV':`${lang.total_coll}`}</Text>
+                        <Text numberOfLines={1} style={[colorTitle, {fontWeight: 'bold', fontSize:14}]}>{role_id?'Tổng số CTV':`${lang.total_coll}`}</Text>
                         <Text style={[titleCoin]}>{listData.count_ctv}</Text>
                       </View>
                     </View>
                     <View style={{height:1}}></View>
                   </View>}
-
                 {!!(role_id || content_id!==undefined) && <View style={wrapWhite}>
                    <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-                     <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14}]}>{role_id ? 'Tổng thu nhập tháng này' : `${lang.total_MM}`}</Text>
+                     <Text numberOfLines={1} style={[colorTitle, {fontWeight: 'bold', fontSize:14}]}>{role_id ? 'Tổng thu nhập tháng này' : `${lang.total_MM}`}</Text>
                      <Text style={titleCoin}>{`${format_number(listData.total)}`}</Text>
                    </View>
                  </View>}
-                 <View style={{height:1}}></View>
-                 {!!role_id &&<View style={wrapWhite}>
-                   <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-                     <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14}]}>{role_id ? 'Tổng số địa điểm' : `${lang.total_location}`}</Text>
-                     <Text style={titleCoin}>{`${format_number(listData.count_location)}`}</Text>
-                   </View>
-                 </View> }
-                 <View style={{height:1}}></View>
-                 {listData.static!==undefined && listData.static.length>0 &&
+                 {!!role_id && listData.static!==undefined && listData.static.length>0 &&
                    <View style={wrapWhite}>
                      <View style={{height:1}}></View>
                      <FlatList
@@ -164,17 +155,26 @@ export default class CTVDetail extends Component {
                       renderItem={({item,index}) =>(
                         <TouchableWithoutFeedback>
                         <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginBottom:5}}>
-                          <Text style={{color:'#2F3C51',fontWeight:'500'}}>{item.name}</Text>
+                          <Text style={{color:'#2F3C51',fontWeight:'bold'}}>{item.name}</Text>
                           <Text style={{color:'#5782A4'}}>{`${format_number(item.value)}`}</Text>
                        </View>
                        </TouchableWithoutFeedback>
                       )} />
                  </View>}
+                 <View style={{height:1}}></View>
+                 {!!role_id &&<View style={wrapWhite}>
+                   <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+                     <Text numberOfLines={1} style={[colorTitle, {fontWeight: 'bold', fontSize:14}]}>{role_id ? 'Tổng số địa điểm' : `${lang.total_location}`}</Text>
+                     <Text style={titleCoin}>{`${format_number(listData.count_location)}`}</Text>
+                   </View>
+                 </View> }
+                 <View style={{height:1}}></View>
+                 
                 {quyenloi !== null && content_id===undefined &&
                 <View style={wrapWhite}>
                 <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                   <View>
-                    <Text numberOfLines={1} style={[colorTitle, {fontWeight: '500', fontSize:14,color:'#6791AF', fontWeight: 'bold'}]}>{role_id ? 'Quyền lợi và Nghĩa vụ' : `${lang.rightsand_obligations}`}</Text>
+                    <Text numberOfLines={1} style={[colorTitle, {fontSize:14,color:'#6791AF', fontWeight: 'bold'}]}>{role_id ? 'Quyền lợi và Nghĩa vụ' : `${lang.rightsand_obligations}`}</Text>
                   </View>
                   <TouchableOpacity onPress={()=>{
                     this.setState({showQuyenloi: !this.state.showQuyenloi})}}>
@@ -193,16 +193,16 @@ export default class CTVDetail extends Component {
                        </View>
                   </View>
                  </View>}
-
                 {showQuyenloi && quyenloi !== null &&
                 <Modal onRequestClose={() => null} transparent visible={showQuyenloi}
                 style={{maxHeight: height*1.8, margin:8, backgroundColor: '#fff'}}>
                   <View style={{flex: 1,maxHeight: height*1.8, backgroundColor: '#fff', paddingBottom: 3}}>
-                    <TouchableOpacity style={{alignItems:'flex-end'}}
+                    <TouchableOpacity hitSlop={{top: 20, bottom: 20, left: 20, right: 20}} 
+                    style={{alignItems:'flex-end', marginTop: 20, marginRight: 5}}
                     onPress={() => this.setState({showQuyenloi: false})}>
                        <Image source={closeIC} style={{width:35,height:35}} />
                     </TouchableOpacity>
-                    <ScrollView style={{maxHeight: height*1.8, marginLeft: 6, marginRight: 6, paddingLeft: 10, paddingRight: 10}}>
+                    <ScrollView style={{maxHeight: height*1.8, marginLeft: 6, marginTop: 20, marginRight: 6, paddingLeft: 10, paddingRight: 10}}>
                       <Text style={{color: '#000'}}>{quyenloi}</Text>
                     </ScrollView>
                   </View>

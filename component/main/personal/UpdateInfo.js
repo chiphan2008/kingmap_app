@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import {
   View,Text,TouchableOpacity,Image,
   TextInput,Dimensions,ScrollView,Alert,AsyncStorage,
-  TouchableWithoutFeedback,Platform,
+  TouchableWithoutFeedback,Platform,KeyboardAvoidingView
 } from 'react-native';
 import {connect} from 'react-redux';
 import Moment from 'moment';
@@ -189,6 +189,7 @@ class UpdateInfo extends Component {
               </View>
           </View>
           <ScrollView horizontalScroll={disable}>
+          <KeyboardAvoidingView behavior="padding">
           <TouchableWithoutFeedback>
            <View style={{height:150,justifyContent:'center',alignItems:'center'}}>
             {this.state.avatar!=='' && <Image source={{isStatic:true,uri:this.state.avatar}} style={{width:90,height:90,borderRadius:45}} />}
@@ -336,9 +337,7 @@ class UpdateInfo extends Component {
                numberOfLines={4}
                maxHeight={65}
                placeholder={lang.description_persional}
-               returnKeyType = {"next"}
-               ref='description'
-               onSubmitEditing={(event) => {this.refs.email.focus();}}
+               returnKeyType = {"done"} ref='description'
                style={wrapInputCreImg}
                onChangeText={(description) => this.setState({description})}
                value={this.state.description}
@@ -356,6 +355,7 @@ class UpdateInfo extends Component {
            </View>
            </TouchableWithoutFeedback>
          <View style={{height:15}}></View>
+         </KeyboardAvoidingView>
          </ScrollView>
       </View>
       </TouchableWithoutFeedback>

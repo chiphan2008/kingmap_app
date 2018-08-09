@@ -27,6 +27,7 @@ export default class Content extends Component {
     this.state = {
       showVote:0,
       vote_avg:-1,
+      numberLine: 8
     };
   }
   saveVote(rate){
@@ -39,6 +40,10 @@ export default class Content extends Component {
       this.props.requestLogin();
     }
   }
+  // componentDidMount(){
+  //   const {listContent} = this.props;
+  //   console.log('listContent', listContent.description)
+  // }
 
   render() {
     var _this=this;
@@ -50,7 +55,7 @@ export default class Content extends Component {
       favIC,imgOnline,width30,imgContentIC,likeIC,colorRed,
     } = styles;
     const {listContent,vote,moderation} = this.props;
-    const { vote_avg } = this.state;
+    const { vote_avg,numberLine } = this.state;
     //console.log('listContent.line',listContent.line);
     return (
       <View style={wrapContentDetail}>
@@ -78,7 +83,10 @@ export default class Content extends Component {
           </View>
         </View>
         <View style={rowFlex}>
-          <Text numberOfLines={8} style={[colorContent,{width:width-35}]}>{`${listContent.description}`}</Text>
+          <TextInput multiline 
+          style={[colorContent,{width:width-35}]}
+          value={listContent.description} editable={false} />
+          {/* <Text numberOfLines={numberLine} style={[colorContent,{width:width-35}]}>{`${listContent.description}`}</Text> */}
         </View>
 
 

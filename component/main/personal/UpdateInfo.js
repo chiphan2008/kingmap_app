@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import {
-  View,Text,TouchableOpacity,Image,
+  View,Text,TouchableOpacity,Image, PanResponder,
   TextInput,Dimensions,ScrollView,Alert,AsyncStorage,
   TouchableWithoutFeedback,Platform,KeyboardAvoidingView
 } from 'react-native';
@@ -56,6 +56,17 @@ class UpdateInfo extends Component {
   }
 
   componentWillMount(){
+    this._panResponder = PanResponder.create({
+      onMoveShouldSetResponderCapture: () => true,
+      onMoveShouldSetPanResponderCapture: (evt,gestureState) => {
+        return Math.abs(gestureState.dy) > 2 ;  // can adjust this num
+      },
+      onPanResponderGrant: (e, gestureState) => {
+        this.fScroll.setNativeProps({ scrollEnabled: false })
+      },
+      onPanResponderMove: () => { },
+      onPanResponderTerminationRequest: () => true,
+    })
 
     checkLogin().then(e=>{
       //console.log('moment.default(date).format()',Moment(new Date()).format());
@@ -176,7 +187,9 @@ class UpdateInfo extends Component {
       <TouchableWithoutFeedback onPress={()=>{
         this.setState({showDay:false,showMonth:false,showYear:false,disable:true})
       }}>
-        <View style={wrapper}>
+        <View style={wrapper} onStartShouldSetResponderCapture={() => {
+    this.setState({ enableScrollViewScroll: true });
+}}>
           <View style={headCatStyle}>
               <View style={headContent}>
                   <TouchableOpacity onPress={()=>{this.closeModal()}} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
@@ -188,9 +201,9 @@ class UpdateInfo extends Component {
                   </TouchableOpacity>
               </View>
           </View>
-          <ScrollView horizontalScroll={disable}>
+          <ScrollView ref={(e) => { this.fScroll = e }}>
           <KeyboardAvoidingView behavior="padding">
-          <TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={() =>{this.setState({showDay:false,showMonth:false,showYear:false})}}>
            <View style={{height:150,justifyContent:'center',alignItems:'center'}}>
             {this.state.avatar!=='' && <Image source={{isStatic:true,uri:this.state.avatar}} style={{width:90,height:90,borderRadius:45}} />}
             <TouchableOpacity style={{position:'absolute',top:90,right:(width/2)-45,padding:6,borderRadius:13,backgroundColor:'#fff',}}
@@ -200,7 +213,7 @@ class UpdateInfo extends Component {
            </View>
            </TouchableWithoutFeedback>
 
-           <TouchableWithoutFeedback>
+           <TouchableWithoutFeedback onPress={() =>{this.setState({showDay:false,showMonth:false,showYear:false})}}>
              <View style={listCreate}>
                  <View style={widthLblCre}>
                  <Image source={nameLocationIC} style={imgInfo} />
@@ -216,7 +229,7 @@ class UpdateInfo extends Component {
                   <View style={{width:15}}></View>
              </View>
              </TouchableWithoutFeedback>
-           <TouchableWithoutFeedback>
+           <TouchableWithoutFeedback onPress={() =>{this.setState({showDay:false,showMonth:false,showYear:false})}}>
              <View style={listCreate}>
                  <View style={widthLblCre}>
                  <Image source={dateIC} style={imgInfo} />
@@ -253,7 +266,8 @@ class UpdateInfo extends Component {
            </TouchableWithoutFeedback>
 
          {showDay && <View style={[wrapSelect,wrapBtnInfo,{top:Platform.OS==='ios'?245:275,left:Platform.OS==='ios'?52:57}]}>
-         <ScrollView>
+         <ScrollView {...this._panResponder.panHandlers}
+    onScrollEndDrag={() => this.fScroll.setNativeProps({ scrollEnabled: true })} >
          <View style={widthDay}>
          {Array(listDay).fill().map((_, i) => {
            i=i+1; i = i<10 ? `0${i}` : i;
@@ -266,8 +280,10 @@ class UpdateInfo extends Component {
          </ScrollView>
          </View>}
 
-         {showMonth && <View style={[wrapSelect,wrapBtnInfo,{top:Platform.OS==='ios'?245:275,left:Platform.OS==='ios'?110:115}]}>
-         <ScrollView>
+         {showMonth && <View 
+         style={[wrapSelect,wrapBtnInfo,{top:Platform.OS==='ios'?245:275,left:Platform.OS==='ios'?110:115}]}>
+         <ScrollView {...this._panResponder.panHandlers}
+    onScrollEndDrag={() => this.fScroll.setNativeProps({ scrollEnabled: true })} >
          <View style={widthDay}>
          {Array(listMonth).fill().map((_, i) => {
            i=i+1; i = i<10 ? `0${i}` : i;
@@ -281,7 +297,8 @@ class UpdateInfo extends Component {
          </View>}
 
          {showYear && <View style={[wrapSelect,wrapBtnInfo,{top:Platform.OS==='ios'?245:275,left:Platform.OS==='ios'?170:175}]}>
-         <ScrollView>
+         <ScrollView {...this._panResponder.panHandlers}
+    onScrollEndDrag={() => this.fScroll.setNativeProps({ scrollEnabled: true })} >
          <View style={widthYear}>
          {Array(100).fill().map((_, i) => {
            i=listYear-i;
@@ -295,7 +312,7 @@ class UpdateInfo extends Component {
          </ScrollView>
          </View>}
 
-         <TouchableWithoutFeedback>
+         <TouchableWithoutFeedback onPress={() =>{this.setState({showDay:false,showMonth:false,showYear:false})}}>
            <View style={[listCreate,marTop]}>
                <View style={widthLblCre}>
                <Image source={locationIC} style={imgInfo} />
@@ -310,7 +327,7 @@ class UpdateInfo extends Component {
                 <View style={{width:15}}></View>
            </View>
            </TouchableWithoutFeedback>
-           <TouchableWithoutFeedback>
+           <TouchableWithoutFeedback onPress={() =>{this.setState({showDay:false,showMonth:false,showYear:false})}}>
              <View style={listCreate}>
                  <View style={widthLblCre}>
                  <Image source={phoneIC} style={imgInfo} />
@@ -327,7 +344,7 @@ class UpdateInfo extends Component {
                   <View style={{width:15}}></View>
              </View>
           </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={() =>{this.setState({showDay:false,showMonth:false,showYear:false})}}>
            <View style={listCreate}>
                <View style={widthLblCre}>
                <Image source={descriptionIC} style={imgInfo} />
@@ -345,7 +362,7 @@ class UpdateInfo extends Component {
                 <View style={{width:15}}></View>
            </View>
            </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={() =>{this.setState({showDay:false,showMonth:false,showYear:false})}}>
            <View style={[listCreate, {marginBottom: 20}]}>
                <View style={widthLblCre}>
                <Image source={emailIC} style={imgInfo} />

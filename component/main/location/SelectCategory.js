@@ -1,5 +1,4 @@
 /* @flow */
-
 import React, { Component } from 'react';
 import {
   View,Text,TouchableOpacity,
@@ -19,29 +18,27 @@ export default class SelectCategory extends Component {
       listCategory:[],
       listSubCat:[],
       listService:[],
+      listIDSub: {},
       show_cat:false,
       show_subcat:false,
       id_sub:'',
       id_cat:'',
       labelCat:'',
       labelSubCat:'',
+      selectAll: 0
     }
     const {idCat} = this.props;
     this.getCategory(idCat);
   }
 
   getCategory(idCat=null){
-    const url = `${global.url}${'categories?language=vn'}${'&limit=100'}`;
+    const {lang} = this.props;
+    const url = `${global.url}${`categories?language=${lang.lang}`}${'&limit=100'}`;
     //console.log('url',url);
     let show_cat = idCat==='' ? true : false;
     getApi(url)
     .then(arrCategory => {
-        let listSubCat = [
-          // {
-          //   id:'',
-          //   name:'Tất cả',
-          // }
-        ];
+        let listSubCat = [];
         let listService = [];
         let labelCat;
         arrCategory.data.forEach((e)=>{
@@ -71,8 +68,10 @@ export default class SelectCategory extends Component {
       overLayout,shadown,listOverService,
       colorText,txtNextItem,imgInfo,show,hide
     } = styles;
-    const { visible,idCat } = this.props;
-    const { listCategory,listSubCat,listService,show_cat,show_subcat,id_cat,id_sub,labelCat,labelSubCat } = this.state;
+    const { visible,idCat,lang } = this.props;
+    const {
+      listCategory,listSubCat,listService,show_cat,show_subcat,
+      id_cat,id_sub,labelCat,labelSubCat, selectAll, listIDSub } = this.state;
 
     return (
       <Modal onRequestClose={() => null} transparent visible={visible}>
@@ -90,11 +89,14 @@ export default class SelectCategory extends Component {
                     <TouchableOpacity
                        onPress={()=>{
                          this.setState({
+                           selectAll:0,
                            show_cat:false,show_subcat:true,
                            listSubCat:item.sub_category,
                            listService:item.service_items,
                            id_cat:item.id,
                            labelCat:item.name,
+                         },()=>{
+                           this.props.saveSubCate(item.id,item.name,[],listService);
                          });
                         }}
                       style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',padding:15}}
@@ -110,9 +112,9 @@ export default class SelectCategory extends Component {
               <View style={listOverService}>
                   <TouchableOpacity style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',padding:15}}
                      onPress={()=>{
-                       this.setState({show_cat:true,show_subcat:false})
+                       this.setState({show_cat:true,show_subcat:false, listIDSub:[]})
                      }}>
-                       <Text style={txtNextItem}>Chọn danh mục khác</Text>
+                       <Text style={txtNextItem}>{lang.select_another_category}</Text>
                        <Image style={{width:14,height:14}} source={arrowNextIC}/>
                    </TouchableOpacity>
                </View>
@@ -124,15 +126,22 @@ export default class SelectCategory extends Component {
                   <View style={listOverService}>
                     <TouchableOpacity
                        onPress={()=>{
-                         this.setState({id_sub:item.id},()=>{
-                           this.props.saveSubCate(id_cat,item.id,labelCat,item.name,listService);
-                           this.props.closeModal();
+                        if(this.state.listIDSub[`${item.id}`]===item.id){
+                          this.state.selectAll -=1;
+                          this.state.listIDSub=Object.assign(this.state.listIDSub,{[item.id]:!item.id,[`${'name'}-${item.id}`]:!item.name})
+                        }else {
+                          this.state.selectAll +=1;
+                          this.state.listIDSub=Object.assign(this.state.listIDSub,{[item.id]:item.id,[`${'name'}-${item.id}`]:item.name})
+                        }
+                        this.state.id_sub=item.id;
+                         this.setState(this.state,()=>{
+                           this.props.saveSubCate(id_cat,labelCat,Object.entries(listIDSub),listService);
                          })
                       }}
                       style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',padding:15}}
                       >
                          <Text style={colorText}>{item.name}</Text>
-                         <Image style={[imgInfo, id_sub===item.id ? show :hide ]} source={checkIC}/>
+                         <Image style={[imgInfo, listIDSub[`${item.id}`]===item.id ? show :hide ]} source={checkIC}/>
                      </TouchableOpacity>
                  </View>
               )} />
@@ -140,13 +149,12 @@ export default class SelectCategory extends Component {
               <View style={listOverService}>
                   <TouchableOpacity style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',padding:15}}
                      onPress={()=>{
-                       this.setState({id_sub:''},()=>{
-                         console.log('labelCat',labelCat);
-                         this.props.saveSubCate(id_cat,'',labelCat,'',listService);
-                         this.props.closeModal();
+                       this.setState({selectAll:0},()=>{
+                         this.props.saveSubCate(id_cat,labelCat,[],listService);
                        })
                      }}>
-                       <Text style={colorText}>Tất cả</Text>
+                       <Text style={colorText}>{lang.all}</Text>
+                       <Image style={[imgInfo, selectAll===0 ? show :hide ]} source={checkIC}/>
                    </TouchableOpacity>
                </View>
 

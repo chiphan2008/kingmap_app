@@ -28,7 +28,8 @@ export default class CTVDetail extends Component {
       showArea:false,
       content:'',
       quyenloi: '',
-      showQuyenloi: false
+      showQuyenloi: false,
+      showInfo: false
     }
   }
   componentWillMount(){
@@ -73,7 +74,7 @@ export default class CTVDetail extends Component {
       imgLogoTop,colorlbl,wrapWhite,titleCoin,colorTitle,
       popoverLoc,overLayout,shadown,listOverService,imgShare
     } = styles;
-    const {listData,showArea,content,quyenloi,showQuyenloi} = this.state;
+    const {listData,showArea,content,quyenloi,showQuyenloi, showInfo} = this.state;
     const {goBack} = this.props.navigation;
     const {avatar,name,address,lang,ctv_id,content_id,user_profile,_daily,role_id} = this.props.navigation.state.params;
 
@@ -102,6 +103,25 @@ export default class CTVDetail extends Component {
                   </View>
               </View>
             </View>
+            {content_id===undefined && !role_id && listData.ceo && <View>
+              <View style={[wrapWhite, {flexDirection: 'row', justifyContent: 'space-between'}]}>
+                  <View>
+                    <Text numberOfLines={1} style={[colorTitle, {fontWeight: 'bold', fontSize:14}]}>
+                    {`${lang.your_management_manager}`}
+                    </Text>
+                  </View>
+                  <TouchableOpacity onPress={()=>{
+                        this.setState({showInfo:!this.state.showInfo})}}>
+                      <Image source={plusIC} style={{width:35,height:35}} />
+                  </TouchableOpacity>
+                </View>
+                <View style={{height:1}}></View>
+            </View>}
+            {showInfo && <View style={{flexDirection: 'column', padding:15}}>
+              <Text style={{color: '#000'}}>{`${lang.name}: ${listData.ceo.full_name}`}</Text>
+              <Text style={{color: '#000'}}>{`${lang.phone}: ${listData.ceo.phone}`}</Text>
+              <Text style={{color: '#000'}}>{`Email: ${listData.ceo.email}`}</Text>
+            </View>}
 
               {content_id===undefined && <View>
                 {(_daily!=='' && _daily!==undefined) && <View>
@@ -117,7 +137,7 @@ export default class CTVDetail extends Component {
                   <View style={wrapWhite}>
                     <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                       <View>
-                        <Text numberOfLines={1} style={[colorTitle, {fontWeight: 'bold', fontSize:14}]}>{role_id ? 'Khu vực phụ trách' : `${lang.area_charge}`}</Text>
+                        <Text numberOfLines={1} style={[colorTitle, {fontWeight: 'bold', fontSize:14}]}>{role_id ? `${lang.area_charges}` : `${lang.area_charge}`}</Text>
                         <Text style={titleCoin}>{listData.area!==undefined && format_number(listData.area.length)}</Text>
                       </View>
                       <TouchableOpacity onPress={()=>{
@@ -132,7 +152,7 @@ export default class CTVDetail extends Component {
                   {listData.count_ctv !== undefined && content_id===undefined && <View>
                     <View style={wrapWhite}>
                       <View style={{width:width-30,flexDirection: 'row', justifyContent: 'space-between',alignItems:'center'}}>
-                        <Text numberOfLines={1} style={[colorTitle, {fontWeight: 'bold', fontSize:14}]}>{role_id?'Tổng số CTV':`${lang.total_coll}`}</Text>
+                        <Text numberOfLines={1} style={[colorTitle, {fontWeight: 'bold', fontSize:14}]}>{`${lang.total_coll}`}</Text>
                         <Text style={[titleCoin]}>{listData.count_ctv}</Text>
                       </View>
                     </View>
@@ -140,7 +160,7 @@ export default class CTVDetail extends Component {
                   </View>}
                 {!!(role_id || content_id!==undefined) && <View style={wrapWhite}>
                    <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-                     <Text numberOfLines={1} style={[colorTitle, {fontWeight: 'bold', fontSize:14}]}>{role_id ? 'Tổng thu nhập tháng này' : `${lang.total_MM}`}</Text>
+                     <Text numberOfLines={1} style={[colorTitle, {fontWeight: 'bold', fontSize:14}]}>{role_id ? `${lang.total_MMY}` : `${lang.total_MM}`}</Text>
                      <Text style={titleCoin}>{`${format_number(listData.total)}`}</Text>
                    </View>
                  </View>}
@@ -164,7 +184,7 @@ export default class CTVDetail extends Component {
                  <View style={{height:1}}></View>
                  {!!role_id &&<View style={wrapWhite}>
                    <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-                     <Text numberOfLines={1} style={[colorTitle, {fontWeight: 'bold', fontSize:14}]}>{role_id ? 'Tổng số địa điểm' : `${lang.total_location}`}</Text>
+                     <Text numberOfLines={1} style={[colorTitle, {fontWeight: 'bold', fontSize:14}]}>{`${role_id ? lang.total_locationd : lang.total_location}`}</Text>
                      <Text style={titleCoin}>{`${format_number(listData.count_location)}`}</Text>
                    </View>
                  </View> }
@@ -174,7 +194,7 @@ export default class CTVDetail extends Component {
                 <View style={wrapWhite}>
                 <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                   <View>
-                    <Text numberOfLines={1} style={[colorTitle, {fontSize:14,color:'#6791AF', fontWeight: 'bold'}]}>{role_id ? 'Quyền lợi và Nghĩa vụ' : `${lang.rightsand_obligations}`}</Text>
+                    <Text numberOfLines={1} style={[colorTitle, {fontSize:14,color:'#6791AF', fontWeight: 'bold'}]}>{role_id ? lang.rightsandobligations : `${lang.rightsand_obligations}`}</Text>
                   </View>
                   <TouchableOpacity onPress={()=>{
                     this.setState({showQuyenloi: !this.state.showQuyenloi})}}>

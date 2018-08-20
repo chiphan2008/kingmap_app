@@ -40,7 +40,6 @@ class OtherCat extends Component {
     const limit = 20;
     const skip = page===null?0:page;
     let url = `${global.url}${'categories?language='}${lang}${'&skip='}${skip}${'&limit='}${limit}`;
-    //console.log(url);
     getApi(url).then(arrCategory => {
         this.state.listCategory = skip===0?arrCategory.data:this.state.listCategory.concat(arrCategory.data);
         this.state.page = skip+limit;

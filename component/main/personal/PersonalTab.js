@@ -56,6 +56,7 @@ class PersonalTab extends Component {
     });
     this.refresh();
   }
+  
   refresh(){
     const {isLogin,user_profile} = this.props;
     isLogin && user_profile.id!==undefined && this.getUser(user_profile.id);
@@ -197,7 +198,7 @@ class PersonalTab extends Component {
               <View style={[rowItem]}>
                 <Image source={locationIC} style={imgIconPerInfo} />
                 <TouchableOpacity style={padPerInfo} onPress={()=>navigate('ListCheckinScr',{lang,yourCurLoc})}>
-                <Text style={titlePer}>{`${'Check in'} (${countEntry.count_checkin})`}</Text>
+                <Text style={titlePer}>{`${'Check in'} (${countEntry.count_checkin ? countEntry.count_checkin : 0})`}</Text>
                 </TouchableOpacity>
               </View>
               <View style={borderItemInfoPer}></View>
@@ -207,7 +208,7 @@ class PersonalTab extends Component {
               <View style={[rowItem]}>
                 <Image source={starIC} style={imgIconPerInfo} />
                 <TouchableOpacity style={padPerInfo} onPress={()=>navigate('LikeLocationScr',{lang,yourCurLoc})}>
-                <Text style={titlePer}>{`${lang.like_location} (${countEntry.count_like})`}</Text>
+                <Text style={titlePer}>{`${lang.like_location} (${countEntry.count_like ? countEntry.count_like : 0})`}</Text>
                 </TouchableOpacity>
               </View>
               <View style={borderItemInfoPer}></View>
@@ -218,7 +219,7 @@ class PersonalTab extends Component {
               <View style={[rowItem]}>
                 <Image source={collectionIC} style={imgIconPerInfo} />
                 <TouchableOpacity style={padPerInfo} onPress={()=>{navigate('CollectionScr',{lang,yourCurLoc})}}>
-                <Text style={titlePer}>{`${lang.collection} (${countEntry.count_collection})`}</Text>
+                <Text style={titlePer}>{`${lang.collection} (${countEntry.count_collection ? countEntry.count_collection : 0})`}</Text>
                 </TouchableOpacity>
               </View>
               <View style={borderItemInfoPer}></View>
@@ -229,7 +230,7 @@ class PersonalTab extends Component {
                 <Image source={menuIC} style={imgIconPerInfo} />
                 <TouchableOpacity style={padPerInfo}
                 onPress={()=>{navigate('ListLocPerScr',{lang,yourCurLoc})}}>
-                <Text style={titlePer}>{`${lang.list_location} (${countEntry.count_location})`}</Text>
+                <Text style={titlePer}>{`${lang.list_location} (${countEntry.count_location ? countEntry.count_location :0})`}</Text>
                 </TouchableOpacity>
               </View>
               <View style={borderItemInfoPer}></View>

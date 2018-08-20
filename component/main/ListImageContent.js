@@ -165,7 +165,7 @@ export default class ListImageContent extends Component {
               this.getContent(idContent,'product',0)
               this.gotoEndScroll();
             })} >
-            <Text style={[marRight,this.state.showProducts==='active' ? titleTabActive : titleTab]}>{'Sản phẩm, dịch vụ'.toUpperCase()}</Text>
+            <Text style={[marRight,this.state.showProducts==='active' ? titleTabActive : titleTab]}>{lang.products_services.toUpperCase()}</Text>
             </TouchableOpacity>
           </ScrollView>
         </View>

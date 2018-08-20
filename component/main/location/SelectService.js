@@ -1,5 +1,4 @@
 /* @flow */
-
 import React, { Component } from 'react';
 import {
   View,Text,TouchableOpacity,
@@ -17,6 +16,7 @@ export default class SelectService extends Component {
     super(props);
     this.state = {
       showService:{},
+      selectAll: false
     }
   }
 
@@ -27,26 +27,36 @@ export default class SelectService extends Component {
       overLayout,shadown,listOverService,
       colorText,txtNextItem,imgInfo,show,hide
     } = styles;
-    const { visible,data } = this.props;
-    const { showService } = this.state;
-    //console.log('data',data);
+    const { visible,data, lang } = this.props;
+    const { showService, selectAll } = this.state;
     return (
       data.length>0 &&
       <Modal onRequestClose={() => null} transparent visible={visible}>
-      <TouchableOpacity
-      onPress={()=>this.props.closeModal()}
-      style={[popoverLoc,padCreate]}>
+      <TouchableOpacity onPress={()=>this.props.closeModal()} style={[popoverLoc,padCreate]}>
       <Image style={[imgUpCreate,imgUpInfo]} source={upDD} />
           <View style={[overLayout,shadown]}>
           <View style={listOverService}>
               <TouchableOpacity  style={{padding:15}}
                  onPress={()=>{
-                   this.setState({showService:[]},()=>{
-                     this.props.saveService([]);
-                     this.props.closeModal();
-                   })
+
+                   if(selectAll){
+                    this.setState({showService:[], selectAll: false},()=>{
+                      this.props.saveService([]);
+                     //  this.props.closeModal();
+                    })
+                   } else {
+                    let newArr = {};
+                    data.forEach((item) => {
+                      newArr = Object.assign(newArr,{[item.id]:item.id,[`${'name'}-${item.id}`]:item.name})
+                    })
+                     this.setState({showService: newArr , selectAll: true},()=>{
+                       this.props.saveService(Object.entries(newArr));
+                      //  this.props.closeModal();
+                     })
+                   }
+
                  }}>
-                   <Text style={colorText}>Tất cả</Text>
+                   <Text style={colorText}>{lang.all}</Text>
                </TouchableOpacity>
            </View>
 

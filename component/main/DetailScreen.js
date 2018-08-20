@@ -84,12 +84,13 @@ class DetailScreen extends Component {
 
   getContent(idContent){
     const {latitude,longitude} = this.props.yourCurLoc;
+    const {lang} = this.state;
     const {update} =this.props.navigation.state.params;
     //console.log(latitude,longitude);
     //if(latlng===undefined) latlng='10.7818513,106.6769368';
     const act = update!==undefined?'content-update':'content';
-    const url = `${global.url}${act}/${idContent}${'?location='}${latitude},${longitude}`;
-    //console.log('url',url);
+    const url = `${global.url}${act}/${idContent}${'?location='}${latitude},${longitude}&lang=${lang.lang}`;
+    console.log('url',lang.lang);
     getApi(url)
     .then(arrData => {
       //console.log('arrData.data.content.lat',arrData.data.content.lat);

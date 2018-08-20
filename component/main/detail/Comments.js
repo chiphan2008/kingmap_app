@@ -222,25 +222,25 @@ export default class Comments extends Component {
                   <TouchableOpacity style={{flexDirection:'row',}}
                   onPress={()=>{this.likeComment(e.id);}}>
                     <Image style={{width:22,height:18,marginRight:5}} source={this.state._has_liked[e.id]!==0 ? likeFullIcon : likeIcon} />
-                    <Text>{this.state.arrIdComment[e.id]} like</Text>
+                    <Text>{this.state.arrIdComment[e.id]} {lang.like}</Text>
 
                   </TouchableOpacity>
                   <TouchableOpacity
                   onPress={()=>{this.setState({showComments:e.id}); }}
                   style={{flexDirection:'row',marginLeft:20}}>
                     <Image style={{width:22,height:22,marginRight:5}} source={commentsIcon} />
-                    <Text>Comments</Text>
+                    <Text>{lang.comments}</Text>
                   </TouchableOpacity>
               </View>
 
-              <View style={this.state.showComments===e.id ? show : hide}>
-              <View>
+              {this.state.showComments===e.id && <View>
                 <TextInput onFocus={()=>{this.props.requestLogin(); }}
-                style={[txtComments, {paddingLeft: 20}]} underlineColorAndroid='transparent'
-                placeholder={`    ${lang.your_comment}`}
+                style={txtComments} underlineColorAndroid='transparent'
+                placeholder={`${lang.your_comment}`}
                 onChangeText={(cm) => this.setState({inputChildComment: cm})}
                 value={this.state.inputChildComment}
                  />
+
                 <TouchableOpacity style={{position:'absolute',right:45,top:Platform.OS==='ios' ? 15 : 18}}
                 onPress={()=>this.uploadImage(e.id)}>
                 <Image source={ImageIcon} style={{width:20,height:20,}} />
@@ -272,8 +272,8 @@ export default class Comments extends Component {
                    )}
                 />
 
-              </View>
-              </View>
+              </View>}
+
 
                 {e._replies.length>0 ?
                   e._replies.map(r =>(

@@ -37,7 +37,7 @@
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
-            android:windowSoftInputMode="stateAlwaysHidden"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"
             android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -47,7 +47,7 @@
           <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
           <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCUNFe8ZC0csUZzlTHRQFPp7PjiAtQ6Z0M" />
+            android:value="AIzaSyA4_lZ8uw0hpJfJxVHnK_vBBXZckA-0Tr0" />
 
             <receiver android:name="io.rumors.reactnativesettings.receivers.GpsLocationReceiver">
               <intent-filter>

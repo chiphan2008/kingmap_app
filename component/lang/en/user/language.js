@@ -44,5 +44,7 @@ module.exports = {
   notify_pwd_weak:'Weak password (Password should have letters, numbers, capital letters, special characters)',
   notify_pwd_medium:'Medium password',
   notify_pwd_strong:'Strong password',
+  your_management_manager: 'Your management manager',
+  
   lang:'en',
 };

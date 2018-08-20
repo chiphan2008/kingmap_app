@@ -3,6 +3,7 @@ import {AsyncStorage,Platform} from 'react-native';
 import 'intl/locale-data/jsonp/en';
 import lang_en from './lang/en/user/language';
 import lang_vn from './lang/vn/user/language';
+import Moment from 'moment';
 
 export function getIndex(element,id){
   return element.key==id;

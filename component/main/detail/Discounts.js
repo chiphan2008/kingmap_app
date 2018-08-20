@@ -57,7 +57,7 @@ export default class Discounts extends Component {
       <View style={wrapContentDetail}>
 
         <View style={titleSpace}>
-            <Text style={[colorNumPP,sizeTitle]}>{'Khuyến mãi'.toUpperCase()}{` (${listDiscounts.length})`}</Text>
+            <Text style={[colorNumPP,sizeTitle]}>{lang.discount.toUpperCase()}{` (${listDiscounts.length})`}</Text>
         </View>
 
         <View>
@@ -102,7 +102,6 @@ export default class Discounts extends Component {
         closeModal={()=>this.setState({showDiscount:false,index:0})}
         />}
         </View>
-
         <View style={rowFlex}></View>
       </View>
     );

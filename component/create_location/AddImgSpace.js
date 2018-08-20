@@ -1,5 +1,4 @@
 /* @flow */
-
 import React, { Component } from 'react';
 import {
   View,Text,Modal,TouchableOpacity,Image,
@@ -73,6 +72,15 @@ export default class AddImgSpace extends Component {
   ImageDelete(id){
       const url = `${global.url}${'image/space/delete/'}${id}`;
       getApi(url);
+  }
+  componentDidMount(){
+    // const {img_space, title_space, des_space} = this.props;
+    // if(img_space.length>0){
+    //   this.state.title_space=title_space;
+    //   this.state.des_space=des_space;
+    //   this.state.imgSpace=img_space;
+    //   this.state.update===false && this.setState(this.state);
+    // }
   }
   componentWillUpdate(){
     const {img_space,des_space,title_space,editLoc} = this.props;
@@ -156,7 +164,7 @@ export default class AddImgSpace extends Component {
               </TouchableOpacity>
               <View style={{backgroundColor:'#fff',marginBottom:20,width,paddingLeft:30,paddingRight:30}}>
               <TextInput underlineColorAndroid='transparent'
-                placeholder={'Chủ đề'}
+                placeholder={lang.subject}
                 maxLength={128}
                 placeholderTextColor={'#A9BFD0'}
                 onChangeText={(text) => {
@@ -186,7 +194,7 @@ export default class AddImgSpace extends Component {
                />
                <View style={{width:width-60,borderBottomWidth:1,borderColor:'#E0E8ED'}}></View>
                <TextInput underlineColorAndroid='transparent'
-                 placeholder={'Viết mô tả'}
+                 placeholder={lang.write_description}
                  placeholderTextColor={'#A9BFD0'}
                  maxLength={128}
                  onChangeText={(text) => {

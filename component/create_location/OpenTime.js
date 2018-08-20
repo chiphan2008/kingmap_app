@@ -98,8 +98,8 @@ export default class OpenTime extends Component {
       to_date:6,
       from_hour:'10:00',
       to_hour:'17:00',
-      startAngle:5.333,
-      angleLength:3.222,
+      // startAngle:5.333,
+      // angleLength:3.222,
       opt_date: lang.lang ==='vn'? opt_date_vn : opt_date_en,
 
       ListDataTime:[{

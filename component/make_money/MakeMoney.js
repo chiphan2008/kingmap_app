@@ -1,9 +1,9 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import {Platform, View, Text, StyleSheet, Dimensions, Image,
+import ReactNative , {Platform, View, Text, StyleSheet, Dimensions, Image,
   TextInput, TouchableOpacity,Modal,Alert,
-  ScrollView,FlatList,TouchableWithoutFeedback,
+  ScrollView,FlatList,TouchableWithoutFeedback, Keyboard,
   DeviceEventEmitter, KeyboardAvoidingView, ActivityIndicator
 } from 'react-native';
 import {connect} from 'react-redux';
@@ -95,12 +95,41 @@ class MakeMoney extends Component {
       content:'',
       searchCTV:false,
       showQLNBPop: false,
-      chooseAll: false
+      chooseAll: false,
+      heightLayout:height,
     }
     loginServer(this.props.navigation.state.params.user_profile,'fgdjk')
     temp_daily_code==='' && this.getStatic();
     //console.log('this.state.curLoc',this.state.curLoc);
   }
+  componentDidMount(){
+    this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
+    this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
+    DeviceEventEmitter.addListener('gobackCTV', (e)=>{
+      if(e.isLogin) {
+        this.state.showListCTVPend=false;
+        if(e.ctv!==undefined){this.state.assign=true;
+        this.state.itemChoose=e.ctv;}
+        this.setState(this.state,()=>{
+          this.getStatic();
+
+        })
+      }
+    })
+  }
+  componentWillUnmount () {
+    this.keyboardDidShowListener.remove();
+    this.keyboardDidHideListener.remove();
+  }
+
+  _keyboardDidShow = () => {
+    this.setState({heightLayout:height+100});
+  }
+
+  _keyboardDidHide = () => {
+    this.setState({heightLayout:height});
+  }
+
 
   searchContentPending(page=null){
     const { user_profile } = this.props.navigation.state.params;
@@ -391,19 +420,7 @@ class MakeMoney extends Component {
       })
     //},2000)
   }
-  componentDidMount(){
-    DeviceEventEmitter.addListener('gobackCTV', (e)=>{
-      if(e.isLogin) {
-        this.state.showListCTVPend=false;
-        if(e.ctv!==undefined){this.state.assign=true;
-        this.state.itemChoose=e.ctv;}
-        this.setState(this.state,()=>{
-          this.getStatic();
 
-        })
-      }
-    })
-  }
   render() {
     const { lang,code_user,name_module,user_profile } = this.props.navigation.state.params;
     //console.log(user_profile);
@@ -462,7 +479,7 @@ class MakeMoney extends Component {
       }
 
       {(isCTV || isAgency || isCeo) &&
-        <View  style={container}>
+        <View style={[container]}>
           <View style={headCatStyle}>
               <View style={headContent}>
                   <TouchableOpacity onPress={()=>goBack()}
@@ -474,7 +491,7 @@ class MakeMoney extends Component {
               </View>
           </View>
           <ScrollView>
-          <View style={contentWrap}>
+          <View style={{height: this.state.heightLayout}}>
 
           <View style={{width:width-80,height:200,justifyContent:'center',alignItems:'center'}}>
           <View style={{marginBottom:5,width:80,height:80,backgroundColor:'#fff',borderRadius:60,justifyContent:'center',alignItems:'center'}}>
@@ -504,7 +521,7 @@ class MakeMoney extends Component {
           <View style={wrapWhite} >
               <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                 <View>
-                  <Text numberOfLines={1} style={colorTitle}>{isCeo ? 'Số tiền đang có trong ví' : `${lang.my_coin}`}</Text>
+                  <Text numberOfLines={1} style={colorTitle}>{isCeo ? `${lang.my_coins}` : `${lang.my_coin}`}</Text>
                   <Text style={titleCoin}>{`${format_number(user_profile.coin)}`}</Text>
                 </View>
               </View>
@@ -515,7 +532,7 @@ class MakeMoney extends Component {
               <View style={wrapWhite}>
               <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                 <View>
-                  <Text  style={colorTitle}>{ isCeo ? 'Tổng doanh thu tháng này' : `${lang.total_MM}`}</Text>
+                  <Text  style={colorTitle}>{ isCeo ? `${lang.total_MMs}` : `${lang.total_MM}`}</Text>
                   <Text style={titleCoin}>{`${listData.revenue ? format_number(listData.revenue) : 0}`}</Text>
                 </View>
                 <TouchableOpacity onPress={()=>{
@@ -543,7 +560,7 @@ class MakeMoney extends Component {
               <View style={wrapWhite}>
               <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
                 <View style={{width:width-65}}>
-                  <Text  style={colorTitle}>{`${lang.total_MMDD}`}</Text>
+                  <Text numberOfLines={2} style={colorTitle}>{`${lang.total_MMDD}`}</Text>
                   <Text style={titleCoin}>{`${listData.total ? format_number(listData.total) : 0}`}</Text>
                 </View>
                 <TouchableOpacity onPress={()=>{
@@ -574,7 +591,7 @@ class MakeMoney extends Component {
                   onPress={()=>{listData.count_location>0 && this.setState({listLoc:[],noData:''},()=>{
                      this.searchContent('search-content','');
                   })}}>
-                    <Text numberOfLines={1} style={colorTitle}>{isCeo ? 'Tổng số địa điểm' : `${lang.total_location}`}</Text>
+                    <Text numberOfLines={2} style={colorTitle}>{isCeo ? `${lang.total_locationceo}` : isCTV ? `${lang.total_locationctv}` : `${lang.total_location}`}</Text>
                     <Text style={titleCoin}>{`${listData.count_location ? format_number(listData.count_location) : 0}`}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity onPress={()=>{listData.count_location>0 && this.setState({showLoc:!this.state.showLoc,listLoc:[],noData:''})}}>
@@ -657,7 +674,7 @@ class MakeMoney extends Component {
                   onPress={()=>this.setState({listAgency:[]},()=>{
                       this.searchContent('find-ctv','');
                   })}>
-                    <Text numberOfLines={1} style={colorTitle}>{`${'Tổng số CTV'}`}</Text>
+                    <Text numberOfLines={1} style={colorTitle}>{`${lang.total_coll}`}</Text>
                     <Text style={titleCoin}>{isCeo?`${listData.count_ctv ? format_number(listData.count_ctv) : 0}`:`${listData.count_ctv ? format_number(listData.count_ctv) : 0}`}</Text>
                   </TouchableOpacity>
 
@@ -761,7 +778,7 @@ class MakeMoney extends Component {
           </View>*/}
 
           </View>
-          <View style={{height:height/6}}></View>
+          <View style={{height:height/5}}></View>
           </ScrollView>
 
         </View>
@@ -811,7 +828,7 @@ class MakeMoney extends Component {
                 this.setState({showTDLCTVPop:true});
               }}>
                 <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-                  <Text numberOfLines={1} style={colorTitle}>{`${'Quản lý nội bộ'}`}</Text>
+                  <Text numberOfLines={1} style={colorTitle}>{`${lang.internal_management}`}</Text>
                   <Image source={filterIC} style={{width:35,height:35}} />
                 </View>
             </TouchableOpacity>
@@ -1140,6 +1157,7 @@ class MakeMoney extends Component {
         </TouchableOpacity>
       </Modal>}
       </View>
+
     );
   }
 }

@@ -152,7 +152,7 @@ export default class SpaceContent extends Component {
           )} />
 
           <View style={[titleSpace, {}]}>
-              <Text style={[colorNumPP,sizeTitle]}>SẢN PHẨM, DỊCH VỤ ({listProduct.length})</Text>
+              <Text style={[colorNumPP,sizeTitle]}>{lang.products_services.toUpperCase()} ({listProduct.length})</Text>
               <TouchableOpacity
               style={[listProduct.length>0 ? show : hide, {justifyContent: 'center'}]}
               onPress={()=>navigate('ListIMGScr',{

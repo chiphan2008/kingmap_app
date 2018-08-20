@@ -56,7 +56,6 @@ export default class Content extends Component {
     } = styles;
     const {listContent,vote,moderation} = this.props;
     const { vote_avg,numberLine } = this.state;
-    //console.log('listContent.line',listContent.line);
     return (
       <View style={wrapContentDetail}>
         <View style={rowFlex}>
@@ -83,8 +82,9 @@ export default class Content extends Component {
           </View>
         </View>
         <View style={rowFlex}>
-          <TextInput multiline 
+          <TextInput multiline
           style={[colorContent,{width:width-35}]}
+          underlineColorAndroid='transparent'
           value={listContent.description} editable={false} />
           {/* <Text numberOfLines={numberLine} style={[colorContent,{width:width-35}]}>{`${listContent.description}`}</Text> */}
         </View>

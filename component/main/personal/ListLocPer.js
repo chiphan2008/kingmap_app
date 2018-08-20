@@ -55,10 +55,10 @@ class ListLocPer extends Component {
   }
   componentDidUpdate(){
     const {detailBack} = this.props;
-    const {user_profile,page} = this.state;
+    const {user_profile} = this.state;
     if((detailBack==='UpdateLocation' || detailBack==='DetailScreen') && user_profile.id!==undefined){
       this.props.dispatch({type:'DETAIL_BACK',detailBack:''});
-      const skip = page>0?page-20:0;
+      const skip = this.state.page>0?this.state.page-20:0;
       this.getData(skip);
     }
   }
@@ -79,7 +79,6 @@ class ListLocPer extends Component {
     getApi(url).then(arrData => {
         if(this.state.page>page && arr.length>20){
           arr.splice(-20);
-          console.log('splice');
         }
         this.state.listData=page>0? arr.concat(arrData.data):arrData.data;
         this.state.page = page===0 ? 20 : page+20;
@@ -92,14 +91,20 @@ class ListLocPer extends Component {
     const url = `${global.url}${'user/delete-location/'}${idContent}`;
     //console.log('url',url);
     getApi(url).then(e => {
-      if(e.code===200) this.getData();
+      if(e.code===200){
+        const skip = this.state.page>0?this.state.page-20:0;
+        this.getData(skip);
+      }
     }).catch(err => console.log(err));
   }
   callPause(idContent){
     this.setState({showOption:false});
     const url = `${global.url}${'user/close-location/'}${idContent}`;
     getApi(url).then(e => {
-      if(e.code===200) this.getData();
+      if(e.code===200){
+        const skip = this.state.page>0?this.state.page-20:0;
+        this.getData(skip);
+      }
     }).catch(err => console.log(err));
 
   }
@@ -107,7 +112,10 @@ class ListLocPer extends Component {
     this.setState({showOption:false});
     const url = `${global.url}${'user/open-location/'}${idContent}`;
     getApi(url).then(e=>{
-      if(e.code===200) this.getData();
+      if(e.code===200){
+        const skip = this.state.page>0?this.state.page-20:0;
+        this.getData(skip);
+      }
     }).catch(err => console.log(err));
   }
 
@@ -134,18 +142,18 @@ class ListLocPer extends Component {
     return (
       <View style={container}>
 
-          <View style={headCatStyle}>
-              <View style={headContent}>
-                  <TouchableOpacity onPress={()=>{
-                    this.props.dispatch({type:'STOP_START_UPDATE_STATE',updateState:true})
-                    goBack();
-                  }}>
-                  <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
-                  </TouchableOpacity>
-                    <Text style={titleCreate}>{lang.list_location.toUpperCase()} </Text>
-                  <View></View>
-              </View>
-          </View>
+        <View style={headCatStyle}>
+            <View style={headContent}>
+                <TouchableOpacity onPress={()=>{
+                  this.props.dispatch({type:'STOP_START_UPDATE_STATE',updateState:true})
+                  goBack();
+                }}>
+                <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
+                </TouchableOpacity>
+                  <Text style={titleCreate}>{lang.list_location.toUpperCase()} </Text>
+                <View></View>
+            </View>
+        </View>
 
         <FlatList
          extraData={this.state}

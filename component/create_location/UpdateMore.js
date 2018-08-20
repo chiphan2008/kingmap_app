@@ -1,5 +1,4 @@
 /* @flow */
-
 import React, { Component } from 'react';
 import {
   View,Text,Modal,TouchableOpacity,Image,Keyboard,
@@ -21,6 +20,7 @@ import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
 import checkIC from '../../src/icon/ic-create/ic-check.png';
 import uncheckIC from '../../src/icon/ic-uncheck.png';
 import LogoHome from '../../src/icon/ic-home/Logo-home.png';
+import * as lib from '../libs';
 
 const {width,height} = Dimensions.get('window');
 import ImagePicker from 'react-native-image-crop-picker';
@@ -192,7 +192,7 @@ export default class UpdateMore extends Component {
     //console.log(url);
     getApi(url)
     .then(arrData => {
-        this.setState({
+        this.setState({ 
           listLoc: page===0 ? arrData.data : this.state.listLoc.concat(arrData.data),
           page: page===0 ? 20 : this.state.page + 20,
           loadMore: arrData.data.length===20 ? true : false
@@ -451,6 +451,7 @@ export default class UpdateMore extends Component {
              data={listKM}
              keyExtractor={(item,index) => index.toString()}
              renderItem={({item,index}) =>(
+               
                <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginBottom:10}}
                >
                    <TouchableOpacity style={{flexDirection:'row',maxWidth:width-65}}
@@ -513,7 +514,6 @@ export default class UpdateMore extends Component {
           </View>}
 
           {showLoc &&
-
             <View style={[popoverLoc,centerVer]}>
 
                 <View style={[overLayout,pad10]}>

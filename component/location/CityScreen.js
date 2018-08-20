@@ -36,16 +36,17 @@ class CityScreen extends Component {
 
 
   }
-  componentWillMount() {
+  componentDidMount() {
     let _this = this;
     checkLocation().then(e=>{
       if(e.idCountry===undefined){
         _this.getCountry();
       }
-    });
+    }).catch(error => console.log('err', error));
   }
 
   onSelectCountry(value, label) {
+    console.log(value)
     this.setState({
       slCountry : {
           name : label,
@@ -95,7 +96,7 @@ class CityScreen extends Component {
     }
   }
   getCountry(){
-    //console.log(`${global.url}${'countries'}`);
+    console.log(`${global.url}${'countries'}`);
     getApi(`${global.url}${'countries'}`).then(arrCountry => {
       //console.log('arrCountry',arrCountry);
       com.setState({ listCountry: arrCountry.data });
@@ -104,6 +105,7 @@ class CityScreen extends Component {
   }
 
   getCity(id_country){
+    console.log(`${global.url}${'cities/'}${id_country}`);
     getApi(`${global.url}${'cities/'}${id_country}`)
     .then(arrCity => {
         this.setState({ listCity: arrCity.data });
@@ -121,7 +123,7 @@ class CityScreen extends Component {
       optionListStyle, optionListStyleCountry, optionListStyleCity,
       btn, btnPress, colorPress, colorNext, btnWrap, contentWrap,
     } = styles;
-
+    //console.log('this.state', this.state)
     return (
 
       <View style={container}>

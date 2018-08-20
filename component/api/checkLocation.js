@@ -1,11 +1,17 @@
 import { AsyncStorage } from 'react-native';
 
 const checkLocation = async () => {
-  const value = await AsyncStorage.getItem('@LocationKey:key');
-  if (value !== null) {
-      return JSON.parse(value);
-  }
-  return {};
+  try {
+    const value = await AsyncStorage.getItem('@LocationKey:key');
+    //console.log('jhfdhs', value)
+    if (value !== null) {
+        return JSON.parse(value);
+    }
+    return {};
+   } catch (error) {
+     //console.log('Error retrieving data',error)
+   }
+
 };
 
 export default checkLocation;

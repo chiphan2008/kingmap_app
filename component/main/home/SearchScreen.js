@@ -38,15 +38,16 @@ import sortDownIC from '../../../src/icon/ic-sort-down.png';
 import upDD from '../../../src/icon/ic-white/ic-dropdown_up.png';
 import checkIC from '../../../src/icon/ic-green/ic-check.png';
 
-var timeout,timeoutZoom,timeoutPosition,timeoutCurPos;
+var timeout,timeoutZoom,timeoutPosition,timeoutCurPos,timeoutSubCat,timeoutServ;
 class SearchScreen extends Component {
   constructor(props) {
     super(props);
     this.mapRef = null;
+    const {lang,lat,lng,idCat,keyword} = this.props.navigation.state.params;
     this.state = {
-      labelLoc : "Địa điểm",
-      labelCat : "Danh mục",
-      labelSer : "Dịch vụ",
+      labelLoc : lang==='vn' ? lang_vn.location : lang_en.location,
+      labelCat : lang==='vn' ? lang_vn.categorys : lang_en.categorys,
+      labelSer : lang==='vn' ? lang_vn.services : lang_en.services,
       fitCoord:false,
       region:{},
 
@@ -57,20 +58,20 @@ class SearchScreen extends Component {
       curLocation:{},
       circleLoc:{},
       curLoc : {
-        lat:this.props.navigation.state.params.lat || '',
-        lng: this.props.navigation.state.params.lng || '',
+        lat: lat || '',
+        lng:  lng || '',
       },
       id_district:'',
       id_city:'',
       id_country:'',
-      id_cat:this.props.navigation.state.params.idCat || '',
+      id_cat: idCat || '',
       id_sub:'',
       id_serv:'',
       markers:[],
       service_items:[],
       kw:'',
-      keyword:this.props.navigation.state.params.keyword || '',
-      lang:this.props.navigation.state.params.lang==='vn' ? lang_vn: lang_en,
+      keyword: keyword || '',
+      lang: lang==='vn' ? lang_vn: lang_en,
       initLoad:false,
       showNotFound:false,
       callout:{},
@@ -91,7 +92,6 @@ class SearchScreen extends Component {
     }else {
       url += `${'&location='}${lat},${lng}`;
     }
-
 
     if(keyword!==undefined && keyword.trim()!=='' && keyword.trim()!==kw){
       url += `${'&keyword='}${keyword}`;
@@ -131,6 +131,7 @@ class SearchScreen extends Component {
           });
           return;
         }
+        // console.log(' kocó vô')
         let data = [];
         let line = 0;
         lat=arrData.data[0].latitude;
@@ -170,19 +171,55 @@ class SearchScreen extends Component {
   }
 
   saveLocation(){
+    let _this = this;
     checkLocation().then((e)=>{
-      this.setState({showLoc:false,id_city:e.idCity,id_district:e.idDist,labelLoc:e.nameDist},()=>{
-        this.getCategory();
+      this.setState({
+        showLoc:false,id_city:e.idCity,
+        id_district:e.idDist,
+        labelLoc:e.nameDist,
+      },()=>{
+        const url =`https://maps.googleapis.com/maps/api/geocode/json?address=${e.nameCountry}${e.nameCity}${e.nameDist}&key=AIzaSyCCCOoPlN2D-mfrYEMWkz-eN7MZnOsnZ44`;
+        console.log('latitude', url)
+        getApi(url).then(res=>{
+          const latitude = res.results[0].geometry.location.lat;
+          const longitude = res.results[0].geometry.location.lng;
+          console.log('latitude', latitude)
+          console.log('longitude', longitude)
+          _this.setState({
+            curLoc : { latitude,longitude },
+            circleLoc : { latitude,longitude },
+            onClick:false,
+          }, () => {
+            _this.getCategory(latitude,longitude)
+          })
+        })
       });
     });
   }
-  saveSubCate(id_cat,id_sub,labelCat,labelSubCat,service_items){
-    if(labelSubCat!=='') labelCat=labelSubCat;
-    this.setState({id_cat,id_sub,labelCat,service_items},()=>{
-        this.getCategory();
-    })
+  saveSubCate(id_cat,labelCat,listIDSub,service_items){
+    clearTimeout(timeoutSubCat);
+    let _this = this;
+    let id_sub = [];
+    let labSubCat = [];
+    listIDSub.length>0 && listIDSub.forEach(e=>{
+      if(e[1]){
+        if( !isNaN(parseFloat(e[0])) ){
+          id_sub = id_sub.concat(`${e[1]}`);
+        }else {
+          labSubCat = labSubCat.concat(`${e[1]}`);
+        }
+      }
+    });
+    if(labSubCat.toString()!=='') labelCat=labSubCat.toString();
+    timeoutSubCat = setTimeout(function () {
+      this.setState({id_cat,id_sub: id_sub.toString(),labelCat,service_items},()=>{
+        _this.getCategory(_this.state.curLoc.latitude,_this.state.curLoc.longitude)
+      })
+    }, 700);
+    
   }
   saveService(arr){
+    let _this = this;
     clearTimeout(timeout);
     let labelSer=[],id_serv=[];
     arr.length>0 && arr.forEach(e=>{
@@ -196,13 +233,12 @@ class SearchScreen extends Component {
     });
 
     this.setState({
-      labelSer:labelSer.length===0 ? 'Dịch vụ' :labelSer.toString(),
+      labelSer:labelSer.length===0 ? this.state.lang.services :labelSer.toString(),
       id_serv: id_serv.length===0 ? '' : id_serv.toString(),
     },()=>{
-      timeout = setTimeout(()=>{
-        this.getCategory();
-      },800)
+      _this.getCategory(_this.state.curLoc.latitude,_this.state.curLoc.longitude)
     })
+    if(arr.length === 0) this.setState({labelSer: this.state.lang.all})
 
   }
 
@@ -249,7 +285,7 @@ class SearchScreen extends Component {
     },700)
   }
   onPressZoom(zoom) {
-    //console.log(zoom);
+    console.log('zoom',zoom);
       clearTimeout(timeoutZoom);
       const {latitude,longitude,lat,lng,latlng,latitudeDelta,longitudeDelta} = this.state.curLocation;
       let latDelta = zoom==='zoom_in' ? latitudeDelta*1.8 : latitudeDelta/1.8;
@@ -272,7 +308,7 @@ class SearchScreen extends Component {
   //   this.getCategory(lat,lng);
   // }
 
-  getPosition(lat,lng){
+  getPosition(lat,lng, clicked=false){
     var _this = this;
     clearTimeout(timeoutPosition);
     const url = `${global.url}${'get-position?location='}${lat},${lng}`;
@@ -280,14 +316,13 @@ class SearchScreen extends Component {
       const { district,city,country } = e.data[0];
       //district!==0 && district!==undefined && _this.setState({id_district:district,},()=>{});
       const url1 = `${global.url}${'district/'}${district}`;
-      //console.log('district',district);
       district!==0 && getApi(url1).then(dist=>{
         timeoutPosition = setTimeout(function () {
           dist.data[0].name!=='' && dist.data[0].name!==undefined && _this.setState({
-            labelLoc:dist.data[0].name,
-            id_city:city,
-            id_district:district,
-            id_country:country,
+            labelLoc:clicked ? _this.state.lang.location : dist.data[0].name,
+            id_city:clicked ? '' : city,
+            id_district:clicked ? '' : district,
+            id_country:clicked ? '' : country,
           });
         }, 1500);
       })
@@ -300,10 +335,10 @@ class SearchScreen extends Component {
   }
   _onRegionChangeComplete = (region) => {
     //console.log('_onRegionChangeComplete1');
-    region.latitudeDelta > 0.002 && this.setState({ curLocation:region, });
+    region.latitudeDelta > 0.002 && this.setState({ curLocation:region,callData:true });
     if(this.state.onClick===false) {
       //console.log('_onRegionChangeComplete2');
-      this.getPosition(region.latitude,region.longitude);
+      // this.getPosition(region.latitude,region.longitude);
       this.setState({ onClick:true });
     }
   }
@@ -317,7 +352,7 @@ class SearchScreen extends Component {
       onClick:true,
 
     },()=>{
-      this.getPosition(latitude,longitude);
+      this.getPosition(latitude,longitude, true);
       this.getCategory(latitude,longitude);
     })
     Keyboard.dismiss();
@@ -440,6 +475,7 @@ class SearchScreen extends Component {
               customMapStyle={global.style_map}
               showsPointsOfInterest={false}
             >
+
             {markers.length>0 &&
               markers.map((marker,index) => (
               <MapView.Marker
@@ -455,23 +491,23 @@ class SearchScreen extends Component {
                 ref={(co) => { this[`${marker.id}`] = co}}
                 image={ Platform.OS==='android' ? {uri:`${marker.marker}`} : null}
                 >
+                {/* {console.log('marker',marker)} */}
               {Platform.OS==='ios' &&
               <View>
                 <Image source={{uri:`${marker.marker}`}} style={{width:48,height:54}} />
               </View>
               }
-              <MapView.Callout
-              onPress={()=>{
-                navigate('DetailScr',{idContent:marker.id,lat:marker.latitude,lng:marker.longitude,curLoc,lang:lang.lang});
-              }}>
-              <View style={{height: 45,width: 300,alignItems:'center',borderRadius:3}}>
-              <Text numberOfLines={1} style={{fontWeight:'bold'}}>{marker.name}</Text>
-              <Text numberOfLines={1}>{`${marker.address}`}</Text>
-              </View>
-              </MapView.Callout>
+                <MapView.Callout
+                onPress={()=>{
+                  navigate('DetailScr',{idContent:marker.id,lat:marker.latitude,lng:marker.longitude,curLoc,lang:lang.lang});
+                }}>
+                  <View style={{height: 45,width: 300,alignItems:'center',borderRadius:3}}>
+                    <Text numberOfLines={1} style={{fontWeight:'bold'}}>{marker.name}</Text>
+                    <Text numberOfLines={1}>{`${marker.address}`}</Text>
+                  </View>
+                </MapView.Callout>
 
               </MapView.Marker>
-
             )
           )}
           {circleLoc.latitude!==undefined &&
@@ -482,13 +518,14 @@ class SearchScreen extends Component {
             strokeWidth={1}
             fillColor="rgba(0, 0, 0, 0.1))"
             strokeColor="rgba(0, 0, 0, 0))"/>}
-            {circleLoc.latitude!==undefined &&
-              <MapView.Marker
+          {circleLoc.latitude!==undefined &&
+            <MapView.Marker
+              style={{position:'relative',zIndex:9999}}
               coordinate={{
                 latitude: Number(circleLoc.latitude),
                 longitude: Number(circleLoc.longitude),
               }}
-              />}
+            />}
             </MapView>
 
             </View>
@@ -516,7 +553,7 @@ class SearchScreen extends Component {
 
           {curLocation.longitude!==undefined &&
             <MapFullScreen
-              closeModal={()=>this.setState({showFullScreen:false,callout:{} })}
+              closeModal={(curLocation)=>this.setState({showFullScreen:false,callout:{},curLocation })}
               findCurrentLoc={()=>this.findCurrentLoc()}
               onPressZoom={(zoom)=>this.onPressZoom(zoom)}
               showFullScreen={showFullScreen}
@@ -563,6 +600,7 @@ class SearchScreen extends Component {
           </Modal>
 
           <SelectCategory
+          lang={this.state.lang}
           visible={showCat}
           saveSubCate={this.saveSubCate.bind(this)}
           idCat={id_cat}
@@ -570,6 +608,7 @@ class SearchScreen extends Component {
           />
 
           <SelectService
+          lang={this.state.lang}
           visible={showSer}
           data={service_items}
           saveService={this.saveService.bind(this)}

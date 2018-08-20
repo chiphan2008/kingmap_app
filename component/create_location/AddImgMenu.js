@@ -1,5 +1,4 @@
 /* @flow */
-
 import React, { Component } from 'react';
 import {
   View,Text,Modal,TouchableOpacity,Image,
@@ -164,7 +163,7 @@ export default class AddImgMenu extends Component {
 
               <View style={{backgroundColor:'#fff',marginBottom:20,width,paddingLeft:30,paddingRight:30}}>
               <TextInput underlineColorAndroid='transparent'
-                placeholder={'Chủ đề'}
+                placeholder={lang.subject}
                 maxLength={128}
                 placeholderTextColor={'#A9BFD0'}
                 onChangeText={(text) => {
@@ -194,7 +193,7 @@ export default class AddImgMenu extends Component {
                />
                <View style={{width:width-60,borderBottomWidth:1,borderColor:'#E0E8ED'}}></View>
                <TextInput underlineColorAndroid='transparent'
-                 placeholder={'Viết mô tả'}
+                 placeholder={lang.write_description}
                  maxLength={128}
                  placeholderTextColor={'#A9BFD0'}
                  onChangeText={(text) => {

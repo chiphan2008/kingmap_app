@@ -51,7 +51,7 @@ export default class Suggest extends Component {
             <Text style={[colorNumPP,sizeTitle]}>{lang.kingmap_suggest.toUpperCase()}</Text>
         </View>
 
-        <FlatList
+        {listSuggest && <FlatList
            horizontal extraData={this.state}
            showsHorizontalScrollIndicator={false}
            initialNumToRender={20}
@@ -94,7 +94,7 @@ export default class Suggest extends Component {
 
              </View>
            )}
-        />
+        />}
 
 
         <View style={rowFlex}></View>

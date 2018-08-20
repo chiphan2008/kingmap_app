@@ -37,7 +37,7 @@ import topIC from '../../../src/icon/ic-top.png';
 import {remove,removeText} from '../../libs';
 //import * as _ from 'lodash';
 
-var timeout;
+var timeout,timeoutSubCat,timeoutServ;
 class ListLocation extends Component {
   constructor(props) {
     super(props);
@@ -211,11 +211,27 @@ class ListLocation extends Component {
     }
 
   }
-  saveSubCate(id_cat,id_sub,labelCat,labelSubCat,service_items){
-    if(labelSubCat!=='') labelCat=labelSubCat;
-    this.setState({id_cat,id_sub,labelCat,service_items},()=>{
-        this.getContentByDist(this.state.idDist,id_sub,this.state.id_serv);
-    })
+  saveSubCate(id_cat,labelCat,listIDSub,service_items){
+    clearTimeout(timeoutSubCat);
+    let _this = this;
+    let id_sub = [];
+    let labSubCat = [];
+    listIDSub.length>0 && listIDSub.forEach(e=>{
+      if(e[1]){
+        if( !isNaN(parseFloat(e[0])) ){
+          id_sub = id_sub.concat(`${e[1]}`);
+        }else {
+          labSubCat = labSubCat.concat(`${e[1]}`);
+        }
+      }
+    });
+    if(labSubCat.toString()!=='') labelCat=labSubCat.toString();
+    timeoutSubCat = setTimeout(function () {
+      this.setState({id_cat,id_sub:id_sub.toString(),labelCat,service_items},()=>{
+          this.getContentByDist(this.state.idDist,id_sub,this.state.id_serv);
+      })
+    }, 700);
+
   }
 
   saveService(arr){
@@ -230,7 +246,7 @@ class ListLocation extends Component {
         }
       }
     });
-
+    //console.log('labelSer',labelSer);
     this.setState({
       labelSer:labelSer.length===0 ? 'Dịch vụ' :labelSer.toString(),
       id_serv: id_serv.length===0 ? '' : id_serv.toString(),
@@ -281,7 +297,7 @@ class ListLocation extends Component {
     const { goBack,navigate,state } = this.props.navigation;
     //console.log('this.props.navigation',this.props);
     const {idCat,sub_cat,serv_items} = this.props.navigation.state.params;
-    //console.log('lang');
+    //console.log('listData',listData);
     //console.log('state.key-ListLoc',state.key);
     const {
       container,btnScrollTop,
@@ -300,7 +316,7 @@ class ListLocation extends Component {
 
     return (
       <View style={container} onLayout={()=>{
-        console.log('render',this.props.updateState);
+        //console.log('render',this.props.updateState);
         if(this.props.updateState){
             const {latitude,longitude} = this.props.yourCurLoc;
             this.getPosition(latitude,longitude);
@@ -375,7 +391,7 @@ class ListLocation extends Component {
         </View>
 
         <View style={[wrapListLoc,padLoc]}>
-              <FlatList
+        {listData && <FlatList
                      ref="listPro"
                      onScroll={(e) => {
                        //console.log('e.nativeEvent',e.nativeEvent);
@@ -386,8 +402,6 @@ class ListLocation extends Component {
                            this.setState({scrollToTop: false});
                          }
                        }
-
-
                      }}
                      style={{marginBottom:Platform.OS==='ios' ? 130 : 150}}
                      ListEmptyComponent={<Text>{noData==='' ? `${'Loading ...'}` : noData }</Text> }
@@ -445,7 +459,8 @@ class ListLocation extends Component {
                            </View>
                        </View>
                      )}
-                   />
+                   />}
+
         </View>
 
 
@@ -463,6 +478,7 @@ class ListLocation extends Component {
         </Modal>
 
         <SelectCategory
+        lang={this.state.lang}
         visible={showCat}
         saveSubCate={this.saveSubCate.bind(this)}
         idCat={id_cat}
@@ -470,6 +486,7 @@ class ListLocation extends Component {
         />
 
         <SelectService
+        lang={this.state.lang}
         visible={this.state.showServie}
         data={serv_items}
         saveService={this.saveService.bind(this)}

@@ -1,13 +1,12 @@
 import { AsyncStorage } from 'react-native';
 import global from '../global';
-import getApi from '../api/getApi';
-import loginApi from '../api/loginApi';
-import gooApi from '../api/gooApi';
-import faceApi from '../api/faceApi';
+import getApi from './getApi';
+import loginApi from './loginApi';
+import gooApi from './gooApi';
+import faceApi from './faceApi';
 
 const loginServer = async (param,reqLoc=null) => {
   try {
-    //console.log(`${global.url}${'check-login'}`,);
     getApi(`${global.url}${'check-login'}`).then(arr => {
 
       if(arr.data.length===0 || reqLoc!==null){

@@ -36,7 +36,7 @@ export default class ChooseCat extends Component {
     const { lang } = this.props.navigation.state.params;
     const limit = 20;
     const skip = page===null?0:page;
-    let url = `${global.url}${'categories?language='}${lang}${'&skip='}${skip}${'&limit='}${limit}`;
+    let url = `${global.url}${'categories?language='}${lang.lang}${'&skip='}${skip}${'&limit='}${limit}`;
     //console.log(url);
     getApi(url).then(arrCategory => {
         this.state.listCategory = skip===0?arrCategory.data:this.state.listCategory.concat(arrCategory.data);

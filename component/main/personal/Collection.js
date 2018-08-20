@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import {
-  View,Text,TouchableOpacity,Image,Platform,
+  View,Text,TouchableOpacity,Image,Platform,Keyboard,
   ScrollView,Alert,FlatList,TextInput,Dimensions
 } from 'react-native';
 import {connect} from 'react-redux';
@@ -39,7 +39,9 @@ class Collection extends Component {
       isFocus:false,
       loading:true,
       page:0,
+      paddingKeyboard: 0,
     }
+    
     checkLogin().then(e=>{
       //console.log('checkLogin',e);
       if(e.id===undefined){
@@ -51,7 +53,25 @@ class Collection extends Component {
         });
       }
     });
+    
   }
+  // componentDidMount () {
+  //   this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardWillShow);
+  //   this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardWillHide);
+  // }
+
+  // componentWillUnmount () {
+  //   this.keyboardDidShowListener.remove();
+  //   this.keyboardDidHideListener.remove();
+  // }
+
+  // _keyboardWillShow = (event) => {
+  //   this.setState({paddingKeyboard: 4})
+  // }
+
+  // _keyboardWillHide = (event) => {
+  //   this.setState({paddingKeyboard: 0})
+  // }
 
   getData(page=null){
     this.setState({loading:false});
@@ -107,6 +127,7 @@ class Collection extends Component {
     postApi(url,arr).then(e => {
       if(e.code===200){
         this.setState({name_coll:'',})
+        Keyboard.dismiss();
       }
     }).catch(err => console.log(err));
 
@@ -154,7 +175,7 @@ class Collection extends Component {
 
   }
   render() {
-    const { showPopup,showInput,showEdit,isFocus,name_coll } = this.state;
+    const { showPopup,showInput,showEdit,isFocus,name_coll,paddingKeyboard } = this.state;
     const { lang,curLoc } = this.props.navigation.state.params;
     const { goBack,navigate } = this.props.navigation;
     const {
@@ -165,7 +186,7 @@ class Collection extends Component {
     } = styles;
     return (
 
-        <View style={container}>
+        <View style={[container]}>
           <View style={headCatStyle}>
               <View style={headContent}>
                   <TouchableOpacity onPress={()=>{
@@ -196,7 +217,8 @@ class Collection extends Component {
                      <View style={listCreate}>
                        <View style={{width:width-105,flexDirection:'row',alignItems:'center'}}>
                             <View style={isFocus && showInput[item.id] ? show : hide}>
-                              <TextInput underlineColorAndroid='transparent' autoFocus={isFocus}
+                              <TextInput underlineColorAndroid='transparent' 
+                              // autoFocus={isFocus}
                                 onSubmitEditing={(event) => {}}
                                 style={{padding:5,fontSize:18,maxWidth:width-(width/3)}} value={name_coll}
                                 onChangeText={(name_coll) => this.setState({name_coll})}

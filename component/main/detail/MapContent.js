@@ -1,5 +1,4 @@
 /* @flow */
-
 import React, { Component } from 'react';
 import {
   View,Text,StyleSheet,Image,TextInput,
@@ -69,12 +68,13 @@ class MapContent extends Component {
     <View style={{width,height:height/2}} >
       {region.latitude!==undefined &&
         <MapView
+          provider={PROVIDER_GOOGLE}
           style={{flex:1,height:height/2,zIndex:10,alignSelf:'stretch'}}
           region={region}
           onRegionChangeComplete={()=>{
             this.getDirection();
           }}
-          customMapStyle={global.style_map_ios}
+          customMapStyle={global.style_map}
           showsPointsOfInterest={false}
         >
 

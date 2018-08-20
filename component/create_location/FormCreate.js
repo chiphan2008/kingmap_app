@@ -27,7 +27,7 @@ import OpenTime from './OpenTime';
 //import la from '../api/checkLocation';
 import ChooseArea from './ChooseArea';
 import checkLogin from '../api/checkLogin';
-import loginServer from '../api/loginServer';
+//import loginServer from '../api/loginServer';
 //import LatLng from './LatLng';
 
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
@@ -333,7 +333,6 @@ class FormCreate extends Component {
       }
     });
     const act = this.state.editLoc?'update-location':'create-location';
-    console.log('arr',arr);
     // console.log('e',`${global.url}${act}`);
     postApi(`${global.url}${act}`,arr).then((e)=>{
       console.log('postApi-e',e);
@@ -382,39 +381,39 @@ class FormCreate extends Component {
   }
   getLatLng(){
     //console.log('addr');
+    clearTimeout(timeoutLatLng);
     const { nameCountry,nameCity,nameDist,txtAddress } = this.state;
-    //console.log('nameCountry,nameCity,nameDist,txtAddress',nameCountry,nameCity,nameDist,txtAddress);
     var params='';
     if(txtAddress.trim()!=='' && txtAddress!==undefined) {params += txtAddress + ', ';}
     if(nameDist.trim()!=='' && nameDist.trim()!==undefined) {params += nameDist + ', ';}
-    //if(nameCity.trim()!=='' && nameCity.trim()!==undefined) {params += nameCity + ', ';}
-    //if(nameCountry.trim()!=='' && nameCountry.trim()!==undefined) {params += nameCountry;}
-    //console.log('params',params);
-    let url = `${'https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyCCCOoPlN2D-mfrYEMWkz-eN7MZnOsnZ44&sensor=true&address='}${params}`;
-    console.log(url);
-    getApi(url).then(e=>{
 
-      let arrDataLoc = e.results[0].geometry.location;
-      const res = e.results[0].address_components;
-      const newAddress = `${res[0].long_name} ${res[1].long_name}, ${res[2].long_name}, ${res[3].long_name}, ${res[4].long_name}`;
-      timeoutLatLng = setTimeout(()=>{
+    let url = `${'https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyCCCOoPlN2D-mfrYEMWkz-eN7MZnOsnZ44&sensor=false&address='}${params}`;
+    //console.log(url);
+    timeoutLatLng = setTimeout(()=>{
+      getApi(url).then(e=>{
+        let arrDataLoc = e.results[0].geometry.location;
+        const newAddress = e.results[0].formatted_address;
+        //const newAddress = `${res[0].long_name} ${res[1].long_name}, ${res[2].long_name}, ${res[3].long_name}, ${res[4].long_name}`;
+
         this.setState({addrMarker: newAddress})
         this.setRegion(arrDataLoc.lat,arrDataLoc.lng);
-      },700)
-
-    })
+      })
+    },700)
   }
 
   getAddress(lat,lng){
-    let url = `${'https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyCCCOoPlN2D-mfrYEMWkz-eN7MZnOsnZ44&sensor=true&latlng='}${lat},${lng}`;
+    clearTimeout(timeoutLatLng);
+    let url = `${'https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyCCCOoPlN2D-mfrYEMWkz-eN7MZnOsnZ44&sensor=false&latlng='}${lat},${lng}`;
     //console.log(url);
-    getApi(url).then(e=>{
-      const res = e.results[0].address_components;
-      const newAddress = `${res[0].long_name} ${res[1].long_name}, ${res[2].long_name}, ${res[3].long_name}, ${res[4].long_name}`;
-      this.setState({
-        addrMarker: newAddress,
-      },()=>this.setRegion(lat,lng))
-    })
+    timeoutLatLng = setTimeout(()=>{
+      getApi(url).then(e=>{
+        const newAddress = e.results[0].formatted_address;
+        //const newAddress = `${res[0].long_name} ${res[1].long_name}, ${res[2].long_name}, ${res[3].long_name}, ${res[4].long_name}`;
+        this.setState({
+          addrMarker: newAddress,
+        },()=>this.setRegion(lat,lng))
+      })
+    },700)
   }
   setRegion = (latitude,longitude) => {
     this.setState({
@@ -542,14 +541,12 @@ class FormCreate extends Component {
           ref='Address' returnKeyType = {"next"}
           onBlur={()=>{
             if(this.state.txtAddress!==''){
-              clearTimeout(timeoutLatLng);
               this.getLatLng()
             }
           }}
           onSubmitEditing={(event) => {
             this.refs.Des.focus();
             if(this.state.txtAddress!==''){
-              clearTimeout(timeoutLatLng);
               this.getLatLng()
             }
           }}
@@ -566,6 +563,7 @@ class FormCreate extends Component {
         <View style={region.latitude!==undefined?show:hide}>
         {region.latitude!==undefined &&
             <MapView
+              provider={PROVIDER_GOOGLE}
               style={{width,height:width,zIndex:10,alignSelf:'stretch'}}
               region={region}
               onPress={(event)=>{
@@ -578,7 +576,7 @@ class FormCreate extends Component {
               onRegionChange={()=>{
                 this.myMar.showCallout();
               }}
-              customMapStyle={global.style_map_ios}
+              customMapStyle={global.style_map}
               showsPointsOfInterest={false}
             >
             <MapView.Marker
@@ -1063,7 +1061,7 @@ class FormCreate extends Component {
                  data={serv_items}
                  renderItem={({item}) =>(
                    <TouchableOpacity onPress={()=>{
-                     console.log('this.state.checkService',this.state.checkService);
+                     //console.log('this.state.checkService',this.state.checkService);
                      if(this.state.checkService[`${item.id}`]!==item.id){
                        this.state.hasService +=1;
                        this.state.checkService=Object.assign(this.state.checkService,{[item.id]:item.id});

@@ -1,5 +1,4 @@
 /* @flow */
-
 import React, { Component } from 'react';
 import {
   View,Text,Modal,StyleSheet,Image,
@@ -72,6 +71,7 @@ export default class MapFullScreen extends Component {
           customMapStyle={global.style_map}
           showsPointsOfInterest={false}
         >
+
         {data.map((marker,index) => (
           <MapView.Marker
             key={marker.id}
@@ -90,7 +90,7 @@ export default class MapFullScreen extends Component {
           {Platform.OS==='ios' && <Image source={{uri:`${marker.marker}`}} style={{width:48,height:54,position:'relative'}} />}
           <MapView.Callout
           onPress={()=>{
-            this.props.closeModal();
+            this.props.closeModal(this.state.curLocation);
             navigation.navigate('DetailScr',{idContent:marker.id,lat:marker.latitude,lng:marker.longitude,curLoc,lang:lang.lang});
           }}>
           <View style={{height: 45,width: 300,alignItems:'center',borderRadius:3}}>
@@ -102,19 +102,23 @@ export default class MapFullScreen extends Component {
           </MapView.Marker>
         )
       )}
+      {circleLoc.latitude!==undefined &&
         <MapView.Circle
-          center={circleLoc}
-          radius={500}
-          lineCap="butt"
-          strokeWidth={1}
-          fillColor="rgba(0, 0, 0, 0.1))"
-          strokeColor="rgba(0, 0, 0, 0))"/>
-          <MapView.Marker
-            coordinate={{
-              latitude: Number(circleLoc.latitude),
-              longitude: Number(circleLoc.longitude),
-            }}
-            />
+        center={circleLoc}
+        radius={500}
+        lineCap="butt"
+        strokeWidth={1}
+        fillColor="rgba(0, 0, 0, 0.1))"
+        strokeColor="rgba(0, 0, 0, 0))"/>}
+      {circleLoc.latitude!==undefined &&
+        <MapView.Marker
+          style={{position:'relative',zIndex:9999}}
+          coordinate={{
+            latitude: Number(circleLoc.latitude),
+            longitude: Number(circleLoc.longitude),
+          }}
+        />}
+        
         </MapView>
         :
         <View></View>
@@ -128,7 +132,7 @@ export default class MapFullScreen extends Component {
         </TouchableOpacity>
 
         <TouchableOpacity style={[btn,btnMapFull,curLocation.latitude!==undefined ? show : hide]}
-        onPress={()=>{this.props.closeModal()}}>
+        onPress={()=>{this.props.closeModal(this.state.curLocation)}}>
         <Image source={normalScreenIC} style={{width:30,height:30}} />
         </TouchableOpacity>
 

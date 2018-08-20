@@ -145,10 +145,9 @@ class LocationTab extends Component {
   }
 
   getCategory(lang){
-    //console.log(global.url+'modules?language='+lang+'&limit=100');
     getApi(global.url+'categories?language='+lang+'&limit=100&block_text=slogan_home')
     .then(arrCategory => {
-      //console.log('arrCategory',arrCategory);
+      console.log('arrCategory',arrCategory.data);
       if(arrCategory!==undefined){setTimeout(() => {
           this.setState({ listCategory: arrCategory.data,slogan:arrCategory.block_text.slogan_home },()=>{
             this.getListStatus();

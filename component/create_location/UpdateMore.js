@@ -84,13 +84,15 @@ export default class UpdateMore extends Component {
     var des = route==='product'?desProduct:desKM;
     var price = route==='product'?priceProduct:priceKM;
     var img = route==='product'?imgProduct:imgKM;
-    if(name===''||des===''||price===''||img.path===undefined || !onlyNumber(price)) {
+    if(name===''||des===''||price===''||img.path===undefined || !onlyNumber(price) || parseInt(price)===0) {
       this.setState({disable:false},()=>{
         if(name===''){Alert.alert(lang.notify,lang.plz_name);return false;}
         if(des===''){Alert.alert(lang.notify,lang.plz_des);return false;}
         if(price===''){Alert.alert(lang.notify,lang.plz_price);return false;}
         if(img.path===undefined){Alert.alert(lang.notify,lang.choose_img);return false;}
-        if(Platform.OS==='ios'&&!onlyNumber(price)&&price<1){Alert.alert(lang.notify,lang.plz_format_price);return false;}
+        if(Platform.OS==='ios'&&(!onlyNumber(price) || parseInt(price)===0)){
+          Alert.alert(lang.notify,lang.plz_format_price);return false;
+        }
       })
     }else {
       arr.append('content_id',content_id);
@@ -192,7 +194,7 @@ export default class UpdateMore extends Component {
     //console.log(url);
     getApi(url)
     .then(arrData => {
-        this.setState({ 
+        this.setState({
           listLoc: page===0 ? arrData.data : this.state.listLoc.concat(arrData.data),
           page: page===0 ? 20 : this.state.page + 20,
           loadMore: arrData.data.length===20 ? true : false
@@ -451,7 +453,7 @@ export default class UpdateMore extends Component {
              data={listKM}
              keyExtractor={(item,index) => index.toString()}
              renderItem={({item,index}) =>(
-               
+
                <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginBottom:10}}
                >
                    <TouchableOpacity style={{flexDirection:'row',maxWidth:width-65}}

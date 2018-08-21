@@ -100,11 +100,13 @@ export default class ChangeOwner extends Component {
     showContent.forEach((e)=>{
       arr.append('content[]',e.id);
     })
-
+    //console.log(`${global.url}${'change-owner?lang='}${lang.lang}`,arr);
     postApi(`${global.url}${'change-owner?lang='}${lang.lang}`,arr).then(e=>{
       if(e.code!==undefined){
-        this.setState({txtLoc:'',txtUser:'',listContent:[],showContent:[],listUser:[],user_profile:{},showLoc:false,showUser:false,});
-        Alert.alert(lang.notify,`${e.data.message}`)
+        this.setState({txtLoc:'',txtUser:'',listContent:[],showContent:[],listUser:[],user_profile:{},showLoc:false,showUser:false,},()=>{
+          Alert.alert(lang.notify,`${e.data.message}`)
+        });
+
       }
     }).catch(err=>{});
   }

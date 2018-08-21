@@ -52,7 +52,8 @@ class NotifyTab extends Component {
       curLoc:{},
       listNoti:[],
       page: 0,
-      loadMore: true
+      loadMore: true,
+      disabled:false,
       //appState: AppState.currentState,
     };
     //this.getLoc();
@@ -138,8 +139,8 @@ class NotifyTab extends Component {
     AppState.removeEventListener('change');
   }
   componentWillUpdate(){
-    // console.log('isLogin',this.props.isLogin);
-    // console.log('user_profile',this.props.user_profile);
+    console.log('isLogin',this.props.isLogin);
+    console.log('user_profile',this.props.user_profile);
 
       const {user_profile,isLogin} = this.props;
       if(isLogin && user_profile.id!==undefined){
@@ -191,7 +192,7 @@ class NotifyTab extends Component {
   }
 
   requestOwner(route){
-    const url = `${global.url}${'apply-owner?'}${route}`;
+    const url = `${global.url}${'apply-owner?'}${route}${'&lang='}${this.state.lang.lang}`;
     getApi(url).then(e => {
       this.getData();
     }).catch(err => console.log(err));
@@ -204,7 +205,7 @@ class NotifyTab extends Component {
       headStyle, imgLogoTop,headContent,inputSearch,colorlbl,
       listAdd,imgShare,wrapContent,btnPress,marTop,colorNext,
     } = styles;
-      const { listNoti, lang, page, loadMore } = this.state;
+      const { listNoti, lang, page, loadMore, disabled } = this.state;
     const { isLogin } =this.props;
 
     //console.log('listNoti',listNoti.notifications);
@@ -250,16 +251,18 @@ class NotifyTab extends Component {
              <Text style={{color:'#000'}}>{item.contentText}</Text>
 
              {item.type==='change_owner' && <View style={{flexDirection:'row',marginTop:5,marginBottom:5}}>
-              <TouchableOpacity onPress={(e)=>{
-                e.stopPropagation();
-                this.requestOwner(`${'h='}${item.data.code}`)
+              <TouchableOpacity disabled={disabled} onPress={(e)=>{
+                this.setState({disabled:true},()=>{
+                  this.requestOwner(`${'h='}${item.data.code}`)
+                })
               }}
               style={{backgroundColor:'#5cb85c',borderRadius:3,padding:3,marginRight:10,minWidth:width/3,alignItems:'center'}}>
                 <Text numberOfLines={1} style={{fontSize:14,color:'#fff'}}>{`${lang.accept}`.toUpperCase()}</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={(e)=>{
-                e.stopPropagation();
-                this.requestOwner(`${'d='}${item.data.code}`)
+              <TouchableOpacity disabled={disabled} onPress={(e)=>{
+                this.setState({disabled:true},()=>{
+                  this.requestOwner(`${'d='}${item.data.code}`)
+                })
               }}
               style={{backgroundColor:'#fff',borderColor:'#DDD',borderWidth:1,borderRadius:3,padding:3,marginRight:3,minWidth:width/3,alignItems:'center'}}>
                 <Text numberOfLines={1} style={{fontSize:14,color:'#000'}}>{`${lang.reject}`.toUpperCase()}</Text>

@@ -185,11 +185,12 @@ class UpdateInfo extends Component {
     const {listDay,listMonth,listYear,showDay,showMonth,showYear,disable} = this.state;
     return (
       <TouchableWithoutFeedback onPress={()=>{
-        this.setState({showDay:false,showMonth:false,showYear:false,disable:true})
+        this.setState({showDay:false,showMonth:false,showYear:false,disable:true});
+        this.fScroll.setNativeProps({ scrollEnabled: true });
       }}>
         <View style={wrapper} onStartShouldSetResponderCapture={() => {
-    this.setState({ enableScrollViewScroll: true });
-}}>
+            this.setState({ enableScrollViewScroll: true });
+        }}>
           <View style={headCatStyle}>
               <View style={headContent}>
                   <TouchableOpacity onPress={()=>{this.closeModal()}} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
@@ -280,7 +281,7 @@ class UpdateInfo extends Component {
          </ScrollView>
          </View>}
 
-         {showMonth && <View 
+         {showMonth && <View
          style={[wrapSelect,wrapBtnInfo,{top:Platform.OS==='ios'?245:275,left:Platform.OS==='ios'?110:115}]}>
          <ScrollView {...this._panResponder.panHandlers}
     onScrollEndDrag={() => this.fScroll.setNativeProps({ scrollEnabled: true })} >

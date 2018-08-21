@@ -423,7 +423,7 @@ class FormCreate extends Component {
         latitudeDelta:  0.004422,
         longitudeDelta: 0.001121,
       }
-    });
+    },()=>{this.myMar.showCallout()});
     //this.getAddress(yourCurLoc.latitude,yourCurLoc.longitude)
   }
 
@@ -570,7 +570,6 @@ class FormCreate extends Component {
                 const {latitude,longitude} = event.nativeEvent.coordinate;
                 this.myMar.hideCallout();
                 this.getAddress(latitude,longitude);
-
               }}
               //onReady={()=>{console.log('onReady');}}
               onRegionChange={()=>{
@@ -586,9 +585,7 @@ class FormCreate extends Component {
               }}
               ref={(co) => { this.myMar = co}}
             >
-            <MapView.Callout onLayout={()=>{
-              Platform.OS==='android' && this.myMar.showCallout();
-            }}>
+            <MapView.Callout onLayout={()=>this.myMar.showCallout()}>
             <View style={{height: 30,width: width-60,alignItems:'center',justifyContent:'center',borderRadius:3}}>
             <Text numberOfLines={1}>{`${addrMarker}`}</Text>
             </View>

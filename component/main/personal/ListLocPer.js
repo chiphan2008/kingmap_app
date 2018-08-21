@@ -20,7 +20,7 @@ import closeIC from '../../../src/icon/ic-create/ic-close.png';
 import closingIC from '../../../src/icon/ic-closing.png';
 import openingIC from '../../../src/icon/ic-opening.png';
 import requestIC from '../../../src/icon/ic-request.png';
-
+import {getIndexById} from '../../libs';
 const {width,height} = Dimensions.get('window');
 
 
@@ -39,6 +39,7 @@ class ListLocPer extends Component {
       loading:true,
       isLoad:false,
       page:0,
+      index:-1,
     }
     this.refresh();
   }
@@ -59,7 +60,7 @@ class ListLocPer extends Component {
     if((detailBack==='UpdateLocation' || detailBack==='DetailScreen') && user_profile.id!==undefined){
       this.props.dispatch({type:'DETAIL_BACK',detailBack:''});
       const skip = this.state.page>0?this.state.page-20:0;
-      this.getData(skip);
+      this.getData(skip,this.state.index);
     }
   }
   renderFooter = () => {
@@ -71,67 +72,73 @@ class ListLocPer extends Component {
     </View>)
   }
 
-  getData(page=null){
+  getData(page=null,index=null){
     if(page===null) page=0;
+    if(index!==null && index<page) page-=20;
     let url = `${global.url}${'user/list-location/'}${this.state.user_profile.id}${'?skip='}${page}${'&limit=20'}`;
-    //console.log(url);
-    let arr = this.state.listData;
+    console.log(url);
+    //let arr = this.state.listData;
     getApi(url).then(arrData => {
-        if(this.state.page>page && arr.length>20){
-          arr.splice(-20);
+        if(index!==null){
+          let oldId = this.state.listData[index].id;
+          const newIndex = getIndexById(arrData.data,oldId);
+          this.state.listData[index] = arrData.data[newIndex];
+        }else {
+          this.state.listData=page>0? this.state.listData.concat(arrData.data):arrData.data;
+          this.state.page = page===0 ? 20 : page+20;
+          this.state.loading = arrData.data.length<20?false:true;
         }
-        this.state.listData=page>0? arr.concat(arrData.data):arrData.data;
-        this.state.page = page===0 ? 20 : page+20;
-        this.state.loading = arrData.data.length<20?false:true;
+        this.state.index = -1;
         this.setState(this.state);
     })
     .catch(err => console.log(err));
   }
-  deleteLocation(idContent){
+  deleteLocation(idContent,index){
     const url = `${global.url}${'user/delete-location/'}${idContent}`;
     //console.log('url',url);
     getApi(url).then(e => {
       if(e.code===200){
         const skip = this.state.page>0?this.state.page-20:0;
-        this.getData(skip);
+        this.getData(skip,index);
       }
     }).catch(err => console.log(err));
   }
-  callPause(idContent){
-    this.setState({showOption:false});
+  callPause(idContent,index){
+    this.setState({showOption:false,index:-1});
     const url = `${global.url}${'user/close-location/'}${idContent}`;
     getApi(url).then(e => {
       if(e.code===200){
         const skip = this.state.page>0?this.state.page-20:0;
-        this.getData(skip);
+        this.getData(skip,index);
       }
     }).catch(err => console.log(err));
 
   }
-  reOpen(idContent){
-    this.setState({showOption:false});
+  reOpen(idContent,index){
+    this.setState({showOption:false,index:-1});
     const url = `${global.url}${'user/open-location/'}${idContent}`;
     getApi(url).then(e=>{
       if(e.code===200){
         const skip = this.state.page>0?this.state.page-20:0;
-        this.getData(skip);
+        this.getData(skip,index);
       }
     }).catch(err => console.log(err));
   }
 
-  confirmDel(id){
-    this.setState({showOption:false});
+  confirmDel(id,index){
+    this.setState({showOption:false,index:-1});
     const {lang} = this.props.navigation.state.params;
     Alert.alert(lang.notify,lang.confirm_loc_del,[
       {text: lang.cancel, style: 'cancel'},
-      {text: lang.confirm, onPress: () => this.deleteLocation(id)},
+      {text: lang.confirm, onPress: () => this.deleteLocation(id,index)},
     ],
-   { cancelable: false } )
+   { cancelable: false } );
+
   }
   render() {
     const { lang,curLoc } = this.props.navigation.state.params;
     const { goBack,navigate } = this.props.navigation;
-    const { showOption,id_content,idCat,nameCat,moderation,loading,page } = this.state;
+    const { showOption,id_content,idCat,nameCat,moderation,loading,page,index } = this.state;
     //console.log('lang',lang);
     const {
       container,headCatStyle,headContent,titleCreate,
@@ -172,7 +179,9 @@ class ListLocPer extends Component {
              <View style={{height:8}}></View>
              <View style={{backgroundColor:'#fff'}}>
                <TouchableOpacity onPress={()=>{
-                 navigate('DetailScr',{moderation:item.moderation,idContent:item.id,lat:item.lat,lng:item.lng,curLoc,lang:lang.lang,update:true})
+                 this.setState({index},()=>{
+                   navigate('DetailScr',{moderation:item.moderation,idContent:item.id,lat:item.lat,lng:item.lng,curLoc,lang:lang.lang,update:true})
+                 })
                }}>
                  <Image source={{uri:`${global.url_media}${item.avatar}`}} style={{width:width,minHeight:200,marginBottom:10}} />
                </TouchableOpacity>
@@ -213,6 +222,7 @@ class ListLocPer extends Component {
                        }
                    </View>
                    <TouchableOpacity onPress={()=>this.setState({
+                     index,
                      showOption:true,
                      id_content:item.id,
                      idCat:item._category_type.id,
@@ -229,7 +239,7 @@ class ListLocPer extends Component {
       {showOption && <View style={actionSheetWrap} >
         <View style={[actionSheetContent,actionSheetRadius]}>
           <TouchableOpacity style={pad15}
-          onPress={()=>{this.setState({showOption:false},()=>{
+          onPress={()=>{this.setState({showOption:false,index:-1},()=>{
             navigate('FormCreateScr',{idContent:id_content,idCat,nameCat,lang:lang.lang})
           })}}>
           <Text style={colorTxt}>{lang.edit}</Text>
@@ -237,7 +247,7 @@ class ListLocPer extends Component {
           {moderation==='publish' &&
             <View>
             <View style={line}></View>
-            <TouchableOpacity onPress={()=>this.callPause(id_content)} style={pad15}>
+            <TouchableOpacity onPress={()=>this.callPause(id_content,index)} style={pad15}>
             <Text style={colorTxt}>{lang.pause}</Text>
             </TouchableOpacity>
             </View>
@@ -246,18 +256,18 @@ class ListLocPer extends Component {
           {moderation==='un_publish' &&
             <View>
             <View style={line}></View>
-            <TouchableOpacity onPress={()=>this.reOpen(id_content)} style={pad15}>
+            <TouchableOpacity onPress={()=>this.reOpen(id_content,index)} style={pad15}>
             <Text style={colorTxt}>{lang.reopen}</Text>
             </TouchableOpacity>
             </View>
           }
           {/*<View style={line}></View>
-          <TouchableOpacity onPress={()=>this.confirmDel(id_content)} style={pad15}>
+          <TouchableOpacity onPress={()=>this.confirmDel(id_content,index)} style={pad15}>
           <Text style={colorTxt}>{lang.delete}</Text>
           </TouchableOpacity>*/}
         </View>
         <View style={[actionSheetContent,actionSheetRadius,marTop10]}>
-          <TouchableOpacity onPress={()=>this.setState({showOption:false})} style={pad15}>
+          <TouchableOpacity onPress={()=>this.setState({showOption:false,index:-1})} style={pad15}>
           <Text style={colorTxt}>{lang.cancel}</Text>
           </TouchableOpacity>
         </View>

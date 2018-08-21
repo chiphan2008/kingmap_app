@@ -37,7 +37,7 @@ import topIC from '../../../src/icon/ic-top.png';
 import {remove,removeText} from '../../libs';
 //import * as _ from 'lodash';
 
-var timeout,timeoutSubCat,timeoutServ;
+var timeout;
 class ListLocation extends Component {
   constructor(props) {
     super(props);
@@ -47,9 +47,10 @@ class ListLocation extends Component {
       kw:'',
       noData:'',
       lang: lang==='vn' ? lang_vn : lang_en,
-      labelLoc : "Địa điểm",
-      labelCat : "Danh mục",
-      labelSer : "Dịch vụ",
+      labelLoc : lang==='vn' ? lang_vn.location : lang_en.location,
+      labelCat : lang==='vn' ? lang_vn.categorys : lang_en.categorys,
+      labelSer : lang==='vn' ? lang_vn.services : lang_en.services,
+
       valueLoc : 0,
       valueCat : 0,
       valueSer : 0,
@@ -104,37 +105,34 @@ class ListLocation extends Component {
     const { keyword,kw,curLoc,id_cat,idDist } = this.state;
     const { yourCurLoc } =this.props;
     if(id_district===null) id_district=idDist;
-    //const id_cat = this.props.navigation.state.params.idCat;
     var url = `${global.url}${'search-content?category='}${id_cat}${'&skip='}${skip}${'&limit=20'}${'&distance=25000'}`;
     if(id_district!==null) {
       url += `${'&district='}${id_district}`;
     }
     if(yourCurLoc.latitude!==undefined) {
       url += `${'&location='}${yourCurLoc.latitude},${yourCurLoc.longitude}`;
-      //this.getPosition(curLoc.latitude,curLoc.longitude);
     }
-    //if(curLoc.latitude!==undefined)
     if(keyword.trim()!=='' && kw!==keyword.trim()) url += `${'&keyword='}${keyword}`;
     else {
       url += `${'&keyword='}${keyword}`;
       if(id_sub!==null) url += `${'&subcategory='}${id_sub}`;
-      //id_serv = id_serv.replace('-1,','');
       if(id_serv!=='') url += `${'&service='}${id_serv}`;
     }
     this.setState({ kw:keyword });
-
     console.log('-----url-----1',url);
-    getApi(url)
-    .then(arrData => {
+    var _this = this;
+    getApi(url).then(arrData => {
       //console.log(arrData.data.length);
-      this.state.listData= skip===0?arrData.data:this.state.listData.concat(arrData.data);
-      this.state.isLoad=false;
-      this.state.isRefresh=false;
-      this.state.pullToRefresh=arrData.data.length<20?false:true;
-      this.state.noData= arrData.data.length===0 ? this.state.lang.not_found : '' ;
-      this.setState(this.state);
-    })
-    .catch(err => console.log(err));
+      timeout = setTimeout(()=>{
+        _this.state.listData= skip===0?arrData.data:_this.state.listData.concat(arrData.data);
+        _this.state.isLoad=false;
+        _this.state.isRefresh=false;
+        _this.state.pullToRefresh=arrData.data.length<20?false:true;
+        _this.state.noData= arrData.data.length===0 ? _this.state.lang.not_found : '' ;
+        _this.setState(_this.state);
+      }, 1200);
+
+    }).catch(err => console.log(err));
   }
 
   saveLocation(){
@@ -212,7 +210,7 @@ class ListLocation extends Component {
 
   }
   saveSubCate(id_cat,labelCat,listIDSub,service_items){
-    clearTimeout(timeoutSubCat);
+    clearTimeout(timeout);
     let _this = this;
     let id_sub = [];
     let labSubCat = [];
@@ -226,16 +224,15 @@ class ListLocation extends Component {
       }
     });
     if(labSubCat.toString()!=='') labelCat=labSubCat.toString();
-    timeoutSubCat = setTimeout(function () {
-      this.setState({id_cat,id_sub:id_sub.toString(),labelCat,service_items},()=>{
-          this.getContentByDist(this.state.idDist,id_sub,this.state.id_serv);
-      })
-    }, 700);
+    _this.setState({id_cat,id_sub:id_sub.toString(),labelCat,service_items},()=>{
+        _this.getContentByDist(_this.state.idDist,id_sub,_this.state.id_serv);
+    })
 
   }
 
   saveService(arr){
     clearTimeout(timeout);
+    let _this = this;
     let labelSer=[],id_serv=[];
     arr.length>0 && arr.forEach(e=>{
       if(e[1]){
@@ -246,15 +243,11 @@ class ListLocation extends Component {
         }
       }
     });
-    //console.log('labelSer',labelSer);
-    this.setState({
-      labelSer:labelSer.length===0 ? 'Dịch vụ' :labelSer.toString(),
+    _this.setState({
+      labelSer:labelSer.length===0 ? _this.state.lang.services :labelSer.toString(),
       id_serv: id_serv.length===0 ? '' : id_serv.toString(),
     },()=>{
-      timeout = setTimeout(()=>{
-        //this.getCategory();
-        this.getContentByDist(this.state.idDist,this.state.id_sub,id_serv);
-      },800)
+        _this.getContentByDist(_this.state.idDist,_this.state.id_sub,id_serv);
     })
 
   }

@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import ReactNative , {Platform, View, Text, StyleSheet, Dimensions, Image,
-  TextInput, TouchableOpacity,Modal,Alert,
+  TextInput, TouchableOpacity,Modal,Alert,UIManager,
   ScrollView,FlatList,TouchableWithoutFeedback, Keyboard,
   DeviceEventEmitter, KeyboardAvoidingView, ActivityIndicator
 } from 'react-native';
@@ -97,6 +97,7 @@ class MakeMoney extends Component {
       showQLNBPop: false,
       chooseAll: false,
       heightLayout:height,
+      activeKeyboard:false,
     }
     loginServer(this.props.navigation.state.params.user_profile,'fgdjk')
     temp_daily_code==='' && this.getStatic();
@@ -123,11 +124,11 @@ class MakeMoney extends Component {
   }
 
   _keyboardDidShow = () => {
-    this.setState({heightLayout:height+100});
+    this.setState({activeKeyboard:true,heightLayout:height*1.7});
   }
 
   _keyboardDidHide = () => {
-    this.setState({heightLayout:height});
+    this.setState({activeKeyboard:false,heightLayout:height});
   }
 
 
@@ -408,7 +409,10 @@ class MakeMoney extends Component {
         arr.data!==null && this.setState({ content:arr.data[0].content===null?'':arr.data[0].content });
     }).catch(err => console.log(err));
   }
-
+  _scrollToInput () {
+    this.scrollView.scrollToEnd()
+    //this.scrollView.scrollTo({x: 0, y, animated: false});
+  }
   componentWillMount(){
     //setTimeout(()=>{
       const { user_profile } = this.props.navigation.state.params;
@@ -436,7 +440,7 @@ class MakeMoney extends Component {
       itemChoose,showCoin,showLoc,showLocPop,showCTV,showCTVCeo,showCTVPop,showTDLPop,showTDLCTVPop,showQLNBPop,showArea,listData,index_ctv_pending,noData,
       listAgency,listLoc,isCeo,isAgency,isNormal,isCTV,assign,listDistrict,labelArea,ListPend,suggestPend,
       ListLocPend,suggestLoc,showListLocPend,showListCTVPend,loadMore,page,static_notes,des_mm,
-      content,searchCTV,let_mm,showCoinTKV, chooseAll
+      content,searchCTV,let_mm,showCoinTKV, chooseAll,activeKeyboard
     } = this.state;
     //console.log('listDistrict listDistrict',listDistrict)
     const {yourCurLoc} = this.props;
@@ -479,7 +483,7 @@ class MakeMoney extends Component {
       }
 
       {(isCTV || isAgency || isCeo) &&
-        <View style={[container]}>
+        <View style={container}>
           <View style={headCatStyle}>
               <View style={headContent}>
                   <TouchableOpacity onPress={()=>goBack()}
@@ -490,10 +494,11 @@ class MakeMoney extends Component {
                   <View></View>
               </View>
           </View>
-          <ScrollView>
-          <View style={{height: this.state.heightLayout}}>
+          <View style={!activeKeyboard?{height: this.state.heightLayout}:null}>
+          <ScrollView ref={(scrollView) => { this.scrollView = scrollView }}>
+          <View style={activeKeyboard?{height: this.state.heightLayout}:null}>
 
-          <View style={{width:width-80,height:200,justifyContent:'center',alignItems:'center'}}>
+          <View style={{width,height:200,justifyContent:'center',alignItems:'center',padding:40}}>
           <View style={{marginBottom:5,width:80,height:80,backgroundColor:'#fff',borderRadius:60,justifyContent:'center',alignItems:'center'}}>
           <Image source={makeMoneyIC} style={{width:60,height:60}} />
           </View>
@@ -607,6 +612,9 @@ class MakeMoney extends Component {
                         this.searchContent('search-content',this.state.valLoc);
                       }
                     }}
+                    onFocus={(event) => {
+                      this._scrollToInput()
+                    }}
                     onChangeText={(valLoc) => this.setState({valLoc})}
                     value={this.state.valLoc} />
 
@@ -650,6 +658,10 @@ class MakeMoney extends Component {
                         this.searchContent(act,this.state.valCTV);
                       }
                     }}
+                    //onScroll={(e)=>console.log('onScroll',e.nativeEvent.contentOffset)}
+                    onFocus={(event) => {
+                      this._scrollToInput()
+                    }}
                     onChangeText={(valCTV) => this.setState({valCTV})}
                     value={this.state.valCTV} />
 
@@ -692,6 +704,12 @@ class MakeMoney extends Component {
                       if (this.state.valCTVCeo.trim()!=='') {
                         this.searchContent('find-ctv',this.state.valCTVCeo);
                       }
+                    }}
+                    //onContentSizeChange={(e)=>console.log('onContentSizeChange',e.nativeEvent)}
+                    //onLayout={(e)=>console.log('onLayout',e.x,e.y)}
+                    //onScroll={(e)=>console.log('onScroll',e.nativeEvent.contentOffset)}
+                    onFocus={(event) => {
+                      this._scrollToInput()
                     }}
                     onChangeText={(valCTVCeo) => this.setState({valCTVCeo})}
                     value={this.state.valCTVCeo} />
@@ -780,7 +798,7 @@ class MakeMoney extends Component {
           </View>
           <View style={{height:height/5}}></View>
           </ScrollView>
-
+          </View>
         </View>
 
       }

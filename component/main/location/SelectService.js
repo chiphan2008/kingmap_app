@@ -16,7 +16,7 @@ export default class SelectService extends Component {
     super(props);
     this.state = {
       showService:{},
-      selectAll: false
+      selectAll: 0
     }
   }
 
@@ -36,27 +36,14 @@ export default class SelectService extends Component {
       <Image style={[imgUpCreate,imgUpInfo]} source={upDD} />
           <View style={[overLayout,shadown]}>
           <View style={listOverService}>
-              <TouchableOpacity  style={{padding:15}}
+              <TouchableOpacity style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',padding:15}}
                  onPress={()=>{
-
-                   if(selectAll){
-                    this.setState({showService:[], selectAll: false},()=>{
-                      this.props.saveService([]);
-                     //  this.props.closeModal();
-                    })
-                   } else {
-                    let newArr = {};
-                    data.forEach((item) => {
-                      newArr = Object.assign(newArr,{[item.id]:item.id,[`${'name'}-${item.id}`]:item.name})
-                    })
-                     this.setState({showService: newArr , selectAll: true},()=>{
-                       this.props.saveService(Object.entries(newArr));
-                      //  this.props.closeModal();
-                     })
-                   }
-
+                   this.state.selectAll!==0 &&  this.setState({showService:{}, selectAll: 0},()=>{
+                     this.props.saveService([]);
+                   });
                  }}>
                    <Text style={colorText}>{lang.all}</Text>
+                   <Image style={[imgInfo, selectAll===0  ? show : hide]} source={checkIC}/>
                </TouchableOpacity>
            </View>
 
@@ -69,15 +56,15 @@ export default class SelectService extends Component {
             <TouchableOpacity
                onPress={()=>{
                  if(showService[`${item.id}`]===item.id){
-                     this.setState({
-                         showService:Object.assign(showService,{[item.id]:!item.id,[`${'name'}-${item.id}`]:!item.name})
-                     })
+                     this.state.selectAll -=1;
+                     this.state.showService=Object.assign(this.state.showService,{[item.id]:!item.id,[`${'name'}-${item.id}`]:!item.name})
                  }else {
-                   this.setState({
-                       showService:Object.assign(showService,{[item.id]:item.id,[`${'name'}-${item.id}`]:item.name})
-                   })
+                     this.state.selectAll +=1;
+                     this.state.showService=Object.assign(this.state.showService,{[item.id]:item.id,[`${'name'}-${item.id}`]:item.name})
                  }
-                 this.props.saveService(Object.entries(showService));
+                 this.setState(this.state,()=>{
+                   this.props.saveService(Object.entries(showService));
+                 })
                 }}
                 style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',padding:15}}
               >

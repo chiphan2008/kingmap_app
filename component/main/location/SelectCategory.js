@@ -149,7 +149,7 @@ export default class SelectCategory extends Component {
               <View style={listOverService}>
                   <TouchableOpacity style={{alignItems:'center',justifyContent:'space-between',flexDirection:'row',padding:15}}
                      onPress={()=>{
-                       this.setState({selectAll:0},()=>{
+                       this.state.selectAll!==0 && this.setState({selectAll:0,listIDSub:{}},()=>{
                          this.props.saveSubCate(id_cat,labelCat,[],listService);
                        })
                      }}>

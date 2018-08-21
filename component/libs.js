@@ -8,6 +8,9 @@ import Moment from 'moment';
 export function getIndex(element,id){
   return element.key==id;
 }
+export function getIndexById(arr,id){
+   return arr.findIndex(el => el.id==id);
+}
 
 export async function CheckTF(obj){
   let arr = [];

@@ -254,18 +254,18 @@ class NotifyTab extends Component {
                 e.stopPropagation();
                 this.requestOwner(`${'h='}${item.data.code}`)
               }}
-              style={{backgroundColor:'#86be57',borderRadius:3,padding:3,marginRight:5,minWidth:80,alignItems:'center'}}>
-                <Text numberOfLines={1} style={{fontSize:14,color:'#fff'}}>{`${lang.accept}`}</Text>
+              style={{backgroundColor:'#5cb85c',borderRadius:3,padding:3,marginRight:10,minWidth:width/3,alignItems:'center'}}>
+                <Text numberOfLines={1} style={{fontSize:14,color:'#fff'}}>{`${lang.accept}`.toUpperCase()}</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={(e)=>{
                 e.stopPropagation();
                 this.requestOwner(`${'d='}${item.data.code}`)
               }}
-              style={{backgroundColor:'#fff',borderColor:'#DDD',borderWidth:1,borderRadius:3,padding:3,marginRight:3,minWidth:80,alignItems:'center'}}>
-                <Text numberOfLines={1} style={{fontSize:14,color:'#000'}}>{`${lang.reject}`}</Text>
+              style={{backgroundColor:'#fff',borderColor:'#DDD',borderWidth:1,borderRadius:3,padding:3,marginRight:3,minWidth:width/3,alignItems:'center'}}>
+                <Text numberOfLines={1} style={{fontSize:14,color:'#000'}}>{`${lang.reject}`.toUpperCase()}</Text>
               </TouchableOpacity>
              </View>}
-             <Text numberOfLines={1} style={{fontSize:12}}>{Moment(item.created_at).format("DD/MM/YYYY h:m:s")}</Text>
+             <Text numberOfLines={1} style={{fontSize:12}}>{Moment(item.created_at).format("DD/MM/YYYY HH:mm:ss")}</Text>
              </View>
              </TouchableOpacity>
            )}

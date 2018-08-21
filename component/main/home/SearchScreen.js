@@ -38,7 +38,7 @@ import sortDownIC from '../../../src/icon/ic-sort-down.png';
 import upDD from '../../../src/icon/ic-white/ic-dropdown_up.png';
 import checkIC from '../../../src/icon/ic-green/ic-check.png';
 
-var timeout,timeoutZoom,timeoutPosition,timeoutCurPos,timeoutSubCat,timeoutServ;
+var timeout,timeoutZoom,timeoutPosition,timeoutCurPos;
 class SearchScreen extends Component {
   constructor(props) {
     super(props);
@@ -105,86 +105,84 @@ class SearchScreen extends Component {
     this.setState({ kw: keyword });
 
     //console.log('url',url);
-    getApi(url)
-      .then(arrData => {
-        if(arrData.data.length===0 ){
-          if(this.state.initLoad===false){
-            this.setState({
-              markers: [],initLoad:true,showNotFound:true,
-              curLocation : {
-                latitude:lat,
-                longitude: lng,
-                lat,lng,
-                latitudeDelta:  0.008757,
-                longitudeDelta: 0.010066,
-                latlng:`${lat},${lng}`,
-              },
-              // circleLoc: {
-              //   latitude:curLoc.latitude,
-              //   longitude:curLoc.longitude,
-              // },
-            });
-            return;
-          }
-          this.setState({
-            markers: arrData.data,initLoad:true,showNotFound:true,
-          });
-          return;
-        }
-        // console.log(' kocó vô')
-        let data = [];
-        let line = 0;
-        lat=arrData.data[0].latitude;
-        lng=arrData.data[0].longitude;
-        let line1 = arrData.data[0].line;
-        arrData.data.forEach(e=>{
-          line = e.line;
-          let obj = {
-            id: e.id,
-            name: e.name,
-            address: `${e.address}, ${e._district.name}, ${e._city.name}, ${e._country.name}`,
-            latitude:e.latitude,
-            longitude:e.longitude,
-            marker:`${global.url_media}${e._category_type.marker}`
-          }
-          data.push(obj);
-        })
+    getApi(url).then(arrData => {
 
-        this.setState({ markers: data,callData:true,showInfoOver:true,initLoad:true,
-          curLocation : {
-            latitude:lat,
-            longitude: lng,
-            lat:lat,
-            lng: lng,
-            latitudeDelta: isNaN(line-line1) || (line-line1)<500 ? 0.008757 : (line-line1)*0.008757/500,
-            longitudeDelta: isNaN(line-line1) || (line-line1)<500 ? 0.010066 : (line-line1)*0.010066/500,
-            latlng:`${lat},${lng}`,
-          },
-          // circleLoc: {
-          //   latitude:curLoc.latitude,
-          //   longitude:curLoc.longitude,
-          // },
+          if(arrData.data.length===0 ){
+            if(this.state.initLoad===false){
+                this.setState({
+                  markers: [],initLoad:true,showNotFound:true,
+                  curLocation : {
+                    latitude:lat,
+                    longitude: lng,
+                    lat,lng,
+                    latitudeDelta:  0.008757,
+                    longitudeDelta: 0.010066,
+                    latlng:`${lat},${lng}`,
+                  },
+                  // circleLoc: {
+                  //   latitude:curLoc.latitude,
+                  //   longitude:curLoc.longitude,
+                  // },
+                });
+              return;
+            }
+              this.setState({
+                markers: arrData.data,initLoad:true,showNotFound:true,
+              });
+              return;
+          }
+          // console.log(' kocó vô')
+          let data = [];
+          let line = 0;
+          lat=arrData.data[0].latitude;
+          lng=arrData.data[0].longitude;
+          let line1 = arrData.data[0].line;
+          arrData.data.forEach(e=>{
+            line = e.line;
+            let obj = {
+              id: e.id,
+              name: e.name,
+              address: `${e.address}, ${e._district.name}, ${e._city.name}, ${e._country.name}`,
+              latitude:e.latitude,
+              longitude:e.longitude,
+              marker:`${global.url_media}${e._category_type.marker}`
+            }
+            data.push(obj);
+          })
 
-         });
-      })
-      .catch(err => console.log(err));
+          this.setState({ markers: data,callData:true,showInfoOver:true,initLoad:true,
+            curLocation : {
+              latitude:lat,
+              longitude: lng,
+              lat:lat,
+              lng: lng,
+              latitudeDelta: isNaN(line-line1) || (line-line1)<500 ? 0.008757 : (line-line1)*0.008757/500,
+              longitudeDelta: isNaN(line-line1) || (line-line1)<500 ? 0.010066 : (line-line1)*0.010066/500,
+              latlng:`${lat},${lng}`,
+            },
+            // circleLoc: {
+            //   latitude:curLoc.latitude,
+            //   longitude:curLoc.longitude,
+            // },
+
+           });
+
+        }).catch(err => console.log(err));
+
   }
 
   saveLocation(){
     let _this = this;
     checkLocation().then((e)=>{
-      this.setState({
+      _this.setState({
         showLoc:false,id_city:e.idCity,
         id_district:e.idDist,
         labelLoc:e.nameDist,
       },()=>{
         const url =`https://maps.googleapis.com/maps/api/geocode/json?address=${e.nameCountry}${e.nameCity}${e.nameDist}&key=AIzaSyCCCOoPlN2D-mfrYEMWkz-eN7MZnOsnZ44`;
-        console.log('latitude', url)
         getApi(url).then(res=>{
           const latitude = res.results[0].geometry.location.lat;
           const longitude = res.results[0].geometry.location.lng;
-          console.log('latitude', latitude)
-          console.log('longitude', longitude)
           _this.setState({
             curLoc : { latitude,longitude },
             circleLoc : { latitude,longitude },
@@ -197,7 +195,7 @@ class SearchScreen extends Component {
     });
   }
   saveSubCate(id_cat,labelCat,listIDSub,service_items){
-    clearTimeout(timeoutSubCat);
+    clearTimeout(timeout);
     let _this = this;
     let id_sub = [];
     let labSubCat = [];
@@ -211,16 +209,16 @@ class SearchScreen extends Component {
       }
     });
     if(labSubCat.toString()!=='') labelCat=labSubCat.toString();
-    timeoutSubCat = setTimeout(function () {
-      this.setState({id_cat,id_sub: id_sub.toString(),labelCat,service_items},()=>{
+    timeout = setTimeout(()=>{
+      _this.setState({id_cat,id_sub: id_sub.toString(),labelCat,service_items},()=>{
         _this.getCategory(_this.state.curLoc.latitude,_this.state.curLoc.longitude)
       })
-    }, 700);
-    
+    },700);
+
   }
   saveService(arr){
-    let _this = this;
     clearTimeout(timeout);
+    let _this = this;
     let labelSer=[],id_serv=[];
     arr.length>0 && arr.forEach(e=>{
       if(e[1]){
@@ -231,14 +229,14 @@ class SearchScreen extends Component {
         }
       }
     });
-
-    this.setState({
-      labelSer:labelSer.length===0 ? this.state.lang.services :labelSer.toString(),
-      id_serv: id_serv.length===0 ? '' : id_serv.toString(),
-    },()=>{
-      _this.getCategory(_this.state.curLoc.latitude,_this.state.curLoc.longitude)
-    })
-    if(arr.length === 0) this.setState({labelSer: this.state.lang.all})
+    timeout = setTimeout(()=>{
+      _this.setState({
+        labelSer:labelSer.length===0 ? _this.state.lang.services :labelSer.toString(),
+        id_serv: id_serv.length===0 ? '' : id_serv.toString()
+      },()=>{
+        _this.getCategory(_this.state.curLoc.latitude,_this.state.curLoc.longitude);
+      });
+    },700);
 
   }
 

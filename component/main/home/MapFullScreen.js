@@ -20,8 +20,11 @@ export default class MapFullScreen extends Component {
       curLocation:{},
     }
   }
-  _onRegionChangeComplete = (curLocation) => {
-    curLocation.latitudeDelta > 0.002 && this.setState({ curLocation });
+  _onRegionChangeComplete(curLocation) {
+    console.log('_onRegionChangeComplete_curLocation');
+    curLocation.latitudeDelta > 0.002 && this.setState({ curLocation },()=>{
+      //this.props.onRegionChangeComplete(curLocation);
+    });
   }
   onMarkerPressed(id) {
     this.props.onMarkerPressed(id);
@@ -40,12 +43,15 @@ export default class MapFullScreen extends Component {
   }
   componentWillUpdate(){
     if(this.props.callData){
+      //console.log('componentWillUpdate');
       const {latitude,longitude,latitudeDelta,longitudeDelta} = this.props.curLocation;
       this.setState({
         curLocation:{
           latitude,longitude,latitudeDelta,longitudeDelta
         }
-      },()=>this.props.stopData())
+      },()=>{
+        this.props.stopData()
+      })
     }
   }
   render() {
@@ -67,7 +73,7 @@ export default class MapFullScreen extends Component {
           style={{width,height,zIndex:-1}}
           region={curLocation}
           onPress={(e)=>this.props.onPressMap(e)}
-          onRegionChangeComplete={this._onRegionChangeComplete}
+          onRegionChangeComplete={()=>this._onRegionChangeComplete.bind(this)}
           customMapStyle={global.style_map}
           showsPointsOfInterest={false}
         >
@@ -118,7 +124,7 @@ export default class MapFullScreen extends Component {
             longitude: Number(circleLoc.longitude),
           }}
         />}
-        
+
         </MapView>
         :
         <View></View>

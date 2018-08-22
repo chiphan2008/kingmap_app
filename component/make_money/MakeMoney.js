@@ -410,7 +410,7 @@ class MakeMoney extends Component {
     }).catch(err => console.log(err));
   }
   _scrollToInput () {
-    this.scrollView.scrollToEnd()
+    //this.scrollView.scrollToEnd()
     //this.scrollView.scrollTo({x: 0, y, animated: false});
   }
   componentWillMount(){
@@ -483,7 +483,13 @@ class MakeMoney extends Component {
       }
 
       {(isCTV || isAgency || isCeo) &&
+
         <View style={container}>
+          <View style={!activeKeyboard?{height: this.state.heightLayout}:null}>
+
+          <ScrollView ref={(scrollView) => { this.scrollView = scrollView }}
+          stickyHeaderIndices={[0]}
+          >
           <View style={headCatStyle}>
               <View style={headContent}>
                   <TouchableOpacity onPress={()=>goBack()}
@@ -494,10 +500,8 @@ class MakeMoney extends Component {
                   <View></View>
               </View>
           </View>
-          <View style={!activeKeyboard?{height: this.state.heightLayout}:null}>
-          <ScrollView ref={(scrollView) => { this.scrollView = scrollView }}>
-          <View style={activeKeyboard?{height: this.state.heightLayout}:null}>
 
+          <View style={activeKeyboard?{height: this.state.heightLayout}:null}>
           <View style={{width,height:200,justifyContent:'center',alignItems:'center',padding:40}}>
           <View style={{marginBottom:5,width:80,height:80,backgroundColor:'#fff',borderRadius:60,justifyContent:'center',alignItems:'center'}}>
           <Image source={makeMoneyIC} style={{width:60,height:60}} />
@@ -796,8 +800,10 @@ class MakeMoney extends Component {
           </View>*/}
 
           </View>
+
           <View style={{height:height/5}}></View>
           </ScrollView>
+
           </View>
         </View>
 

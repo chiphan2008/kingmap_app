@@ -161,15 +161,18 @@ export default class App extends Component {
     });
   }
 
-  getLang(slLang,route=null){
+  getLang(slLang,route=null,updateRoute=null){
     // const { slLang } = defaultState;
     //console.log('slLang',slLang);
     if(route!==null) this.state.initApp=true;
-    this.state.lang = (slLang.valueLang==='vn' || slLang.valueLang==='') ?lang_vn:lang_en;
+    if(updateRoute!==null) this.state.initRoute=updateRoute;
+    if(slLang.valueLang!==undefined){
+      this.state.lang = (slLang.valueLang==='vn' || slLang.valueLang==='') ?lang_vn:lang_en;
+    }
     this.setState(this.state);
   }
 
-  
+
 
   render(){
     const styles = StyleSheet.create({

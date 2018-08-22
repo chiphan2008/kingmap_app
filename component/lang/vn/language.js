@@ -48,7 +48,7 @@ module.exports = {
   add_classify: 'Thêm phân loại',
   add_time_open: 'Thêm giờ mở cửa',
   classify_location: 'Phân loại địa điểm',
-  search:'Tìm kiếm sản phẩm, dịch vụ, địa chỉ ...',
+  search:'Tìm kiếm sản phẩm, dịch vụ, địa điểm ...',
   your_comment:'Bình luận của bạn ...',
   add_branch:'Thêm địa điểm cùng hệ thống',
   branch:'Chi nhánh',

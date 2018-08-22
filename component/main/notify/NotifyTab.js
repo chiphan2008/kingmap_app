@@ -3,8 +3,9 @@
 import React, { Component } from 'react';
 import {
   Platform, View, Text, StyleSheet, Dimensions, Image, TextInput, TouchableOpacity,
-  FlatList,AppState,TouchableWithoutFeedback,Keyboard
+  FlatList,AppState,TouchableWithoutFeedback,Keyboard,ActivityIndicator,Modal
 } from 'react-native';
+import { StackActions, NavigationActions } from 'react-navigation';
 import Moment from 'moment';
 import PushNotification from 'react-native-push-notification';
 import Pusher from 'pusher-js/react-native';
@@ -99,7 +100,7 @@ class NotifyTab extends Component {
 
   getData(page=null){
     if(page===null) page=0;
-    const url = `${global.url}${'getlistnoti'}?skip=${page}&limit=20`;
+    const url = `${global.url}${'getlistnoti'}?skip=${page}&limit=20${'&lang='}${this.state.lang.lang}`;
     //console.log(url);
     getApi(url).then(arrData => {
       // console.log('arrData',arrData.data);
@@ -121,12 +122,35 @@ class NotifyTab extends Component {
   }
 
   componentDidMount(){
-
+      const _this = this;
       PushNotification.configure({
-          onNotification: function(notification) {
-              console.log( 'NOTIFICATION:', notification );
-              //notification.finish(PushNotificationIOS.FetchResult.NoData);
-          },
+        onNotification: function(notification) {
+          // _this.props.navigation.dispatch(
+          //   NavigationActions.reset({
+          //     index: 0,
+          //     actions: [NavigationActions.navigate({ routeName: 'NotifyT' })]
+          //   })
+          // )
+
+            if(notification.foreground)
+            {
+              const navigateAction = NavigationActions.navigate({
+                routeName: 'RootTabs',
+                params: {},
+
+                action: NavigationActions.navigate({ routeName: 'NotifyT' }),
+              });
+              _this.props.navigation.dispatch(navigateAction);
+            }else {
+              _this.props.screenProps({},null,'NotifyT');
+            }
+            console.log(notification);
+            // required on iOS only (see fetchCompletionHandler docs: https://facebook.github.io/react-native/docs/pushnotificationios.html)
+            if(Platform.OS == 'ios')
+            {
+              notification.finish(PushNotificationIOS.FetchResult.NoData);
+            }
+        },
       });
       AppState.addEventListener('change', (nextAppState)=>{
         //alert('nextAppState.toString()');
@@ -139,19 +163,17 @@ class NotifyTab extends Component {
     AppState.removeEventListener('change');
   }
   componentWillUpdate(){
-    console.log('isLogin',this.props.isLogin);
-    console.log('user_profile',this.props.user_profile);
-
+    // console.log('isLogin',this.props.isLogin);
+    // console.log('user_profile',this.props.user_profile);
       const {user_profile,isLogin} = this.props;
       if(isLogin && user_profile.id!==undefined){
         channelUserAll = socket.subscribe('get-new-notifi-all');
         channelUser = socket.subscribe(`${'get-new-notifi-'}${user_profile.id}`);
       }
-
-
   }
   componentDidUpdate(){
       countNoti = 0;
+      let _this = this;
       clearTimeout(NotiTimeout);
       channelNews.bind(`${'App\\Events\\getNotifi'}`, function(data) {
         countNoti += 1;
@@ -161,44 +183,51 @@ class NotifyTab extends Component {
             data:data.data,
             title,
             message: contentText,
-            date: new Date(Date.now()) // in 60 secs  + (3 * 1000)
+            date: new Date(Date.now() + (1 * 1000)) // in 60 secs  + (3 * 1000)
           });
           countNoti=0;
         }
       });
       NotiTimeout = setTimeout(()=>{
           this.props.isLogin && channelUserAll.bind(`${'App\\Events\\getNotifi'}`,function(data) {
-            //console.log(data);
+            console.log('channelUserAll',data);
             const {title,contentText} = data.data;
+            data.data!==undefined && data.data!==null && _this.getData();
               PushNotification.localNotificationSchedule({
                 data:data.data,
                 title,
                 message: contentText,
-                date: new Date(Date.now()) // in 60 secs  + (3 * 1000)
+                date: new Date(Date.now() + (1 * 1000)) // in 60 secs  + (3 * 1000)
               });
           });
 
           this.props.isLogin && channelUser.bind(`${'App\\Events\\getNotifi'}`,function(data) {
-            //console.log(data);
+            console.log('channelUser',data);
             const {title,contentText} = data.data;
+            data.data!==undefined && data.data!==null && _this.getData();
               PushNotification.localNotificationSchedule({
                 data:data.data,
                 title,
                 message: contentText,
-                date: new Date(Date.now()) // in 60 secs  + (3 * 1000)
+                date: new Date(Date.now() + (1 * 1000)) // in 60 secs  + (3 * 1000)
               });
           });
-      },1500);
+      },1200);
   }
 
   requestOwner(route){
     const url = `${global.url}${'apply-owner?'}${route}${'&lang='}${this.state.lang.lang}`;
+    //console.log(url);
     getApi(url).then(e => {
-      this.getData();
+      this.props.dispatch({type:'STOP_START_UPDATE_STATE',updateState:true});
+      this.setState({disabled:false},()=>{
+        this.getData();
+      })
     }).catch(err => console.log(err));
   }
   render() {
     const {navigate} = this.props.navigation;
+    console.log('this.props.navigation',this.props.navigation);
     //console.log("this.props.Hometab=",util.inspect(this.props.navigation,false,null));
     const {
       container, bgImg,
@@ -274,12 +303,12 @@ class NotifyTab extends Component {
            )}
            style={{marginBottom:110,}}
            onEndReachedThreshold={0.5}
-          onEndReached={() => {
-            if(loadMore) this.setState({loadMore:false},()=>{
-              this.getData(page)
-            });
-          }}
-         />
+            onEndReached={() => {
+              if(loadMore) this.setState({loadMore:false},()=>{
+                this.getData(page)
+              });
+            }}
+           />
          :
          <View style={[wrapContent, {width: width}]}>
            <Text style={{color:'#B8B9BD'}}>{lang.request_login}</Text>
@@ -289,6 +318,15 @@ class NotifyTab extends Component {
          </View>
           }
         </View>
+
+        {this.state.disabled &&
+        <Modal onRequestClose={() => null} transparent
+        visible={this.state.disabled} >
+          <View style={{flex:1,justifyContent:'center',alignItems:'center',backgroundColor:'rgba(0,0,0,0.6)'}}>
+            <ActivityIndicator size="large" color="#d0021b" />
+          </View>
+        </Modal>}
+
       </View>
       </TouchableWithoutFeedback>
     );

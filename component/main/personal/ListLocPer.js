@@ -59,8 +59,9 @@ class ListLocPer extends Component {
     const {user_profile} = this.state;
     if((detailBack==='UpdateLocation' || detailBack==='DetailScreen') && user_profile.id!==undefined){
       this.props.dispatch({type:'DETAIL_BACK',detailBack:''});
-      const skip = this.state.page>0?this.state.page-20:0;
-      this.getData(skip,this.state.index);
+      //const skip = this.state.page>0?this.state.page-20:0;
+      this.getData(this.state.page,this.state.index);
+      //console.log('componentDidUpdate-UpdateLocation');
     }
   }
   renderFooter = () => {
@@ -73,9 +74,10 @@ class ListLocPer extends Component {
   }
 
   getData(page=null,index=null){
+    let limit = 20;
     if(page===null) page=0;
-    if(index!==null && index<page) page-=20;
-    let url = `${global.url}${'user/list-location/'}${this.state.user_profile.id}${'?skip='}${page}${'&limit=20'}`;
+    if(index!==null && index<page) {page=0;limit=index+1; }
+    let url = `${global.url}${'user/list-location/'}${this.state.user_profile.id}${'?skip='}${page}${'&limit='}${limit}`;
     console.log(url);
     //let arr = this.state.listData;
     getApi(url).then(arrData => {
@@ -98,8 +100,8 @@ class ListLocPer extends Component {
     //console.log('url',url);
     getApi(url).then(e => {
       if(e.code===200){
-        const skip = this.state.page>0?this.state.page-20:0;
-        this.getData(skip,index);
+        //const skip = this.state.page>0?this.state.page-20:0;
+        this.getData(this.state.page,index);
       }
     }).catch(err => console.log(err));
   }
@@ -108,8 +110,8 @@ class ListLocPer extends Component {
     const url = `${global.url}${'user/close-location/'}${idContent}`;
     getApi(url).then(e => {
       if(e.code===200){
-        const skip = this.state.page>0?this.state.page-20:0;
-        this.getData(skip,index);
+        //const skip = this.state.page>0?this.state.page-20:0;
+        this.getData(this.state.page,index);
       }
     }).catch(err => console.log(err));
 
@@ -119,8 +121,8 @@ class ListLocPer extends Component {
     const url = `${global.url}${'user/open-location/'}${idContent}`;
     getApi(url).then(e=>{
       if(e.code===200){
-        const skip = this.state.page>0?this.state.page-20:0;
-        this.getData(skip,index);
+        //const skip = this.state.page>0?this.state.page-20:0;
+        this.getData(this.state.page,index);
       }
     }).catch(err => console.log(err));
   }
@@ -239,7 +241,7 @@ class ListLocPer extends Component {
       {showOption && <View style={actionSheetWrap} >
         <View style={[actionSheetContent,actionSheetRadius]}>
           <TouchableOpacity style={pad15}
-          onPress={()=>{this.setState({showOption:false,index:-1},()=>{
+          onPress={()=>{this.setState({showOption:false},()=>{
             navigate('FormCreateScr',{idContent:id_content,idCat,nameCat,lang:lang.lang})
           })}}>
           <Text style={colorTxt}>{lang.edit}</Text>

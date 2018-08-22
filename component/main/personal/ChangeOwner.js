@@ -6,6 +6,7 @@ import {
   TextInput,Dimensions,FlatList,Alert,
   TouchableWithoutFeedback,Keyboard,
 } from 'react-native';
+import {connect} from 'react-redux';
 import styles from '../../styles';
 import getApi from '../../api/getApi';
 import postApi from '../../api/postApi';
@@ -18,7 +19,7 @@ import {checkUrl,removeItem} from '../../libs';
 const {width,height} = Dimensions.get('window');
 
 var timeoutLoc;
-export default class ChangeOwner extends Component {
+class ChangeOwner extends Component {
   constructor(props){
     super(props);
     this.state = {
@@ -103,6 +104,7 @@ export default class ChangeOwner extends Component {
     //console.log(`${global.url}${'change-owner?lang='}${lang.lang}`,arr);
     postApi(`${global.url}${'change-owner?lang='}${lang.lang}`,arr).then(e=>{
       if(e.code!==undefined){
+        this.props.dispatch({type:'STOP_START_UPDATE_STATE',updateState:true});
         this.setState({txtLoc:'',txtUser:'',listContent:[],showContent:[],listUser:[],user_profile:{},showLoc:false,showUser:false,},()=>{
           Alert.alert(lang.notify,`${e.data.message}`)
         });
@@ -212,7 +214,7 @@ export default class ChangeOwner extends Component {
          <FlatList
             extraData={this.state}
             data={listContent}
-            ListEmptyComponent={<Text>{noData!=='' ? noData : '' }</Text> }
+            ListEmptyComponent={<Text style={{paddingLeft:10}}>{noData!=='' ? noData : '' }</Text> }
             keyExtractor={(item,index) => index.toString()}
             renderItem={({item,index}) =>(
               <TouchableOpacity onPress={()=>{this.chooseLoc(item.id,item,index,'kfd')}}
@@ -236,7 +238,7 @@ export default class ChangeOwner extends Component {
          <FlatList
             extraData={this.state}
             data={listUser}
-            ListEmptyComponent={<Text>{noData!=='' ? noData : '' }</Text> }
+            ListEmptyComponent={<Text style={{paddingLeft:10}}>{noData!=='' ? noData : '' }</Text> }
             keyExtractor={(item,index) => index.toString()}
             renderItem={({item}) =>(
               <TouchableOpacity onPress={()=>{clearTimeout(timeoutLoc);this.setState({ user_profile:item,showUser:false,txtUser:item.text })}}
@@ -260,3 +262,15 @@ export default class ChangeOwner extends Component {
     );
   }
 }
+
+// const mapStateToProps = (state) => {
+//   return {
+//     yourCurLoc:state.yourCurLoc,
+//     isLogin:state.isLogin,
+//     user_profile:state.user_profile,
+//     updateState:state.updateState,
+//     slLang:state.slLang
+//   }
+// }
+
+export default connect()(ChangeOwner);

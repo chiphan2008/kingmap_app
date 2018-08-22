@@ -332,7 +332,7 @@ class SearchScreen extends Component {
     if(service_items!==undefined) this.setState({service_items});
   }
   _onRegionChangeComplete = (region) => {
-    //console.log('_onRegionChangeComplete1');
+    console.log('_onRegionChangeComplete1');
     region.latitudeDelta > 0.002 && this.setState({ curLocation:region,callData:true });
     if(this.state.onClick===false) {
       //console.log('_onRegionChangeComplete2');
@@ -551,7 +551,7 @@ class SearchScreen extends Component {
 
           {curLocation.longitude!==undefined &&
             <MapFullScreen
-              closeModal={(curLocation)=>this.setState({showFullScreen:false,callout:{},curLocation })}
+              closeModal={(curLocation)=>this.setState({showFullScreen:false,callout:{} })}
               findCurrentLoc={()=>this.findCurrentLoc()}
               onPressZoom={(zoom)=>this.onPressZoom(zoom)}
               showFullScreen={showFullScreen}

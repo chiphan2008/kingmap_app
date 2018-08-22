@@ -204,7 +204,9 @@ class UpdateInfo extends Component {
           </View>
           <ScrollView ref={(e) => { this.fScroll = e }}>
           <KeyboardAvoidingView behavior="padding">
-          <TouchableWithoutFeedback onPress={() =>{this.setState({showDay:false,showMonth:false,showYear:false})}}>
+          <TouchableWithoutFeedback onPress={() =>{
+            this.fScroll.setNativeProps({ scrollEnabled: true });
+            this.setState({showDay:false,showMonth:false,showYear:false})}}>
            <View style={{height:150,justifyContent:'center',alignItems:'center'}}>
             {this.state.avatar!=='' && <Image source={{isStatic:true,uri:this.state.avatar}} style={{width:90,height:90,borderRadius:45}} />}
             <TouchableOpacity style={{position:'absolute',top:90,right:(width/2)-45,padding:6,borderRadius:13,backgroundColor:'#fff',}}
@@ -214,7 +216,10 @@ class UpdateInfo extends Component {
            </View>
            </TouchableWithoutFeedback>
 
-           <TouchableWithoutFeedback onPress={() =>{this.setState({showDay:false,showMonth:false,showYear:false})}}>
+           <TouchableWithoutFeedback onPress={() =>{
+             this.fScroll.setNativeProps({ scrollEnabled: true });
+             this.setState({showDay:false,showMonth:false,showYear:false})
+           }}>
              <View style={listCreate}>
                  <View style={widthLblCre}>
                  <Image source={nameLocationIC} style={imgInfo} />
@@ -222,15 +227,16 @@ class UpdateInfo extends Component {
                  <TextInput underlineColorAndroid='transparent'
                  returnKeyType = {"next"}
                  onSubmitEditing={(event) => {this.refs.address.focus();}}
-                 style={wrapInputCreImg}
-                 placeholder={lang.full_name}
+                 style={wrapInputCreImg} placeholder={lang.full_name}
                  onChangeText={(full_name) => this.setState({full_name})}
                  value={this.state.full_name}
                   />
                   <View style={{width:15}}></View>
              </View>
              </TouchableWithoutFeedback>
-           <TouchableWithoutFeedback onPress={() =>{this.setState({showDay:false,showMonth:false,showYear:false})}}>
+           <TouchableWithoutFeedback onPress={() =>{
+             this.fScroll.setNativeProps({ scrollEnabled: true });
+             this.setState({showDay:false,showMonth:false,showYear:false})}}>
              <View style={listCreate}>
                  <View style={widthLblCre}>
                  <Image source={dateIC} style={imgInfo} />
@@ -313,7 +319,9 @@ class UpdateInfo extends Component {
          </ScrollView>
          </View>}
 
-         <TouchableWithoutFeedback onPress={() =>{this.setState({showDay:false,showMonth:false,showYear:false})}}>
+         <TouchableWithoutFeedback onPress={() =>{
+           this.fScroll.setNativeProps({ scrollEnabled: true });
+           this.setState({showDay:false,showMonth:false,showYear:false})}}>
            <View style={[listCreate,marTop]}>
                <View style={widthLblCre}>
                <Image source={locationIC} style={imgInfo} />
@@ -328,7 +336,9 @@ class UpdateInfo extends Component {
                 <View style={{width:15}}></View>
            </View>
            </TouchableWithoutFeedback>
-           <TouchableWithoutFeedback onPress={() =>{this.setState({showDay:false,showMonth:false,showYear:false})}}>
+           <TouchableWithoutFeedback onPress={() =>{
+             this.fScroll.setNativeProps({ scrollEnabled: true });;
+             this.setState({showDay:false,showMonth:false,showYear:false})}}>
              <View style={listCreate}>
                  <View style={widthLblCre}>
                  <Image source={phoneIC} style={imgInfo} />
@@ -345,7 +355,9 @@ class UpdateInfo extends Component {
                   <View style={{width:15}}></View>
              </View>
           </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={() =>{this.setState({showDay:false,showMonth:false,showYear:false})}}>
+          <TouchableWithoutFeedback onPress={() =>{
+            this.fScroll.setNativeProps({ scrollEnabled: true });
+            this.setState({showDay:false,showMonth:false,showYear:false})}}>
            <View style={listCreate}>
                <View style={widthLblCre}>
                <Image source={descriptionIC} style={imgInfo} />
@@ -363,7 +375,9 @@ class UpdateInfo extends Component {
                 <View style={{width:15}}></View>
            </View>
            </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={() =>{this.setState({showDay:false,showMonth:false,showYear:false})}}>
+          <TouchableWithoutFeedback onPress={() =>{
+            this.fScroll.setNativeProps({ scrollEnabled: true });
+            this.setState({showDay:false,showMonth:false,showYear:false})}}>
            <View style={[listCreate, {marginBottom: 20}]}>
                <View style={widthLblCre}>
                <Image source={emailIC} style={imgInfo} />

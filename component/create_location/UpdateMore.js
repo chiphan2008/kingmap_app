@@ -152,7 +152,13 @@ export default class UpdateMore extends Component {
       {text: lang.cancel, style: 'cancel'},
       {text: lang.confirm, onPress: () => {
         getApi(`${global.url}${route}${'/delete/'}${id}`).then((e)=>{
-          this.getList(route);
+          this.setState({
+            nameProduct:'',desProduct:'',priceProduct:'',imgProduct:{},
+            nameKM:'',desKM:'',priceKM:'',imgKM:{},
+          },()=>{
+            this.getList(route);
+          });
+
         });
       }},
     ],
@@ -475,7 +481,7 @@ export default class UpdateMore extends Component {
           {this.state.showBrandTab &&
           <View style={[container,this.state.showBrandTab ? show : hide]}>
           <View style={{width:width*0.8,alignSelf:'center',marginTop:20}}>
-            <TouchableOpacity onPress={()=>{this.getData();this.setState({showLoc:true})}} style={btnPress}>
+            <TouchableOpacity onPress={()=>{this.getData();this.setState({showLoc:true,arrLoc:{} })}} style={btnPress}>
             <Text style={colorNext}> + {lang.add_branch} </Text>
             </TouchableOpacity>
           </View>

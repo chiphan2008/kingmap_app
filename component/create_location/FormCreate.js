@@ -423,7 +423,7 @@ class FormCreate extends Component {
         latitudeDelta:  0.004422,
         longitudeDelta: 0.001121,
       }
-    },()=>{this.myMar.showCallout()});
+    },()=>{});
     //this.getAddress(yourCurLoc.latitude,yourCurLoc.longitude)
   }
 

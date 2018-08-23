@@ -472,6 +472,7 @@ class SearchScreen extends Component {
               onRegionChangeComplete={this._onRegionChangeComplete}
               customMapStyle={global.style_map}
               showsPointsOfInterest={false}
+              
             >
 
             {markers.length>0 &&

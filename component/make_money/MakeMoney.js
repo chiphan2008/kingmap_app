@@ -98,6 +98,7 @@ class MakeMoney extends Component {
       chooseAll: false,
       heightLayout:height,
       activeKeyboard:false,
+      isReady:0,
     }
     loginServer(this.props.navigation.state.params.user_profile,'fgdjk')
     temp_daily_code==='' && this.getStatic();
@@ -124,13 +125,18 @@ class MakeMoney extends Component {
   }
 
   _keyboardDidShow = () => {
-    this.setState({activeKeyboard:true,heightLayout:height*1.7});
+    this.setState({activeKeyboard:true});
   }
 
   _keyboardDidHide = () => {
-    this.setState({activeKeyboard:false,heightLayout:height});
+    this.setState({activeKeyboard:false});
   }
-
+  _scrollToInput (y) {
+    //this.scrollView.scrollToEnd()
+    console.log(this.state.heightLayout);
+    y=(this.state.heightLayout<1030 && !this.state.isCeo)?y+0.2:y;
+    this.scrollView.scrollTo({y:this.state.heightLayout*y});
+  }
 
   searchContentPending(page=null){
     const { user_profile } = this.props.navigation.state.params;
@@ -226,12 +232,14 @@ class MakeMoney extends Component {
       this.state.des_mm=e.block_text[des_mm];
       this.state.let_mm=e.block_text[let_mm];
       this.state.listData=e.data;
+      //this.state.isReady=false;
         this.setState(this.state,()=>{
           if(this.state.isAgency){
             this.getListPending();
             this.searchContentPending();
             //this.searchContent('ctv','');
           }
+
         });
       }).catch(err => console.log(err));
     }else {
@@ -409,10 +417,7 @@ class MakeMoney extends Component {
         arr.data!==null && this.setState({ content:arr.data[0].content===null?'':arr.data[0].content });
     }).catch(err => console.log(err));
   }
-  _scrollToInput () {
-    //this.scrollView.scrollToEnd()
-    //this.scrollView.scrollTo({x: 0, y, animated: false});
-  }
+
   componentWillMount(){
     //setTimeout(()=>{
       const { user_profile } = this.props.navigation.state.params;
@@ -485,12 +490,18 @@ class MakeMoney extends Component {
       {(isCTV || isAgency || isCeo) &&
 
         <View style={container}>
-          <View style={!activeKeyboard?{height: this.state.heightLayout}:null}>
+
+          <View >
 
           <ScrollView ref={(scrollView) => { this.scrollView = scrollView }}
           stickyHeaderIndices={[0]}
+          contentContainerStyle={{position:'relative',top:0}}
+          onContentSizeChange={(contentWidth, contentHeight)=>{
+            console.log(contentWidth, contentHeight);
+            (((isAgency || isCeo) && this.state.isReady<2) || (isCTV && this.state.isReady<1)) && this.setState({isReady:this.state.isReady+=1,heightLayout:contentHeight})
+          }}
           >
-          <View style={headCatStyle}>
+          <View style={[headCatStyle]}>
               <View style={headContent}>
                   <TouchableOpacity onPress={()=>goBack()}
                   hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
@@ -500,8 +511,7 @@ class MakeMoney extends Component {
                   <View></View>
               </View>
           </View>
-
-          <View style={activeKeyboard?{height: this.state.heightLayout}:null}>
+          <View style={{height:this.state.heightLayout}}>
           <View style={{width,height:200,justifyContent:'center',alignItems:'center',padding:40}}>
           <View style={{marginBottom:5,width:80,height:80,backgroundColor:'#fff',borderRadius:60,justifyContent:'center',alignItems:'center'}}>
           <Image source={makeMoneyIC} style={{width:60,height:60}} />
@@ -617,8 +627,9 @@ class MakeMoney extends Component {
                       }
                     }}
                     onFocus={(event) => {
-                      this._scrollToInput()
+                      this._scrollToInput(0.3)
                     }}
+                    //onScroll={(e)=>{console.log(e.nativeEvent.contentOffset)}}
                     onChangeText={(valLoc) => this.setState({valLoc})}
                     value={this.state.valLoc} />
 
@@ -662,9 +673,9 @@ class MakeMoney extends Component {
                         this.searchContent(act,this.state.valCTV);
                       }
                     }}
-                    //onScroll={(e)=>console.log('onScroll',e.nativeEvent.contentOffset)}
+                    onScroll={(e)=>{console.log(e.nativeEvent.contentOffset)}}
                     onFocus={(event) => {
-                      this._scrollToInput()
+                      this._scrollToInput(0.4)
                     }}
                     onChangeText={(valCTV) => this.setState({valCTV})}
                     value={this.state.valCTV} />
@@ -713,7 +724,7 @@ class MakeMoney extends Component {
                     //onLayout={(e)=>console.log('onLayout',e.x,e.y)}
                     //onScroll={(e)=>console.log('onScroll',e.nativeEvent.contentOffset)}
                     onFocus={(event) => {
-                      this._scrollToInput()
+                      this._scrollToInput(0.5)
                     }}
                     onChangeText={(valCTVCeo) => this.setState({valCTVCeo})}
                     value={this.state.valCTVCeo} />

@@ -55,6 +55,7 @@ class NotifyTab extends Component {
       page: 0,
       loadMore: true,
       disabled:false,
+      id_noti:0,
       //appState: AppState.currentState,
     };
     //this.getLoc();
@@ -122,15 +123,10 @@ class NotifyTab extends Component {
   }
 
   componentDidMount(){
+    //console.log('componentDidMount',this.props.isLogin);
       const _this = this;
       PushNotification.configure({
         onNotification: function(notification) {
-          // _this.props.navigation.dispatch(
-          //   NavigationActions.reset({
-          //     index: 0,
-          //     actions: [NavigationActions.navigate({ routeName: 'NotifyT' })]
-          //   })
-          // )
 
             if(notification.foreground)
             {
@@ -144,20 +140,20 @@ class NotifyTab extends Component {
             }else {
               _this.props.screenProps({},null,'NotifyT');
             }
-            console.log(notification);
-            // required on iOS only (see fetchCompletionHandler docs: https://facebook.github.io/react-native/docs/pushnotificationios.html)
-            if(Platform.OS == 'ios')
-            {
-              notification.finish(PushNotificationIOS.FetchResult.NoData);
-            }
+            //console.log('onNotification');
+            // // required on iOS only (see fetchCompletionHandler docs: https://facebook.github.io/react-native/docs/pushnotificationios.html)
+            // if(Platform.OS == 'ios')
+            // {
+            //   notification.finish(PushNotificationIOS.FetchResult.NoData);
+            // }
         },
       });
       AppState.addEventListener('change', (nextAppState)=>{
-        //alert('nextAppState.toString()');
-
         //alert(nextAppState.toString());
       });
-      this.props.navigation.setParams({ listNoti: this.props.listNoti });
+      //this.props.navigation.setParams({ listNoti: this.props.listNoti });
+
+
   }
   componentWillUnmount() {
     AppState.removeEventListener('change');
@@ -165,13 +161,21 @@ class NotifyTab extends Component {
   componentWillUpdate(){
     // console.log('isLogin',this.props.isLogin);
     // console.log('user_profile',this.props.user_profile);
-      const {user_profile,isLogin} = this.props;
-      if(isLogin && user_profile.id!==undefined){
+    const {user_profile,isLogin} = this.props;
+    if(isLogin && user_profile.id!==undefined){
+      if(channelUserAll===undefined){
         channelUserAll = socket.subscribe('get-new-notifi-all');
-        channelUser = socket.subscribe(`${'get-new-notifi-'}${user_profile.id}`);
+        console.log('channelUserAll.bind',this.props.isLogin);
       }
+      if(channelUser===undefined){
+        channelUser = socket.subscribe(`${'get-new-notifi-'}${user_profile.id}`);
+        console.log('channelUser.bind',this.props.isLogin);
+      }
+
+    }
   }
-  componentDidUpdate(){
+  componentDidUpdate(prevProps, prevState){
+
       countNoti = 0;
       let _this = this;
       clearTimeout(NotiTimeout);
@@ -183,36 +187,46 @@ class NotifyTab extends Component {
             data:data.data,
             title,
             message: contentText,
-            date: new Date(Date.now() + (1 * 1000)) // in 60 secs  + (3 * 1000)
+            date: new Date(Date.now()) // in 60 secs  + (3 * 1000)
           });
           countNoti=0;
         }
       });
-      NotiTimeout = setTimeout(()=>{
-          this.props.isLogin && channelUserAll.bind(`${'App\\Events\\getNotifi'}`,function(data) {
-            console.log('channelUserAll',data);
-            const {title,contentText} = data.data;
-            data.data!==undefined && data.data!==null && _this.getData();
+      // user login
+      this.props.isLogin && channelUserAll!==undefined && channelUserAll.bind(`${'App\\Events\\getNotifi'}`,function(data) {
+        const {title,contentText,id} = data.data;
+        NotiTimeout = setTimeout(function () {
+          _this.state.id_noti!==id && _this.setState({id_noti:id},()=>{
+              _this.props.dispatch({type:'STOP_START_UPDATE_STATE',updateState:true});
+              _this.getData();
               PushNotification.localNotificationSchedule({
                 data:data.data,
                 title,
                 message: contentText,
-                date: new Date(Date.now() + (1 * 1000)) // in 60 secs  + (3 * 1000)
+                date: new Date(Date.now()) // in 60 secs  + (3 * 1000)
               });
           });
+        }, 500);
+      });
 
-          this.props.isLogin && channelUser.bind(`${'App\\Events\\getNotifi'}`,function(data) {
-            console.log('channelUser',data);
-            const {title,contentText} = data.data;
-            data.data!==undefined && data.data!==null && _this.getData();
+      this.props.isLogin && channelUser!==undefined && channelUser.bind(`${'App\\Events\\getNotifi'}`,function(data) {
+
+        const {title,contentText,id} = data.data;
+        NotiTimeout = setTimeout(function () {
+          _this.state.id_noti!==id && _this.setState({id_noti:id},()=>{
+              _this.props.dispatch({type:'STOP_START_UPDATE_STATE',updateState:true});
+              _this.getData();
               PushNotification.localNotificationSchedule({
                 data:data.data,
                 title,
                 message: contentText,
-                date: new Date(Date.now() + (1 * 1000)) // in 60 secs  + (3 * 1000)
+                date: new Date(Date.now()) // in 60 secs  + (3 * 1000)
               });
           });
-      },1200);
+        }, 500);
+
+
+      });
   }
 
   requestOwner(route){
@@ -227,15 +241,15 @@ class NotifyTab extends Component {
   }
   render() {
     const {navigate} = this.props.navigation;
-    console.log('this.props.navigation',this.props.navigation);
+    //console.log('this.props.navigation',this.props.navigation);
     //console.log("this.props.Hometab=",util.inspect(this.props.navigation,false,null));
     const {
       container, bgImg,
       headStyle, imgLogoTop,headContent,inputSearch,colorlbl,
       listAdd,imgShare,wrapContent,btnPress,marTop,colorNext,
     } = styles;
-      const { listNoti, lang, page, loadMore, disabled } = this.state;
-    const { isLogin } =this.props;
+    const { listNoti, lang, page, loadMore, disabled } = this.state;
+    const { isLogin,user_profile } =this.props;
 
     //console.log('listNoti',listNoti.notifications);
     return (
@@ -265,7 +279,7 @@ class NotifyTab extends Component {
         </View>
 
         <View>
-        {listNoti.notifications !== undefined  && isLogin ?
+        {user_profile.id!==undefined ?
           <FlatList
            extraData={this.state}
            data={listNoti.notifications}

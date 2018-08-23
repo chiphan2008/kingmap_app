@@ -165,7 +165,11 @@ export default class App extends Component {
     // const { slLang } = defaultState;
     //console.log('slLang',slLang);
     if(route!==null) this.state.initApp=true;
-    if(updateRoute!==null) this.state.initRoute=updateRoute;
+    if(updateRoute!==null){
+      this.state.initRoute=updateRoute;
+    }else {
+      this.state.initRoute='HomeT';
+    }
     if(slLang.valueLang!==undefined){
       this.state.lang = (slLang.valueLang==='vn' || slLang.valueLang==='') ?lang_vn:lang_en;
     }

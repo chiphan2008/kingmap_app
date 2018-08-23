@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import {
   View,Text,Modal,TouchableOpacity,Image,
   Dimensions,PanResponder,Animated,AsyncStorage,
-  
+
 } from 'react-native';
 import ChangePwd from './ChangePwd';
 import checkNoti from '../../api/checkNoti';
@@ -80,7 +80,7 @@ export default class AppInfo extends Component {
               <Text style={colorTitle}>Version</Text>
             </View>
             <View style={{width:(width-30)/2}}>
-              <Text style={{color:'#B8B9BD'}}>{'1.0.1 dev'}</Text>
+              <Text style={{color:'#B8B9BD'}}>{'1.0.2 release'}</Text>
             </View>
          </View>
 

@@ -274,12 +274,15 @@ class UpdateInfo extends Component {
 
          {showDay && <View style={[wrapSelect,wrapBtnInfo,{top:Platform.OS==='ios'?245:275,left:Platform.OS==='ios'?52:57}]}>
          <ScrollView {...this._panResponder.panHandlers}
-    onScrollEndDrag={() => this.fScroll.setNativeProps({ scrollEnabled: true })} >
+         onScrollEndDrag={() => this.fScroll.setNativeProps({ scrollEnabled: true })} >
          <View style={widthDay}>
          {Array(listDay).fill().map((_, i) => {
            i=i+1; i = i<10 ? `0${i}` : i;
            return (
-             <TouchableOpacity key={i} onPress={()=>this.setState({dDay:i,showDay:false,disable:true})}>
+             <TouchableOpacity key={i} onPress={()=>{
+               this.fScroll.setNativeProps({ scrollEnabled: true });
+               this.setState({dDay:i,showDay:false,disable:true})
+             }}>
                 <Text style={colourTitle}>{i}</Text>
             </TouchableOpacity>
          )})}
@@ -295,7 +298,10 @@ class UpdateInfo extends Component {
          {Array(listMonth).fill().map((_, i) => {
            i=i+1; i = i<10 ? `0${i}` : i;
            return (
-             <TouchableOpacity key={i} onPress={()=>this.setState({mDay:i,showMonth:false,disable:true})}>
+             <TouchableOpacity key={i} onPress={()=>{
+               this.fScroll.setNativeProps({ scrollEnabled: true });
+               this.setState({mDay:i,showMonth:false,disable:true})
+             }}>
                 <Text style={colourTitle}>{i}</Text>
             </TouchableOpacity>
          )})}
@@ -310,7 +316,10 @@ class UpdateInfo extends Component {
          {Array(100).fill().map((_, i) => {
            i=listYear-i;
            return (
-             <TouchableOpacity key={i} onPress={()=>this.setState({yDay:i,showYear:false,disable:true})}>
+             <TouchableOpacity key={i} onPress={()=>{
+               this.fScroll.setNativeProps({ scrollEnabled: true });
+               this.setState({yDay:i,showYear:false,disable:true})
+             }}>
                 <Text style={colourTitle}>{i}</Text>
             </TouchableOpacity>
          )})}

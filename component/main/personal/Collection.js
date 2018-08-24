@@ -40,8 +40,9 @@ class Collection extends Component {
       loading:true,
       page:0,
       paddingKeyboard: 0,
+      activeKeyboard:false,
     }
-    
+
     checkLogin().then(e=>{
       //console.log('checkLogin',e);
       if(e.id===undefined){
@@ -53,25 +54,28 @@ class Collection extends Component {
         });
       }
     });
-    
+
   }
-  // componentDidMount () {
-  //   this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardWillShow);
-  //   this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardWillHide);
-  // }
+  componentDidMount () {
+    this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
+    this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
+  }
 
-  // componentWillUnmount () {
-  //   this.keyboardDidShowListener.remove();
-  //   this.keyboardDidHideListener.remove();
-  // }
+  componentWillUnmount () {
+    this.keyboardDidShowListener.remove();
+    this.keyboardDidHideListener.remove();
+  }
 
-  // _keyboardWillShow = (event) => {
-  //   this.setState({paddingKeyboard: 4})
-  // }
+  _keyboardDidShow = () => {
+    this.setState({activeKeyboard:true});
+  }
 
-  // _keyboardWillHide = (event) => {
-  //   this.setState({paddingKeyboard: 0})
-  // }
+  _keyboardDidHide = () => {
+    this.setState({activeKeyboard:false});
+  }
+  _scrollToInput (y) {
+    this.scrollView.scrollToIndex({index: y || 0});
+  }
 
   getData(page=null){
     this.setState({loading:false});
@@ -185,22 +189,30 @@ class Collection extends Component {
       closeCollection,
     } = styles;
     return (
+        <View style={container}>
 
-        <View style={[container]}>
-          <View style={headCatStyle}>
-              <View style={headContent}>
-                  <TouchableOpacity onPress={()=>{
-                    this.props.dispatch({type:'STOP_START_UPDATE_STATE',updateState:true})
-                    goBack();
-                  }} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
-                  <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
-                  </TouchableOpacity>
-                    <Text style={titleCreate}>{lang.collection.toUpperCase()} </Text>
-                  <View></View>
-              </View>
-          </View>
           <FlatList
              extraData={this.state}
+             ref={r => this.scrollView = r}
+             stickyHeaderIndices={[0]}
+             ListHeaderComponent={
+               <View style={headCatStyle}>
+                   <View style={headContent}>
+                       <TouchableOpacity onPress={()=>{
+                         this.props.dispatch({type:'STOP_START_UPDATE_STATE',updateState:true})
+                         goBack();
+                       }} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
+                       <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
+                       </TouchableOpacity>
+                         <Text style={titleCreate}>{lang.collection.toUpperCase()} </Text>
+                       <View></View>
+                   </View>
+               </View>
+             }
+             ListFooterComponent={
+               this.state.activeKeyboard &&
+               <View style={{height:400}}></View>
+             }
              keyExtractor={item => item.id.toString()}
              onEndReachedThreshold={0.5}
              onEndReached={() => {
@@ -217,8 +229,11 @@ class Collection extends Component {
                      <View style={listCreate}>
                        <View style={{width:width-105,flexDirection:'row',alignItems:'center'}}>
                             <View style={isFocus && showInput[item.id] ? show : hide}>
-                              <TextInput underlineColorAndroid='transparent' 
+                              <TextInput underlineColorAndroid='transparent'
                               // autoFocus={isFocus}
+                                onFocus={()=>{
+                                  //this._scrollToInput(index)
+                                }}
                                 onSubmitEditing={(event) => {}}
                                 style={{padding:5,fontSize:18,maxWidth:width-(width/3)}} value={name_coll}
                                 onChangeText={(name_coll) => this.setState({name_coll})}
@@ -232,7 +247,7 @@ class Collection extends Component {
                              if(this.state.showInput[item.id] === item.id){
                               if(isFocus){
                                  this.editCollection(item.id,index);
-                                
+
                                  this.setState({isFocus:false,showInput:Object.assign({},{[item.id]:!item.id})});
                                }else {
                                  this.setState({
@@ -244,7 +259,7 @@ class Collection extends Component {
                                 isFocus:true,name_coll:item.name,
                                 showInput:Object.assign({},{[item.id]:item.id})})
                              }
-                             
+
                            }}>
                              <Image source={(isFocus && showInput[item.id]) ? saveBlueIC : editBlueIC} style={{width:15,height:15}} />
                            </TouchableOpacity>
@@ -304,8 +319,7 @@ class Collection extends Component {
              )}
           />
 
-          </View>
-
+        </View>
     );
   }
 }

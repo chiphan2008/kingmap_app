@@ -236,26 +236,52 @@ class FormCreate extends Component {
   }
 
   confirmPostData(){
-
-    if(this.state.hasSubCat===0){this.setState({errMsg:this.state.lang.enter_classify});return false;}
+    Keyboard.dismiss();
+    if(this.state.hasSubCat===0){
+      return Alert.alert(this.state.lang.notify,this.state.lang.enter_classify);
+    }
     //console.log('confirmPostData2');
-    if(this.state.txtName===''){this.setState({errMsg:this.state.lang.enter_name});return false;}
+    if(this.state.txtName===''){
+      //this.setState({errMsg:this.state.lang.enter_name});
+      return Alert.alert(this.state.lang.notify,this.state.lang.enter_name);
+    }
     //console.log('confirmPostData3');
-    if(this.state.txtAddress===''){this.setState({errMsg:this.state.lang.enter_address});return false;}
+    if(this.state.txtAddress===''){
+      //this.setState({errMsg:this.state.lang.enter_address});
+      return Alert.alert(this.state.lang.notify,this.state.lang.enter_address);
+    }
     //console.log('confirmPostData4');
-    if(this.state.ListOpenTime.length===0){this.setState({errMsg:this.state.lang.enter_time});return false;}
+    if(this.state.ListOpenTime.length===0){
+      //this.setState({errMsg:this.state.lang.enter_time});
+      return Alert.alert(this.state.lang.notify,this.state.lang.enter_time);
+    }
     //console.log('confirmPostData5');
     if(this.state.idCountry==='' || this.state.idCity==='' || this.state.idDist===''){
-      this.setState({errArea:true});return false;
+      //this.setState({errArea:true});return false;
+      return Alert.alert(this.state.lang.notify,this.state.lang.plz_choose_area);
     }
     //console.log('confirmPostData6');
-    if(this.state.txtKW===null || this.state.txtKW.trim()==='' || strtoarray(this.state.txtKW,',').length<3 ){this.setState({errMsg:this.state.lang.enter_kw});return false;}
+    if(this.state.txtKW===null || this.state.txtKW.trim()==='' || strtoarray(this.state.txtKW,',').length<3 ){
+      //this.setState({errMsg:this.state.lang.enter_kw});
+      return Alert.alert(this.state.lang.notify,this.state.lang.enter_kw);
+    }
     //console.log('confirmPostData7');
-    if(this.state.imgAvatar.path===undefined){this.setState({errMsg:this.state.lang.enter_avatar});return false;}
+    if(this.state.imgAvatar.path===undefined){
+      //this.setState({errMsg:this.state.lang.enter_avatar});return false;
+      return Alert.alert(this.state.lang.notify,this.state.lang.enter_avatar);
+    }
     //console.log('confirmPostData8');
-    if(this.state.lat==='Lat 0.0' || this.state.lat===''){this.setState({errMsg:this.state.lang.enter_address_again});return false;}
+    if(this.state.lat==='Lat 0.0' || this.state.lat===''){
+      //this.setState({errMsg:this.state.lang.enter_address_again});return false;
+      return Alert.alert(this.state.lang.notify,this.state.lang.enter_address_again);
+    }
     //console.log('confirmPostData9',isEmail(this.state.txtEmail));
-    if(this.state.txtEmail!=='' && this.state.txtEmail!==null){if(!isEmail(this.state.txtEmail.trim())) {this.setState({errMsg:this.state.lang.email_format});return false;}}
+    if(this.state.txtEmail!=='' && this.state.txtEmail!==null){
+      if(!isEmail(this.state.txtEmail.trim())) {
+        //this.setState({errMsg:this.state.lang.email_format});return false;
+        return Alert.alert(this.state.lang.notify,this.state.lang.email_format);
+      }
+    }
     //console.log('confirmPostData10');
     this.setState({showLoading:true});
     const arr = new FormData();
@@ -335,7 +361,7 @@ class FormCreate extends Component {
     const act = this.state.editLoc?'update-location':'create-location';
     // console.log('e',`${global.url}${act}`);
     postApi(`${global.url}${act}`,arr).then((e)=>{
-      console.log('postApi-e',e);
+      //console.log('postApi-e',e);
       this.setState({showLoading:false,errMsg:''},()=>{
         this.state.showLoading===false && setTimeout(()=>{
           if(e.code===200){

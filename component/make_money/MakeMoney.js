@@ -133,7 +133,7 @@ class MakeMoney extends Component {
   }
   _scrollToInput (y) {
     //this.scrollView.scrollToEnd()
-    console.log(this.state.heightLayout);
+    //console.log(this.state.heightLayout);
     y=(this.state.heightLayout<1030 && !this.state.isCeo)?y+0.2:y;
     this.scrollView.scrollTo({y:this.state.heightLayout*y});
   }

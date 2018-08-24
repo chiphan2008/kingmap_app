@@ -31,6 +31,14 @@
           }
         },
         {
+          "client_id": "278965524140-i8qpg8l217kft1usubg4lce3m987qll8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kingmap_app",
+            "certificate_hash": "613007f0512bad5a475908528dfb780cdd3a2af3"
+          }
+        },
+        {
           "client_id": "278965524140-kdfddo63ljd1ljp06mp61ljgpnad9sj0.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -52,11 +60,10 @@
               "client_type": 3
             },
             {
-              "client_id": "278965524140-npl5pvrlnkh302hagt7lr648msoui2fc.apps.googleusercontent.com",
+              "client_id": "278965524140-utus34metiirt8bd8k16clrt7h0fd0jj.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "org.reactjs.native.example.kingmap-app",
-                "app_store_id": "6553"
+                "bundle_id": "com.kingmapvn.kingmapapp"
               }
             }
           ]

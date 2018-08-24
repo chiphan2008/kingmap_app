@@ -165,11 +165,11 @@ class NotifyTab extends Component {
     if(isLogin && user_profile.id!==undefined){
       if(channelUserAll===undefined){
         channelUserAll = socket.subscribe('get-new-notifi-all');
-        console.log('channelUserAll.bind',this.props.isLogin);
+        //console.log('channelUserAll.bind',this.props.isLogin);
       }
       if(channelUser===undefined){
         channelUser = socket.subscribe(`${'get-new-notifi-'}${user_profile.id}`);
-        console.log('channelUser.bind',this.props.isLogin);
+        //console.log('channelUser.bind',this.props.isLogin);
       }
 
     }

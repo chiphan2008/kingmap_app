@@ -91,7 +91,7 @@ export default class AppInfo extends Component {
               <Text style={colorTitle}>{'Ngày cập nhật:'}</Text>
             </View>
             <View style={{width:(width-30)/2}}>
-              <Text style={{color:'#B8B9BD'}}>{'23/07/2018'}</Text>
+              <Text style={{color:'#B8B9BD'}}>{'24/08/2018'}</Text>
             </View>
          </View>
       </View>

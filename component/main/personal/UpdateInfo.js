@@ -173,6 +173,9 @@ class UpdateInfo extends Component {
     this.props.dispatch({type:'STOP_START_UPDATE_STATE',updateState:true});
     this.props.navigation.goBack();
   }
+  _scrollToInput (y) {
+    this.fScroll.scrollTo({y:height*y});
+  }
 
   render() {
     const {
@@ -191,6 +194,10 @@ class UpdateInfo extends Component {
         <View style={wrapper} onStartShouldSetResponderCapture={() => {
             this.setState({ enableScrollViewScroll: true });
         }}>
+
+          <ScrollView ref={(e) => { this.fScroll = e }}
+          stickyHeaderIndices={[0]}
+          >
           <View style={headCatStyle}>
               <View style={headContent}>
                   <TouchableOpacity onPress={()=>{this.closeModal()}} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
@@ -202,8 +209,8 @@ class UpdateInfo extends Component {
                   </TouchableOpacity>
               </View>
           </View>
-          <ScrollView ref={(e) => { this.fScroll = e }}>
-          <KeyboardAvoidingView behavior="padding">
+
+          <KeyboardAvoidingView behavior="padding" style={{minHeight:height*1.5}}>
           <TouchableWithoutFeedback onPress={() =>{
             this.fScroll.setNativeProps({ scrollEnabled: true });
             this.setState({showDay:false,showMonth:false,showYear:false})}}>
@@ -339,6 +346,7 @@ class UpdateInfo extends Component {
                returnKeyType = {"next"} ref='address' placeholder={lang.address}
                onSubmitEditing={(event) => {this.refs.phone.focus();}}
                style={wrapInputCreImg}
+               onFocus={()=>{this._scrollToInput(0.3)}}
                onChangeText={(address) => this.setState({address})}
                value={this.state.address}
                 />
@@ -356,6 +364,7 @@ class UpdateInfo extends Component {
                  returnKeyType = {"next"} ref='phone'
                  maxLength={12} keyboardType={'numeric'}
                  placeholder={lang.phone}
+                 onFocus={()=>{this._scrollToInput(0.4)}}
                  onSubmitEditing={(event) => {this.refs.description.focus();}}
                  style={wrapInputCreImg}
                  onChangeText={(text)=>this.handlePhone(text,'phone')}
@@ -375,6 +384,7 @@ class UpdateInfo extends Component {
                multiline
                numberOfLines={4}
                maxHeight={65}
+               onFocus={()=>{this._scrollToInput(0.5)}}
                placeholder={lang.description_persional}
                returnKeyType = {"done"} ref='description'
                style={wrapInputCreImg}

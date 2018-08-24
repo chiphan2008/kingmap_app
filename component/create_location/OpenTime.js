@@ -399,9 +399,9 @@ export class ListChooseDate extends Component {
           this.props.updateDate(index);
           this.props.closeModal();
         }}
-        style={{position:'absolute',top:10,right:10}}
+        style={{position:'absolute',top:Platform.OS==='ios'?20:10,right:10}}
         hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
-        <Image source={closeIC} style={{width:18, height:18}} />
+        <Image source={closeIC} style={{width:20, height:20}} />
         </TouchableOpacity>
 
         <View style={{backgroundColor:'#fff',width:width-50,padding:10}}>

@@ -1,8 +1,9 @@
 /* @flow */
 import React, { Component } from 'react';
 import {
-  View,Text,Modal,TouchableOpacity,Image,
-  TextInput,Dimensions,ScrollView,
+  View,Text,Modal,TouchableOpacity,Image,Keyboard,
+  TextInput,Dimensions,ScrollView,Platform,
+  TouchableWithoutFeedback
 } from 'react-native';
 import styles from '../styles';
 import postApi from '../api/postApi';
@@ -27,6 +28,7 @@ export default class AddImgMenu extends Component {
       title_menu_update:{},
       txtErr:'',
       update:false,
+      activeKeyboard:0,
     }
   }
   uploadSpace(){
@@ -47,7 +49,7 @@ export default class AddImgMenu extends Component {
         this.state.imgMenu.push(e);
       })
       this.state.imgMenuUpdate = this.state.imgMenu;
-      
+
       this.setState(this.state,()=>{
         this.gotoEndScroll();
       })
@@ -93,6 +95,23 @@ export default class AddImgMenu extends Component {
       })
     }
   }
+  componentDidMount(){
+    this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
+    this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
+  }
+  componentWillUnmount () {
+    this.keyboardDidShowListener.remove();
+    this.keyboardDidHideListener.remove();
+  }
+
+  _keyboardDidShow = () => {
+    this.setState({activeKeyboard:120});
+  }
+
+  _keyboardDidHide = () => {
+    this.setState({activeKeyboard:0});
+  }
+
   render() {
     const {
       container,headCatStyle,headContent,titleCreate,
@@ -107,6 +126,15 @@ export default class AddImgMenu extends Component {
       animationType={'slide'} visible={this.props.visible}
       >
       <View style={container}>
+
+          <ScrollView keyboardShouldPersistTaps='always'
+          onContentSizeChange={(contentWidth, contentHeight)=>{
+            //this.gotoEndScroll(contentWidth, contentHeight)
+          }}
+          ref={(scrollView) => { this.scrollView = scrollView }}
+          stickyHeaderIndices={[0]}
+          >
+          <TouchableWithoutFeedback onPress={()=>Keyboard.dismiss()}>
           <View style={headCatStyle}>
               <View style={headContent}>
                   <TouchableOpacity onPress={()=>{
@@ -123,12 +151,8 @@ export default class AddImgMenu extends Component {
                   <View></View>
               </View>
           </View>
-
-
-          <ScrollView
-          onContentSizeChange={(contentWidth, contentHeight)=>this.gotoEndScroll(contentWidth, contentHeight)}
-          ref={(scrollView) => { this.scrollView = scrollView }}
-          >
+          </TouchableWithoutFeedback>
+          <View style={{paddingBottom:this.state.activeKeyboard}}>
           <View style={{justifyContent:'center',alignItems:'center',backgroundColor:'#FFFEFF',padding:50,marginBottom:5,borderColor:'#ECEEF3',borderBottomWidth:1}}>
             <TouchableOpacity
             onPress={()=>this.uploadSpace()}>
@@ -138,11 +162,12 @@ export default class AddImgMenu extends Component {
           </View>
 
           {this.state.imgMenu.length > 0 ?
-            <View>
+            <View style={{paddingBottom:this.state.activeKeyboard}}>
             {this.state.imgMenu.map((e,index)=>(
               <View key={index}>
-
+              <TouchableWithoutFeedback onPress={()=>Keyboard.dismiss()}>
               <Image style={{width,height:300,resizeMode: 'cover'}} source={{isStatic:true,uri:e.path!==undefined?`${e.path}`:`${e.url}`}} />
+              </TouchableWithoutFeedback>
               <TouchableOpacity style={{position:'absolute',right:5,top:5}}
               onPress={()=>{
                 this.state.imgMenu.splice(index, 1);
@@ -163,6 +188,7 @@ export default class AddImgMenu extends Component {
 
               <View style={{backgroundColor:'#fff',marginBottom:20,width,paddingLeft:30,paddingRight:30}}>
               <TextInput underlineColorAndroid='transparent'
+                style={Platform.OS==='ios'?{paddingTop:20,paddingBottom:20}:null}
                 placeholder={lang.subject}
                 maxLength={128}
                 placeholderTextColor={'#A9BFD0'}
@@ -193,6 +219,7 @@ export default class AddImgMenu extends Component {
                />
                <View style={{width:width-60,borderBottomWidth:1,borderColor:'#E0E8ED'}}></View>
                <TextInput underlineColorAndroid='transparent'
+                 style={Platform.OS==='ios'?{paddingTop:20,paddingBottom:20}:null}
                  placeholder={lang.write_description}
                  maxLength={128}
                  placeholderTextColor={'#A9BFD0'}
@@ -224,6 +251,7 @@ export default class AddImgMenu extends Component {
             :
             <View></View>
           }
+          </View>
           </ScrollView>
           </View>
 

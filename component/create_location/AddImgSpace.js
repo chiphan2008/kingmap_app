@@ -2,7 +2,8 @@
 import React, { Component } from 'react';
 import {
   View,Text,Modal,TouchableOpacity,Image,
-  TextInput,Dimensions,ScrollView,
+  TextInput,Dimensions,ScrollView,Platform,
+  TouchableWithoutFeedback,Keyboard
 } from 'react-native';
 import postApi from '../api/postApi';
 import getApi from '../api/getApi';
@@ -28,6 +29,7 @@ export default class AddImgSpace extends Component {
       title_space_update:{},
       txtErr:'',
       update:false,
+      activeKeyboard:0,
     }
   }
   uploadSpace(){
@@ -100,6 +102,23 @@ export default class AddImgSpace extends Component {
       })
     }
   }
+  componentDidMount(){
+    this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
+    this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
+  }
+  componentWillUnmount () {
+    this.keyboardDidShowListener.remove();
+    this.keyboardDidHideListener.remove();
+  }
+
+  _keyboardDidShow = () => {
+    this.setState({activeKeyboard:230});
+  }
+
+  _keyboardDidHide = () => {
+    this.setState({activeKeyboard:0});
+  }
+
   render() {
     const {
       container,headCatStyle,headContent,titleCreate,
@@ -114,6 +133,15 @@ export default class AddImgSpace extends Component {
       animationType={'slide'} visible={this.props.visible}
       >
       <View style={container}>
+
+          <ScrollView keyboardShouldPersistTaps='always'
+          onContentSizeChange={(contentWidth, contentHeight)=>{
+            //this.gotoEndScroll(contentWidth, contentHeight)
+          }}
+          ref={(scrollView) => { this.scrollView = scrollView }}
+          stickyHeaderIndices={[0]}
+          >
+          <TouchableWithoutFeedback onPress={()=>Keyboard.dismiss()}>
           <View style={headCatStyle}>
               <View style={headContent}>
                   <TouchableOpacity onPress={()=>{
@@ -129,13 +157,8 @@ export default class AddImgSpace extends Component {
                     <Text style={titleCreate}> {lang.add_gallery} </Text>
                   <View></View>
               </View>
-
           </View>
-
-
-          <ScrollView
-          onContentSizeChange={(contentWidth, contentHeight)=>this.gotoEndScroll(contentWidth, contentHeight)}
-          ref={(scrollView) => { this.scrollView = scrollView }}>
+          </TouchableWithoutFeedback>
           <View style={{justifyContent:'center',alignItems:'center',backgroundColor:'#FFFEFF',padding:50,borderColor:'#ECEEF3',borderBottomWidth:1,marginBottom:5}}>
             <TouchableOpacity onPress={()=>this.uploadSpace()}>
             <Image source={cameraLargeIC} style={{width:60,height:60,marginBottom:10}}/>
@@ -143,10 +166,12 @@ export default class AddImgSpace extends Component {
             <Text style={{fontSize:20}}>{lang.upload_image.toUpperCase()}</Text>
           </View>
           {this.state.imgSpace.length > 0 ?
-            <View>
+            <View style={{paddingBottom:this.state.activeKeyboard}}>
             {this.state.imgSpace.map((e,index)=>(
               <View key={index}>
+              <TouchableWithoutFeedback onPress={()=>Keyboard.dismiss()}>
               <Image style={{width,height:300,resizeMode: 'cover'}} source={{isStatic:true,uri:e.path==undefined?`${e.url}`:`${e.path}`}} />
+              </TouchableWithoutFeedback>
               <TouchableOpacity style={{position:'absolute',right:5,top:5}}
               onPress={()=>{
                 this.state.imgSpace.splice(index, 1);
@@ -165,6 +190,7 @@ export default class AddImgSpace extends Component {
               <View style={{backgroundColor:'#fff',marginBottom:20,width,paddingLeft:30,paddingRight:30}}>
               <TextInput underlineColorAndroid='transparent'
                 placeholder={lang.subject}
+                style={Platform.OS==='ios'?{paddingTop:20,paddingBottom:20}:null}
                 maxLength={128}
                 placeholderTextColor={'#A9BFD0'}
                 onChangeText={(text) => {
@@ -195,6 +221,7 @@ export default class AddImgSpace extends Component {
                <View style={{width:width-60,borderBottomWidth:1,borderColor:'#E0E8ED'}}></View>
                <TextInput underlineColorAndroid='transparent'
                  placeholder={lang.write_description}
+                 style={Platform.OS==='ios'?{paddingTop:20,paddingBottom:20}:null}
                  placeholderTextColor={'#A9BFD0'}
                  maxLength={128}
                  onChangeText={(text) => {

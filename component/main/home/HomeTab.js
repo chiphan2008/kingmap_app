@@ -195,7 +195,7 @@ class HomeTab extends Component {
       wrapContent,iconHomeTab,iconHome,square,wrapCircle,logoCenter,circle1,circle2,circle3,circle4,circle5,circle6,circle7,circle8,labelCat,labelNum,
       plusStyle,imgPlusStyle,popover,overLayout,listOver,popoverShare,popoverCreate,overLayoutShare,listOverShare,imgMargin,imgUpHome,imgUpInfo,imgUpShare
     } = styles;
-    let i=0;
+    let i=0;const x=85;const y=70;const distance=(width/10)<60?120:140;
     return (
       <TouchableWithoutFeedback onPress={()=>Keyboard.dismiss()}>
       <View style={container} >
@@ -280,6 +280,24 @@ class HomeTab extends Component {
                   <Text style={labelCat}>{e.name}</Text>
                 </TouchableOpacity>);
                 break;
+                case 'chat':
+                    let angle = index-i;
+                    pos = this.findNewPoint(x, y, angle, distance);
+                    return (<TouchableOpacity
+                        key={e.id}
+                        style={{position:'absolute',alignItems:'center',top:pos.y,left :pos.x,overflow: 'visible'}}
+                        onPress={() => {
+                          this.requestLogin();
+                          if(this.props.isLogin){
+                            navigate('ContactScr',{user_id:this.state.user_id,avatar:this.state.avatar, name_module:e.name,lang:this.state.lang});
+                          }
+                        }}
+                        >
+
+                      <Image style={e.noibat===1?iconHome:iconHomeTab} source={{uri:`${global.url_media}${e.image}`}} />
+                      <Text style={labelCat}>{e.name}</Text>
+                    </TouchableOpacity>);
+                      break;
                 case 'make_money':
                 return (<TouchableOpacity key={e.id}
                     //style={{position:'absolute',alignItems:'center',top:pos.y,left :pos.x,overflow: 'visible'}}
@@ -298,7 +316,7 @@ class HomeTab extends Component {
             })}
             {/*
               this.state.listCategory.map((e,index)=>{
-                const x=85;const y=70;const distance=(width/10)<60?120:140;
+
                 let angle = (360/(this.state.listCategory.length-1));
                 let pos = this.findNewPoint(x, y, angle, distance);
                 //console.log(e);

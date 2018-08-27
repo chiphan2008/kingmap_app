@@ -126,13 +126,14 @@ export default class Messenger extends Component {
     } = styles;
 
     return (
-      <KeyboardAvoidingView style={container} keyboardVerticalOffset={-500} behavior="padding" enabled>
+      <View style={container}>
         <ScrollView
         onContentSizeChange={(contentWidth, contentHeight)=>{
             this.scrollView.scrollToEnd({animated: false});
         }}
         ref={(scrollView) => { this.scrollView = scrollView }}
         scrollEnabled
+        stickyHeaderIndices={[0]}
         >
         <View style={headCatStyle}>
             <View style={headContent}>
@@ -146,8 +147,35 @@ export default class Messenger extends Component {
             </View>
         </View>
 
-        <View style={{width,marginTop: 70,marginBottom:Platform.OS==='ios' ? 70 :90}}>
+        <View style={{width,minHeight:height*1.9,marginTop: 70,marginBottom:Platform.OS==='ios' ? 70 :90}}>
           {index_item>1 ? listData : <View key={0}></View>}
+        </View>
+        <View style={bottomSend}>
+            <TextInput underlineColorAndroid='transparent'
+            placeholder={`${'Nhập nội dung ...'}`}
+            onChangeText={(text) => {
+              this.setState({text})
+              if(text.length===1 && showType===false){
+                this.handleEnterText(true)
+              }
+              if(text.length===0){
+                this.handleEnterText(false)
+              }
+            }}
+            onSubmitEditing={(event) => {
+              if(text!==''){
+                this.sendMessage();
+              }
+            }} value={text} style={txtInput} />
+
+            <TouchableOpacity onPress={()=>{
+              if(text!==''){
+                this.sendMessage();
+                Keyboard.dismiss()
+              }
+            }}>
+            <Image source={sendEmailIC} style={{width:20,height:20}} />
+            </TouchableOpacity>
         </View>
         </ScrollView>
 
@@ -156,41 +184,9 @@ export default class Messenger extends Component {
           <Text style={{fontSize:12,fontStyle:'italic',color:'#fff'}}>{name} đang nhập ...</Text>
         </View>}
 
-        <View style={bottomSend}>
-        <TextInput
-        underlineColorAndroid='transparent'
-        placeholder={`${'Nhập nội dung ...'}`}
-        onChangeText={(text) => {
-          this.setState({text})
-          if(text.length===1 && showType===false){
-            this.handleEnterText(true)
-          }
-          if(text.length===0){
-            this.handleEnterText(false)
-          }
-          //console.log('showType',showType);
-        }}
-        onSubmitEditing={(event) => {
-          if(text!==''){
-            this.sendMessage();
-          }
-        }}
-        value={text}
-        style={txtInput} />
 
-        <TouchableOpacity
-        onPress={()=>{
-          if(text!==''){
-            this.sendMessage();
-            Keyboard.dismiss()
-          }
-        }}>
-        <Image source={sendEmailIC} style={{width:20,height:20}} />
-        </TouchableOpacity>
 
-        </View>
-
-      </KeyboardAvoidingView>
+      </View>
     );
   }
 }

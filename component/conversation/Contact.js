@@ -11,46 +11,64 @@ import postEncodeApi from '../api/postEncodeApi';
 import global from '../global';
 import ListChat from './ListChat';
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
+import chatIC from '../../src/icon/ic-blue/ic-chat.png';
+import userIC from '../../src/icon/ic-blue/ic-user.png';
+import groupIC from '../../src/icon/ic-blue/ic-group.png';
 import onlineIC from '../../src/icon/ic-green/ic-online.png';
-import {checkUrl} from '../libs';
+import {checkUrl,checkFriend} from '../libs';
 
 export default class Contact extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      listData:[],
+      listSys:[],
+      listHis:[],
       yf_id:'',
-      activeTab:'system',
+      activeTab:'history',
     };
-    this.getData();
+    this.getHistory();
   }
-
-  getData(page=null){
+  getHistory(page=null){
     const { user_id } = this.props.navigation.state.params;
     if(page===null) page=0;
-    const url = `${global.url_node}${'except-person/'}${user_id}${'?skip='}${page}${'&limit=20'}`;
+    const url = `${global.url_node}${'history-chat/'}${user_id}${'?skip='}${page}${'&limit=20'}`;
     console.log(url);
     getEncodeApi(url).then(e=>{
       //console.log('e',e.data);
       if(page===0){
-        this.state.listData=e.data;
+        this.state.listHis=e.data;
       }else {
-        this.state.listData.concat(e.data);
+        this.state.listHis.concat(e.data);
       }
       this.setState(this.state)
     })
   }
-  addFriend(id,name,urlhinh){
+  getSystem(page=null){
+    const { user_id } = this.props.navigation.state.params;
+    if(page===null) page=0;
+    const url = `${global.url_node}${'except-person/'}${user_id}${'?skip='}${page}${'&limit=20'}`;
+    //console.log(url);
+    getEncodeApi(url).then(e=>{
+      //console.log('e',e.data);
+      if(page===0){
+        this.state.listSys=e.data;
+      }else {
+        this.state.listSys.concat(e.data);
+      }
+      this.setState(this.state)
+    })
+  }
+  addFriend(friend_id){
     const { user_id } = this.props.navigation.state.params;
     const url = `${global.url_node}${'add-friend'}`;
-    const param = `${'id='}${user_id}&${'user_id='}${id}&${'name='}${name}&${'urlhinh='}${urlhinh}`;
+    const param = `${'id='}${user_id}&${'friend_id='}${friend_id}`;
     //console.log('(url,param)',url,param);
     postEncodeApi(url,param);
   }
   render() {
     const { lang,name_module,user_id,avatar } = this.props.navigation.state.params;
     const { navigation } = this.props;
-    const { listData,activeTab } = this.state;
+    const { listSys,listHis,activeTab } = this.state;
     //console.log('listData',listData);
     const {
       container,contentWrap,headCatStyle,headContent,titleCreate,
@@ -71,40 +89,56 @@ export default class Contact extends Component {
           </View>
       </View>
       <View style={{backgroundColor:'#fff',flexDirection:'row',borderBottomWidth:1,borderColor:'#E9E8EF'}}>
-        <TouchableOpacity style={[wrapTab,activeTab==='system' ? borderActive : '']}
-        onPress={()=>{this.setState({activeTab:'system'})}}>
-        <Text style={[activeTab==='system' ? colorTabActive : colorName,tabCenter]}> Hệ thống </Text>
+
+        <TouchableOpacity style={[wrapTab,activeTab==='history' ? borderActive : '']}
+        onPress={()=>{
+          activeTab!=='history' && this.setState({activeTab:'history'})
+        }}>
+        <Image source={chatIC} style={{width:20,height:20}} />
         </TouchableOpacity>
+
         <TouchableOpacity style={[wrapTab,activeTab==='contact' ? borderActive : '']}
-        onPress={()=>{this.setState({activeTab:'contact'})}}>
-        <Text style={[activeTab==='contact' ? colorTabActive : colorName,tabCenter]}> Danh bạ </Text>
+        onPress={()=>{
+          activeTab!=='contact' && this.setState({activeTab:'contact'})
+        }}>
+        <Image source={userIC} style={{width:20,height:20}} />
         </TouchableOpacity>
+
+        <TouchableOpacity style={[wrapTab,activeTab==='system' ? borderActive : '']}
+        onPress={()=>{
+          activeTab!=='system' && this.setState({activeTab:'system'},()=>{
+            this.state.listSys.length===0 && this.getSystem();
+          })
+        }}>
+        <Image source={groupIC} style={{width:20,height:20}} />
+        {/*<Text style={[activeTab==='system' ? colorTabActive : colorName,tabCenter]}> Hệ thống </Text>*/}
+        </TouchableOpacity>
+
       </View>
 
         <View style={[contentWrap,activeTab==='system' ? show : hide]}>
-        {listData.length>0 ?
+        {listSys.length>0 ?
           <View>
 
           <FlatList
              extraData={this.state}
              keyExtractor={(item, index) => index.toString()}
-             data={listData}
-             renderItem={({item}) => (
+             data={listSys}
+             renderItem={({item,index}) => (
                <View style={wrapItems}>
                <TouchableOpacity style={{flexDirection:'row',alignItems:'center',width:width-105}}
                onPress={()=>navigation.navigate('MessengerScr',{user_id,yf_id:item.id,yf_avatar:item.urlhinh,name:item.name,port_connect:user_id<item.id ? `${user_id}_${item.id}` : `${item.id}_${user_id}`})}>
-                  <View>
-                 <Image source={{uri: checkUrl(item.urlhinh) ? `${item.urlhinh}` : `${global.url_media}/${item.urlhinh}`}} style={{width:50,height:50,borderRadius:25,marginRight:7}} />
+                <View>
+                 <Image source={{uri: checkUrl(item.urlhinh) ? `${item.urlhinh}` : `${global.url_release_media}${item.urlhinh}`}} style={{width:50,height:50,borderRadius:25,marginRight:7}} />
                  {Moment(item.online_at).diff(item.offline_at, 'minutes')>=0 &&
                  <Image source={onlineIC} style={{width:10,height:10,position:'absolute',right:10,top:40}} />}
                  </View>
                  <Text style={colorName}>{item.name}</Text>
                </TouchableOpacity>
-
-               <TouchableOpacity style={{flexDirection:'row',alignItems:'center',borderWidth:1,paddingLeft:10,paddingRight:10,padding:3,maxHeight:34,borderRadius:17,borderColor:'#5b89ab'}}
-               onPress={()=>this.addFriend(item.id,item.name,item.urlhinh)}>
+               {!checkFriend(item.friends,user_id) && <TouchableOpacity style={{flexDirection:'row',alignItems:'center',borderWidth:1,paddingLeft:10,paddingRight:10,padding:3,maxHeight:34,borderRadius:17,borderColor:'#5b89ab'}}
+               onPress={()=>this.addFriend(item.id)}>
                  <Text style={{color:'#5b89ab',fontSize:14}}>Kết bạn</Text>
-               </TouchableOpacity>
+               </TouchableOpacity>}
                </View>
           )} />
           </View>
@@ -143,7 +177,7 @@ const styles = StyleSheet.create({
   titleCreate:{color:'white',fontSize:18,paddingTop:5},
   colorName:{color:'#2F3540',fontSize:16},
   colorTabActive:{color:'#5b89ab',fontSize:16,fontWeight:'400'},
-  wrapTab:{width:width/2,padding:10,borderBottomWidth:1},
+  wrapTab:{width:width/3,padding:10,borderBottomWidth:1,justifyContent:'center',alignItems:'center'},
   borderActive:{borderColor:'#5b89ab',borderBottomWidth:2},
   tabCenter:{textAlign:'center'},
   show : { display: 'flex'},

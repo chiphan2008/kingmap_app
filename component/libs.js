@@ -12,12 +12,16 @@ export function getIndexById(arr,id){
    return arr.findIndex(el => el.id==id);
 }
 
+export function checkFriend(arr,id){
+  return arr.findIndex(el => el.friend_id==id)!==-1;
+}
+
 export async function CheckTF(obj){
   let arr = [];
   Object.entries(obj).forEach(async (e)=>{
     await arr.push(e[1]);
   })
-  return arr.includes(true);;
+  return arr.includes(true);
 }
 
 export function calcAngle(str){

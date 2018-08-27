@@ -17,26 +17,26 @@ export default class ListChat extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      listData:[],
+      listFriend:[],
+      listSuggestFriend:[],
       showSuggest:false,
     };
-    this.getData();
+    this.getListFriend();
   }
 
-  getData(){
+  getListFriend(){
     const { user_id } = this.props;
-    const url = `${global.url_node}${'list-friend/'}${user_id}`;
-    //console.log(url);
+    const url = `${global.url_node}${'list-friend/'}${user_id}/1`;
+    console.log(url);
     getEncodeApi(url).then(e=>{
-      this.setState({listData:e.data})
-
+      this.setState({listFriend:[e.data]})
     })
   }
 
   render() {
     const { user_id,navigation,avatar } = this.props;
-    const { listData,showSuggest } = this.state;
-    //console.log('listData',listData);
+    const { listFriend,showSuggest } = this.state;
+    //console.log('listFriend',listFriend);
     const {
       container,contentWrap,headCatStyle,headContent,titleCreate,
       wrapItems,colorName,wrapConnect,show,hide,
@@ -58,17 +58,17 @@ export default class ListChat extends Component {
               </TouchableOpacity>
 
               <View>
-              {listData.length>0 ?
+              {listFriend.length>0 ?
                 <FlatList
                    extraData={this.state}
                    keyExtractor={(item, index) => index.toString()}
-                   data={listData}
+                   data={listFriend}
                    renderItem={({item}) => (
                      <View style={bgWhite}>
                      <TouchableOpacity style={[wrapItems]}
                      onPress={()=>navigation.navigate('MessengerScr',{user_id,yf_id:item.user_id,yf_avatar:item.urlhinh,name:item.name,port_connect:user_id<item.user_id ? `${user_id}_${item.user_id}` : `${item.user_id}_${user_id}`})}>
-                       <Image source={{uri: checkUrl(item.urlhinh) ? `${item.urlhinh}` : `${global.url_media}/${item.urlhinh}`}} style={{width:50,height:50,borderRadius:25,marginRight:7}} />
-                       <Text style={colorName}>{item.name}</Text>
+                       {/*<Image source={{uri: checkUrl(item.urlhinh) ? `${item.urlhinh}` : `${global.url_media}/${item.urlhinh}`}} style={{width:50,height:50,borderRadius:25,marginRight:7}} />
+                       <Text style={colorName}>{item.name}</Text>*/}
                      </TouchableOpacity>
                      </View>
                 )} />
@@ -89,17 +89,17 @@ export default class ListChat extends Component {
 
               </TouchableOpacity>
 
-              {listData.length>0 ?
+              {listFriend.length>0 ?
                 <FlatList
                    extraData={this.state}
                    keyExtractor={(item, index) => index.toString()}
-                   data={listData}
+                   data={listFriend}
                    renderItem={({item}) => (
                      <View style={[itemCenter,bgWhite]}>
                        <TouchableOpacity style={wrapItems}
                        onPress={()=>navigation.navigate('MessengerScr',{user_id,yf_id:item.user_id,yf_avatar:item.urlhinh,name:item.name,port_connect:user_id<item.user_id ? `${user_id}_${item.user_id}` : `${item.user_id}_${user_id}`})}>
-                         <Image source={{uri: checkUrl(item.urlhinh) ? `${item.urlhinh}` : `${global.url_media}/${item.urlhinh}`}} style={{width:50,height:50,borderRadius:25,marginRight:7}} />
-                         <Text style={colorName}>{item.name}</Text>
+                         {/*<Image source={{uri: checkUrl(item.urlhinh) ? `${item.urlhinh}` : `${global.url_media}/${item.urlhinh}`}} style={{width:50,height:50,borderRadius:25,marginRight:7}} />
+                         <Text style={colorName}>{item.name}</Text>*/}
                        </TouchableOpacity>
                        <View style={itemCenter}>
                            <TouchableOpacity style={{flexDirection:'row',alignItems:'center',borderWidth:1,paddingLeft:10,paddingRight:10,padding:3,maxHeight:34,borderRadius:17,borderColor:'#5b89ab',marginRight:10}}

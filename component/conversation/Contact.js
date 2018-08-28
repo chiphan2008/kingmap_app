@@ -21,18 +21,29 @@ export default class Contact extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      profile:{},
       listSys:[],
       listHis:[],
+      listAddFriend:{},
       yf_id:'',
       activeTab:'history',
     };
+    this.getProfile();
     this.getHistory();
   }
+  getProfile(){
+    const { user_id } = this.props.navigation.state.params;
+    const url = `${global.url_node}${'person/'}${user_id}`;
+    getEncodeApi(url).then(e=>{
+      this.setState({profile:e.data[0]});
+    })
+  }
+
   getHistory(page=null){
     const { user_id } = this.props.navigation.state.params;
     if(page===null) page=0;
     const url = `${global.url_node}${'history-chat/'}${user_id}${'?skip='}${page}${'&limit=20'}`;
-    console.log(url);
+    //console.log(url);
     getEncodeApi(url).then(e=>{
       //console.log('e',e.data);
       if(page===0){
@@ -68,12 +79,12 @@ export default class Contact extends Component {
   render() {
     const { lang,name_module,user_id,avatar } = this.props.navigation.state.params;
     const { navigation } = this.props;
-    const { listSys,listHis,activeTab } = this.state;
+    const { listSys,listHis,activeTab,listAddFriend,profile } = this.state;
     //console.log('listData',listData);
     const {
       container,contentWrap,headCatStyle,headContent,titleCreate,
       wrapItems,colorName,tabCenter,colorTabActive,wrapTab,borderActive,
-      show, hide
+      show, hide,btnAdd,
     } = styles;
 
     return (
@@ -129,14 +140,18 @@ export default class Contact extends Component {
                <TouchableOpacity style={{flexDirection:'row',alignItems:'center',width:width-105}}
                onPress={()=>navigation.navigate('MessengerScr',{user_id,yf_id:item.id,yf_avatar:item.urlhinh,name:item.name,port_connect:user_id<item.id ? `${user_id}_${item.id}` : `${item.id}_${user_id}`})}>
                 <View>
-                 <Image source={{uri: checkUrl(item.urlhinh) ? `${item.urlhinh}` : `${global.url_release_media}${item.urlhinh}`}} style={{width:50,height:50,borderRadius:25,marginRight:7}} />
+                 <Image source={{uri: checkUrl(item.urlhinh) ? `${item.urlhinh}` : `${global.url_media}${item.urlhinh}`}} style={{width:50,height:50,borderRadius:25,marginRight:7}} />
                  {Moment(item.online_at).diff(item.offline_at, 'minutes')>=0 &&
                  <Image source={onlineIC} style={{width:10,height:10,position:'absolute',right:10,top:40}} />}
                  </View>
                  <Text style={colorName}>{item.name}</Text>
                </TouchableOpacity>
-               {!checkFriend(item.friends,user_id) && <TouchableOpacity style={{flexDirection:'row',alignItems:'center',borderWidth:1,paddingLeft:10,paddingRight:10,padding:3,maxHeight:34,borderRadius:17,borderColor:'#5b89ab'}}
-               onPress={()=>this.addFriend(item.id)}>
+               {(!checkFriend(profile.friends,item.id) && listAddFriend[`${item.id}`]!==item.id) &&
+               <TouchableOpacity style={btnAdd}
+               onPress={()=>{this.setState({listAddFriend:Object.assign(this.state.listAddFriend,{[`${item.id}`]:item.id})},()=>{
+                   this.addFriend(item.id)
+                })
+               }}>
                  <Text style={{color:'#5b89ab',fontSize:14}}>Kết bạn</Text>
                </TouchableOpacity>}
                </View>
@@ -148,12 +163,11 @@ export default class Contact extends Component {
         }
         </View>
 
-        <View style={activeTab==='contact' ? show : hide}>
-          <ListChat
-          user_id={user_id}
-          navigation={this.props.navigation}
-          avatar={avatar}/>
-        </View>
+        {activeTab==='contact' &&
+        <ListChat
+        user_id={user_id}
+        navigation={this.props.navigation}
+        avatar={avatar}/>}
 
       </View>
     );
@@ -165,6 +179,7 @@ const styles = StyleSheet.create({
     width,
     height
   },
+  btnAdd:{flexDirection:'row',alignItems:'center',borderWidth:1,paddingLeft:10,paddingRight:10,padding:3,maxHeight:34,borderRadius:17,borderColor:'#5b89ab'},
   contentWrap : { width,alignItems: 'center',justifyContent: 'center',paddingBottom:Platform.OS==='ios' ? 100 : 130},
   wrapItems:{flexDirection:'row',width,justifyContent:'space-between',padding:15,backgroundColor:'#fff',marginBottom:1,alignItems:'center'},
   headCatStyle : {

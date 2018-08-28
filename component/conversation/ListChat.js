@@ -26,10 +26,9 @@ export default class ListChat extends Component {
 
   getListFriend(){
     const { user_id } = this.props;
-    const url = `${global.url_node}${'list-friend/'}${user_id}/1`;
-    console.log(url);
+    const url = `${global.url_node}${'list-friend/'}${user_id}/accept`;
     getEncodeApi(url).then(e=>{
-      this.setState({listFriend:[e.data]})
+      this.setState({listFriend:e.data})
     })
   }
 

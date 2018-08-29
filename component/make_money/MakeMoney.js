@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import ReactNative , {Platform, View, Text, StyleSheet, Dimensions, Image,
   TextInput, TouchableOpacity,Modal,Alert,UIManager,
   ScrollView,FlatList,TouchableWithoutFeedback, Keyboard,
-  DeviceEventEmitter, KeyboardAvoidingView, ActivityIndicator
+  DeviceEventEmitter, ActivityIndicator
 } from 'react-native';
 import {connect} from 'react-redux';
 import Moment from 'moment';

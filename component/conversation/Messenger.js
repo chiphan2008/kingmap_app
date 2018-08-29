@@ -2,8 +2,7 @@
 
 import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image,
-  TouchableOpacity,TextInput,ScrollView,Keyboard,
-  KeyboardAvoidingView
+  TouchableOpacity,TextInput,ScrollView,Keyboard,Modal
 } from 'react-native';
 const {height, width} = Dimensions.get('window');
 import io from 'socket.io-client/dist/socket.io.js';
@@ -27,6 +26,7 @@ export default class Messenger extends Component {
       checkDate:'',
       showType:false,
       myID:'',
+      activeKeyboard:0,
     };
 
     this.socket = io(`${global.url_server}`,{jsonp:false});
@@ -114,11 +114,27 @@ export default class Messenger extends Component {
   componentWillMount(){
     this.sendMessage();
   }
+  componentDidMount(){
+    this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
+    this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
+  }
+  componentWillUnmount () {
+    this.keyboardDidShowListener.remove();
+    this.keyboardDidHideListener.remove();
+  }
 
+  _keyboardDidShow = (e) => {
+    console.log(e.endCoordinates.height);
+    this.setState({activeKeyboard:e.endCoordinates.height});
+  }
+
+  _keyboardDidHide = () => {
+    this.setState({activeKeyboard:0});
+  }
   render() {
     const { name,yf_avatar,user_id } = this.props.navigation.state.params;
     const { navigation } = this.props;
-    const { listData,text,index_item,showType,myID } = this.state;
+    const { listData,text,index_item,showType,myID,activeKeyboard } = this.state;
     const {
       container,contentWrap,headCatStyle,headContent,titleCreate,
       wrapItems,colorName,bottomSend,txtInput,show,hide,
@@ -126,6 +142,7 @@ export default class Messenger extends Component {
     } = styles;
 
     return (
+      <Modal onRequestClose={() => null} transparent animationType={'none'} visible>
       <View style={container}>
         <ScrollView
         onContentSizeChange={(contentWidth, contentHeight)=>{
@@ -133,6 +150,9 @@ export default class Messenger extends Component {
         }}
         ref={(scrollView) => { this.scrollView = scrollView }}
         scrollEnabled
+        horizontal={false}
+        refreshing={true}
+        onRefresh={()=>console.log(this._onRefresh)}
         stickyHeaderIndices={[0]}
         >
         <View style={headCatStyle}>
@@ -147,7 +167,7 @@ export default class Messenger extends Component {
             </View>
         </View>
 
-        <View style={{width,minHeight:height*1.9,marginTop: 70,marginBottom:Platform.OS==='ios' ? 70 :90}}>
+        <View style={{width,minHeight:height,marginTop: 70,marginBottom:Platform.OS==='ios' ? 70 :90}}>
           {index_item>1 ? listData : <View key={0}></View>}
         </View>
         <View style={bottomSend}>
@@ -177,6 +197,7 @@ export default class Messenger extends Component {
             <Image source={sendEmailIC} style={{width:20,height:20}} />
             </TouchableOpacity>
         </View>
+        <View style={{height:activeKeyboard,width}}></View>
         </ScrollView>
 
         {showType && user_id!==myID &&
@@ -184,9 +205,8 @@ export default class Messenger extends Component {
           <Text style={{fontSize:12,fontStyle:'italic',color:'#fff'}}>{name} đang nhập ...</Text>
         </View>}
 
-
-
       </View>
+      </Modal>
     );
   }
 }
@@ -318,10 +338,9 @@ const styles = StyleSheet.create({
     backgroundColor:'#fff',
     borderColor:'#E1E7EC',
     borderTopWidth:1,
-    position:'absolute',
-    zIndex:99,bottom:Platform.OS==='ios' ? 0 : 25,
+    position:'relative',
+    zIndex:9999,bottom:Platform.OS==='ios' ? 0 : 25,
     flexDirection:'row',
-
     alignItems:'center',
   },
   headContent : {

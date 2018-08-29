@@ -24,18 +24,33 @@ export default class ListChat extends Component {
     this.getListFriend();
   }
 
-  getListFriend(){
+  getListFriend(status='accept'){
     const { user_id } = this.props;
-    const url = `${global.url_node}${'list-friend/'}${user_id}/accept`;
-    getEncodeApi(url).then(e=>{
-      this.setState({listFriend:e.data})
+    const url = `${global.url_node}${'list-friend/'}${user_id}/${status}`;
+    console.log(url);
+    getEncodeApi(url).then(lf=>{
+      if(status==='accept') this.state.listFriend=lf.data;
+      if(status==='request') this.state.listSuggestFriend=lf.data;
+      this.setState(this.state);
     })
   }
-
+  actFriend(route,id,index){
+    this.state.listSuggestFriend.splice(index,1);
+    if(route==='un'){
+      this.props.removeFriend(id);
+    }else {
+      this.props.addFriend(id)
+    }
+    this.setState(this.state,()=>{
+      this.getListFriend();
+    })
+  }
+  componentWillMount(){
+    this.getListFriend('request');
+  }
   render() {
     const { user_id,navigation,avatar } = this.props;
-    const { listFriend,showSuggest } = this.state;
-    //console.log('listFriend',listFriend);
+    const { listFriend,showSuggest,listSuggestFriend } = this.state;
     const {
       container,contentWrap,headCatStyle,headContent,titleCreate,
       wrapItems,colorName,wrapConnect,show,hide,
@@ -48,10 +63,12 @@ export default class ListChat extends Component {
 
             <View style={[showSuggest===false ? show : hide]}>
               <TouchableOpacity style={wrapConnect}
-              onPress={()=>this.setState({showSuggest:true})}>
+              onPress={()=>this.setState({showSuggest:true},()=>{
+                this.getListFriend('request');
+              })}>
                 <View style={itemCenter}>
                 <Image source={connectIC} style={{width:18,height:18,marginRight:7}} />
-                <Text style={colorName}>Gợi ý kết bạn</Text>
+                <Text style={colorName}>Gợi ý kết bạn ({listSuggestFriend.length})</Text>
                 </View>
                 <Image source={arrowNextIC} style={{width:18,height:18}} />
               </TouchableOpacity>
@@ -66,8 +83,8 @@ export default class ListChat extends Component {
                      <View style={bgWhite}>
                      <TouchableOpacity style={[wrapItems]}
                      onPress={()=>navigation.navigate('MessengerScr',{user_id,yf_id:item.user_id,yf_avatar:item.urlhinh,name:item.name,port_connect:user_id<item.user_id ? `${user_id}_${item.user_id}` : `${item.user_id}_${user_id}`})}>
-                       {/*<Image source={{uri: checkUrl(item.urlhinh) ? `${item.urlhinh}` : `${global.url_media}/${item.urlhinh}`}} style={{width:50,height:50,borderRadius:25,marginRight:7}} />
-                       <Text style={colorName}>{item.name}</Text>*/}
+                       <Image source={{uri: checkUrl(item.urlhinh) ? `${item.urlhinh}` : `${global.url_media}/${item.urlhinh}`}} style={{width:50,height:50,borderRadius:25,marginRight:7}} />
+                       <Text style={colorName}>{item.name}</Text>
                      </TouchableOpacity>
                      </View>
                 )} />
@@ -88,24 +105,24 @@ export default class ListChat extends Component {
 
               </TouchableOpacity>
 
-              {listFriend.length>0 ?
+              {listSuggestFriend.length>0 ?
                 <FlatList
                    extraData={this.state}
                    keyExtractor={(item, index) => index.toString()}
-                   data={listFriend}
-                   renderItem={({item}) => (
+                   data={listSuggestFriend}
+                   renderItem={({item,index}) => (
                      <View style={[itemCenter,bgWhite]}>
                        <TouchableOpacity style={wrapItems}
                        onPress={()=>navigation.navigate('MessengerScr',{user_id,yf_id:item.user_id,yf_avatar:item.urlhinh,name:item.name,port_connect:user_id<item.user_id ? `${user_id}_${item.user_id}` : `${item.user_id}_${user_id}`})}>
-                         {/*<Image source={{uri: checkUrl(item.urlhinh) ? `${item.urlhinh}` : `${global.url_media}/${item.urlhinh}`}} style={{width:50,height:50,borderRadius:25,marginRight:7}} />
-                         <Text style={colorName}>{item.name}</Text>*/}
+                         <Image source={{uri: checkUrl(item.urlhinh) ? `${item.urlhinh}` : `${global.url_media}/${item.urlhinh}`}} style={{width:50,height:50,borderRadius:25,marginRight:7}} />
+                         <Text style={colorName}>{item.name}</Text>
                        </TouchableOpacity>
                        <View style={itemCenter}>
                            <TouchableOpacity style={{flexDirection:'row',alignItems:'center',borderWidth:1,paddingLeft:10,paddingRight:10,padding:3,maxHeight:34,borderRadius:17,borderColor:'#5b89ab',marginRight:10}}
-                           onPress={()=>this.addFriend(item.id,item.name,item.urlhinh)}>
+                           onPress={()=>this.actFriend('add',item.id,index)}>
                              <Text style={{color:'#5b89ab',fontSize:14}}>Đồng ý</Text>
                            </TouchableOpacity>
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={()=>this.actFriend('un',item.id,index)}>
                             <Image source={closeIC} style={{width:20,height:20}} />
                             </TouchableOpacity>
                        </View>

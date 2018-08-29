@@ -21,21 +21,21 @@ export default class Contact extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      profile:{},
+      friends:[],
       listSys:[],
       listHis:[],
       listAddFriend:{},
       yf_id:'',
       activeTab:'history',
     };
-    this.getProfile();
+    this.getListFriend();
     this.getHistory();
   }
-  getProfile(){
+  getListFriend(){
     const { user_id } = this.props.navigation.state.params;
-    const url = `${global.url_node}${'person/'}${user_id}`;
-    getEncodeApi(url).then(e=>{
-      this.setState({profile:e.data[0]});
+    const url = `${global.url_node}${'list-friend/'}${user_id}`;
+    getEncodeApi(url).then(friends=>{
+      this.setState({friends:friends.data});
     })
   }
 
@@ -43,30 +43,29 @@ export default class Contact extends Component {
     const { user_id } = this.props.navigation.state.params;
     if(page===null) page=0;
     const url = `${global.url_node}${'history-chat/'}${user_id}${'?skip='}${page}${'&limit=20'}`;
-    //console.log(url);
-    getEncodeApi(url).then(e=>{
-      //console.log('e',e.data);
+    getEncodeApi(url).then(hs=>{
+      //console.log('getHistory');
       if(page===0){
-        this.state.listHis=e.data;
+        this.state.listHis=hs.data;
       }else {
-        this.state.listHis.concat(e.data);
+        this.state.listHis.concat(hs.data);
       }
-      this.setState(this.state)
+        this.setState(this.state);
     })
   }
   getSystem(page=null){
     const { user_id } = this.props.navigation.state.params;
     if(page===null) page=0;
     const url = `${global.url_node}${'except-person/'}${user_id}${'?skip='}${page}${'&limit=20'}`;
-    //console.log(url);
-    getEncodeApi(url).then(e=>{
+    console.log(url);
+    getEncodeApi(url).then(sys=>{
       //console.log('e',e.data);
-      if(page===0){
-        this.state.listSys=e.data;
-      }else {
-        this.state.listSys.concat(e.data);
-      }
-      this.setState(this.state)
+        if(page===0){
+          this.state.listSys=sys.data;
+        }else {
+          this.state.listSys.concat(sys.data);
+        }
+          this.setState(this.state);
     })
   }
   addFriend(friend_id){
@@ -74,12 +73,22 @@ export default class Contact extends Component {
     const url = `${global.url_node}${'add-friend'}`;
     const param = `${'id='}${user_id}&${'friend_id='}${friend_id}`;
     //console.log('(url,param)',url,param);
-    postEncodeApi(url,param);
+    postEncodeApi(url,param).then((e)=>{
+      this.getListFriend();
+    });
+  }
+  removeFriend(friend_id){
+    const { user_id } = this.props.navigation.state.params;
+    const url = `${global.url_node}${'unfriend'}`;
+    const param = `${'id='}${user_id}&${'friend_id='}${friend_id}`;
+    postEncodeApi(url,param).then(()=>{
+      this.getListFriend();
+    });
   }
   render() {
     const { lang,name_module,user_id,avatar } = this.props.navigation.state.params;
     const { navigation } = this.props;
-    const { listSys,listHis,activeTab,listAddFriend,profile } = this.state;
+    const { listSys,listHis,activeTab,listAddFriend,friends } = this.state;
     //console.log('listData',listData);
     const {
       container,contentWrap,headCatStyle,headContent,titleCreate,
@@ -99,7 +108,7 @@ export default class Contact extends Component {
               <View></View>
           </View>
       </View>
-      <View style={{backgroundColor:'#fff',flexDirection:'row',borderBottomWidth:1,borderColor:'#E9E8EF'}}>
+      <View style={{backgroundColor:'#fff',flexDirection:'row'}}>
 
         <TouchableOpacity style={[wrapTab,activeTab==='history' ? borderActive : '']}
         onPress={()=>{
@@ -138,15 +147,17 @@ export default class Contact extends Component {
              renderItem={({item,index}) => (
                <View style={wrapItems}>
                <TouchableOpacity style={{flexDirection:'row',alignItems:'center',width:width-105}}
-               onPress={()=>navigation.navigate('MessengerScr',{user_id,yf_id:item.id,yf_avatar:item.urlhinh,name:item.name,port_connect:user_id<item.id ? `${user_id}_${item.id}` : `${item.id}_${user_id}`})}>
+               onPress={()=>{
+                 //navigation.navigate('MessengerScr',{user_id,yf_id:item.id,yf_avatar:item.urlhinh,name:item.name,port_connect:user_id<item.id ? `${user_id}_${item.id}` : `${item.id}_${user_id}`})
+                }}>
                 <View>
                  <Image source={{uri: checkUrl(item.urlhinh) ? `${item.urlhinh}` : `${global.url_media}${item.urlhinh}`}} style={{width:50,height:50,borderRadius:25,marginRight:7}} />
-                 {Moment(item.online_at).diff(item.offline_at, 'minutes')>=0 &&
+                 {Moment(item.online_at)===Moment(item.offline_at) &&
                  <Image source={onlineIC} style={{width:10,height:10,position:'absolute',right:10,top:40}} />}
                  </View>
                  <Text style={colorName}>{item.name}</Text>
                </TouchableOpacity>
-               {(!checkFriend(profile.friends,item.id) && listAddFriend[`${item.id}`]!==item.id) &&
+               {(!checkFriend(friends,item.id) && listAddFriend[`${item.id}`]!==item.id) &&
                <TouchableOpacity style={btnAdd}
                onPress={()=>{this.setState({listAddFriend:Object.assign(this.state.listAddFriend,{[`${item.id}`]:item.id})},()=>{
                    this.addFriend(item.id)
@@ -164,10 +175,14 @@ export default class Contact extends Component {
         </View>
 
         {activeTab==='contact' &&
-        <ListChat
-        user_id={user_id}
-        navigation={this.props.navigation}
-        avatar={avatar}/>}
+        <View style={activeTab==='contact'?show:hide}>
+          <ListChat
+          addFriend={this.addFriend.bind(this)}
+          removeFriend={this.removeFriend.bind(this)}
+          user_id={user_id}
+          navigation={this.props.navigation}
+          avatar={avatar}/>
+        </View>}
 
       </View>
     );
@@ -192,7 +207,7 @@ const styles = StyleSheet.create({
   titleCreate:{color:'white',fontSize:18,paddingTop:5},
   colorName:{color:'#2F3540',fontSize:16},
   colorTabActive:{color:'#5b89ab',fontSize:16,fontWeight:'400'},
-  wrapTab:{width:width/3,padding:10,borderBottomWidth:1,justifyContent:'center',alignItems:'center'},
+  wrapTab:{width:width/3,padding:10,borderBottomWidth:1,borderColor:'#DDD',justifyContent:'center',alignItems:'center'},
   borderActive:{borderColor:'#5b89ab',borderBottomWidth:2},
   tabCenter:{textAlign:'center'},
   show : { display: 'flex'},

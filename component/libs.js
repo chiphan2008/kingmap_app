@@ -152,7 +152,7 @@ export function checkKeyword(str,char=null){
 
 export function isEmail(text){
   let email = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/ ;
-  return email.test(text);
+  return email.test(text.trim());
 }
 
 export function checkSVG(text){

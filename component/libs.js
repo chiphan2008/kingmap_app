@@ -16,6 +16,14 @@ export function checkFriend(arr,id){
   return arr.findIndex(el => el.friend_id==id)!==-1;
 }
 
+export function getGroup(id,friend_id){
+  return (id<friend_id)?`${id}_${friend_id}`:`${friend_id}_${id}`;
+}
+
+export function checkFriendAccept(arr,id){
+  return arr.findIndex(el => el.friend_id==id && el.status=='accept')!==-1;
+}
+
 export async function CheckTF(obj){
   let arr = [];
   Object.entries(obj).forEach(async (e)=>{

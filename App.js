@@ -93,6 +93,7 @@ const defaultState = {
     valueLang : '',
     labelLang : '',
   },
+  myFriends:[],
   updateState:false,
   user_profile:{},
   isLogin:false,
@@ -101,6 +102,9 @@ const defaultState = {
 };
 const reducer = (state = defaultState, action) => {
   switch (action.type) {
+    case 'UPDATE_MY_FRIENDS':
+      return {...state,myFriends:action.myFriends}
+      break;
     case 'UPDATE_LANG':
       return {...state,slLang:action.slLang}
       break;
@@ -300,6 +304,7 @@ export default class App extends Component {
       },
       MainScr: {
         screen: RootTabs,
+        path: 'home',
       },
       MakeMoneyScr: { screen: MakeMoney },
       CTVApproveScr: { screen: CTVApprove },
@@ -364,9 +369,10 @@ export default class App extends Component {
       initialRouteName: this.state.initApp ? 'MainScr' : 'IntroSrc',//'MainScr',//
     });
     //const {setVal} = this.state;
+    const prefix = Platform.OS == 'android' ? 'kingmap://kingmap/' : 'kingmap://';
     return (
       <Provider store={store}>
-        <RootNav screenProps={this.getLang.bind(this)}/>
+        <RootNav screenProps={this.getLang.bind(this)} uriPrefix={prefix} />
       </Provider>
     );
   }

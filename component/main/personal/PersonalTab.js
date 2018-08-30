@@ -56,7 +56,7 @@ class PersonalTab extends Component {
     });
     this.refresh();
   }
-  
+
   refresh(){
     const {isLogin,user_profile} = this.props;
     isLogin && user_profile.id!==undefined && this.getUser(user_profile.id);
@@ -72,6 +72,7 @@ class PersonalTab extends Component {
   }
   logoutUser(){
     const {user_profile} = this.props;
+    this.props.dispatch({type:'UPDATE_MY_FRIENDS',myFriends:[]});
     this.props.dispatch({type:'USER_LOGINED',isLogin:false,user_profile:{}});
     GoogleSignin.signOut().catch(e=>{});
     encodeApi(`${global.url_node}${'person/offline'}`,'POST',user_profile);

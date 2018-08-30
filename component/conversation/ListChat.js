@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image,
   TouchableOpacity,FlatList,
 } from 'react-native';
+import {connect} from 'react-redux';
 const {height, width} = Dimensions.get('window');
 import getEncodeApi from '../api/getEncodeApi';
 import global from '../global';
@@ -11,15 +12,16 @@ import connectIC from '../../src/icon/ic-connect.png';
 import arrowNextIC from '../../src/icon/ic-arrow-next.png';
 import closeIC from '../../src/icon/ic-close.png';
 import arrowPreviewIC from '../../src/icon/ic-arrow-preview.png';
-import {checkUrl} from '../libs';
+import {checkUrl,getGroup} from '../libs';
 
-export default class ListChat extends Component {
+class ListChat extends Component {
   constructor(props) {
     super(props);
     this.state = {
       listFriend:[],
       listSuggestFriend:[],
       showSuggest:false,
+      countSuggest:0,
     };
     this.getListFriend();
   }
@@ -29,7 +31,10 @@ export default class ListChat extends Component {
     const url = `${global.url_node}${'list-friend/'}${user_id}/${status}`;
     console.log(url);
     getEncodeApi(url).then(lf=>{
-      if(status==='accept') this.state.listFriend=lf.data;
+      if(status==='accept') {
+        this.state.listFriend=lf.data;
+        this.state.countSuggest= this.props.myFriends.length - lf.data.length;
+      }
       if(status==='request') this.state.listSuggestFriend=lf.data;
       this.setState(this.state);
     })
@@ -45,12 +50,12 @@ export default class ListChat extends Component {
       this.getListFriend();
     })
   }
-  componentWillMount(){
-    this.getListFriend('request');
-  }
+  // componentWillMount(){
+  //   this.getListFriend('request');
+  // }
   render() {
     const { user_id,navigation,avatar } = this.props;
-    const { listFriend,showSuggest,listSuggestFriend } = this.state;
+    const { listFriend,showSuggest,listSuggestFriend,countSuggest } = this.state;
     const {
       container,contentWrap,headCatStyle,headContent,titleCreate,
       wrapItems,colorName,wrapConnect,show,hide,
@@ -68,7 +73,7 @@ export default class ListChat extends Component {
               })}>
                 <View style={itemCenter}>
                 <Image source={connectIC} style={{width:18,height:18,marginRight:7}} />
-                <Text style={colorName}>Gợi ý kết bạn ({listSuggestFriend.length})</Text>
+                <Text style={colorName}>Gợi ý kết bạn ({countSuggest})</Text>
                 </View>
                 <Image source={arrowNextIC} style={{width:18,height:18}} />
               </TouchableOpacity>
@@ -82,7 +87,7 @@ export default class ListChat extends Component {
                    renderItem={({item}) => (
                      <View style={bgWhite}>
                      <TouchableOpacity style={[wrapItems]}
-                     onPress={()=>navigation.navigate('MessengerScr',{user_id,yf_id:item.user_id,yf_avatar:item.urlhinh,name:item.name,port_connect:user_id<item.user_id ? `${user_id}_${item.user_id}` : `${item.user_id}_${user_id}`})}>
+                     onPress={()=>navigation.navigate('MessengerScr',{user_id,yf_id:item.id,yf_avatar:item.urlhinh,name:item.name,port_connect:getGroup(user_id,item.id)})}>
                        <Image source={{uri: checkUrl(item.urlhinh) ? `${item.urlhinh}` : `${global.url_media}/${item.urlhinh}`}} style={{width:50,height:50,borderRadius:25,marginRight:7}} />
                        <Text style={colorName}>{item.name}</Text>
                      </TouchableOpacity>
@@ -113,7 +118,7 @@ export default class ListChat extends Component {
                    renderItem={({item,index}) => (
                      <View style={[itemCenter,bgWhite]}>
                        <TouchableOpacity style={wrapItems}
-                       onPress={()=>navigation.navigate('MessengerScr',{user_id,yf_id:item.user_id,yf_avatar:item.urlhinh,name:item.name,port_connect:user_id<item.user_id ? `${user_id}_${item.user_id}` : `${item.user_id}_${user_id}`})}>
+                       onPress={()=>navigation.navigate('MessengerScr',{user_id,yf_id:item.id,yf_avatar:item.urlhinh,name:item.name,port_connect:getGroup(user_id,item.id)})}>
                          <Image source={{uri: checkUrl(item.urlhinh) ? `${item.urlhinh}` : `${global.url_media}/${item.urlhinh}`}} style={{width:50,height:50,borderRadius:25,marginRight:7}} />
                          <Text style={colorName}>{item.name}</Text>
                        </TouchableOpacity>
@@ -140,6 +145,12 @@ export default class ListChat extends Component {
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {myFriends:state.myFriends}
+}
+
+export default connect(mapStateToProps)(ListChat);
 
 const styles = StyleSheet.create({
   container: {

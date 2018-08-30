@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image,
   TouchableOpacity,FlatList,
 } from 'react-native';
+import {connect} from 'react-redux';
 const {height, width} = Dimensions.get('window');
 import Moment from 'moment';
 import getEncodeApi from '../api/getEncodeApi';
@@ -15,13 +16,12 @@ import chatIC from '../../src/icon/ic-blue/ic-chat.png';
 import userIC from '../../src/icon/ic-blue/ic-user.png';
 import groupIC from '../../src/icon/ic-blue/ic-group.png';
 import onlineIC from '../../src/icon/ic-green/ic-online.png';
-import {checkUrl,checkFriend} from '../libs';
+import {checkUrl,checkFriend,getGroup} from '../libs';
 
-export default class Contact extends Component {
+class Contact extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      friends:[],
       listSys:[],
       listHis:[],
       listAddFriend:{},
@@ -35,7 +35,7 @@ export default class Contact extends Component {
     const { user_id } = this.props.navigation.state.params;
     const url = `${global.url_node}${'list-friend/'}${user_id}`;
     getEncodeApi(url).then(friends=>{
-      this.setState({friends:friends.data});
+      friends.data.length>0 && this.props.dispatch({type:'UPDATE_MY_FRIENDS',myFriends:friends.data});
     })
   }
 
@@ -87,7 +87,7 @@ export default class Contact extends Component {
   }
   render() {
     const { lang,name_module,user_id,avatar } = this.props.navigation.state.params;
-    const { navigation } = this.props;
+    const { navigation,myFriends } = this.props;
     const { listSys,listHis,activeTab,listAddFriend,friends } = this.state;
     //console.log('listData',listData);
     const {
@@ -114,14 +114,14 @@ export default class Contact extends Component {
         onPress={()=>{
           activeTab!=='history' && this.setState({activeTab:'history'})
         }}>
-        <Image source={chatIC} style={{width:20,height:20}} />
+        <Image source={chatIC} style={{width:25,height:25}} />
         </TouchableOpacity>
 
         <TouchableOpacity style={[wrapTab,activeTab==='contact' ? borderActive : '']}
         onPress={()=>{
           activeTab!=='contact' && this.setState({activeTab:'contact'})
         }}>
-        <Image source={userIC} style={{width:20,height:20}} />
+        <Image source={userIC} style={{width:25,height:25}} />
         </TouchableOpacity>
 
         <TouchableOpacity style={[wrapTab,activeTab==='system' ? borderActive : '']}
@@ -130,7 +130,7 @@ export default class Contact extends Component {
             this.state.listSys.length===0 && this.getSystem();
           })
         }}>
-        <Image source={groupIC} style={{width:20,height:20}} />
+        <Image source={groupIC} style={{width:25,height:25}} />
         {/*<Text style={[activeTab==='system' ? colorTabActive : colorName,tabCenter]}> Hệ thống </Text>*/}
         </TouchableOpacity>
 
@@ -148,7 +148,7 @@ export default class Contact extends Component {
                <View style={wrapItems}>
                <TouchableOpacity style={{flexDirection:'row',alignItems:'center',width:width-105}}
                onPress={()=>{
-                 //navigation.navigate('MessengerScr',{user_id,yf_id:item.id,yf_avatar:item.urlhinh,name:item.name,port_connect:user_id<item.id ? `${user_id}_${item.id}` : `${item.id}_${user_id}`})
+                 //navigation.navigate('MessengerScr',{user_id,yf_id:item.id,yf_avatar:item.urlhinh,name:item.name,port_connect:getGroup(user_id,item.id)})
                 }}>
                 <View>
                  <Image source={{uri: checkUrl(item.urlhinh) ? `${item.urlhinh}` : `${global.url_media}${item.urlhinh}`}} style={{width:50,height:50,borderRadius:25,marginRight:7}} />
@@ -157,7 +157,8 @@ export default class Contact extends Component {
                  </View>
                  <Text style={colorName}>{item.name}</Text>
                </TouchableOpacity>
-               {(!checkFriend(friends,item.id) && listAddFriend[`${item.id}`]!==item.id) &&
+               {console.log(checkFriend(myFriends,item.id))}
+               {(!checkFriend(myFriends,item.id) && listAddFriend[`${item.id}`]!==item.id) &&
                <TouchableOpacity style={btnAdd}
                onPress={()=>{this.setState({listAddFriend:Object.assign(this.state.listAddFriend,{[`${item.id}`]:item.id})},()=>{
                    this.addFriend(item.id)
@@ -188,6 +189,12 @@ export default class Contact extends Component {
     );
   }
 }
+
+const mapStateToProps = (state) => {
+  return {myFriends:state.myFriends}
+}
+
+export default connect(mapStateToProps)(Contact);
 
 const styles = StyleSheet.create({
   container: {

@@ -5,6 +5,21 @@ import lang_en from './lang/en/user/language';
 import lang_vn from './lang/vn/user/language';
 import Moment from 'moment';
 
+export function getDistanceMinutes(startTime){
+  const now = Moment().format();
+  return parseInt(Moment.duration(Moment(now).diff(Moment(startTime))).asMinutes());
+}
+
+export function getDistanceHours(startTime){
+  const now = Moment().format();
+  return parseInt(Moment.duration(Moment(now).diff(Moment(startTime))).asHours());
+}
+
+export function getDistanceDays(startTime){
+  const now = Moment().format();
+  return parseInt(Moment.duration(Moment(now).diff(Moment(startTime))).asDays());
+}
+
 export function getIndex(element,id){
   return element.key==id;
 }

@@ -16,7 +16,7 @@ import chatIC from '../../src/icon/ic-blue/ic-chat.png';
 import userIC from '../../src/icon/ic-blue/ic-user.png';
 import groupIC from '../../src/icon/ic-blue/ic-group.png';
 import onlineIC from '../../src/icon/ic-green/ic-online.png';
-import {checkUrl,checkFriend,getGroup} from '../libs';
+import {checkUrl,checkFriend,getGroup,getDistanceHours,getDistanceMinutes,getDistanceDays} from '../libs';
 
 class Contact extends Component {
   constructor(props) {
@@ -38,13 +38,13 @@ class Contact extends Component {
       friends.data.length>0 && this.props.dispatch({type:'UPDATE_MY_FRIENDS',myFriends:friends.data});
     })
   }
-
+  
   getHistory(page=null){
     const { user_id } = this.props.navigation.state.params;
     if(page===null) page=0;
     const url = `${global.url_node}${'history-chat/'}${user_id}${'?skip='}${page}${'&limit=20'}`;
     getEncodeApi(url).then(hs=>{
-      //console.log('getHistory');
+      //console.log('getHistory',hs);
       if(page===0){
         this.state.listHis=hs.data;
       }else {
@@ -136,10 +136,51 @@ class Contact extends Component {
 
       </View>
 
+        <View style={[contentWrap,activeTab==='history' ? show : hide]}>
+        {listHis.length>0 ?
+          <View>
+          <FlatList
+             extraData={this.state}
+             keyExtractor={(item, index) => index.toString()}
+             data={listHis}
+             renderItem={({item,index}) => (
+               <View style={wrapItems}>
+               <TouchableOpacity style={{flexDirection:'row',alignItems:'center',width:width-105}}
+               onPress={()=>{
+                 navigation.navigate('MessengerScr',{id:user_id,friend_id:item.id,yf_avatar:item.urlhinh,name:item.name,port_connect:getGroup(user_id,item.id)})
+                }}>
+                <View>
+                 <Image source={{uri: checkUrl(item.urlhinh) ? `${item.urlhinh}` : `${global.url_media}${item.urlhinh}`}} style={{width:50,height:50,borderRadius:25,marginRight:7}} />
+                 {Moment(item.online_at)===Moment(item.offline_at) &&
+                 <Image source={onlineIC} style={{width:10,height:10,position:'absolute',right:10,top:40}} />}
+                 </View>
+                 <View>
+                  <Text style={colorName}>{item.name}</Text>
+                  <Text style={{fontSize:14}}>{item.last_message}</Text>
+                 </View>
+               </TouchableOpacity>
+
+               <View>
+                 {getDistanceMinutes(item.update_at)<60 &&
+                   <Text style={{fontSize:14}}>{getDistanceMinutes(item.update_at)} phút</Text>}
+                 {getDistanceHours(item.update_at)<24 &&
+                   <Text style={{fontSize:14}}>{getDistanceHours(item.update_at)} giờ</Text>}
+                 {getDistanceDays(item.update_at)>1 &&
+                   <Text style={{fontSize:14}}>{getDistanceDays(item.update_at)} ngày</Text>}
+               </View>
+
+               </View>
+          )} />
+          </View>
+
+          :
+          <View></View>
+        }
+        </View>
+
         <View style={[contentWrap,activeTab==='system' ? show : hide]}>
         {listSys.length>0 ?
           <View>
-
           <FlatList
              extraData={this.state}
              keyExtractor={(item, index) => index.toString()}
@@ -148,7 +189,7 @@ class Contact extends Component {
                <View style={wrapItems}>
                <TouchableOpacity style={{flexDirection:'row',alignItems:'center',width:width-105}}
                onPress={()=>{
-                 //navigation.navigate('MessengerScr',{user_id,yf_id:item.id,yf_avatar:item.urlhinh,name:item.name,port_connect:getGroup(user_id,item.id)})
+                 //navigation.navigate('MessengerScr',{id:user_id,friend_id:item.id,yf_avatar:item.urlhinh,name:item.name,port_connect:getGroup(user_id,item.id)})
                 }}>
                 <View>
                  <Image source={{uri: checkUrl(item.urlhinh) ? `${item.urlhinh}` : `${global.url_media}${item.urlhinh}`}} style={{width:50,height:50,borderRadius:25,marginRight:7}} />

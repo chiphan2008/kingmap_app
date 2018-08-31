@@ -9,6 +9,7 @@ const {height, width} = Dimensions.get('window');
 import io from 'socket.io-client/dist/socket.io.js';
 import Moment from 'moment';
 import getEncodeApi from '../api/getEncodeApi';
+import postEncodeApi from '../api/postEncodeApi';
 import global from '../global';
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
 import sendEmailIC from '../../src/icon/ic-send-email.png';
@@ -20,7 +21,7 @@ import videoCallIC from '../../src/icon/ic-blue/ic-video-call.png';
 import videoClipIC from '../../src/icon/ic-blue/ic-video-clip.png';
 import {checkUrl,formatDate,formatHour,checkFriendAccept,getGroup} from '../libs';
 
-var element;
+var element,timeoutHis;
 class Messenger extends Component {
   constructor(props) {
     super(props);
@@ -42,7 +43,7 @@ class Messenger extends Component {
     this.socket.on('replyStatus-'+port_connect,function(data){
       console.log('showType',data);
       if(data.showType!==undefined){
-        element.setState({showType:data.showType,myID:data.user_id})
+        element.setState({showType:data.showType,myID:data.id})
       }
     })
     this.socket.on('replyMessage-'+port_connect,function(data){
@@ -52,8 +53,9 @@ class Messenger extends Component {
       // load first have one array: data.length!==undefined
 
       if(data.message!==undefined && data.message!==''){
+
         const {listData,index_item, checkID, checkDate} = element.state;
-        const { user_id,name,yf_avatar } =element.props.navigation.state.params;
+        const { id,name,yf_avatar } =element.props.navigation.state.params;
         let arr = [];
         let countID=0;
         let countDate='';
@@ -63,16 +65,16 @@ class Messenger extends Component {
         if(index_item>1){
           //load continue…: data.length===undefined
           console.log('load continue',index_item);
-          listData.push(<ListMsg name={name} showHour={checkID!==data.user_id ? true : false}
+          arr.push(<ListMsg name={name} showHour={checkID!==data.id ? true : false}
             checkDate={countDate} checkID={countID}
-            data={data} userId={user_id}
+            data={data} userId={id}
             key={index_item} yf_avatar={yf_avatar} />)
           arr = listData;
-          countID = data.user_id;
+          countID = data.id;
           countDate = data.create_at;
         }else {
           //load first, but don’t have data: data.length===undefined
-          arr = [<ListMsg name={name} showHour={true} checkDate={countDate} checkID={countID} data={data} userId={user_id} key={index_item} yf_avatar={yf_avatar} />]
+          arr = [<ListMsg name={name} showHour={true} checkDate={countDate} checkID={countID} data={data} userId={id} key={index_item} yf_avatar={yf_avatar} />]
         }
         element.setState({
             checkDate:countDate,
@@ -80,43 +82,60 @@ class Messenger extends Component {
             index_item: index_item + 1,
             listData: arr,
             showType:false,
-        });
+        },()=>{element.addHistory(data.message);});
       }
       //console.log('index_item',index_item);
   	})
 
   }
+  addHistory(message){
+    // add-history
+    clearTimeout(timeoutHis);
+    const { id,friend_id } = element.props.navigation.state.params;
+    const url = `${global.url_node}${'add-history'}`;
+    const param = `${'id='}${id}&${'friend_id='}${friend_id}&${'message='}${message}`;
+    //console.log('(url,param)',url,param);
+    timeoutHis = setTimeout(function () {
+      postEncodeApi(url,param).then(e=>{
+        console.log('eee',e);
+      });
+    }, 5000);
+  }
   loadHistoryChat(page=null){
-    const { user_id,name,yf_avatar,port_connect } =element.props.navigation.state.params;
+    const { id,name,yf_avatar,port_connect } = element.props.navigation.state.params;
     if(page===null) page=0;
     const url = `${global.url_node}${'conversation/'}${port_connect}${'?skip='}${page}${'&limit=20'}`;
+    //console.log(url);
     getEncodeApi(url).then(hischat=>{
       let arr = [];
       let countID=0;
       let countDate='';
-
+      // console.log(hischat.data);
       hischat.data.forEach((e,i)=>{
         const countData = hischat.data[i+1];
-        this.state.listData.push(<ListMsg name={name} showHour={countData===undefined || e.user_id!==countData.user_id || (e.user_id===countData.user_id && formatHour(e.create_at)!==formatHour(countData.create_at) )  ? true : false} checkDate={countDate} checkID={countID} data={e} userId={user_id} key={i} yf_avatar={yf_avatar} />);
-        countID=e.user_id;
+        //console.log('countData',countData);
+        arr.push(<ListMsg name={name} showHour={countData===undefined || e.id!==countData.id || (e.id===countData.id && formatHour(e.create_at)!==formatHour(countData.create_at) )  ? true : false}
+        checkDate={countDate} checkID={countID} data={e}
+        userId={id} key={i} yf_avatar={yf_avatar} />);
+        countID=e.id;
         countDate = e.create_at;
         //console.log('data[]',i+1,data[i+1]);
       });
-      arr = this.state.listData;
+      //arr = element.state.listData;
       element.setState({
           checkDate:countDate,
           checkID:countID,
           index_item: hischat.data.length,
           listData: arr,
           showType:false,
-      });
+      },()=>{});
 
     })
   }
   componentWillMount(){
-    const { port_connect,user_id,yf_avatar,yf_id } = this.props.navigation.state.params;
-    console.log(this.props.myFriends,yf_id);
-    if(checkFriendAccept(this.props.myFriends,yf_id)){
+    const { port_connect,id,yf_avatar,friend_id } = this.props.navigation.state.params;
+    //console.log(this.props.myFriends,friend_id);
+    if(checkFriendAccept(this.props.myFriends,friend_id)){
       this.loadHistoryChat();
       this.sendMessage();
     }else {
@@ -125,17 +144,18 @@ class Messenger extends Component {
   }
 
   sendMessage(){
-    const { port_connect,user_id,yf_avatar,yf_id } = this.props.navigation.state.params;
+    const { port_connect,id,yf_avatar,friend_id } = this.props.navigation.state.params;
     const { text } = this.state;
     let data = {
       group:port_connect,
-      user_id,
+      id,
+      friend_id,
       message : text,
       urlhinh: yf_avatar,
       //create_at:Moment(new Date())
     }
     // if(text==='') data={
-    //   yf_id:yf_id,
+    //   friend_id:friend_id,
     //   notification:'Bạn chưa thể gửi tin nhắn cho người này. Vui lòng gửi yêu cầu kết bạn.'
     // };
     this.socket.emit('sendMessage',port_connect,data);
@@ -143,8 +163,8 @@ class Messenger extends Component {
 
   }
   handleEnterText(showType){
-    const { user_id,port_connect } = this.props.navigation.state.params;
-    const data = {showType,user_id}
+    const { id,port_connect } = this.props.navigation.state.params;
+    const data = {showType,id}
     this.socket.emit('handleEnterText',port_connect,data);
   }
 
@@ -165,7 +185,7 @@ class Messenger extends Component {
     this.setState({activeKeyboard:25});
   }
   render() {
-    const { name,yf_avatar,user_id } = this.props.navigation.state.params;
+    const { name,yf_avatar,id } = this.props.navigation.state.params;
     const { navigation } = this.props;
     const { listData,text,index_item,showType,myID,activeKeyboard,scrollHeight } = this.state;
     const {
@@ -175,7 +195,7 @@ class Messenger extends Component {
     } = styles;
 
     return (
-      <Modal onRequestClose={() => null} transparent animationType={'slide'} visible>
+      <Modal onRequestClose={() => null} transparent animationType={'none'} visible>
       <View style={container}>
         <View style={headCatStyle}>
             <View style={headContent}>
@@ -204,11 +224,11 @@ class Messenger extends Component {
         //stickyHeaderIndices={[0]}
         >
         <View style={{width,marginTop: 70}}>
-          {index_item>1 ? listData : <View key={0}></View>}
+          {index_item>0 ? listData : <View key={0}></View>}
         </View>
           <View style={{height:activeKeyboard,width}}></View>
         </ScrollView>
-        {showType && user_id!==myID &&
+        {showType && id!==myID &&
         <View style={[wrapShowType,{bottom:Platform.OS==='ios' ? 50 : activeKeyboard+75}]}>
           <Text style={{fontSize:12,fontStyle:'italic',color:'#fff'}}>{name} đang nhập ...</Text>
         </View>}
@@ -289,7 +309,7 @@ export class ListMsg extends Component {
   }
   render(){
     const {data, userId,name, checkID, checkDate, showHour ,yf_avatar} = this.props;
-    //console.log('data.message',data);
+    //console.log('this.props',this.props);
     const {
       wrapAva,widthAva,radiusAva,wrapMsg,colorMsg,avatarRight,avatarLeft,
       msgLeft,msgRight,bgMe,show,hide,colorWhite,groupFirstLeft,wrapDate,
@@ -298,7 +318,7 @@ export class ListMsg extends Component {
     } = styles;
     return(
       <View>
-      <View style={{height: checkID!==0 && checkID!==data.user_id && formatDate(checkDate)===formatDate(data.create_at) ? 20 : 0}}></View>
+      <View style={{height: checkID!==0 && checkID!==data.id && formatDate(checkDate)===formatDate(data.create_at) ? 20 : 0}}></View>
       {data.message!==undefined && data.create_at!==undefined  ?
         <View style={{paddingLeft:10,paddingRight:10,marginBottom:7}}>
           <View style={[wrapDatePaging,formatDate(checkDate)!==formatDate(data.create_at) ? show :hide ]}>
@@ -308,20 +328,20 @@ export class ListMsg extends Component {
             <View style={lineDate}></View>
           </View>
 
-          <View style={[userId===data.user_id ? avatarRight : avatarLeft,checkID===data.user_id && userId===data.user_id ? groupTopRight : '']}>
+          <View style={[userId===data.id ? avatarRight : avatarLeft,checkID===data.id && userId===data.id ? groupTopRight : '']}>
             <View style={widthAva}>
-              <View style={[wrapAva,userId===data.user_id || checkID===data.user_id ? hide : show]}>
+              <View style={[wrapAva,userId===data.id || checkID===data.id ? hide : show]}>
               <Image source={{uri: checkUrl(yf_avatar) ? `${yf_avatar}` : `${global.url_media}/${yf_avatar}`}} style={radiusAva} />
               </View>
             </View>
 
-            <View style={[wrapDate,userId===data.user_id ? msgRight : msgLeft,  userId!==data.user_id ? groupFirstLeft : '']}>
-              <View style={[wrapMsg,userId===data.user_id ? bgMe : '']}>
-                <Text style={userId!==data.user_id && checkID!==data.user_id  ? [colorItemName,show] : hide}>{name}</Text>
-                <Text style={userId===data.user_id ? colorWhite : colorMsg}>{data.message}</Text>
+            <View style={[wrapDate,userId===data.id ? msgRight : msgLeft,  userId!==data.id ? groupFirstLeft : '']}>
+              <View style={[wrapMsg,userId===data.id ? bgMe : '']}>
+                <Text style={userId!==data.id && checkID!==data.id  ? [colorItemName,show] : hide}>{name}</Text>
+                <Text style={userId===data.id ? colorWhite : colorMsg}>{data.message}</Text>
               </View>
               <View style={[showHour ? show : hide]}>
-                <Text style={[dateStyle, userId===data.user_id ? dateDirRight : dateDirLeft]}>{formatHour(data.create_at)}</Text>
+                <Text style={[dateStyle, userId===data.id ? dateDirRight : dateDirLeft]}>{formatHour(data.create_at)}</Text>
               </View>
             </View>
 

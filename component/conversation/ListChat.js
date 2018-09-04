@@ -21,10 +21,12 @@ class ListChat extends Component {
       listFriend:[],
       listSuggestFriend:[],
       showSuggest:false,
-      countSuggest:0,
+
     };
     this.getListFriend();
   }
+
+
 
   getListFriend(status='accept'){
     const { user_id } = this.props;
@@ -33,7 +35,7 @@ class ListChat extends Component {
     getEncodeApi(url).then(lf=>{
       if(status==='accept') {
         this.state.listFriend=lf.data;
-        this.state.countSuggest= this.props.myFriends.length - lf.data.length;
+
       }
       if(status==='request') this.state.listSuggestFriend=lf.data;
       this.setState(this.state);
@@ -54,8 +56,8 @@ class ListChat extends Component {
   //   this.getListFriend('request');
   // }
   render() {
-    const { user_id,navigation,avatar } = this.props;
-    const { listFriend,showSuggest,listSuggestFriend,countSuggest } = this.state;
+    const { user_id,navigation,avatar,countSuggest } = this.props;
+    const { listFriend,showSuggest,listSuggestFriend } = this.state;
     const {
       container,contentWrap,headCatStyle,headContent,titleCreate,
       wrapItems,colorName,wrapConnect,show,hide,

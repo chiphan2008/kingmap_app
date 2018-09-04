@@ -27,10 +27,23 @@ class Contact extends Component {
       listAddFriend:{},
       yf_id:'',
       activeTab:'history',
+      countSuggest:0,
     };
     this.getListFriend();
     this.getHistory();
+    this.getStaticFriend();
   }
+
+  getStaticFriend(){
+    const { user_id } = this.props.navigation.state.params;
+    const url = `${global.url_node}${'static-friend/'}${user_id}`;
+    getEncodeApi(url).then(staticfr=>{
+      if(staticfr.data.length>0){
+        this.state.countSuggest= staticfr.data[0].request;
+      }
+    })
+  }
+
   getListFriend(){
     const { user_id } = this.props.navigation.state.params;
     const url = `${global.url_node}${'list-friend/'}${user_id}`;
@@ -38,7 +51,7 @@ class Contact extends Component {
       friends.data.length>0 && this.props.dispatch({type:'UPDATE_MY_FRIENDS',myFriends:friends.data});
     })
   }
-  
+
   getHistory(page=null){
     const { user_id } = this.props.navigation.state.params;
     if(page===null) page=0;
@@ -222,6 +235,7 @@ class Contact extends Component {
           addFriend={this.addFriend.bind(this)}
           removeFriend={this.removeFriend.bind(this)}
           user_id={user_id}
+          countSuggest={this.state.countSuggest}
           navigation={this.props.navigation}
           avatar={avatar}/>
         </View>}

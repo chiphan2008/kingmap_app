@@ -11,6 +11,7 @@ import Moment from 'moment';
 import getEncodeApi from '../api/getEncodeApi';
 import postEncodeApi from '../api/postEncodeApi';
 import global from '../global';
+
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
 import sendEmailIC from '../../src/icon/ic-send-email.png';
 import attachIC from '../../src/icon/ic-blue/ic-attach.png';
@@ -19,6 +20,7 @@ import musicIC from '../../src/icon/ic-blue/ic-music.png';
 import pictureIC from '../../src/icon/ic-blue/ic-picture.png';
 import videoCallIC from '../../src/icon/ic-blue/ic-video-call.png';
 import videoClipIC from '../../src/icon/ic-blue/ic-video-clip.png';
+
 import {checkUrl,formatDate,formatHour,checkFriendAccept,getGroup} from '../libs';
 
 var element,timeoutHis;
@@ -37,6 +39,8 @@ class Messenger extends Component {
       myID:'',
       activeKeyboard:25,
       scrollHeight:0,
+      socketID:'',
+      visible:true,
     };
     const {port_connect} = this.props.navigation.state.params;
     this.socket = io(`${global.url_server}`,{jsonp:false});
@@ -48,58 +52,56 @@ class Messenger extends Component {
     })
     this.socket.on('replyMessage-'+port_connect,function(data){
       console.log('replyMessage',data);
-
-      // console.log('data.length',data.length);
       // load first have one array: data.length!==undefined
-
-      if(data.message!==undefined && data.message!==''){
+      if(data.message!==undefined && data.message!=='' && data.socketID !== element.state.socketID){
 
         const {listData,index_item, checkID, checkDate} = element.state;
         const { id,name,yf_avatar } =element.props.navigation.state.params;
-        let arr = [];
+        let arr = element.state.listData;
         let countID=0;
         let countDate='';
 
         countID = checkID;
         countDate = checkDate;
-        if(index_item>1){
-          //load continue…: data.length===undefined
-          console.log('load continue',index_item);
-          arr.push(<ListMsg name={name} showHour={checkID!==data.id ? true : false}
-            checkDate={countDate} checkID={countID}
-            data={data} userId={id}
-            key={index_item} yf_avatar={yf_avatar} />)
-          arr = listData;
-          countID = data.id;
-          countDate = data.create_at;
-        }else {
-          //load first, but don’t have data: data.length===undefined
-          arr = [<ListMsg name={name} showHour={true} checkDate={countDate} checkID={countID} data={data} userId={id} key={index_item} yf_avatar={yf_avatar} />]
-        }
+        // if(index_item>1){
+        //   //load continue…: data.length===undefined
+        //
+        // }else {
+        //   //load first, but don’t have data: data.length===undefined
+        //   arr = [<ListMsg name={name} showHour={true} index={index_item} checkDate={countDate} checkID={countID} data={data} userId={id} key={index_item} yf_avatar={yf_avatar} />]
+        // }
+        console.log('load continue',index_item);
+        arr.push(<ListMsg name={name} showHour={checkID!==data.id ? true : false}
+          checkDate={countDate} checkID={countID}
+          data={data} userId={id} index={index_item}
+          key={index_item} yf_avatar={yf_avatar} />)
+        countID = data.id;
+        countDate = data.create_at;
+
         element.setState({
             checkDate:countDate,
             checkID:countID,
             index_item: index_item + 1,
-            listData: arr,
+            listData:arr,
             showType:false,
-        },()=>{element.addHistory(data.message);});
+            socketID:data.socketID
+        },()=>{element.addHistory(data.message,data.create_at);});
       }
       //console.log('index_item',index_item);
   	})
 
   }
-  addHistory(message){
+  addHistory(message,dateNow){
     // add-history
     clearTimeout(timeoutHis);
     const { id,friend_id } = element.props.navigation.state.params;
     const url = `${global.url_node}${'add-history'}`;
-    const param = `${'id='}${id}&${'friend_id='}${friend_id}&${'message='}${message}`;
+    const param = `${'id='}${id}&${'friend_id='}${friend_id}&${'message='}${message}&${'dateNow='}${dateNow}`;
     //console.log('(url,param)',url,param);
-    timeoutHis = setTimeout(function () {
-      postEncodeApi(url,param).then(e=>{
-        console.log('eee',e);
-      });
-    }, 5000);
+    postEncodeApi(url,param);
+    // timeoutHis = setTimeout(function () {
+    //   postEncodeApi(url,param);
+    // }, 5000);
   }
   loadHistoryChat(page=null){
     const { id,name,yf_avatar,port_connect } = element.props.navigation.state.params;
@@ -111,14 +113,18 @@ class Messenger extends Component {
       let countID=0;
       let countDate='';
       // console.log(hischat.data);
+      hischat.data.sort(function(a, b){return (a.create_at<b.create_at?-1:1)})
       hischat.data.forEach((e,i)=>{
         const countData = hischat.data[i+1];
-        //console.log('countData',countData);
-        arr.push(<ListMsg name={name} showHour={countData===undefined || e.id!==countData.id || (e.id===countData.id && formatHour(e.create_at)!==formatHour(countData.create_at) )  ? true : false}
-        checkDate={countDate} checkID={countID} data={e}
-        userId={id} key={i} yf_avatar={yf_avatar} />);
-        countID=e.id;
-        countDate = e.create_at;
+        //console.log('countData');
+        arr.push(<ListMsg
+          name={name}
+          showHour={countData===undefined || e.id!==countData.id || (e.id===countData.id && formatHour(e.create_at)!==formatHour(countData.create_at) )  ? true : false}
+          checkDate={countDate} checkID={countID} data={e} index={i}
+          userId={id} key={i} yf_avatar={yf_avatar}
+          />);
+          countID=e.id;
+          countDate = e.create_at;
         //console.log('data[]',i+1,data[i+1]);
       });
       //arr = element.state.listData;
@@ -138,8 +144,6 @@ class Messenger extends Component {
     if(checkFriendAccept(this.props.myFriends,friend_id)){
       this.loadHistoryChat();
       this.sendMessage();
-    }else {
-
     }
   }
 
@@ -158,8 +162,11 @@ class Messenger extends Component {
     //   friend_id:friend_id,
     //   notification:'Bạn chưa thể gửi tin nhắn cho người này. Vui lòng gửi yêu cầu kết bạn.'
     // };
-    this.socket.emit('sendMessage',port_connect,data);
-    this.setState({text:''});
+    if(checkFriendAccept(this.props.myFriends,friend_id)){
+      this.socket.emit('sendMessage',port_connect,data);
+      this.setState({text:''});
+    }
+
 
   }
   handleEnterText(showType){
@@ -187,7 +194,7 @@ class Messenger extends Component {
   render() {
     const { name,yf_avatar,id } = this.props.navigation.state.params;
     const { navigation } = this.props;
-    const { listData,text,index_item,showType,myID,activeKeyboard,scrollHeight } = this.state;
+    const { listData,text,index_item,showType,myID,activeKeyboard,scrollHeight,visible } = this.state;
     const {
       container,contentWrap,headCatStyle,headContent,titleCreate,
       wrapItems,colorName,bottomSend,txtInput,show,hide,
@@ -195,13 +202,17 @@ class Messenger extends Component {
     } = styles;
 
     return (
+      visible &&
       <Modal onRequestClose={() => null} transparent animationType={'none'} visible>
       <View style={container}>
         <View style={headCatStyle}>
             <View style={headContent}>
                 <TouchableOpacity onPress={()=>{
+                  this.props.dispatch({type:'DETAIL_BACK',detailBack:'UpdateHistoryChat'});
                   this.handleEnterText(false);
-                  navigation.goBack();
+                  this.setState({visible:false},()=>{
+                    navigation.goBack();
+                  })
                 }} hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}>
                 <Image source={arrowLeft} style={{width:18, height:18,marginTop:5}} />
                 </TouchableOpacity>
@@ -322,12 +333,11 @@ export class ListMsg extends Component {
       {data.message!==undefined && data.create_at!==undefined  ?
         <View style={{paddingLeft:10,paddingRight:10,marginBottom:7}}>
           <View style={[wrapDatePaging,formatDate(checkDate)!==formatDate(data.create_at) ? show :hide ]}>
-            <View style={{borderRadius:10,backgroundColor:'#C5C4CE',padding:3,paddingLeft:5,paddingRight:5}}>
+            <View style={{borderRadius:10,backgroundColor:'#C5C4CE',padding:3,paddingLeft:7,paddingRight:7}}>
             <Text style={{color:'#fff',fontSize:12}}>{Moment(data.create_at).format('DD/MM/YYYY')}</Text>
             </View>
             <View style={lineDate}></View>
           </View>
-
           <View style={[userId===data.id ? avatarRight : avatarLeft,checkID===data.id && userId===data.id ? groupTopRight : '']}>
             <View style={widthAva}>
               <View style={[wrapAva,userId===data.id || checkID===data.id ? hide : show]}>

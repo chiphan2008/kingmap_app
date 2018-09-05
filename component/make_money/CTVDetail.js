@@ -7,7 +7,7 @@ import {
   TouchableWithoutFeedback
 } from 'react-native';
 import Moment from 'moment';
-import {format_number} from '../libs';
+import {format_number,checkFriendAccept,getGroup} from '../libs';
 import styles from '../styles';
 import global from '../global';
 import postApi from '../api/postApi';
@@ -77,7 +77,7 @@ export default class CTVDetail extends Component {
     const {listData,showArea,content,quyenloi,showQuyenloi, showInfo} = this.state;
     const {goBack} = this.props.navigation;
     const {avatar,name,address,lang,ctv_id,content_id,user_profile,_daily,role_id} = this.props.navigation.state.params;
-
+    console.log('ctv_id,_daily,user_profile.id',ctv_id,_daily,user_profile);
     // console.log('_daily',_daily);
     return (
       <View>
@@ -94,12 +94,23 @@ export default class CTVDetail extends Component {
           </View>
 
             <ScrollView>
-            <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center',paddingTop:15}}>
-              <View style={{flexDirection:'row',paddingBottom:15}}>
-                  <Image source={{uri:avatar}} style={{width:50,height:50,marginRight:10,borderRadius:25}} />
-                  <View style={{width:width-90}}>
-                    <Text numberOfLines={1} style={colorlbl}>{name}</Text>
+            <View style={{flexDirection:'row',paddingTop:15,justifyContent:'center',alignItems:'center'}}>
+              <View style={{flexDirection:'row',paddingBottom:15,justifyContent:'center',alignItems:'center'}}>
+                  <Image source={{uri:avatar}} style={{width:70,height:70,marginRight:10,borderRadius:35}} />
+                  <View style={{width:width-110}}>
+                    <Text numberOfLines={1} style={[colorlbl,{fontWeight:'bold'}]}>{name}</Text>
                     <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${address}`}</Text>
+
+                    <TouchableOpacity style={{backgroundColor:'#d0021b',padding:5,borderRadius:5,maxWidth:100,alignItems:'center',marginTop:5}}
+                    onPress={()=>{
+                        //if(isLogin){
+                          const port = user_id<listData.created_by ? `${user_id}_${listData.created_by}` : `${listData.created_by}_${user_id}`;
+                          navigate('MessengerScr',{user_id,yf_id:listData.created_by,yf_avatar:`${global.url_media}${listData._created_by.avatar}`,name:listData._created_by.full_name,port_connect:port})
+                        //}
+                    }}>
+                    <Text style={{fontSize:16,color:'#fff',lineHeight:23}} numberOfLines={2}>Chat online</Text>
+                    </TouchableOpacity>
+
                   </View>
               </View>
             </View>
@@ -189,7 +200,7 @@ export default class CTVDetail extends Component {
                    </View>
                  </View> }
                  <View style={{height:1}}></View>
-                 
+
                 {quyenloi !== null && content_id===undefined &&
                 <View style={wrapWhite}>
                 <View style={{width:width-30,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
@@ -217,7 +228,7 @@ export default class CTVDetail extends Component {
                 <Modal onRequestClose={() => null} transparent visible={showQuyenloi}
                 style={{maxHeight: height*1.8, margin:8, backgroundColor: '#fff'}}>
                   <View style={{flex: 1,maxHeight: height*1.8, backgroundColor: '#fff', paddingBottom: 3}}>
-                    <TouchableOpacity hitSlop={{top: 20, bottom: 20, left: 20, right: 20}} 
+                    <TouchableOpacity hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
                     style={{alignItems:'flex-end', marginTop: 20, marginRight: 5}}
                     onPress={() => this.setState({showQuyenloi: false})}>
                        <Image source={closeIC} style={{width:35,height:35}} />

@@ -497,7 +497,7 @@ class MakeMoney extends Component {
           stickyHeaderIndices={[0]}
           contentContainerStyle={{position:'relative',top:0}}
           onContentSizeChange={(contentWidth, contentHeight)=>{
-            console.log(contentWidth, contentHeight);
+            //console.log(contentWidth, contentHeight);
             (((isAgency || isCeo) && this.state.isReady<2) || (isCTV && this.state.isReady<1)) && this.setState({isReady:this.state.isReady+=1,heightLayout:contentHeight})
           }}
           >

@@ -6,18 +6,18 @@ import lang_vn from './lang/vn/user/language';
 import Moment from 'moment';
 
 export function getDistanceMinutes(startTime){
-  const now = Moment().format();
-  return parseInt(Moment.duration(Moment(now).diff(Moment(startTime))).asMinutes());
+  const nowDate = Moment().format("YYYY-MM-DD HH:mm:ss");
+  return parseInt(Moment.duration(Moment(nowDate).diff(Moment(startTime).format("YYYY-MM-DD HH:mm:ss"))).asMinutes());
 }
 
 export function getDistanceHours(startTime){
-  const now = Moment().format();
-  return parseInt(Moment.duration(Moment(now).diff(Moment(startTime))).asHours());
+  const nowDate = Moment().format("YYYY-MM-DD HH:mm:ss");
+  return parseInt(Moment.duration(Moment(nowDate).diff(Moment(startTime).format("YYYY-MM-DD HH:mm:ss"))).asHours());
 }
 
 export function getDistanceDays(startTime){
-  const now = Moment().format();
-  return parseInt(Moment.duration(Moment(now).diff(Moment(startTime))).asDays());
+  const nowDate = Moment().format("YYYY-MM-DD HH:mm:ss");
+  return parseInt(Moment.duration(Moment(nowDate).diff(Moment(startTime).format("YYYY-MM-DD HH:mm:ss"))).asDays());
 }
 
 export function getIndex(element,id){

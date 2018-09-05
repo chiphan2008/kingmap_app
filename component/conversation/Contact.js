@@ -5,22 +5,26 @@ import {Platform, View, Text, StyleSheet, Dimensions, Image,
   TouchableOpacity,FlatList,
 } from 'react-native';
 import {connect} from 'react-redux';
+import io from 'socket.io-client/dist/socket.io.js';
 const {height, width} = Dimensions.get('window');
 import Moment from 'moment';
 import getEncodeApi from '../api/getEncodeApi';
 import postEncodeApi from '../api/postEncodeApi';
 import global from '../global';
 import ListChat from './ListChat';
+
 import arrowLeft from '../../src/icon/ic-white/arrow-left.png';
 import chatIC from '../../src/icon/ic-blue/ic-chat.png';
 import userIC from '../../src/icon/ic-blue/ic-user.png';
 import groupIC from '../../src/icon/ic-blue/ic-group.png';
 import onlineIC from '../../src/icon/ic-green/ic-online.png';
-import {checkUrl,checkFriend,getGroup,getDistanceHours,getDistanceMinutes,getDistanceDays} from '../libs';
 
+import {checkUrl,checkFriend,getGroup,getDistanceHours,getDistanceMinutes,getDistanceDays} from '../libs';
+var element,timeoutHis;
 class Contact extends Component {
   constructor(props) {
     super(props);
+    element = this;
     this.state = {
       listSys:[],
       listHis:[],
@@ -29,7 +33,19 @@ class Contact extends Component {
       activeTab:'history',
       countSuggest:0,
     };
-    this.getListFriend();
+
+    clearTimeout(timeoutHis);
+    const { user_id } = this.props.navigation.state.params;
+    this.socket = io(`${global.url_server}`,{jsonp:false});
+    this.socket.on('updateHistory-'+user_id,function(data){
+      console.log('data.update',data.update);
+      if(data.update){
+        timeoutHis = setTimeout(function () {
+          element.getHistory();
+        }, 1500);
+      }
+    })
+
     this.getHistory();
     this.getStaticFriend();
   }
@@ -53,6 +69,7 @@ class Contact extends Component {
   }
 
   getHistory(page=null){
+    this.getListFriend();
     const { user_id } = this.props.navigation.state.params;
     if(page===null) page=0;
     const url = `${global.url_node}${'history-chat/'}${user_id}${'?skip='}${page}${'&limit=20'}`;
@@ -66,6 +83,14 @@ class Contact extends Component {
         this.setState(this.state);
     })
   }
+
+  componentDidUpdate(){
+    if(this.props.detailBack==='UpdateHistoryChat'){
+      this.props.dispatch({type:'DETAIL_BACK',detailBack:''});
+      this.getHistory();
+    }
+  }
+
   getSystem(page=null){
     const { user_id } = this.props.navigation.state.params;
     if(page===null) page=0;
@@ -125,7 +150,9 @@ class Contact extends Component {
 
         <TouchableOpacity style={[wrapTab,activeTab==='history' ? borderActive : '']}
         onPress={()=>{
-          activeTab!=='history' && this.setState({activeTab:'history'})
+          activeTab!=='history' && this.setState({activeTab:'history'},()=>{
+            this.getHistory();
+          })
         }}>
         <Image source={chatIC} style={{width:25,height:25}} />
         </TouchableOpacity>
@@ -168,15 +195,17 @@ class Contact extends Component {
                  <Image source={onlineIC} style={{width:10,height:10,position:'absolute',right:10,top:40}} />}
                  </View>
                  <View>
+
                   <Text style={colorName}>{item.name}</Text>
                   <Text style={{fontSize:14}}>{item.last_message}</Text>
                  </View>
                </TouchableOpacity>
 
                <View>
+
                  {getDistanceMinutes(item.update_at)<60 &&
                    <Text style={{fontSize:14}}>{getDistanceMinutes(item.update_at)} phút</Text>}
-                 {getDistanceHours(item.update_at)<24 &&
+                 {getDistanceHours(item.update_at)<24 && getDistanceHours(item.update_at)>1 &&
                    <Text style={{fontSize:14}}>{getDistanceHours(item.update_at)} giờ</Text>}
                  {getDistanceDays(item.update_at)>1 &&
                    <Text style={{fontSize:14}}>{getDistanceDays(item.update_at)} ngày</Text>}
@@ -246,7 +275,10 @@ class Contact extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return {myFriends:state.myFriends}
+  return {
+    myFriends:state.myFriends,
+    detailBack:state.detailBack
+  }
 }
 
 export default connect(mapStateToProps)(Contact);

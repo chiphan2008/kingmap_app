@@ -240,7 +240,7 @@ class Messenger extends Component {
           <View style={{height:activeKeyboard,width}}></View>
         </ScrollView>
         {showType && id!==myID &&
-        <View style={[wrapShowType,{bottom:Platform.OS==='ios' ? 50 : activeKeyboard+75}]}>
+        <View style={[wrapShowType,{bottom:Platform.OS==='ios' ? activeKeyboard+50 : activeKeyboard+75}]}>
           <Text style={{fontSize:12,fontStyle:'italic',color:'#fff'}}>{name} đang nhập ...</Text>
         </View>}
         <View style={{
@@ -249,7 +249,7 @@ class Messenger extends Component {
           borderColor:'#E1E7EC',
           borderTopWidth:1,
           position:'relative',
-          zIndex:9999,bottom:activeKeyboard,
+          zIndex:9999,bottom:Platform.OS==='ios'? activeKeyboard-25: activeKeyboard,
         }}>
 
           <View style={{flexDirection:'row',alignItems:'center',height:50,paddingTop:5}}>

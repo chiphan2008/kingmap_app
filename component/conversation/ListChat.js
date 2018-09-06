@@ -89,7 +89,10 @@ class ListChat extends Component {
                    renderItem={({item}) => (
                      <View style={bgWhite}>
                      <TouchableOpacity style={[wrapItems]}
-                     onPress={()=>navigation.navigate('MessengerScr',{id:user_id,friend_id:item.id,yf_avatar:item.urlhinh,name:item.name,port_connect:getGroup(user_id,item.id)})}>
+                     onPress={()=>navigation.navigate('MessengerScr',
+                     {id:user_id,friend_id:item.id,yf_avatar:item.urlhinh,name:item.name,port_connect:getGroup(user_id,item.id)})}
+                     onLongPress={()=>alert('onLongPress')}
+                     >
                        <Image source={{uri: checkUrl(item.urlhinh) ? `${item.urlhinh}` : `${global.url_media}/${item.urlhinh}`}} style={{width:50,height:50,borderRadius:25,marginRight:7}} />
                        <Text style={colorName}>{item.name}</Text>
                      </TouchableOpacity>

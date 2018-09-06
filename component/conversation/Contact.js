@@ -32,6 +32,7 @@ class Contact extends Component {
       yf_id:'',
       activeTab:'history',
       countSuggest:0,
+      showOpt:false,
     };
 
     clearTimeout(timeoutHis);
@@ -123,6 +124,9 @@ class Contact extends Component {
       this.getListFriend();
     });
   }
+  _onLongPressHis(id,name){
+
+  }
   render() {
     const { lang,name_module,user_id,avatar } = this.props.navigation.state.params;
     const { navigation,myFriends } = this.props;
@@ -186,9 +190,11 @@ class Contact extends Component {
              renderItem={({item,index}) => (
                <View style={wrapItems}>
                <TouchableOpacity style={{flexDirection:'row',alignItems:'center',width:width-105}}
-               onPress={()=>{
+                onPress={()=>{
                  navigation.navigate('MessengerScr',{id:user_id,friend_id:item.id,yf_avatar:item.urlhinh,name:item.name,port_connect:getGroup(user_id,item.id)})
-                }}>
+                }}
+                onLongPress={()=>this._onLongPressHis(item.id,item.name)}
+                >
                 <View>
                  <Image source={{uri: checkUrl(item.urlhinh) ? `${item.urlhinh}` : `${global.url_media}${item.urlhinh}`}} style={{width:50,height:50,borderRadius:25,marginRight:7}} />
                  {Moment(item.online_at)===Moment(item.offline_at) &&
@@ -240,7 +246,7 @@ class Contact extends Component {
                  </View>
                  <Text style={colorName}>{item.name}</Text>
                </TouchableOpacity>
-               {console.log(checkFriend(myFriends,item.id))}
+
                {(!checkFriend(myFriends,item.id) && listAddFriend[`${item.id}`]!==item.id) &&
                <TouchableOpacity style={btnAdd}
                onPress={()=>{this.setState({listAddFriend:Object.assign(this.state.listAddFriend,{[`${item.id}`]:item.id})},()=>{

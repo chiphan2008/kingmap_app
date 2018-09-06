@@ -280,24 +280,24 @@ class HomeTab extends Component {
                   <Text style={labelCat}>{e.name}</Text>
                 </TouchableOpacity>);
                 break;
-                case 'chat':
-                    let angle = index-i;
-                    pos = this.findNewPoint(x, y, angle, distance);
-                    return (<TouchableOpacity
-                        key={e.id}
-                        style={{position:'absolute',alignItems:'center',top:pos.y,left :pos.x,overflow: 'visible'}}
-                        onPress={() => {
-                          this.requestLogin();
-                          if(this.props.isLogin){
-                            navigate('ContactScr',{user_id:this.state.user_id,avatar:this.state.avatar, name_module:e.name,lang:this.state.lang});
-                          }
-                        }}
-                        >
-
-                      <Image style={e.noibat===1?iconHome:iconHomeTab} source={{uri:`${global.url_media}${e.image}`}} />
-                      <Text style={labelCat}>{e.name}</Text>
-                    </TouchableOpacity>);
-                      break;
+                // case 'chat':
+                //     let angle = index-i;
+                //     pos = this.findNewPoint(x, y, angle, distance);
+                //     return (<TouchableOpacity
+                //         key={e.id}
+                //         style={{position:'absolute',alignItems:'center',top:pos.y,left :pos.x,overflow: 'visible'}}
+                //         onPress={() => {
+                //           this.requestLogin();
+                //           if(this.props.isLogin){
+                //             navigate('ContactScr',{user_id:this.state.user_id,avatar:this.state.avatar, name_module:e.name,lang:this.state.lang});
+                //           }
+                //         }}
+                //         >
+                //
+                //       <Image style={e.noibat===1?iconHome:iconHomeTab} source={{uri:`${global.url_media}${e.image}`}} />
+                //       <Text style={labelCat}>{e.name}</Text>
+                //     </TouchableOpacity>);
+                //       break;
                 case 'make_money':
                 return (<TouchableOpacity key={e.id}
                     //style={{position:'absolute',alignItems:'center',top:pos.y,left :pos.x,overflow: 'visible'}}

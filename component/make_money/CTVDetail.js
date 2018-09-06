@@ -6,6 +6,7 @@ import {
   TextInput,Dimensions,ScrollView,FlatList,
   TouchableWithoutFeedback
 } from 'react-native';
+import {connect} from 'react-redux';
 import Moment from 'moment';
 import {format_number,checkFriendAccept,getGroup} from '../libs';
 import styles from '../styles';
@@ -20,7 +21,7 @@ import closeIC from '../../src/icon/ic-create/ic-close.png';
 
 const {width,height} = Dimensions.get('window');
 
-export default class CTVDetail extends Component {
+class CTVDetail extends Component {
   constructor(props){
     super(props);
     this.state={
@@ -75,10 +76,9 @@ export default class CTVDetail extends Component {
       popoverLoc,overLayout,shadown,listOverService,imgShare
     } = styles;
     const {listData,showArea,content,quyenloi,showQuyenloi, showInfo} = this.state;
-    const {goBack} = this.props.navigation;
-    const {avatar,name,address,lang,ctv_id,content_id,user_profile,_daily,role_id} = this.props.navigation.state.params;
-    console.log('ctv_id,_daily,user_profile.id',ctv_id,_daily,user_profile);
-    // console.log('_daily',_daily);
+    const {goBack,navigate} = this.props.navigation;
+    const {avatar,name,address,lang,ceo_id,daily_id,ctv_id,content_id,user_profile,_daily,role_id} = this.props.navigation.state.params;
+  //  console.log('ctv_id,_daily,user_profile.id',ceo_id,daily_id,ctv_id);
     return (
       <View>
         <View style={wrapper}>
@@ -101,15 +101,19 @@ export default class CTVDetail extends Component {
                     <Text numberOfLines={1} style={[colorlbl,{fontWeight:'bold'}]}>{name}</Text>
                     <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${address}`}</Text>
 
-                    <TouchableOpacity style={{backgroundColor:'#d0021b',padding:5,borderRadius:5,maxWidth:100,alignItems:'center',marginTop:5}}
-                    onPress={()=>{
-                        //if(isLogin){
-                          const port = user_id<listData.created_by ? `${user_id}_${listData.created_by}` : `${listData.created_by}_${user_id}`;
-                          navigate('MessengerScr',{user_id,yf_id:listData.created_by,yf_avatar:`${global.url_media}${listData._created_by.avatar}`,name:listData._created_by.full_name,port_connect:port})
-                        //}
-                    }}>
-                    <Text style={{fontSize:16,color:'#fff',lineHeight:23}} numberOfLines={2}>Chat online</Text>
-                    </TouchableOpacity>
+                    {content_id===undefined &&
+                      <TouchableOpacity style={{backgroundColor:'#d0021b',padding:5,borderRadius:5,maxWidth:100,alignItems:'center',marginTop:5}}
+                      onPress={()=>{
+                          //if(isLogin){
+                            const {id} = this.props.user_profile;
+                            const friend_id = daily_id!==''?daily_id:ctv_id;
+                            const port = getGroup(id,friend_id);
+                            navigate('MessengerScr',{id,friend_id,yf_avatar:avatar,name,port_connect:port})
+                          //}
+                      }}>
+                      <Text style={{fontSize:16,color:'#fff',lineHeight:23}} numberOfLines={2}>Chat online</Text>
+                      </TouchableOpacity>
+                    }
 
                   </View>
               </View>
@@ -274,3 +278,8 @@ export default class CTVDetail extends Component {
     );
   }
 }
+const mapStateToProps = (state) => {
+  return {user_profile:state.user_profile}
+}
+
+export default connect(mapStateToProps)(CTVDetail);

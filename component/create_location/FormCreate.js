@@ -255,15 +255,15 @@ class FormCreate extends Component {
       //this.setState({errMsg:this.state.lang.enter_time});
       return Alert.alert(this.state.lang.notify,this.state.lang.enter_time);
     }
-    //console.log('confirmPostData5');
-    if(this.state.idCountry==='' || this.state.idCity==='' || this.state.idDist===''){
-      //this.setState({errArea:true});return false;
-      return Alert.alert(this.state.lang.notify,this.state.lang.plz_choose_area);
-    }
     //console.log('confirmPostData6');
     if(this.state.txtKW===null || this.state.txtKW.trim()==='' || strtoarray(this.state.txtKW,',').length<3 ){
       //this.setState({errMsg:this.state.lang.enter_kw});
       return Alert.alert(this.state.lang.notify,this.state.lang.enter_kw);
+    }
+    //console.log('confirmPostData5');
+    if(this.state.idCountry==='' || this.state.idCity==='' || this.state.idDist===''){
+      //this.setState({errArea:true});return false;
+      return Alert.alert(this.state.lang.notify,this.state.lang.plz_choose_area);
     }
     //console.log('confirmPostData7');
     if(this.state.imgAvatar.path===undefined){

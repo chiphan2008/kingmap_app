@@ -5,8 +5,8 @@ module.exports = {
     client_id:1,
     client_secret:'NKbqe8ovfMetW8WYimVN7MtNHSsy6tCo6mm7WU9Y'
   },
-  url: 'https://develop.kingmap.vn/api/',
-  url_media: 'https://develop.kingmap.vn',
+  url: 'https://kingmap.vn/api/',
+  url_media: 'https://kingmap.vn',
   url_develop_api: 'https://develop.kingmap.vn/api/',
   url_release_media: 'https://kingmap.vn',
   url_server:'https://node.kingmap.vn:2309',

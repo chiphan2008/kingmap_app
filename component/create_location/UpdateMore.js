@@ -155,6 +155,10 @@ export default class UpdateMore extends Component {
           this.setState({
             nameProduct:'',desProduct:'',priceProduct:'',imgProduct:{},
             nameKM:'',desKM:'',priceKM:'',imgKM:{},
+            lblPro:lang.title_add_pro,
+            lblKM:lang.title_add_km,
+            edit:false,discount_id:'',discount_id:'',
+            disable:false,
           },()=>{
             this.getList(route);
           });

@@ -2,7 +2,8 @@
 
 import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image,
-  TouchableOpacity,TextInput,ScrollView,Keyboard,Modal
+  TouchableOpacity,TextInput,ScrollView,Keyboard,Modal,
+  RefreshControl
 } from 'react-native';
 import {connect} from 'react-redux';
 const {height, width} = Dimensions.get('window');
@@ -41,6 +42,7 @@ class Messenger extends Component {
       scrollHeight:0,
       socketID:'',
       visible:true,
+      refreshing:true,
     };
     const {port_connect} = this.props.navigation.state.params;
     this.socket = io(`${global.url_server}`,{jsonp:false});
@@ -191,8 +193,12 @@ class Messenger extends Component {
   _keyboardDidHide = () => {
     this.setState({activeKeyboard:25});
   }
+  _onRefresh = () => {
+    //console.log('_onRefresh');
+  }
   render() {
-    const { name,yf_avatar,id } = this.props.navigation.state.params;
+    const { id,friend_id,yf_avatar,name,port_connect } = this.props.navigation.state.params;
+    console.log(id,friend_id,yf_avatar,name,port_connect);
     const { navigation } = this.props;
     const { listData,text,index_item,showType,myID,activeKeyboard,scrollHeight,visible } = this.state;
     const {
@@ -228,10 +234,15 @@ class Messenger extends Component {
             this.scrollView.scrollToEnd({animated: false});
           })
         }}
+        horizontal={false}
         ref={(scrollView) => { this.scrollView = scrollView }}
-        scrollEnabled
-        refreshing={true}
-        onRefresh={()=>console.log(this._onRefresh)}
+        //scrollEnabled
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.refreshing}
+            onRefresh={this._onRefresh}
+          />
+        }
         //stickyHeaderIndices={[0]}
         >
         <View style={{width,marginTop: 70}}>

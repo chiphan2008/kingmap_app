@@ -26,8 +26,6 @@ class ListChat extends Component {
     this.getListFriend();
   }
 
-
-
   getListFriend(status='accept'){
     const { user_id } = this.props;
     const url = `${global.url_node}${'list-friend/'}${user_id}/${status}`;
@@ -35,7 +33,6 @@ class ListChat extends Component {
     getEncodeApi(url).then(lf=>{
       if(status==='accept') {
         this.state.listFriend=lf.data;
-
       }
       if(status==='request') this.state.listSuggestFriend=lf.data;
       this.setState(this.state);
@@ -80,7 +77,7 @@ class ListChat extends Component {
                 <Image source={arrowNextIC} style={{width:18,height:18}} />
               </TouchableOpacity>
 
-              <View>
+              <View style={{height:height-200}}>
               {listFriend.length>0 ?
                 <FlatList
                    extraData={this.state}
@@ -164,7 +161,6 @@ const styles = StyleSheet.create({
   },
   itemCenter:{flexDirection:'row',alignItems:'center'},
   wrapConnect:{
-
     backgroundColor:'#fff',
     width,padding:10,
     paddingBottom:15,

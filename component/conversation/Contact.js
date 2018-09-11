@@ -33,6 +33,8 @@ class Contact extends Component {
       activeTab:'history',
       countSuggest:0,
       showOpt:false,
+      loadMore:false,
+      page:0,
     };
 
     clearTimeout(timeoutHis);
@@ -46,7 +48,7 @@ class Contact extends Component {
         }, 1500);
       }
     })
-
+    console.log('constructor');
     this.getHistory();
     this.getStaticFriend();
   }
@@ -96,17 +98,15 @@ class Contact extends Component {
     const { user_id } = this.props.navigation.state.params;
     if(page===null) page=0;
     const url = `${global.url_node}${'except-person/'}${user_id}${'?skip='}${page}${'&limit=20'}`;
-    console.log(url);
+    console.log('getSystem',url);
     getEncodeApi(url).then(sys=>{
-      //console.log('e',e.data);
-        if(page===0){
-          this.state.listSys=sys.data;
-        }else {
-          this.state.listSys.concat(sys.data);
-        }
-          this.setState(this.state);
+        this.state.listSys=page===0?sys.data: this.state.listSys.concat(sys.data);
+        this.state.page += 20;
+        this.state.loadMore = sys.data.length===20?true:false;
+        this.setState(this.state);
     })
   }
+
   addFriend(friend_id){
     const { user_id } = this.props.navigation.state.params;
     const url = `${global.url_node}${'add-friend'}`;
@@ -127,6 +127,7 @@ class Contact extends Component {
   _onLongPressHis(id,name){
 
   }
+
   render() {
     const { lang,name_module,user_id,avatar } = this.props.navigation.state.params;
     const { navigation,myFriends } = this.props;
@@ -154,7 +155,7 @@ class Contact extends Component {
 
         <TouchableOpacity style={[wrapTab,activeTab==='history' ? borderActive : '']}
         onPress={()=>{
-          activeTab!=='history' && this.setState({activeTab:'history'},()=>{
+          this.setState({activeTab:'history'},()=>{
             this.getHistory();
           })
         }}>
@@ -163,14 +164,14 @@ class Contact extends Component {
 
         <TouchableOpacity style={[wrapTab,activeTab==='contact' ? borderActive : '']}
         onPress={()=>{
-          activeTab!=='contact' && this.setState({activeTab:'contact'})
+          this.setState({activeTab:'contact'})
         }}>
         <Image source={userIC} style={{width:25,height:25}} />
         </TouchableOpacity>
 
         <TouchableOpacity style={[wrapTab,activeTab==='system' ? borderActive : '']}
         onPress={()=>{
-          activeTab!=='system' && this.setState({activeTab:'system'},()=>{
+          this.setState({activeTab:'system'},()=>{
             this.state.listSys.length===0 && this.getSystem();
           })
         }}>
@@ -227,12 +228,22 @@ class Contact extends Component {
         </View>
 
         <View style={[contentWrap,activeTab==='system' ? show : hide]}>
-        {listSys.length>0 ?
-          <View>
           <FlatList
              extraData={this.state}
-             keyExtractor={(item, index) => index.toString()}
+             keyExtractor={(item, index) => item.id.toString()}
              data={listSys}
+             shouldItemUpdate={(props,nextProps)=>{
+               console.log('props.item',props.item);
+                 return props.item!==nextProps.item
+             }}
+             onEndReachedThreshold={0.01}
+             onEndReached={() => {
+               if(this.state.loadMore && activeTab==='system'){
+                 this.setState({loadMore:false},()=>{
+                   this.getSystem(this.state.page);
+                 })
+               }
+             }}
              renderItem={({item,index}) => (
                <View style={wrapItems}>
                <TouchableOpacity style={{flexDirection:'row',alignItems:'center',width:width-105}}
@@ -257,14 +268,9 @@ class Contact extends Component {
                </TouchableOpacity>}
                </View>
           )} />
-          </View>
 
-          :
-          <View></View>
-        }
         </View>
 
-        {activeTab==='contact' &&
         <View style={activeTab==='contact'?show:hide}>
           <ListChat
           addFriend={this.addFriend.bind(this)}
@@ -273,7 +279,7 @@ class Contact extends Component {
           countSuggest={this.state.countSuggest}
           navigation={this.props.navigation}
           avatar={avatar}/>
-        </View>}
+        </View>
 
       </View>
     );

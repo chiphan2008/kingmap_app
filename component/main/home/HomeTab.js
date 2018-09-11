@@ -263,13 +263,13 @@ class HomeTab extends Component {
         <View style={{alignItems: 'center', justifyContent: 'center', position:'relative',top:(width/10)<60?-60:-(width/10)}}>
             <Text numberOfLines={1} style={{fontSize: 21, fontWeight: 'bold', color: '#2e3c52'}}>{slogan ? slogan : ''}</Text>
         </View>
-            <View style={{width:260,height:140,alignItems:'center',flexDirection:'row',justifyContent:'space-between'}}>
+            <View style={{width:260,height:180,alignItems:'flex-end',flexDirection:'row',justifyContent:'space-between'}}>
             {this.state.listCategory.map((e,index)=>{
               switch (e.machine_name) {
                 case 'dia_diem':
                   return (
                   <TouchableOpacity key={e.id}
-                    style={{top:-(distance*0.55)}}
+                    style={{top:0,left:90,position:'absolute'}}
                     onPress={() => {
                       //console.log(this.state.lang.lang);
                       navigate('OtherCatScr',{name_module:e.name,lang:this.state.lang.lang})

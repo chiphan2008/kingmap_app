@@ -80,7 +80,7 @@ export default class AppInfo extends Component {
               <Text style={colorTitle}>Version</Text>
             </View>
             <View style={{width:(width-30)/2}}>
-              <Text style={{color:'#B8B9BD'}}>{'1.0.5 release'}</Text>
+              <Text style={{color:'#B8B9BD'}}>{'1.0.6 release'}</Text>
             </View>
          </View>
 
@@ -91,7 +91,7 @@ export default class AppInfo extends Component {
               <Text style={colorTitle}>{'Ngày cập nhật:'}</Text>
             </View>
             <View style={{width:(width-30)/2}}>
-              <Text style={{color:'#B8B9BD'}}>{'07/09/2018'}</Text>
+              <Text style={{color:'#B8B9BD'}}>{'11/09/2018'}</Text>
             </View>
          </View>
       </View>

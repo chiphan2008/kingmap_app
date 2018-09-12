@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image,
-  TouchableOpacity,FlatList,
+  TouchableOpacity,FlatList,TextInput
 } from 'react-native';
 import {connect} from 'react-redux';
 import io from 'socket.io-client/dist/socket.io.js';
@@ -13,6 +13,7 @@ import postEncodeApi from '../api/postEncodeApi';
 import global from '../global';
 
 import onlineIC from '../../src/icon/ic-green/ic-online.png';
+import searchIC from '../../src/icon/ic-gray/ic-search.png';
 
 import {checkUrl,checkFriend,getGroup,getDistanceHours,getDistanceMinutes,getDistanceDays} from '../libs';
 var element,timeoutHis;
@@ -22,6 +23,7 @@ class HistoryChat extends Component {
     element = this;
     this.state = {
       listHis:[],
+      valSearch:'',
     };
     const { id } = this.props.user_profile;
     this.socket = io(`${global.url_server}`,{jsonp:false});
@@ -64,11 +66,30 @@ class HistoryChat extends Component {
     const { listHis } = this.state;
     const {
       container,headCatStyle,headContent,titleCreate,
-      wrapItems,colorName
+      wrapItems,colorName,inputSearch
     } = styles;
 
     return (
       <View style={container}>
+        <View style={{padding:3,alignItems:'center',justifyContent:'center',marginBottom:3}}>
+            <TextInput underlineColorAndroid='transparent'
+            placeholder={'Search...'} style={inputSearch}
+            onSubmitEditing={() => {
+            }}
+            onChangeText={(valSearch) => this.setState({valSearch})}
+            value={this.state.valSearch} />
+
+            {/*<TouchableOpacity style={{top:Platform.OS==='ios' ? 75 : 65,left:(width-50),position:'absolute'}}
+            onPress={()=>{
+              if (this.state.valSearch.trim()!=='') {
+                navigate('SearchScr',{keyword:this.state.valSearch,lat:yourCurLoc.latitude,lng:yourCurLoc.longitude,idCat:'',lang:this.state.lang.lang});
+                this.setState({valSearch:''})
+              }
+            }}>
+              <Image style={{width:16,height:16,}} source={searchIC} />
+            </TouchableOpacity>*/}
+        </View>
+
           <FlatList
              extraData={this.state}
              keyExtractor={(item, index) => index.toString()}
@@ -132,5 +153,7 @@ const styles = StyleSheet.create({
   },
   titleCreate:{color:'white',fontSize:18,paddingTop:5},
   colorName:{color:'#2F3540',fontSize:16},
-
+  inputSearch : {
+    marginTop: 3,width:width-10,backgroundColor:'#fff',borderRadius:5,padding:10,paddingRight:70,
+  },
 })

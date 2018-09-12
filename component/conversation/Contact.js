@@ -28,6 +28,7 @@ class Contact extends Component {
     this.state = {
       countSuggest:0,
     };
+    this.getListFriend();
     this.getStaticFriend();
   }
 

@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image,
-  TouchableOpacity,FlatList,
+  TouchableOpacity,FlatList,TextInput
 } from 'react-native';
 import {connect} from 'react-redux';
 const {height, width} = Dimensions.get('window');
@@ -12,6 +12,7 @@ import connectIC from '../../src/icon/ic-connect.png';
 import arrowNextIC from '../../src/icon/ic-arrow-next.png';
 import closeIC from '../../src/icon/ic-close.png';
 import arrowPreviewIC from '../../src/icon/ic-arrow-preview.png';
+import searchIC from '../../src/icon/ic-gray/ic-search.png';
 import {checkUrl,getGroup} from '../libs';
 
 class ListChat extends Component {
@@ -21,7 +22,7 @@ class ListChat extends Component {
       listFriend:[],
       listSuggestFriend:[],
       showSuggest:false,
-
+      valSearch:'',
     };
     this.getListFriend();
   }
@@ -58,7 +59,7 @@ class ListChat extends Component {
     const {
       container,contentWrap,headCatStyle,headContent,titleCreate,
       wrapItems,colorName,wrapConnect,show,hide,
-      itemCenter,bgWhite,
+      itemCenter,bgWhite,inputSearch
     } = styles;
 
     return (
@@ -77,7 +78,26 @@ class ListChat extends Component {
                 <Image source={arrowNextIC} style={{width:18,height:18}} />
               </TouchableOpacity>
 
-              <View style={{height:Platform.OS==='ios'? height-175 : height-200}}>
+              <View style={{padding:3,alignItems:'center',justifyContent:'center',marginBottom:3,marginTop:3}}>
+                  <TextInput underlineColorAndroid='transparent'
+                  placeholder={'Search...'} style={inputSearch}
+                  onSubmitEditing={() => {
+                  }}
+                  onChangeText={(valSearch) => this.setState({valSearch})}
+                  value={this.state.valSearch} />
+
+                  {/*<TouchableOpacity style={{top:Platform.OS==='ios' ? 65 : 70,left:(width-30),position:'absolute'}}
+                  onPress={()=>{
+                    if (this.state.valSearch.trim()!=='') {
+                      navigate('SearchScr',{keyword:this.state.valSearch,lat:yourCurLoc.latitude,lng:yourCurLoc.longitude,idCat:'',lang:this.state.lang.lang});
+                      this.setState({valSearch:''})
+                    }
+                  }}>
+                    <Image style={{width:16,height:16,}} source={searchIC} />
+                  </TouchableOpacity>*/}
+              </View>
+
+              <View style={{height:Platform.OS==='ios'? height-205 : height-250}}>
               {listFriend.length>0 ?
                 <FlatList
                    extraData={this.state}
@@ -165,7 +185,7 @@ const styles = StyleSheet.create({
     width,padding:10,
     paddingBottom:15,
     paddingTop:15,
-    marginBottom:10,
+    //marginBottom:10,
     flexDirection:'row',
     justifyContent:'space-between'
   },
@@ -178,6 +198,9 @@ const styles = StyleSheet.create({
   },
   headContent : {
       width: width - 40,justifyContent: 'space-between',flexDirection: 'row',
+  },
+  inputSearch : {
+    width:width-10,backgroundColor:'#fff',borderRadius:5,padding:10,paddingRight:70,
   },
   titleCreate:{color:'white',fontSize:18,paddingTop:5},
   colorName:{color:'#2F3540',fontSize:16},

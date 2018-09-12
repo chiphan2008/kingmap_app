@@ -20,8 +20,8 @@ import personalIC from './src/icon/ic-home/ic-personal.png';
 import global from './component/global';
 
 //import Chat
-import Contact from './component/conversation/Contact';
-import Messenger from './component/conversation/Messenger';
+import HomeChat from './component/conversation/HomeChat';
+
 //create-location
 import ChooseCat from './component/create_location/ChooseCat';
 import FormCreate from './component/create_location/FormCreate';
@@ -356,12 +356,10 @@ export default class App extends Component {
       ForgotScr: {
         screen: ForgotPasswordScreen,
       },
-      ContactScr: {
-        screen: Contact,
+      HomeChatScr: {
+        screen: HomeChat,
       },
-      MessengerScr: {
-        screen: Messenger,
-      },
+
 
     },
     {

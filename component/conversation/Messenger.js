@@ -45,6 +45,7 @@ class Messenger extends Component {
       refreshing:true,
     };
     const {port_connect} = this.props.navigation.state.params;
+    this.loadHistoryChat();
     this.socket = io(`${global.url_server}`,{jsonp:false});
     this.socket.on('replyStatus-'+port_connect,function(data){
       console.log('showType',data);
@@ -109,16 +110,16 @@ class Messenger extends Component {
     const { id,name,yf_avatar,port_connect } = element.props.navigation.state.params;
     if(page===null) page=0;
     const url = `${global.url_node}${'conversation/'}${port_connect}${'?skip='}${page}${'&limit=20'}`;
-    //console.log(url);
+    console.log(url);
     getEncodeApi(url).then(hischat=>{
       let arr = [];
       let countID=0;
       let countDate='';
       // console.log(hischat.data);
       hischat.data.sort(function(a, b){return (a.create_at<b.create_at?-1:1)})
-      hischat.data.forEach((e,i)=>{
+      hischat.data.map((e,i)=>{
         const countData = hischat.data[i+1];
-        //console.log('countData');
+        console.log('countData');
         arr.push(<ListMsg
           name={name}
           showHour={countData===undefined || e.id!==countData.id || (e.id===countData.id && formatHour(e.create_at)!==formatHour(countData.create_at) )  ? true : false}
@@ -129,22 +130,25 @@ class Messenger extends Component {
           countDate = e.create_at;
         //console.log('data[]',i+1,data[i+1]);
       });
-      //arr = element.state.listData;
-      element.setState({
-          checkDate:countDate,
-          checkID:countID,
-          index_item: hischat.data.length,
-          listData: arr,
-          showType:false,
-      },()=>{});
+      //arr = arr;
+      setTimeout(()=>{
+        element.setState({
+            checkDate:countDate,
+            checkID:countID,
+            index_item: hischat.data.length,
+            listData: arr,
+            showType:false,
+        });
+      },800)
+
 
     })
   }
   componentWillMount(){
     const { port_connect,id,yf_avatar,friend_id } = this.props.navigation.state.params;
     //console.log(this.props.myFriends,friend_id);
+
     if(checkFriendAccept(this.props.myFriends,friend_id)){
-      this.loadHistoryChat();
       this.sendMessage();
     }
   }
@@ -198,7 +202,7 @@ class Messenger extends Component {
   }
   render() {
     const { id,friend_id,yf_avatar,name,port_connect } = this.props.navigation.state.params;
-    console.log(id,friend_id,yf_avatar,name,port_connect);
+    //console.log(id,friend_id,yf_avatar,name,port_connect);
     const { navigation } = this.props;
     const { listData,text,index_item,showType,myID,activeKeyboard,scrollHeight,visible } = this.state;
     const {

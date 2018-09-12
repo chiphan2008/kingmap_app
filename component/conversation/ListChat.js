@@ -77,7 +77,7 @@ class ListChat extends Component {
                 <Image source={arrowNextIC} style={{width:18,height:18}} />
               </TouchableOpacity>
 
-              <View style={{height:height-200}}>
+              <View style={{height:Platform.OS==='ios'? height-175 : height-200}}>
               {listFriend.length>0 ?
                 <FlatList
                    extraData={this.state}

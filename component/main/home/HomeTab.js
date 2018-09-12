@@ -289,7 +289,7 @@ class HomeTab extends Component {
                         onPress={() => {
                           this.requestLogin();
                           if(this.props.isLogin){
-                            navigate('ContactScr',{user_id:this.state.user_id,avatar:this.state.avatar, name_module:e.name,lang:this.state.lang});
+                            navigate('HomeChatScr',{user_id:this.state.user_id,avatar:this.state.avatar, name_module:e.name,lang:this.state.lang});
                           }
                         }}
                         >
@@ -364,7 +364,7 @@ class HomeTab extends Component {
                           onPress={() => {
                             this.requestLogin();
                             if(this.props.isLogin){
-                              navigate('ContactScr',{user_id:this.state.user_id,avatar:this.state.avatar, name_module:e.name,lang:this.state.lang});
+                              navigate('HomeChatScr',{user_id:this.state.user_id,avatar:this.state.avatar, name_module:e.name,lang:this.state.lang});
                             }
                           }}
                           >

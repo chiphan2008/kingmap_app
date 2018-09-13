@@ -2,11 +2,13 @@
 
 import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image,
-  TouchableOpacity,FlatList,TextInput
+  TouchableOpacity,FlatList,TextInput,
+  TouchableWithoutFeedback,Keyboard
 } from 'react-native';
 import {connect} from 'react-redux';
 const {height, width} = Dimensions.get('window');
 import getEncodeApi from '../api/getEncodeApi';
+import postEncodeApi from '../api/postEncodeApi';
 import global from '../global';
 import connectIC from '../../src/icon/ic-connect.png';
 import arrowNextIC from '../../src/icon/ic-arrow-next.png';
@@ -15,6 +17,7 @@ import arrowPreviewIC from '../../src/icon/ic-arrow-preview.png';
 import searchIC from '../../src/icon/ic-gray/ic-search.png';
 import {checkUrl,getGroup} from '../libs';
 
+var searchTimeout;
 class ListChat extends Component {
   constructor(props) {
     super(props);
@@ -28,6 +31,7 @@ class ListChat extends Component {
   }
 
   getListFriend(status='accept'){
+    clearTimeout(searchTimeout);
     const { user_id } = this.props;
     const url = `${global.url_node}${'list-friend/'}${user_id}/${status}`;
     console.log(url);
@@ -50,9 +54,21 @@ class ListChat extends Component {
       this.getListFriend();
     })
   }
-  // componentWillMount(){
-  //   this.getListFriend('request');
-  // }
+  searchContact(keyword,page=null){
+    clearTimeout(searchTimeout);
+    const { user_id } = this.props;
+    if(page===null) page=0;
+    const url = `${global.url_node}${'search-contact'}`;
+    const param = `${'id='}${user_id}&${'keyword='}${keyword}`;
+    //console.log('(url,param)',url,param);
+    searchTimeout = setTimeout(()=>{
+      postEncodeApi(url,param).then(sys=>{
+          this.state.listFriend= page===0?sys.data: this.state.listFriend.concat(sys.data);
+          this.setState(this.state);
+      })
+    },700)
+
+  }
   render() {
     const { user_id,navigation,avatar,countSuggest } = this.props;
     const { listFriend,showSuggest,listSuggestFriend } = this.state;
@@ -63,6 +79,7 @@ class ListChat extends Component {
     } = styles;
 
     return (
+      <TouchableWithoutFeedback onPress={()=>Keyboard.dismiss()}>
       <View style={container}>
         <View style={contentWrap}>
 
@@ -82,8 +99,15 @@ class ListChat extends Component {
                   <TextInput underlineColorAndroid='transparent'
                   placeholder={'Search...'} style={inputSearch}
                   onSubmitEditing={() => {
+                    this.searchContact(this.state.valSearch);
                   }}
-                  onChangeText={(valSearch) => this.setState({valSearch})}
+                  onChangeText={(valSearch) => {
+                    this.setState({valSearch},()=>{
+                      if(valSearch.trim()!==''){
+                        this.searchContact(valSearch);
+                      }else { this.getListFriend(); }
+                    })
+                  }}
                   value={this.state.valSearch} />
 
                   {/*<TouchableOpacity style={{top:Platform.OS==='ios' ? 65 : 70,left:(width-30),position:'absolute'}}
@@ -161,15 +185,17 @@ class ListChat extends Component {
               }
             </View>
 
-
         </View>
       </View>
+      </TouchableWithoutFeedback>
     );
   }
 }
 
 const mapStateToProps = (state) => {
-  return {myFriends:state.myFriends}
+  return {
+    myFriends:state.myFriends
+  }
 }
 
 export default connect(mapStateToProps)(ListChat);

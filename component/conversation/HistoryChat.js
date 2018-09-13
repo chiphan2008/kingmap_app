@@ -2,7 +2,8 @@
 
 import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image,
-  TouchableOpacity,FlatList,TextInput
+  TouchableOpacity,FlatList,TextInput,
+  TouchableWithoutFeedback,Keyboard
 } from 'react-native';
 import {connect} from 'react-redux';
 import io from 'socket.io-client/dist/socket.io.js';
@@ -16,7 +17,7 @@ import onlineIC from '../../src/icon/ic-green/ic-online.png';
 import searchIC from '../../src/icon/ic-gray/ic-search.png';
 
 import {checkUrl,checkFriend,getGroup,getDistanceHours,getDistanceMinutes,getDistanceDays} from '../libs';
-var element,timeoutHis;
+var element,timeoutHis,searchTimeout;
 class HistoryChat extends Component {
   constructor(props) {
     super(props);
@@ -36,9 +37,25 @@ class HistoryChat extends Component {
     })
     this.getHistory();
   }
+  searchHistory(keyword,page=null){
+    clearTimeout(searchTimeout);
+    const { id } = this.props.user_profile;
+    if(page===null) page=0;
+    const url = `${global.url_node}${'search-history?'}${'skip='}${page}${'&limit=20'}`;
+    const param = `${'id='}${id}&${'keyword='}${keyword}`;
+    //console.log('(url,param)',url,param);
+    searchTimeout = setTimeout(()=>{
+      postEncodeApi(url,param).then(sys=>{
+        console.log(sys.data);
+          this.state.listHis= page===0?sys.data: this.state.listHis.concat(sys.data);
+          this.setState(this.state);
+      })
+    },700)
 
+  }
   getHistory(page=null){
     //this.getListFriend();
+    clearTimeout(searchTimeout);
     const { id } = this.props.user_profile;
     if(page===null) page=0;
     const url = `${global.url_node}${'history-chat/'}${id}${'?skip='}${page}${'&limit=20'}`;
@@ -56,7 +73,6 @@ class HistoryChat extends Component {
     }
   }
 
-
   _onLongPressHis(id,name){
 
   }
@@ -70,13 +86,22 @@ class HistoryChat extends Component {
     } = styles;
 
     return (
+      <TouchableWithoutFeedback onPress={()=>Keyboard.dismiss()}>
       <View style={container}>
         <View style={{padding:3,alignItems:'center',justifyContent:'center',marginBottom:3}}>
             <TextInput underlineColorAndroid='transparent'
             placeholder={'Search...'} style={inputSearch}
             onSubmitEditing={() => {
+              this.searchHistory(this.state.valSearch);
             }}
-            onChangeText={(valSearch) => this.setState({valSearch})}
+            onChangeText={(valSearch) => {
+              this.setState({valSearch},()=>{
+                if(valSearch.trim()!==''){
+                  this.searchHistory(valSearch);
+                }
+                else { this.getHistory(); }
+              })
+            }}
             value={this.state.valSearch} />
 
             {/*<TouchableOpacity style={{top:Platform.OS==='ios' ? 75 : 65,left:(width-50),position:'absolute'}}
@@ -127,6 +152,7 @@ class HistoryChat extends Component {
           )} />
 
       </View>
+      </TouchableWithoutFeedback>
     );
   }
 }

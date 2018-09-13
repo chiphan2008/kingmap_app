@@ -4,16 +4,16 @@ import global from '../global';
 
 const getEncodeApi = async (url) => {
   try {
-    //AsyncStorage.removeItem('@AuthKey:key');
-    
-    resposive = await fetch(url, {
+    var resposive = {code:401};
+    const params = {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': global.auth_key.client_secret,
-      },
-    }).then(res => res.json());
-    if(resposive.code!==401) return resposive;
+        'Authorization': global.auth_key.client_secret
+      }
+    };
+    let res = await fetch(url, params);
+    resposive = await res.json();
+    return resposive;
 
   } catch (error) {
      //console.log('error',error);

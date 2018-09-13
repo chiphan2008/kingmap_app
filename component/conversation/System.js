@@ -2,7 +2,8 @@
 
 import React, { Component } from 'react';
 import {Platform, View, Text, StyleSheet, Dimensions, Image,
-  TouchableOpacity,FlatList,TextInput
+  TouchableOpacity,FlatList,TextInput,
+  TouchableWithoutFeedback,Keyboard
 } from 'react-native';
 import {connect} from 'react-redux';
 const {height, width} = Dimensions.get('window');
@@ -59,7 +60,7 @@ class System extends Component {
           //this.state.loadMore = sys.data.length===20?true:false;
           this.setState(this.state);
       })
-    },1500)
+    },700)
 
   }
   addFriend(friend_id){
@@ -80,6 +81,7 @@ class System extends Component {
     } = styles;
 
     return (
+      <TouchableWithoutFeedback onPress={()=>Keyboard.dismiss()}>
       <View style={container}>
         <View style={{padding:3,alignItems:'center',justifyContent:'center',marginBottom:3}}>
             <TextInput underlineColorAndroid='transparent'
@@ -147,6 +149,7 @@ class System extends Component {
 
         </View>
       </View>
+      </TouchableWithoutFeedback>
     );
   }
 }

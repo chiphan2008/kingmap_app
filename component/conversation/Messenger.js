@@ -24,7 +24,7 @@ import videoClipIC from '../../src/icon/ic-blue/ic-video-clip.png';
 
 import {checkUrl,formatDate,formatHour,checkFriendAccept,getGroup} from '../libs';
 
-var element,timeoutHis;
+var element,timeoutHis,timeoutShowType;
 class Messenger extends Component {
   constructor(props) {
     super(props);
@@ -46,11 +46,15 @@ class Messenger extends Component {
     };
     const {port_connect} = this.props.navigation.state.params;
     this.loadHistoryChat();
+
     this.socket = io(`${global.url_server}`,{jsonp:false});
     this.socket.on('replyStatus-'+port_connect,function(data){
-      console.log('showType',data);
+      clearTimeout(timeoutShowType);
       if(data.showType!==undefined){
-        element.setState({showType:data.showType,myID:data.id})
+        console.log('showType',data);
+        timeoutShowType = setTimeout(()=>{
+          element.setState({showType:data.showType,myID:data.id})
+        },500)
       }
     })
     this.socket.on('replyMessage-'+port_connect,function(data){
@@ -102,52 +106,46 @@ class Messenger extends Component {
     const param = `${'id='}${id}&${'friend_id='}${friend_id}&${'message='}${message}&${'dateNow='}${dateNow}`;
     //console.log('(url,param)',url,param);
     postEncodeApi(url,param);
-    // timeoutHis = setTimeout(function () {
-    //   postEncodeApi(url,param);
-    // }, 5000);
+    
   }
   loadHistoryChat(page=null){
     const { id,name,yf_avatar,port_connect } = element.props.navigation.state.params;
     if(page===null) page=0;
     const url = `${global.url_node}${'conversation/'}${port_connect}${'?skip='}${page}${'&limit=20'}`;
-    console.log(url);
+    //console.log(url);
     getEncodeApi(url).then(hischat=>{
       let arr = [];
       let countID=0;
       let countDate='';
-      // console.log(hischat.data);
+      //console.log(hischat.data.length);
       hischat.data.sort(function(a, b){return (a.create_at<b.create_at?-1:1)})
       hischat.data.map((e,i)=>{
         const countData = hischat.data[i+1];
-        console.log('countData');
-        arr.push(<ListMsg
-          name={name}
+        //console.log('countData');
+        arr.push(<ListMsg name={name}
           showHour={countData===undefined || e.id!==countData.id || (e.id===countData.id && formatHour(e.create_at)!==formatHour(countData.create_at) )  ? true : false}
-          checkDate={countDate} checkID={countID} data={e} index={i}
-          userId={id} key={i} yf_avatar={yf_avatar}
-          />);
+          checkDate={countDate} checkID={countID} data={e} index={i} userId={id} key={i} yf_avatar={yf_avatar} />);
           countID=e.id;
           countDate = e.create_at;
         //console.log('data[]',i+1,data[i+1]);
       });
       //arr = arr;
-      setTimeout(()=>{
-        element.setState({
-            checkDate:countDate,
-            checkID:countID,
-            index_item: hischat.data.length,
-            listData: arr,
-            showType:false,
-        });
-      },800)
-
-
+      element.setState({
+          checkDate:countDate,
+          checkID:countID,
+          index_item: hischat.data.length,
+          listData: arr,
+          showType:false,
+      });
+      // setTimeout(()=>{
+      //
+      // },800)
     })
   }
+
   componentWillMount(){
     const { port_connect,id,yf_avatar,friend_id } = this.props.navigation.state.params;
     //console.log(this.props.myFriends,friend_id);
-
     if(checkFriendAccept(this.props.myFriends,friend_id)){
       this.sendMessage();
     }
@@ -219,7 +217,7 @@ class Messenger extends Component {
             <View style={headContent}>
                 <TouchableOpacity onPress={()=>{
                   this.props.dispatch({type:'DETAIL_BACK',detailBack:'UpdateHistoryChat'});
-                  this.handleEnterText(false);
+                  //this.handleEnterText(false);
                   this.setState({visible:false},()=>{
                     navigation.goBack();
                   })
@@ -335,6 +333,7 @@ export class ListMsg extends Component {
   }
   render(){
     const {data, userId,name, checkID, checkDate, showHour ,yf_avatar} = this.props;
+    //console.log('userId',userId);
     //console.log('this.props',this.props);
     const {
       wrapAva,widthAva,radiusAva,wrapMsg,colorMsg,avatarRight,avatarLeft,
@@ -382,11 +381,7 @@ export class ListMsg extends Component {
   }
 }
 const styles = StyleSheet.create({
-  container: {
-    width,
-    height,
-    //alignSelf: 'stretch',
-  },
+  container: {width,height},
   colorItemName:{color:'#606B85',fontSize:13},
   wrapShowType:{position:'absolute', zIndex:98,backgroundColor:'rgba(179, 181, 183, 0.45)',padding:10,paddingTop:5,paddingBottom:5,},
   contentWrap : { width,height,alignItems: 'center',justifyContent: 'flex-start',marginBottom:height/4,},

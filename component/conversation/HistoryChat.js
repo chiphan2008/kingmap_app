@@ -114,43 +114,46 @@ class HistoryChat extends Component {
               <Image style={{width:16,height:16,}} source={searchIC} />
             </TouchableOpacity>*/}
         </View>
-
+          <View style={{height:height-200}}>
           <FlatList
              extraData={this.state}
              keyExtractor={(item, index) => index.toString()}
              data={listHis}
+
              renderItem={({item,index}) => (
-               <View style={wrapItems}>
-               <TouchableOpacity style={{flexDirection:'row',alignItems:'center',width:width-105}}
-                onPress={()=>{
-                 navigation.navigate('MessengerScr',{id:user_profile.id,friend_id:item.id,yf_avatar:item.urlhinh,name:item.name,port_connect:getGroup(user_profile.id,item.id)})
-                }}
-                onLongPress={()=>this._onLongPressHis(item.id,item.name)}
-                >
-                <View>
-                 <Image source={{uri: checkUrl(item.urlhinh) ? `${item.urlhinh}` : `${global.url_media}${item.urlhinh}`}} style={{width:50,height:50,borderRadius:25,marginRight:7}} />
-                 {Moment(item.online_at)===Moment(item.offline_at) &&
-                 <Image source={onlineIC} style={{width:10,height:10,position:'absolute',right:10,top:40}} />}
-                 </View>
+               <TouchableWithoutFeedback>
+                 <View style={wrapItems}>
+                 <TouchableOpacity style={{flexDirection:'row',alignItems:'center',width:width-105}}
+                  onPress={()=>{
+                   navigation.navigate('MessengerScr',{id:user_profile.id,friend_id:item.id,yf_avatar:item.urlhinh,name:item.name,port_connect:getGroup(user_profile.id,item.id)})
+                  }}
+                  onLongPress={()=>this._onLongPressHis(item.id,item.name)}
+                  >
+                  <View>
+                   <Image source={{uri: checkUrl(item.urlhinh) ? `${item.urlhinh}` : `${global.url_media}${item.urlhinh}`}} style={{width:50,height:50,borderRadius:25,marginRight:7}} />
+                   {Moment(item.online_at)===Moment(item.offline_at) &&
+                   <Image source={onlineIC} style={{width:10,height:10,position:'absolute',right:10,top:40}} />}
+                   </View>
+                   <View>
+                    <Text style={colorName}>{item.name}</Text>
+                    <Text style={{fontSize:14}}>{item.last_message}</Text>
+                   </View>
+                 </TouchableOpacity>
+
                  <View>
-                  <Text style={colorName}>{item.name}</Text>
-                  <Text style={{fontSize:14}}>{item.last_message}</Text>
+
+                   {getDistanceMinutes(item.update_at)<60 &&
+                     <Text style={{fontSize:14}}>{getDistanceMinutes(item.update_at)} phút</Text>}
+                   {getDistanceHours(item.update_at)<24 && getDistanceHours(item.update_at)>1 &&
+                     <Text style={{fontSize:14}}>{getDistanceHours(item.update_at)} giờ</Text>}
+                   {getDistanceDays(item.update_at)>1 &&
+                     <Text style={{fontSize:14}}>{getDistanceDays(item.update_at)} ngày</Text>}
                  </View>
-               </TouchableOpacity>
 
-               <View>
-
-                 {getDistanceMinutes(item.update_at)<60 &&
-                   <Text style={{fontSize:14}}>{getDistanceMinutes(item.update_at)} phút</Text>}
-                 {getDistanceHours(item.update_at)<24 && getDistanceHours(item.update_at)>1 &&
-                   <Text style={{fontSize:14}}>{getDistanceHours(item.update_at)} giờ</Text>}
-                 {getDistanceDays(item.update_at)>1 &&
-                   <Text style={{fontSize:14}}>{getDistanceDays(item.update_at)} ngày</Text>}
-               </View>
-
-               </View>
+                 </View>
+              </TouchableWithoutFeedback>
           )} />
-
+          </View>
       </View>
       </TouchableWithoutFeedback>
     );

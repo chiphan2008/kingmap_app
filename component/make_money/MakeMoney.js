@@ -12,6 +12,7 @@ const {height, width} = Dimensions.get('window');
 import {Select, Option} from "react-native-chooser";
 
 //import styles from '../styles';
+import getEncodeApi from '../api/getEncodeApi';
 import postApi from '../api/postApi';
 import getApi from '../api/getApi';
 import global from '../global';
@@ -199,6 +200,7 @@ class MakeMoney extends Component {
 
   getStatic(){
     const { user_profile,lang } = this.props.navigation.state.params;
+
     const {isCTV,isAgency,isCeo} = this.state;
     if(user_profile.temp_daily_code===''){
       const month = Moment().format('MM');
@@ -423,7 +425,12 @@ class MakeMoney extends Component {
       const { user_profile } = this.props.navigation.state.params;
       this.assignWork();
       checkLogin().then(e=>{
-        //console.log(e);
+        if(e.id!==undefined){
+          const url = `${global.url_node}${'list-friend/'}${e.id}`;
+          getEncodeApi(url).then(friends=>{
+            friends.data.length>0 && this.props.dispatch({type:'UPDATE_MY_FRIENDS',myFriends:friends.data});
+          })
+        }
         if(user_profile._roles.length!==e._roles.length) this.props.navigation.navigate('MainScr');
         e.temp_daily_code!=='' && this.setState({isPend:true})
       })
@@ -432,7 +439,7 @@ class MakeMoney extends Component {
 
   render() {
     const { lang,code_user,name_module,user_profile } = this.props.navigation.state.params;
-    //console.log(user_profile);
+
     const { navigate,goBack } = this.props.navigation;
     const {
       container,contentWrap,headCatStyle,headContent,titleCreate,wrapDes,
@@ -673,7 +680,7 @@ class MakeMoney extends Component {
                         this.searchContent(act,this.state.valCTV);
                       }
                     }}
-                    onScroll={(e)=>{console.log(e.nativeEvent.contentOffset)}}
+                    //onScroll={(e)=>{console.log(e.nativeEvent.contentOffset)}}
                     onFocus={(event) => {
                       this._scrollToInput(0.4)
                     }}

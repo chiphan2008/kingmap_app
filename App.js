@@ -21,6 +21,7 @@ import global from './component/global';
 
 //import Chat
 import HomeChat from './component/conversation/HomeChat';
+import Messenger from './component/conversation/Messenger';
 
 //create-location
 import ChooseCat from './component/create_location/ChooseCat';
@@ -359,7 +360,9 @@ export default class App extends Component {
       HomeChatScr: {
         screen: HomeChat,
       },
-
+      MessengerScr: {
+        screen: Messenger,
+      },
 
     },
     {

@@ -106,7 +106,7 @@ class Messenger extends Component {
     const param = `${'id='}${id}&${'friend_id='}${friend_id}&${'message='}${message}&${'dateNow='}${dateNow}`;
     //console.log('(url,param)',url,param);
     postEncodeApi(url,param);
-    
+
   }
   loadHistoryChat(page=null){
     const { id,name,yf_avatar,port_connect } = element.props.navigation.state.params;

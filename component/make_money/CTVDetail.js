@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import Moment from 'moment';
-import {format_number,checkFriendAccept,getGroup} from '../libs';
+import {format_number,checkFriendAccept,getGroup,onlyNumber} from '../libs';
 import styles from '../styles';
 import global from '../global';
 import postApi from '../api/postApi';
@@ -64,21 +64,21 @@ class CTVDetail extends Component {
     //console.log(`${global.url}${'static'}${'?lang='}${lang.lang}`,arr);
     postApi(`${global.url}${'static'}${'?lang='}${lang.lang}`,arr)
     .then(arr => {
-      console.log('listData',arr.data)
+      //console.log('listData',arr.data)
         this.setState({ listData:arr.data });
     }).catch(err => console.log(err));
   }
   render() {
     const {
-      container,headCatStyle,headContent,titleCreate,
-      wrapper,
+      container,headCatStyle,headContent,titleCreate,wrapper,
       imgLogoTop,colorlbl,wrapWhite,titleCoin,colorTitle,
       popoverLoc,overLayout,shadown,listOverService,imgShare
     } = styles;
     const {listData,showArea,content,quyenloi,showQuyenloi, showInfo} = this.state;
     const {goBack,navigate} = this.props.navigation;
     const {avatar,name,address,lang,ceo_id,daily_id,ctv_id,content_id,user_profile,_daily,role_id} = this.props.navigation.state.params;
-  //  console.log('ctv_id,_daily,user_profile.id',ceo_id,daily_id,ctv_id);
+    //console.log('role_id',role_id);
+    console.log(ceo_id,daily_id,ctv_id,_daily,role_id);
     return (
       <View>
         <View style={wrapper}>
@@ -101,15 +101,13 @@ class CTVDetail extends Component {
                     <Text numberOfLines={1} style={[colorlbl,{fontWeight:'bold'}]}>{name}</Text>
                     <Text numberOfLines={1} style={{color:'#6791AF'}}>{`${address}`}</Text>
 
-                    {content_id===undefined &&
+                    {content_id===undefined && role_id &&
                       <TouchableOpacity style={{backgroundColor:'#d0021b',padding:5,borderRadius:5,maxWidth:100,alignItems:'center',marginTop:5}}
                       onPress={()=>{
-                          //if(isLogin){
                             const {id} = this.props.user_profile;
                             const friend_id = daily_id!==''?daily_id:ctv_id;
                             const port = getGroup(id,friend_id);
                             navigate('MessengerScr',{id,friend_id,yf_avatar:avatar,name,port_connect:port})
-                          //}
                       }}>
                       <Text style={{fontSize:16,color:'#fff',lineHeight:23}} numberOfLines={2}>Chat online</Text>
                       </TouchableOpacity>
@@ -118,6 +116,7 @@ class CTVDetail extends Component {
                   </View>
               </View>
             </View>
+
             {content_id===undefined && !role_id && listData.ceo && <View>
               <View style={[wrapWhite, {flexDirection: 'row', justifyContent: 'space-between'}]}>
                   <View>
@@ -125,6 +124,7 @@ class CTVDetail extends Component {
                     {`${lang.your_management_manager}`}
                     </Text>
                   </View>
+
                   <TouchableOpacity onPress={()=>{
                         this.setState({showInfo:!this.state.showInfo})}}>
                       <Image source={plusIC} style={{width:35,height:35}} />
@@ -136,15 +136,35 @@ class CTVDetail extends Component {
               <Text style={{color: '#000'}}>{`${lang.name}: ${listData.ceo.full_name}`}</Text>
               <Text style={{color: '#000'}}>{`${lang.phone}: ${listData.ceo.phone}`}</Text>
               <Text style={{color: '#000'}}>{`Email: ${listData.ceo.email}`}</Text>
-            </View>}
+              {listData.ceo!==undefined &&
+                <TouchableOpacity style={{backgroundColor:'#d0021b',padding:5,borderRadius:5,maxWidth:100,alignItems:'center',marginTop:5}}
+                onPress={()=>{
+                      const {id} = this.props.user_profile;
+                      const friend_id = listData.ceo.id;
+                      const port = getGroup(id,friend_id);
+                      navigate('MessengerScr',{id,friend_id,yf_avatar:listData.ceo.avatar,name:listData.ceo.full_name,port_connect:port})
+                }}>
+              <Text style={{fontSize:16,color:'#fff',lineHeight:23}} numberOfLines={2}>Chat online</Text>
+              </TouchableOpacity>}
 
+            </View>}
               {content_id===undefined && <View>
                 {(_daily!=='' && _daily!==undefined) && <View>
-                <View style={wrapWhite}>
+                <View style={[wrapWhite,{flexDirection: 'row', justifyContent: 'space-between'}]}>
                   <View>
                     <Text numberOfLines={1} style={[colorTitle, {fontWeight: 'bold', fontSize:14}]}>{`${lang.agency}`}</Text>
                     {<Text style={titleCoin}>{_daily}</Text>}
                   </View>
+                  {onlyNumber(ctv_id) && !role_id &&
+                    <TouchableOpacity style={{backgroundColor:'#d0021b',padding:5,borderRadius:5,maxWidth:100,alignItems:'center',marginTop:5}}
+                    onPress={()=>{
+                          const {id,avatar,full_name} = this.props.user_profile._daily;
+                          const friend_id = ctv_id;
+                          const port = getGroup(id,friend_id);
+                          navigate('MessengerScr',{id:friend_id,friend_id:id,yf_avatar:avatar,name:full_name,port_connect:port})
+                    }}>
+                  <Text style={{fontSize:16,color:'#fff',lineHeight:23}} numberOfLines={2}>Chat online</Text>
+                  </TouchableOpacity>}
                 </View>
                 <View style={{height:1}}></View>
                 </View>}

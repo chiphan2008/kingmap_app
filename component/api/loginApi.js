@@ -25,8 +25,8 @@ const loginApi = async (url,param) => {
     //console.log(responseJson);
     if(responseJson.code===200){
       getEncodeApi(`${global.url_node}${'person/'}${responseJson.data[0].id}`).then(e=>{
-        console.log(responseJson.data[0]);
-        console.log(e.data);
+        //console.log(responseJson.data[0]);
+        //console.log(e.data);
         if(e.data===undefined || e.data.length===0) encodeApi(`${global.url_node}${'person/add'}`,'POST',responseJson.data[0]);
         else encodeApi(`${global.url_node}${'person/update'}`,'POST',responseJson.data[0]);
       })

@@ -136,7 +136,7 @@ class System extends Component {
                  <Text style={colorName}>{item.name}</Text>
                </TouchableOpacity>
 
-               {!(checkFriendAccept(myFriends,item.id)) &&
+               {!(checkFriend(myFriends,item.id)) && listAddFriend[`${item.id}`]!==item.id &&
                <TouchableOpacity style={btnAdd}
                onPress={()=>{this.setState({listAddFriend:Object.assign(this.state.listAddFriend,{[`${item.id}`]:item.id})},()=>{
                    this.addFriend(item.id)

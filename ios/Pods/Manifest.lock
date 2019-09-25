@@ -75,7 +75,7 @@ PODS:
     - React/Core
     - React/fishhook
     - React/RCTBlob
-  - RNSVG (6.2.2):
+  - RNSVG (6.4.1):
     - React
   - RSKImageCropper (2.0.0)
   - yoga (0.55.4.React)
@@ -135,15 +135,15 @@ SPEC CHECKSUMS:
   GoogleMaps: c087b8e5dfe87ca6ebf59adb9b4894a4146bec4f
   GoogleSignIn: 3fdaa34a2ba04dbd7a25d7db39aecb0da98d5bdc
   GoogleToolboxForMac: 2501e2ad72a52eb3dfe7bd9aee7dad11b858bd20
-  GTMOAuth2: c77fe325e4acd453837e72d91e3b5f13116857b2
+  GTMOAuth2: e8b6512c896235149df975c41d9a36c868ab7fba
   GTMSessionFetcher: ebaa1f79a5366922c1735f1566901f50beba23b7
   QBImagePickerController: d54cf93db6decf26baf6ed3472f336ef35cae022
-  React: aa2040dbb6f317b95314968021bd2888816e03d5
-  react-native-maps: 066c2afcc89e18726377bcc685315f989ca22449
-  RNSVG: 6252323c0312735f0af5f58b5adf2965b6a9ffbf
+  React: 755b16d9a9387e856d4dce6528130c51e4d409b8
+  react-native-maps: d3b689927722398a12a4b3007fd9a0c60e1c48cd
+  RNSVG: cfc21c5d37622f0861d65ce33b439930b7035af4
   RSKImageCropper: d9a1acbc0600bf8decc8f0d21895872c99a9e4cf
-  yoga: a23273df0088bf7f2bb7e5d7b00044ea57a2a54a
+  yoga: c3ce6137f85f60c93a834235d7f08e2b44a42eed
 
-PODFILE CHECKSUM: fe8ce9e6661514831bca56aaf2d9e08c0684ee03
+PODFILE CHECKSUM: 7eca0f0fccff20dcc85562617abe0bdc1656fb08
 
-COCOAPODS: 1.5.3
+COCOAPODS: 1.7.5

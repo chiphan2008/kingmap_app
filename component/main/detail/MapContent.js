@@ -36,8 +36,7 @@ class MapContent extends Component {
       const {distance} = this.props;
       if(this.state.direct===destination) return;
       this.setState({direct:this.props.region.latlng})
-      const APIKEY = 'AIzaSyCCCOoPlN2D-mfrYEMWkz-eN7MZnOsnZ44';
-      const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}${'&destination='}${destination}${'&mode='}${mode}${'&key='}${APIKEY}`;
+      const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${origin}${'&destination='}${destination}${'&mode='}${mode}${'&key='}${global.google_key}`;
       //console.log(url);
       latitude!==undefined && getApi(url).then(e=> {
         if(e.routes[0].overview_polyline!==undefined){

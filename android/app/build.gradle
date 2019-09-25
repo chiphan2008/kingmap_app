@@ -86,16 +86,19 @@ apply from: "../../node_modules/react-native/react.gradle"
  * Upload all the APKs to the Play Store and people will download
  * the correct one based on the CPU architecture of their device.
  */
-def enableSeparateBuildPerCPUArchitecture = false
+def enableSeparateBuildPerCPUArchitecture = true
 
 /**
  * Run Proguard to shrink the Java bytecode in release builds.
+ #ndk {
+ #    abiFilters "armeabi-v7a", "x86"
+ #}
  */
-def enableProguardInReleaseBuilds = false
+def enableProguardInReleaseBuilds = true
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    compileSdkVersion 28
+    buildToolsVersion "28.0.3"
 
     defaultConfig {
         applicationId "com.kingmap_app"
@@ -103,9 +106,6 @@ android {
         targetSdkVersion 26
         versionCode 11
         versionName "1.1.2"
-        ndk {
-            abiFilters "armeabi-v7a", "x86"
-        }
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
     }
@@ -124,7 +124,7 @@ android {
         abi {
             reset()
             enable enableSeparateBuildPerCPUArchitecture
-            universalApk false  // If true, also generate a universal APK
+            universalApk true  // If true, also generate a universal APK
             include "armeabi-v7a", "x86"
         }
     }
@@ -161,17 +161,17 @@ dependencies {
     compile(project(":react-native-google-signin")){
         exclude group: "com.google.android.gms" // very important
     }
-    compile project(':react-native-push-notification')
-    compile 'com.google.android.gms:play-services-auth:11.0.1'
+    compile  project(':react-native-push-notification')
+    compile  'com.google.android.gms:play-services-auth:11.0.1'
     compile 'com.google.firebase:firebase-core:11.0.1'
     compile 'com.google.firebase:firebase-auth:11.0.1'
     compile 'com.google.firebase:firebase-database:11.0.1'
 
 
-    compile project(':react-native-image-crop-picker')
-    compile project(':react-native-settings')
-    compile fileTree(dir: "libs", include: ["*.jar"])
-    compile "com.android.support:appcompat-v7:23.0.1"
+    compile  project(':react-native-image-crop-picker')
+    compile  project(':react-native-settings')
+    compile  fileTree(dir: "libs", include: ["*.jar"])
+    compile  "com.android.support:appcompat-v7:23.0.1"
 
     compile ('com.google.android.gms:play-services-gcm:11.0.1') {
       force = true;

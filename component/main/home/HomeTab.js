@@ -145,7 +145,7 @@ class HomeTab extends Component {
    }
 
    getCategory(lang){
-     //console.log(global.url+'modules?language='+lang+'&limit=100');
+     console.log(global.url+'modules?language='+lang+'&limit=100');
      getApi(global.url+'modules?language='+lang+'&limit=100&block_text=slogan_home')
      .then(arrCategory => {
        //console.log('arrCategory',arrCategory);

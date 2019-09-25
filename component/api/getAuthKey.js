@@ -3,7 +3,7 @@ import { AsyncStorage } from 'react-native';
 const getAuthKey = async (url,param) => {
   try {
     //AsyncStorage.removeItem('AuthKey');
-    //console.log('==========url,param===========',url,param);
+    // console.log('==========url,param===========',url,param);
     let response = await fetch(url, {
         method: 'POST',
         headers: {

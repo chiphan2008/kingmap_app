@@ -38,10 +38,11 @@ import sortDownIC from '../../../src/icon/ic-sort-down.png';
 import upDD from '../../../src/icon/ic-white/ic-dropdown_up.png';
 import checkIC from '../../../src/icon/ic-green/ic-check.png';
 
-var timeout,timeoutZoom,timeoutPosition,timeoutCurPos;
+var timeout,timeoutZoom,timeoutPosition,timeoutCurPos, timeoutRegionChange, _this;
 class SearchScreen extends Component {
   constructor(props) {
     super(props);
+    _this = this;
     this.mapRef = null;
     const {lang,lat,lng,idCat,keyword} = this.props.navigation.state.params;
     this.state = {
@@ -179,7 +180,7 @@ class SearchScreen extends Component {
         id_district:e.idDist,
         labelLoc:e.nameDist,
       },()=>{
-        const url =`https://maps.googleapis.com/maps/api/geocode/json?address=${e.nameCountry}${e.nameCity}${e.nameDist}&key=AIzaSyCCCOoPlN2D-mfrYEMWkz-eN7MZnOsnZ44`;
+        const url =`https://maps.googleapis.com/maps/api/geocode/json?address=${e.nameCountry}${e.nameCity}${e.nameDist}&key=${global.google_key}`;
         getApi(url).then(res=>{
           const latitude = res.results[0].geometry.location.lat;
           const longitude = res.results[0].geometry.location.lng;
@@ -333,12 +334,16 @@ class SearchScreen extends Component {
   }
   _onRegionChangeComplete = (region) => {
     console.log('_onRegionChangeComplete1');
-    region.latitudeDelta > 0.002 && this.setState({ curLocation:region,callData:true });
-    if(this.state.onClick===false) {
-      //console.log('_onRegionChangeComplete2');
-      // this.getPosition(region.latitude,region.longitude);
-      this.setState({ onClick:true });
-    }
+    clearTimeout(timeoutRegionChange);
+    timeoutRegionChange = setTimeout(function () {
+      region.latitudeDelta > 0.002 && _this.setState({ curLocation:region,callData:true });
+      if(_this.state.onClick===false) {
+        //console.log('_onRegionChangeComplete2');
+        // this.getPosition(region.latitude,region.longitude);
+        _this.setState({ onClick:true });
+      }
+    }, 1000);
+
   }
   _onPressMap = (event) => {
     //console.log('_onPressMap');
@@ -472,7 +477,7 @@ class SearchScreen extends Component {
               onRegionChangeComplete={this._onRegionChangeComplete}
               customMapStyle={global.style_map}
               showsPointsOfInterest={false}
-              
+
             >
 
             {markers.length>0 &&

@@ -413,7 +413,7 @@ class FormCreate extends Component {
     if(txtAddress.trim()!=='' && txtAddress!==undefined) {params += txtAddress + ', ';}
     if(nameDist.trim()!=='' && nameDist.trim()!==undefined) {params += nameDist + ', ';}
 
-    let url = `${'https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyCCCOoPlN2D-mfrYEMWkz-eN7MZnOsnZ44&sensor=false&address='}${params}`;
+    let url = `${'https://maps.googleapis.com/maps/api/geocode/json?key='}${global.google_key}${'&sensor=false&address='}${params}`;
     //console.log(url);
     timeoutLatLng = setTimeout(()=>{
       getApi(url).then(e=>{
@@ -429,7 +429,7 @@ class FormCreate extends Component {
 
   getAddress(lat,lng){
     clearTimeout(timeoutLatLng);
-    let url = `${'https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyCCCOoPlN2D-mfrYEMWkz-eN7MZnOsnZ44&sensor=false&latlng='}${lat},${lng}`;
+    let url = `${'https://maps.googleapis.com/maps/api/geocode/json?key='}${global.google_key}${'&sensor=false&latlng='}${lat},${lng}`;
     //console.log(url);
     timeoutLatLng = setTimeout(()=>{
       getApi(url).then(e=>{

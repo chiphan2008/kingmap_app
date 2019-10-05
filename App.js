@@ -100,11 +100,15 @@ const defaultState = {
   isLogin:false,
   detailBack:'',
   listNoti: 0,
+  count_suggest: 0,
 };
 const reducer = (state = defaultState, action) => {
   switch (action.type) {
     case 'UPDATE_MY_FRIENDS':
       return {...state,myFriends:action.myFriends}
+      break;
+    case 'UPDATE_COUNT_SUGGEST':
+      return {...state,count_suggest:action.count_suggest}
       break;
     case 'UPDATE_LANG':
       return {...state,slLang:action.slLang}

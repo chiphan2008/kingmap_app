@@ -45,6 +45,10 @@ class ListChat extends Component {
   }
   actFriend(route,id,index){
     this.state.listSuggestFriend.splice(index,1);
+    this.props.dispatch({
+      type: 'UPDATE_COUNT_SUGGEST',
+      count_suggest: this.props.count_suggest-1,
+    })
     if(route==='un'){
       this.props.removeFriend(id);
     }else {
@@ -70,7 +74,8 @@ class ListChat extends Component {
 
   }
   render() {
-    const { user_id,navigation,avatar,countSuggest } = this.props;
+    const { user_id,navigation,avatar } = this.props;
+    // console.log('countSuggest', countSuggest);
     const { listFriend,showSuggest,listSuggestFriend } = this.state;
     const {
       container,contentWrap,headCatStyle,headContent,titleCreate,
@@ -90,7 +95,7 @@ class ListChat extends Component {
               })}>
                 <View style={itemCenter}>
                 <Image source={connectIC} style={{width:18,height:18,marginRight:7}} />
-                <Text style={colorName}>Gợi ý kết bạn ({countSuggest})</Text>
+                <Text style={colorName}>Gợi ý kết bạn ({this.props.count_suggest})</Text>
                 </View>
                 <Image source={arrowNextIC} style={{width:18,height:18}} />
               </TouchableOpacity>
@@ -194,7 +199,8 @@ class ListChat extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    myFriends:state.myFriends
+    myFriends:state.myFriends,
+    count_suggest:state.count_suggest,
   }
 }
 

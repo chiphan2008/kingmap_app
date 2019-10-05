@@ -25,9 +25,7 @@ class Contact extends Component {
   constructor(props) {
     super(props);
     element = this;
-    this.state = {
-      countSuggest:0,
-    };
+    this.countSuggest=0;
     this.getListFriend();
     this.getStaticFriend();
   }
@@ -36,9 +34,8 @@ class Contact extends Component {
     const { id } = this.props.user_profile;
     const url = `${global.url_node}${'static-friend/'}${id}`;
     getEncodeApi(url).then(staticfr=>{
-      if(staticfr.data.length>0){
-        this.state.countSuggest= staticfr.data[0].request;
-      }
+      // this.countSuggest= staticfr.data.length;
+      this.props.dispatch({type: 'UPDATE_COUNT_SUGGEST', count_suggest: staticfr.data.length})
     })
   }
 
@@ -77,7 +74,7 @@ class Contact extends Component {
         addFriend={this.addFriend.bind(this)}
         removeFriend={this.removeFriend.bind(this)}
         user_id={user_profile.id}
-        countSuggest={this.state.countSuggest}
+        countSuggest={this.countSuggest}
         navigation={this.props.navigation}
         avatar={user_profile.avatar}/>
       </View>

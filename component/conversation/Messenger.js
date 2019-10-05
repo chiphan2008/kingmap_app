@@ -24,11 +24,11 @@ import videoClipIC from '../../src/icon/ic-blue/ic-video-clip.png';
 
 import {checkUrl,formatDate,formatHour,checkFriendAccept,getGroup} from '../libs';
 
-var element,timeoutHis,timeoutShowType;
+var _this,timeoutHis,timeoutShowType;
 class Messenger extends Component {
   constructor(props) {
     super(props);
-    element = this;
+    _this = this;
     this.state = {
       isFriend:false,
       listData:[],
@@ -53,18 +53,18 @@ class Messenger extends Component {
       if(data.showType!==undefined){
         console.log('showType',data);
         timeoutShowType = setTimeout(()=>{
-          element.setState({showType:data.showType,myID:data.id})
+          _this.setState({showType:data.showType,myID:data.id})
         },500)
       }
     })
     this.socket.on('replyMessage-'+port_connect,function(data){
       console.log('replyMessage',data);
       // load first have one array: data.length!==undefined
-      if(data.message!==undefined && data.message!=='' && data.socketID !== element.state.socketID){
+      if(data.message!==undefined && data.message!=='' && data.socketID !== _this.state.socketID){
 
-        const {listData,index_item, checkID, checkDate} = element.state;
-        const { id,name,yf_avatar } =element.props.navigation.state.params;
-        let arr = element.state.listData;
+        const {listData,index_item, checkID, checkDate} = _this.state;
+        const { id,name,yf_avatar } =_this.props.navigation.state.params;
+        let arr = _this.state.listData;
         let countID=0;
         let countDate='';
 
@@ -85,14 +85,14 @@ class Messenger extends Component {
         countID = data.id;
         countDate = data.create_at;
 
-        element.setState({
+        _this.setState({
             checkDate:countDate,
             checkID:countID,
             index_item: index_item + 1,
             listData:arr,
             showType:false,
             socketID:data.socketID
-        },()=>{element.addHistory(data.message,data.create_at);});
+        },()=>{_this.addHistory(data.message,data.create_at);});
       }
       //console.log('index_item',index_item);
   	})
@@ -101,7 +101,7 @@ class Messenger extends Component {
   addHistory(message,dateNow){
     // add-history
     clearTimeout(timeoutHis);
-    const { id,friend_id } = element.props.navigation.state.params;
+    const { id,friend_id } = _this.props.navigation.state.params;
     const url = `${global.url_node}${'add-history'}`;
     const param = `${'id='}${id}&${'friend_id='}${friend_id}&${'message='}${message}&${'dateNow='}${dateNow}`;
     //console.log('(url,param)',url,param);
@@ -109,7 +109,7 @@ class Messenger extends Component {
 
   }
   loadHistoryChat(page=null){
-    const { id,name,yf_avatar,port_connect } = element.props.navigation.state.params;
+    const { id,name,yf_avatar,port_connect } = _this.props.navigation.state.params;
     if(page===null) page=0;
     const url = `${global.url_node}${'conversation/'}${port_connect}${'?skip='}${page}${'&limit=20'}`;
     //console.log(url);
@@ -130,7 +130,7 @@ class Messenger extends Component {
         //console.log('data[]',i+1,data[i+1]);
       });
       //arr = arr;
-      element.setState({
+      _this.setState({
           checkDate:countDate,
           checkID:countID,
           index_item: hischat.data.length,

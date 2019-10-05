@@ -60,7 +60,7 @@ class HistoryChat extends Component {
     if(page===null) page=0;
     const url = `${global.url_node}${'history-chat/'}${id}${'?skip='}${page}${'&limit=20'}`;
     getEncodeApi(url).then(hs=>{
-      //console.log('getHistory',hs);
+      console.log('getHistory',hs);
       this.state.listHis=page===0?hs.data:this.state.listHis.concat(hs.data);
         this.setState(this.state);
     })

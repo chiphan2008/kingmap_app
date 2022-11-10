@@ -27,7 +27,7 @@
     "react-navigation": "^1.0.0-beta.26",
     "react-redux": "^5.0.7",
     "redux": "^4.0.0",
-    "socket.io-client": "^2.0.4"
+    "socket.io-client": "^2.5.0"
   },
   "devDependencies": {
     "babel-jest": "22.1.0",
